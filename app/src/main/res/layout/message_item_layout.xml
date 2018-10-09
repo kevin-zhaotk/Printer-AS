@@ -1,0 +1,78 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    android:descendantFocusability="blocksDescendants"
+    >
+<!-- 
+    <TextView 
+        android:id="@+id/tv_message_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textColor="@color/black"
+		android:textSize="40sp"
+        />
+    <TextView
+        android:id="@+id/tv_message_abstract"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_message_title"
+        android:singleLine="true"
+        android:textSize="30sp"
+        android:textColor="@color/message_abstract_color"
+        />
+-->
+
+	<HorizontalScrollView
+		android:layout_width="match_parent"
+		android:layout_height="100dp"
+
+		>
+	   <LinearLayout
+	        android:id="@+id/ll_preview"	        
+	        android:layout_width="match_parent"
+	        android:layout_height="100dp"
+	        android:orientation="horizontal"
+	        android:background="#ffffff"/>
+
+	</HorizontalScrollView>
+		<!-- <ImageView 
+		    android:id="@+id/message_image"
+		    android:layout_width="wrap_content"
+		    android:layout_height="100dp"
+		    android:minWidth="1280dp"
+		    android:background="#ffffff"
+		    android:scaleType="fitStart"
+		    /> -->
+	<TextView
+	    android:id="@+id/tv_msg_title"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentTop="true"
+	    android:layout_alignParentRight="true"
+	    android:layout_marginRight="5dp"
+	    android:background="#000000"
+	    android:textSize="24sp"
+	    android:textColor="#ffffff"
+	    />
+	
+	<ImageView
+	    android:id="@+id/image_selected"
+	    android:layout_width="fill_parent"
+	    android:layout_height="100dp"
+	    android:background="@drawable/message_selector"
+	    android:visibility="gone"	    
+	    />
+
+	<ImageView
+		android:id="@+id/check_state"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/check_nor"
+		android:layout_alignParentRight="true"
+		android:layout_marginRight="20dp"
+		android:layout_centerVertical="true"
+		android:visibility="gone"
+		/>
+</RelativeLayout>    

@@ -1,0 +1,732 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!-- tr 20170319 -->
+
+    <string name="app_version">Sürüm:</string>
+    <string name="system_time">Zaman:</string>
+    <string name="app_name">Yazıcı</string>
+    <string name="action_settings">Ayar</string>
+    <string name="hello_world">Merhaba Dünya!</string>
+    <string name="ControlTab">Kontrol</string>
+    <string name="manualCtrlTab">Kontrol adamı</string>
+    <string name="Edit">Düzenle</string>
+    <string name="Settings">Ayarlar</string>
+    <string name="str_btn_start">Başla</string>
+    <string name="str_btn_stop">Dur</string>
+    <string name="str_btn_clean">Temizle</string>
+    <string name="str_btn_open">Aç</string>
+    <string name="str_btn_new">Yeni</string>
+    <string name="str_btn_save">Kaydet</string>
+    <string name="str_btn_saveas">Farklıkaydet</string>
+    <string name="str_btn_prerecord">Yukarı</string>
+    <string name="str_btn_nextrecord">Aşağı</string>
+    <string name="str_btn_send">Gönder</string>
+    <string name="str_btn_set">Ayar</string>
+    <string name="str_btn_get">Mesaj</string>
+    <string name="str_btn_print">Yazdır</string>
+    <string name="str_btn_finish">Bitir</string>
+    <string name="str_btn_header1">Kalem1</string>
+    <string name="str_btn_header2">Kalem2</string>
+    <string name="str_btn_header3">Kalem3</string>
+    <string name="str_btn_header4">Kalem4</string>
+    <string name="strDate">Tarih:</string>
+    <string name="strInklevel">Kalan</string>
+    <string name="strPhotocellState">Fotocel</string>
+    <string name="strEncoderState">Enkoder</string>
+    <string name="strPrintstate">Yazıyor：</string>
+    <string name="strPrinting">Yazıyor</string>
+    <string name="strPrintok">Hazır</string>
+    <string name="strOn">Aç</string>
+    <string name="strOff">Kapa</string>
+    <string name="strwaitting">yazıyor......</string>
+    <string name="str_csvfile">Csv</string>
+    <string name="str_tlkfile">Tlk</string>
+    <string name="str_binfile">Aç</string>
+    <string name="str_openfile">Aç...</string>
+    <string name="str_mvforward">İleri</string>
+    <string name="str_mvbackward">Geri</string>
+    <string name="str_preview">Önizleme</string>
+    <string name="str_del">Sil</string>
+    <string name="str_multi_select">Group</string>
+    <string name="str_btn_shift">Vardiya</string>
+    <string name="str_btn_second">Dakika</string>
+    <string name="str_btn_upgrade">Yükselt</string>
+    <string name="str_btn_setDate">Tarih Ayarı</string>
+    <string name="str_btn_setTime">Zaman Ayarı</string>
+    <string name="str_btn_image">Logo</string>
+    <string name="str_goto">git</string>
+    
+	<string name="str_remain_ink">Ink</string>
+	<string name="str_remain_ptimes">Total</string>
+	
+    <!-- object info table -->
+    <string name="strWidth">Genişlik</string>
+    <string name="strHigh">Yükseklik</string>
+    <string name="strHightype">Stepwise</string>
+    <string name="strReverse">Reverse</string>
+    <string name="strXcor">X-Cor</string>
+    <string name="strYcor">Y-Cor</string>
+    <string name="strCnt">İçerik</string>
+    <string name="strDefault">0</string>
+    <string name="txtDefault">mesaj</string>
+    <string name="strDragable">Sürüklenebilir</string>
+    <string name="strShow">Göster</string>
+	<string name="strFontsize">Font Size</string>
+    <string name="strFont">Yazı tipi</string>
+    <string name="strLinewidth">Satır Genişliği</string>
+    <string name="strBits">Rakamlar</string>
+    <string name="strImage">Resim</string>
+    <string name="strDirect">Yön</string>
+    <string name="strShift1">Vardiya1</string>
+    <string name="strShift2">Vardiya2</string>
+    <string name="strShift3">Vardiya3</string>
+    <string name="strShift4">Vardiya4</string>
+    <string name="strShift5">Variya5</string>
+    <string name="strInfoname">Bilgi</string>
+    <string name="strHeadType">KalemTipi</string>
+    <string name="strHeadResolution">Resolution</string>
+    <string name="strUpgradeConfirm">Yükseltmek istiyor musunuz?</string>
+    <string name="strUpgradeNoApk">Yükseltme dosyası yok!!!</string>
+    <string name="strSaving">kaydediliyor, lütfen bekleyin...</string>
+    <string name="strLoading">yükleniyor, lütfen bekleyin...</string>
+    <string name="strCopying">Copying, attendere prego...</string>
+    <string name="strInsertSerial">Lütfen cihazı bağlayın...</string>
+    <string name="strReinsertSerial">Hata, lütfen cihazı yenden bağlayın</string>
+
+    <string-array name="strPrinterArray">
+        <item>12.7 mm HP head</item>
+        <item>12.7 mm HP standard</item>
+        <item>25.4 mm HP dual</item>
+        <item>16.3 mm Xaar head</item>
+        <item>33 mm Xaar dual</item>
+        <item>38.1 mm HP Triple</item>
+        <item>50.8 mm HP quadruple</item>
+        <item>32 dot</item>
+        <item>16 dot</item>
+        <item>--</item>
+        <item>25.4mm fast  ONE INCH</item>
+        <item>-- </item>
+        <item>25.4mm x2 fast</item>
+        <item>9mm</item>
+        <item>Nova</item>
+    </string-array>
+    <string-array name="strFontArray">
+        <item>0T+</item>
+        <item>1+</item>
+        <item>1B+</item>
+        <item>1B2</item>
+        <item>1BS</item>
+        <item>1T</item>
+        <item>2+</item>
+        <item>2B</item>
+        <item>2i</item>
+        <item>3+</item>
+        <item>3B</item>
+        <item>3i</item>
+        <item>3T</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>6B</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+    
+    <string-array name="strFontTipsArray">
+	    <item>0T+ font</item>
+	    <item>1+ font</item>
+	    <item>1B+ font</item>
+	    <item>1B2 font</item>
+	    <item>1BS font</item>
+	    <item>1T font</item>
+	    <item>2+ font</item>
+	    <item>2B font</item>
+	    <item>2i font</item>
+	    <item>3+ font</item>
+	    <item>3B font</item>
+	    <item>3i font</item>
+	    <item>3T font</item>
+	    <item>4 font</item>
+	    <item>5 font</item>
+	    <item>6 font</item>
+	    <item>6B font</item>
+	    <item>7 font</item>
+	    <item>8 font</item>
+	    <item>9 font</item>
+	</string-array>
+	
+    <string-array name="strFontFile">
+        <item>WelldrawH000</item>
+    </string-array>
+    <string-array name="strDirectArray">
+        <item>artırmak</item>
+        <item>azaltmak</item>
+    </string-array>
+
+    <string name="strCode">Kod Türü</string>
+
+    <string-array name="strCodeArray">
+        <item>EAN8</item>
+	    <item>EAN13</item>
+	    <item>EAN128</item>
+	    <item>CODE_128</item>
+	    <item>CODE_39</item>
+	    <item>UPC_A</item>
+	    <item>ITF_14</item>
+	    <item>QR</item>
+        <item>DM</item>
+    </string-array>
+
+    <string name="strBarsource">Data</string>
+
+    <string-array name="strLineArray">
+        <item>Düz çizgi</item>
+        <item>Çizgi çizgisi</item>
+        <item>Nokta Çizgisi</item>
+        <item>Dash Dot Hattı</item>
+        <item>Dash Dot Nokta Çizgisi</item>
+    </string-array>
+
+    <string name="strLinetype">Hat Türü</string>
+    <string name="str_ok">tamam</string>
+    <string name="strNativeBtn">İptal etmek</string>
+    <string name="strRtFmt">Biçim</string>
+
+    <string-array name="strTimeFormat">
+        <item>AA-MM-GG</item>
+        <item>MM-GG-AA</item>
+        <item>AA/MM/GG</item>
+        <item>MM/GG/AA</item>
+        <item>GG/MM/AA</item>
+        <item>AA</item>
+        <item>MM</item>
+        <item>GG</item>
+        <item>HH:NN</item>
+    </string-array>
+    <string-array name="strarrayCounter">
+        <item>3 bit</item>
+        <item>4 bit</item>
+        <item>5 bit</item>
+        <item>6 bit</item>
+        <item>7 bit</item>
+        <item>8 bit</item>
+        <item>9 bit</item>
+        <item>10 bit</item>
+    </string-array>
+    <string-array name="strarrayFontSize">
+        <item>1 mm</item>
+        <item>2 mm</item>
+        <item>3 mm</item>
+        <item>4 mm</item>
+        <item>5 mm</item>
+        <item>6 mm</item>
+        <item>7 mm</item>
+        <item>8 mm</item>
+        <item>9 mm</item>
+        <item>10 mm</item>
+        <item>11 mm</item>
+        <item>12 mm</item>
+        <item>12.7 mm</item>
+    </string-array>
+
+    <string name="strOffset">Offset</string>
+
+    <!-- object list -->
+    <string name="objectListName">Listeyi Göster</string>
+    <string name="objectInfoName">Mesajı Göster</string>
+    <string name="object_Msg">MESAJ</string>
+    <string name="object_text">Mesaj</string>
+    <string name="object_realtime">Tarih</string>
+    <string name="object_counter">Sayıcı</string>
+    <string name="object_bar">Barkod</string>
+    <string name="object_pic">Grafik</string>
+    <string name="object_julian">Julian</string>
+    <string name="object_line">Çizgi</string>
+    <string name="object_rect">Dikdörtgen</string>
+    <string name="object_ellipse">Elips</string>
+    <string name="object_shift">Vardiya</string>
+    <string name="object_second">Dakika</string>
+	<string name="object_weekofyear">WeekOfYear</string>
+	<string name="object_weekday">WeekDay</string>
+    <string name="object_charHour">AlphaHour</string>
+    <string name="object_msg_name">Konu</string>
+    <string name="object_qr">QRCode</string>
+    <string name="object_dynamic_qr">DynamicQR</string>
+    <!-- Settings frame -->
+    <string name="strParam0">00.Ayrılmış</string>
+    <string name="strPrSpeedname">01.Hız</string>
+    <string name="strDelay_key">Gecikme anahtarı</string>
+    <string name="strDelayname">02.Gecikme</string>
+    <string name="strDelay_summary">Gecikme Ayarı</string>
+    <string name="strParam3">03.Ayrılmış</string>
+    <string name="strTrigger_key">tetikleme_tuşu</string>
+    <string name="strTriggername">04.Tetikleme</string>
+    <string name="strTrigger_summary">Tetikleme Modu</string>
+    <string name="strDirection_key">yön tuşu</string>
+    <string name="strSyncname">05.Enkoder</string>
+    <string name="strDirectionname">05.Senkrnz</string>
+    <string name="strBold">06.Kalınlık</string>
+    <string name="strFixlen">07.Uzunluk</string>
+    <string name="strFixtime">08.Zaman Ayarlama</string>
+    <string name="strHeadTemp">09.Kafa Sıcaklığı</string>
+    <string name="strResvTemp">10.Kutu Sıcaklığı</string>
+    <string name="strfontwidth">11.fontgenişlği</string>
+    <string name="strDotname">12.Damlaboyutu</string>
+    <string name="strDirection_summary">Yön Seçimi</string>
+    <string name="strEncoder_key">enkoder</string>
+    <string name="strEncodername">03.Enkoder</string>
+    <string name="strEncoder_summary">Enkoder mod Ayarı</string>
+    <string name="strHoriRes_key">dikey_tuşu</string>
+    <string name="strHoriResname">04.Dikey</string>
+    <string name="strHoriRes_summary">Dikey Çözünürlük Ayarı</string>
+    <string name="strVertRes_key">yatay_tuşu</string>
+    <string name="strVertResname">05.Yatay</string>
+    <string name="strVertRes_summary">Yatay Çözünürlük Ayarı</string>
+    <string name="strTimeunit">ms</string>
+    <string name="strResunit">dpi</string>
+    <string name="strLenunit">0.1mmm</string>
+    <string name="strTempunit">C</string>
+    <string name="strPrSpeedUnit">HZ</string>
+    <string name="strResvname8">08.Ayrılmış</string>
+    <string name="strResvname9">09.Ayrılmış</string>
+    <string name="strResvname10">10.Ayrılmış</string>
+    <string name="strResvname11">11.Ayrılmış</string>
+    <string name="strResvname12">12.Ayrılmış</string>
+    <string name="strResvname13">13.Ayrılmış</string>
+    <string name="strResvname14">14.Ayrılmış</string>
+    <string name="strResvname15">15.Ayrılmış</string>
+    <string name="strResvname16">16.Ayrılmış</string>
+    <string name="strResvname17">17.Ayrılmış</string>
+    <string name="strResvname18">18.Ayrılmış</string>
+    <string name="strResvname19">19.Ayrılmış</string>
+    <string name="strResvname20">20.Ayrılmış</string>
+    <string name="strResvname21">21.Ayrılmış</string>
+    <string name="strResvname22">22.Ayrılmış</string>
+    <string name="strResvname23">23.Ayrılmış</string>
+    <string name="strResvname24">24.Ayrılmış</string>
+    <string name="strResvname25">25.Ayrılmış</string>
+    <string name="strResvname26">26.Ayrılmış</string>
+    <string name="strResvname27">27.Ayrılmış</string>
+    <string name="strResvname28">28.Ayrılmış</string>
+    <string name="strResvname29">29.Ayrılmış</string>
+    <string name="strResvname30">30.Ayrılmış</string>
+    <string name="strResvname31">31.Ayrılmış</string>
+    <string name="strResvname32">32.Ayrılmış</string>
+    <string name="strResvname33">33.Ayrılmış</string>
+    <string name="strResvname34">34.Ayrılmış</string>
+    <string name="strResvname35">35.Ayrılmış</string>
+    <string name="strResvname36">36.Ayrılmış</string>
+    <string name="strResvname37">37.Ayrılmış</string>
+    <string name="strResvname38">38.Ayrılmış</string>
+    <string name="strResvname39">39.Ayrılmış</string>
+    <string name="strResvname40">40.Ayrılmış</string>
+    <string name="strResvname41">41.Ayrılmış</string>
+    <string name="strResvname42">42.Ayrılmış</string>
+    <string name="strResvname43">43.Pens</string>
+    <string name="strResvname44">44.Ayrılmış</string>
+    <string name="strResvname45">45.Ayrılmış</string>
+    <string name="strResvname46">46.Ayrılmış</string>
+    <string name="strResvname47">47.Ayrılmış</string>
+    <string name="strResvname48">48.Ayrılmış</string>
+    <string name="strResvname49">49.Ayrılmış</string>
+    <string name="strResvname50">50.Ayrılmış</string>
+    <string name="strResvname51">51.Ayrılmış</string>
+    <string name="strResvname52">52.Ayrılmış</string>
+    <string name="strResvname53">53.Ayrılmış</string>
+    <string name="strResvname54">54.Ayrılmış</string>
+    <string name="strResvname55">55.Ayrılmış</string>
+    <string name="strResvname56">56.Ayrılmış</string>
+    <string name="strResvname57">57.Ayrılmış</string>
+    <string name="strResvname58">58.Ayrılmış</string>
+    <string name="strResvname59">59.Ayrılmış</string>
+    <string name="strResvname60">60.Ayrılmış</string>
+    <string name="strResvname61">61.Ayrılmış</string>
+    <string name="strResvname62">62.Ayrılmış</string>
+    <string name="strResvname63">63.Ayrılmış</string>
+    <string name="strResvname64">64.Ayrılmış</string>
+    <string name="strBtnSave">Tamam</string>
+
+    <string-array name="trigger_mode_name">
+        <item>Açık</item>
+        <item>Kapalı</item>
+    </string-array>
+    <string-array name="tetikleme_modu_değeri">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="yön_adı">
+        <item>Soldan-Sağa</item>
+        <item>Sağdan-Sola</item>
+    </string-array>
+    <string-array name="yön_değeri">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="enkoder_ismi">
+        <item>Açık</item>
+        <item>Kapalı</item>
+    </string-array>
+    <string-array name="enkoder_değeri">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="dikeyçöz_ismi">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+    <string-array name="dikeyçöz_değeri">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+    <string-array name="yatayçöz_ismi">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+    <string-array name="yatayçöz_değeri">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+    <string-array name="object_list_msg">
+        <item>Mesaj Adı</item>
+    </string-array>
+    <string-array name="storage_dev">
+        <item>SDCard</item>
+        <item>USB</item>
+    </string-array>
+
+    <string name="str_fileicon_des">Dosya simgesi</string>
+    <string name="str_file_save"> Tamam </string>
+    <string name="str_file_cancel">İptal</string>
+    <string name="str_setting_upgrade">Yükselt</string>
+    <string name="str_month">Ay</string>
+    <string name="str_year">Yıl</string>
+    <string name="str_date">Gün</string>
+    <string name="str_hour">Saat</string>
+    <string name="str_minute">Dakika</string>
+    <string name="str_format">24-Format</string>
+    <string name="str_format_24">Evet</string>
+    <string name="str_format_12">Hayır</string>
+    <string name="cor_unit">dp</string>
+    <string name="font_unit">mm</string>
+    <string name="str_trans">Sağdan</string>
+    <string name="str_column_index">içerik</string>
+    <string name="str_column_pic1">resim1</string>
+    <string name="str_column_pic2">resim2</string>
+    <string name="str_column_pic3">resim3</string>
+    <string name="str_column_pic4">resim4</string>
+    <string name="str_column_text1">mesaj1</string>
+    <string name="str_column_text2">mesaj2</string>
+    <string name="str_column_text3">mesaj3</string>
+    <string name="str_column_text4">mesaj4</string>
+    <string name="str_column_text5">mesaj5</string>
+    <string name="str_column_text6">mesaj6</string>
+    <string name="str_column_text7">mesaj7</string>
+    <string name="str_column_text8">mesaj8</string>
+    <string name="str_column_text9">mesaj9</string>
+    <string name="str_column_text10">mesaj10</string>
+    <string name="str_column_text11">mesaj11</string>
+    <string name="str_column_text12">mesaj12</string>
+    <string name="str_column_text13">mesaj13</string>
+    <string name="str_column_text14">mesaj14</string>
+    <string name="str_column_text15">mesaj15</string>
+    <string name="str_column_text16">mesaj16</string>
+    <string name="str_notlkfile">Lütfen TLK dosyasını seçin</string>
+    <string name="str_tlk_already_exist">Tlk dosyası hazır!!!</string>
+    <string name="str_createfile_failure">Düzenleme hatası</string>
+    <string name="str_no_print_target">Lütfen hedef seçiniz</string>
+    <string name="str_radioLocal">Dahili</string>
+    <string name="str_radioUsb">USB</string>
+    <string name="str_radioUsb1">USB1</string>
+    <string name="str_radioUsb2">USB2</string>
+    <string name="str_radioSdcard">SDKart</string>
+    <string name="str_title_infodialog">Nesne Bilgisi</string>
+    <string name="str_search">Ara</string>
+
+    <!-- 树莓派3 打印界面相关 -->
+    <string name="str_msg_name">MSJ:</string>
+    <!-- <string name="str_state_inklevel">MÜRK:  %1$d%%</string> -->
+    <string name="str_state_inklevel">MÜRK:</string>
+    <string name="str_invalid_ink">--</string>
+    <string name="str_state_battery">Güç:%1$d</string>
+    <string name="str_hint_preview">mesaj öngörünüm</string>
+    <string name="str_print_count">Kayıtlar: </string>
+    <string name="str_print_count_default">0</string>
+    <string name="str_print_printing">Yazdırma açık...</string>
+    <string name="str_print_startok">yazdırma işlemi başarılı...</string>
+    <string name="str_print_stopok">baskı durduruldu...</string>
+    <string name="str_toast_no_bin">Bin dosyası bulunamadı !!!</string>
+    <string name="str_toast_emptycontent">Seçilen mesaj boş!!!</string>
+    <string name="str_toast_no_message">Lütfen mesaj dosyası seçin!!!</string>
+    <string name="str_toast_no_ink">Mürekkep Az!!!</string>
+    <string name="str_rfid_initfail_notify">RFID başlatma hatası！</string>
+    <string name="str_page_forward"> 《 </string>
+    <string name="str_page_backward"> 》 </string>
+    <string name="str_message_no_content">öngörünüm oluşturulamıyor</string>
+    <string name="str_state_printing">Yazıyor</string>
+    <string name="str_state_stopped">Hazır</string>
+
+    <!-- 树莓派3 设置界面相关 -->
+
+    <string name="str_textview_param1">01. Hız</string>
+    <string name="str_textview_param2">02. Yön</string>
+    <string name="str_textview_param3">03. Çözünürlük</string>
+    <string name="str_textview_param4">04. Gecikme</string>
+    <string name="str_textview_param5">05. Fotosel</string>
+    <string name="str_textview_param6">06. Enkoder</string>
+    <string name="str_textview_param7">07. Baskı tekrarı</string>
+    <string name="str_textview_param8">08. Nozul seçimi</string>
+    <string name="str_textview_param9">09. Teker Çapı</string>
+    <string name="str_textview_param10">10. Enkoder PPR</string>
+    <string name="str_textview_param11">11.Kalem1 Mahsup</string>
+    <string name="str_textview_param12">12.Kalem2 Mahsup</string>
+    <string name="str_textview_param13">13.Kalem1 Aynalanmış</string>
+    <string name="str_textview_param14">14.Kalem2 Aynalanmış</string>
+    <string name="str_textview_param15">15.Kalem1 Ters</string>
+    <string name="str_textview_param16">16.Kalem2 Ters</string>
+    <string name="str_textview_param17">17.Ayrılmış</string>
+    <string name="str_textview_param18">18.Sayıcı</string>
+    <string name="str_textview_param19">19.Kalem3 Mahsup</string>
+    <string name="str_textview_param20">20.Kalem4 Mahsup</string>
+    <string name="str_textview_param21">21.Kalem3 Aynalanmış</string>
+    <string name="str_textview_param22">22.Kalem4 Aynalanmış</string>
+    <string name="str_textview_param23">23.Kalem3 Ters</string>
+    <string name="str_textview_param24">24.Kalem4 Ters</string>
+    <string name="str_textview_param25">25.Oto Voltaj</string>
+    <string name="str_textview_param26">26.Voltaj Ayarı</string>
+    <string name="str_textview_param27">27.Oto Puls</string>
+    <string name="str_textview_param28">28.Puls Ayarı</string>
+    <string name="str_textview_param29">29.Islak tutun</string>
+    <string name="str_textview_param30">30.Pho Filtresi</string>
+    <string name="str_textview_param31">31.Ayrılmış</string>
+    <string name="str_textview_param32">32.Ayrılmış</string>
+	<string name="str_textview_param33">33.Dotsize</string>
+	<string name="str_textview_param34">34.PWML</string>
+	<string name="str_textview_param35">35.STR</string>
+	<string name="str_textview_param36">36.Slant</string>
+	<string name="str_textview_param37">37.PWMH</string>
+    <string name="str_textview_param38">38.Ayrılmış</string>
+    <string name="str_textview_param39">39.Ayrılmış</string>
+    <string name="str_textview_param40">40.Ayrılmış</string>
+    <string name="str_textview_param41">41.Ayrılmış</string>
+    <string name="str_textview_param42">42.Ayrılmış</string>
+    <string name="str_textview_param43">43.Pens</string>
+    <string name="str_textview_param44">44.Ayrılmış</string>
+    <string name="str_textview_param45">45.Ayrılmış</string>
+    <string name="str_textview_param46">46.Ayrılmış</string>
+    <string name="str_textview_param47">47.Ayrılmış</string>
+    <string name="str_textview_param48">48.Ayrılmış</string>
+    <string name="str_textview_param49">49.Ayrılmış</string>
+    <string name="str_textview_param50">50.Ayrılmış</string>
+    <string name="str_textview_param51">51.Ayrılmış</string>
+    <string name="str_textview_param52">52.Ayrılmış</string>
+    <string name="str_textview_param53">53.Ayrılmış</string>
+    <string name="str_textview_param54">54.Ayrılmış</string>
+    <string name="str_textview_param55">55.Ayrılmış</string>
+    <string name="str_textview_param56">56.Ayrılmış</string>
+    <string name="str_textview_param57">57.Ayrılmış</string>
+    <string name="str_textview_param58">58.Ayrılmış</string>
+    <string name="str_textview_param59">59.Ayrılmış</string>
+    <string name="str_textview_param60">60.Ayrılmış</string>
+    <string name="str_textview_param61">61.Ayrılmış</string>
+    <string name="str_textview_param62">62.Ayrılmış</string>
+    <string name="str_textview_param63">63.Ayrılmış</string>
+    <string name="str_textview_param64">64.Ayrılmış</string>
+    <string name="str_btn_settings_sync">Tamam</string>
+
+    <string-array name="array_triger_mode">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="str_settings_params">
+        <item>01. Fotosel</item>
+        <item>02. Tetikleme</item>
+        <item>03. Fitler</item>
+        <item>04. Gecikme</item>
+        <item>05. Hız</item>
+        <item>06. Tekrar Süresi</item>
+        <item>07. Enkoder genişliği</item>
+        <item>08. Puls tekrarı</item>
+        <item>09. Puls gecikmesi</item>
+        <item>10. Damla Boyutu</item>
+        <item>11. Ayrılmış</item>
+        <item>12. Ayrılmış</item>
+        <item>13. Ayrılmış</item>
+        <item>14. Ayrılmış</item>
+        <item>15. Ayrılmış</item>
+        <item>16. Kalınlık</item>
+        <item>17. Ayrılmış</item>
+        <item>18. Ayrılmış</item>
+        <item>19. Ayrılmış</item>
+        <item>20. Ayrılmış</item>
+        <item>21. Ayrılmış</item>
+        <item>22. Ayrılmış</item>
+        <item>23. Ayrılmış</item>
+        <item>24. Ayrılmış</item>
+        <item>25. Ayrılmış</item>
+        <item>26. Ayrılmış</item>
+        <item>27. Ayrılmış</item>
+        <item>28. Ayrılmış</item>
+        <item>29. Ayrılmış</item>
+        <item>30. Ayrılmış</item>
+        <item>31. Ayrılmış</item>
+        <item>32. Ayrılmış</item>
+        <item>33. Ayrılmış</item>
+        <item>34. Ayrılmış</item>
+        <item>35. Ayrılmış</item>
+        <item>36. Ayrılmış</item>
+        <item>37. Ayrılmış</item>
+        <item>38. Ayrılmış</item>
+        <item>39. Ayrılmış</item>
+        <item>40. Ayrılmış</item>
+        <item>41. Ayrılmış</item>
+        <item>42. Ayrılmış</item>
+        <item>43. Pens</item>
+        <item>44. Ayrılmış</item>
+        <item>45. Ayrılmış</item>
+        <item>46. Ayrılmış</item>
+        <item>47. Ayrılmış</item>
+        <item>48. Ayrılmış</item>
+        <item>49. Ayrılmış</item>
+        <item>50. Ayrılmış</item>
+        <item>51. Ayrılmış</item>
+        <item>52. Ayrılmış</item>
+        <item>53. Ayrılmış</item>
+        <item>54. Ayrılmış</item>
+        <item>55. Ayrılmış</item>
+        <item>56. Ayrılmış</item>
+        <item>57. Ayrılmış</item>
+        <item>58. Ayrılmış</item>
+        <item>59. Ayrılmış</item>
+        <item>60. Ayrılmış</item>
+        <item>61. Ayrılmış</item>
+        <item>62. Ayrılmış</item>
+        <item>63. Ayrılmış</item>
+        <item>64. Ayrılmış</item>
+    </string-array>
+    <string-array name="encoder_item_entries">
+        <item>PHO1</item>
+        <item>PHO2</item>
+    </string-array>
+    <string-array name="direction_item_entries">
+        <item>Sol</item>
+        <item>Sağ</item>
+    </string-array>
+    <string-array name="resolution_item_entries">
+        <item>150</item>
+        <item>300</item>
+        <item>450</item>
+        <item>600</item>
+        <item>750</item>
+    </string-array>
+    <string-array name="pens_item_entries">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+    <string-array name="switch_item_entries">
+        <item>Kapa</item>
+        <item>Aç</item>
+    </string-array>
+    <string-array name="photo_item_entries">
+        <item>Kapa</item>
+        <item>Kalem</item>
+        <item>Harici</item>
+    </string-array>
+    <string-array name="message_dots">
+        <item>128</item>
+        <item>152</item>
+        <item>384</item>
+    </string-array>
+
+    <string name="str_time_unit_0_1v">0.1V</string>
+    <string name="str_length_unit_mm">mm</string>
+    <string name="str_length_unit_6_1mm">1/6mm</string>
+    <string name="str_time_unit_mm">ms</string>
+    <string name="str_time_unit_ms">ms</string>
+    <string name="str_time_unit_mm_s">mm/s</string>
+    <string name="str_time_unit_0_1us">0.1us</string>
+    <string name="str_time_unit_us">us</string>
+    <string name="str_time_unit_100us">100us</string>
+    <string name="str_setting_time">Saat</string>
+    <string name="str_system_setting">Ayarlar</string>
+    <string name="str_upgrade_progress">sistem yükseltiliyor....</string>
+    <string name="str_time_format">%1$04d-%2$02d-%3$02d %4$02d:%5$02d:%6$02d</string>
+    <string name="str_toast_ink_unvalid">Mürekkep damlası seviye dışı,yeniden ayarlayın：800</string>
+    <string name="str_toast_photoelectricity_delay">Fotoselektrik gecikmesi çok yüksek,yeniden ayarlayın:100</string>
+    <string name="str_toast_photoelectricity_antishake">Fotoelektrik sallantısı yüksek,yeniden ayarlayın:20</string>
+    <string name="str_toast_timingprint">Baskı zamanlaması yüksek,yeniden ayarlayın:1000</string>
+
+    <!-- 树莓派3 编辑界面相关 -->
+    <string name="str_edit_btn_insert">Değişkenler</string>
+    <string name="str_edit_btn_temp1">Sıcaklık1</string>
+    <string name="str_edit_btn_temp2">Sıcaklık2</string>
+    <string name="str_edit_btn_temp3">Sıcaklık3</string>
+    <string name="str_edit_btn_temp4">Sıcaklık4</string>
+    <string name="str_edit_btn_temp5">Sıcaklık5</string>
+    <string name="str_edit_line1">1. Satır:</string>
+    <string name="str_edit_line2">2. Satır:</string>
+    <string name="str_edit_line3">3. Satır:</string>
+    <string name="str_edit_line4">4. Satır:</string>
+    <string name="str_notice_save">lütfen mesaj ismi girin:</string>
+    <string name="str_notice_no_objects">Kayıt için bilgi yok!</string>
+    <string name="str_file_title">Mesaj：</string>
+    <string name="str_file_hint">dosya ismi</string>
+    <string name="str_page_prev">SayfaYukarı</string>
+    <string name="str_page_next">SayfaAşağı</string>
+    <string name="str_filename_no">Yeni</string>
+    <string name="str_btn_back">Geri</string>
+    <string name="str_btn_up">Yukarı</string>
+    <string name="str_btn_detail">Ayar</string>
+    <string name="cursor">Kursor</string>
+    <!-- 树莓派3 -->
+    <string name="str_dialog_msgnote">请选择信息行数：</string>
+
+    <string-array name="msglines_item_entries">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+    <string name="str_no_upgrade">Son versiyon kullanılıyor</string>
+    <string name="str_cnt_min">Başlama</string>
+    <string name="str_cnt_max">Son</string>
+
+    <string name="str_toast_no_qrfile">no QR.txt or QR.csv</string>
+    <string name="str_recover_print">recover last print</string>
+    
+    
+	<string name="str_net_devname">Device</string>
+	<string name="str_net_ipaddr">IP addr</string>
+	<string name="str_net_stat">State</string>
+	<string name="str_net_number">Number</string>
+	<string name="str_net_counts">Counts</string>
+	<string name="str_net_int">Ink</string>
+	<string name="str_net_commands">Commands</string>
+	<string name="str_net_back">Back</string>
+	<string name="str_net_one">1</string>
+	<string name="str_net_hundred">100</string>
+	<string name="str_net_thousand">1000</string>
+	<string name="str_net_connect">Connect</string>
+	
+	<string name="str_tip_nothing">~ There is no picture !!!</string>
+	<string name="str_no_permission">Permission denied for access the files</string>
+	<string name="str_flush_tips">Will Overwrite the settings, Confirm?</string>
+	
+	<string name="str_prepared">TLK parse success!!!</string>
+	<string name="str_prepare_fail">TLK parse failed!!!</string>
+	
+	<string name="password_title">Please Enter Password</string>
+	
+</resources>

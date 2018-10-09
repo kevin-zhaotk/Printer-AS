@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="30dp"
+    android:background="#436EEE"
+     >
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:background="#436EEE"
+		>
+		<ImageButton
+			android:id="@+id/ib_import"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/usb_to_flash"
+			/>
+
+		<ImageButton
+			android:id="@+id/ib_export"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="15dp"
+			android:src="@drawable/flash_to_usb"
+			/>
+
+		<ImageButton
+			android:id="@+id/ib_flush"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="15dp"
+			android:src="@drawable/usb_to_flash_override"
+			/>
+	</LinearLayout>
+
+	<RelativeLayout
+		android:id="@+id/cancel"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<Button
+			android:id="@+id/btn_cancel"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:background="@drawable/button_style"
+			android:text="@string/str_btn_cancel"
+			android:textSize="40sp"/>
+	</RelativeLayout>
+</LinearLayout>

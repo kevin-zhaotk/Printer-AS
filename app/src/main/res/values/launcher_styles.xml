@@ -1,0 +1,6 @@
+<resources>
+    <style name="LauncherStyle" parent="android:Theme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/launcherbg</item>
+    </style>
+</resources>

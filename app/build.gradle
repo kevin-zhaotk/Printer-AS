@@ -1,0 +1,44 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion '25.0.0'
+
+    defaultConfig {
+        applicationId "com.industry.printer"
+        minSdkVersion 17
+        targetSdkVersion 17
+        versionCode 1
+        versionName "08092905172"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+//    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('libs/corelibrary.jar')
+    provided files('libs/systemapi.jar')
+    compile 'com.android.support:support-v4:25.3.0'
+    compile 'io.reactivex:rxjava:1.1.0'
+    compile 'com.google.zxing:core:3.3.3'
+    //    compile 'io.reactivex:rxandroid:1.3.4'
+    testCompile 'junit:junit:4.12'
+    //    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    //    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+//    compileOnly project(':systemapi')
+}

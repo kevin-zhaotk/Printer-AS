@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+    
+    <RelativeLayout
+          android:id="@+id/btn_new"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:gravity="center"
+        >
+        <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:background="@drawable/edit_default_btn_style"
+        	/>
+		<TextView 
+		    android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerInParent="true"
+	        android:text="@string/str_btn_new"
+	        android:textSize="20sp"
+	        android:textColor="#ffffff"
+		    />
+    </RelativeLayout>
+	
+    <RelativeLayout
+          android:id="@+id/btn_save"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_toRightOf="@id/btn_new"
+          android:gravity="center"
+        >
+        <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:background="@drawable/edit_default_btn_style"
+        	/>
+		<TextView 
+		    android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerInParent="true"
+	        android:text="@string/str_btn_save"
+	        android:textSize="20sp"
+	        android:textColor="#ffffff"
+		    />
+    </RelativeLayout>
+    
+    <RelativeLayout
+          android:id="@+id/btn_saveas"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_toRightOf="@id/btn_save"
+          android:gravity="center"
+        >
+        <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:background="@drawable/edit_default_btn_style"
+        	/>
+		<TextView 
+		    android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerInParent="true"
+	        android:text="@string/str_btn_saveas"
+	        android:textSize="20sp"
+	        android:textColor="#ffffff"
+		    />
+    </RelativeLayout>
+    
+    <RelativeLayout
+          android:id="@+id/btn_open"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_toRightOf="@id/btn_saveas"
+          android:gravity="center"
+        >
+        <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:background="@drawable/edit_default_btn_style"
+        	/>
+		<TextView 
+		    android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerInParent="true"
+	        android:text="@string/str_btn_open"
+	        android:textSize="20sp"
+	        android:textColor="#ffffff"
+		    />
+    </RelativeLayout>
+    
+
+	<ImageButton android:id="@+id/btn_left"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_toRightOf="@id/btn_open"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_left"
+	    />
+	
+	<ImageButton android:id="@+id/btn_right"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_toRightOf="@id/btn_left"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_right"
+	    />
+	
+	<ImageButton android:id="@+id/btn_up"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_toRightOf="@id/btn_right"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_up"
+	    />
+	
+	<ImageButton android:id="@+id/btn_down"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_toRightOf="@id/btn_up"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_down"
+	    />
+	
+	<ImageButton android:id="@+id/btn_zoominx"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_toRightOf="@id/btn_down"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_zoominx"
+	    />
+	
+	<ImageButton android:id="@+id/btn_zoominy"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_toRightOf="@id/btn_zoominx"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_zoominy"
+	    />
+	
+	<ImageButton android:id="@+id/btn_zoomoutx"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_toRightOf="@id/btn_zoominy"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_zoomoutx"
+	    />
+
+	<ImageButton android:id="@+id/btn_zoomouty"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_toRightOf="@id/btn_zoomoutx"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_zoomouty"
+	    />
+
+
+<!-- buttons on the 2rd line -->
+	<ImageButton android:id="@+id/btn_ABC"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/btn_new"
+	    android:layout_marginTop="5dp"
+	    android:layout_alignParentLeft="true"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_abc"
+	    />
+	
+	<ImageButton android:id="@+id/btn_cnt"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_ABC"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_cnt"
+	    />
+	
+	<ImageButton android:id="@+id/btn_barcode"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_cnt"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_barcode"
+	    />
+	
+	<ImageButton android:id="@+id/btn_image"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_barcode"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_image"
+	    />
+	
+	<ImageButton android:id="@+id/btn_julian"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_image"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_julian"
+	    />
+	
+	<ImageButton android:id="@+id/btn_time"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_julian"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_clock"
+	    />
+	
+	<ImageButton android:id="@+id/btn_line"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_time"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_line"
+	    />
+	
+	<ImageButton android:id="@+id/btn_rect"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_line"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_rect"
+	    />
+	
+	<ImageButton android:id="@+id/btn_ellipse"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_rect"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:contentDescription="@string/str_btn_new"
+	    android:background="@drawable/style_ellipse"
+	    />
+	
+	<ImageButton
+	    android:id="@+id/btn_shift"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_ellipse"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:background="@drawable/style_shift"
+	    android:contentDescription="@string/str_btn_new"
+	    />
+	
+	<ImageButton
+	    android:id="@+id/btn_second"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_shift"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:background="@drawable/style_second"
+	    android:contentDescription="@string/str_btn_new"
+	    />
+	<ImageButton android:id="@+id/btn_delete"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignTop="@id/btn_ABC"
+	    android:layout_alignBaseline="@id/btn_ABC"
+	    android:layout_toRightOf="@id/btn_second"
+	    android:background="@drawable/style_del"
+	    android:contentDescription="@string/str_btn_new"
+	    />
+</RelativeLayout>

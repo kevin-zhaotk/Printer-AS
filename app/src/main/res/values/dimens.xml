@@ -1,0 +1,42 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="scrollbar_size">20dp</dimen>
+<!-- 设置界面相关尺寸定义 -->	
+	<dimen name="settingsTextsize">25sp</dimen>
+	<dimen name="settingsEditTextsize">25sp</dimen>
+	<dimen name="settingsBtnsize">30sp</dimen>
+	<dimen name="settingsUnitTextsize">15sp</dimen>
+	<dimen name="settingsMarginLeft">5dp</dimen>
+	<dimen name="settingsItemLength">220dp</dimen>
+	<dimen name="settingsValueLength">110dp</dimen>
+	<dimen name="settingsUnitLength">70dp</dimen>
+	<dimen name="settingsSPinnerSize">60dp</dimen>
+	<dimen name="settingsMarginTop">5dp</dimen>
+	<dimen name="settingsTextViewHeight">60dp</dimen>
+	
+<!-- 编辑界面相关尺寸定义 -->
+	<dimen name="editButtonsHeight">80dp</dimen>
+	<dimen name="editButtonsTextsize">30sp</dimen>
+	<dimen name="objinfoTextsize">30sp</dimen>
+	<dimen name="obj_oinfo_title_width">120dp</dimen>
+	
+<!-- 控制界面相关尺寸定义 -->
+	<dimen name="ctrlButtonHeight">80dp</dimen>
+	<dimen name="ctrlButtonsTextsize">40sp</dimen>
+	<dimen name="ctrlButtonsTextsize_min">30sp</dimen>
+	<dimen name="ctrlPreviewTextsize">60sp</dimen>
+	
+<!-- dialog相关尺寸 -->
+	<dimen name="dialogBtnTextSize">30sp</dimen>
+	
+<!-- 顶部三个RadioButton尺寸 -->
+	<dimen name="top_btn_height">80dp</dimen>
+	<dimen name="top_btn_height_half">40dp</dimen>
+	<dimen name="top_btn_textsize">25sp</dimen>
+		
+	
+	<dimen name="control_preview_height">75dp</dimen>
+</resources>

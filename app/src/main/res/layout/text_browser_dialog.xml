@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="800dp"
+    android:layout_height="match_parent"
+	android:background="#DEDEDE"
+    >
+    
+	<LinearLayout 
+	    android:id="@+id/btns_layout"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:layout_alignParentLeft="true"
+	    android:orientation="horizontal"
+	    >
+	    
+	    <Button
+	        android:id="@+id/dialog_save"
+	        android:layout_width="0dp"
+	        android:layout_height="80dp"
+			android:layout_weight="1"
+			android:layout_gravity="center"
+	        android:text="@string/str_file_save"
+	        android:textSize="30dp"
+	        />
+	    
+	    <Button
+	        android:id="@+id/dialog_cancel"
+	        android:layout_width="0dp"
+	        android:layout_height="80dp"
+			android:layout_weight="1"
+			android:layout_gravity="center"
+	        android:text="@string/str_file_cancel"
+	        android:textSize="30dp"
+	        />
+		
+		<Button
+	        android:id="@+id/dialog_page_prev"
+	        android:layout_width="0dp"
+	        android:layout_height="80dp"
+			android:layout_weight="1"
+			android:layout_gravity="center"
+	        android:text="@string/str_page_prev"
+	        android:textSize="30dp"
+	        />
+		
+		<Button
+	        android:id="@+id/dialog_page_next"
+	        android:layout_width="0dp"
+	        android:layout_height="80dp"
+			android:layout_weight="1"
+			android:layout_gravity="center"
+	        android:text="@string/str_page_next"
+	        android:textSize="30dp"
+	        />
+		
+	</LinearLayout>
+	
+	<ListView
+	    android:id="@+id/file_list"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_above="@id/btns_layout"
+	    android:layout_marginTop="10dp"
+	    android:focusable="true"
+	    android:focusableInTouchMode="true"
+	    android:background="#ffffff"
+	    />
+	    
+</RelativeLayout>

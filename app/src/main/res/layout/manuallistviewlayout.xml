@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/item_selector"
+    >
+    
+	<View
+	    android:layout_width="0.5px"
+	    android:layout_height="fill_parent"
+	    android:background="#000000"
+	    android:visibility="visible" 
+	    />
+	
+	<CheckBox
+	    android:id="@+id/manual_index"
+	    android:layout_width="50px"
+	    android:layout_height="80px"
+	    android:textSize="20sp"
+	    android:gravity="center"
+	    android:textColor="#000000"
+	    android:editable="true"
+	    />
+	
+	
+	<View
+	    android:layout_width="0.5px"
+	    android:layout_height="fill_parent"
+	    android:background="#000000"
+	    android:visibility="visible" 
+	    />
+	
+	<EditText
+	    android:id="@+id/manual_text1"
+	    android:layout_width="140px"
+	    android:layout_height="80px"
+	    android:textSize="20sp"
+	    android:gravity="center"
+	    android:textColor="#000000"
+	    android:editable="true"
+	    android:imeOptions="flagNoExtractUi"
+	    />
+	
+	<View
+	    android:layout_width="0.5px"
+	    android:layout_height="fill_parent"
+	    android:background="#000000"
+	    android:visibility="visible" 
+	    />
+	
+	<EditText
+	    android:id="@+id/manual_text2"
+	    android:layout_width="140px"
+	    android:layout_height="80px"
+	    android:imeOptions="flagNoExtractUi"
+	    android:textSize="20sp"
+	    android:gravity="center"
+	    android:textColor="#000000"
+	    />
+	
+	<View
+	    android:layout_width="0.5px"
+	    android:layout_height="fill_parent"
+	    android:background="#000000"
+	    android:visibility="visible" 
+	    />
+	
+	<EditText
+	    android:id="@+id/manual_text3"
+	    android:layout_width="140px"
+	    android:layout_height="80px"
+	    android:imeOptions="flagNoExtractUi"
+	    android:textSize="20sp"
+	    android:gravity="center"
+	    android:textColor="#000000"
+	    />
+	
+	<View
+	    android:layout_width="0.5px"
+	    android:layout_height="fill_parent"
+	    android:background="#000000"
+	    android:visibility="visible" 
+	    />
+	
+	<EditText
+	    android:id="@+id/manual_text4"
+	    android:layout_width="140px"
+	    android:layout_height="80px"
+	    android:imeOptions="flagNoExtractUi"
+	    android:textSize="20sp"
+	    android:gravity="center"
+	    android:textColor="#000000"
+	    />
+	
+	<View
+	    android:layout_width="0.5px"
+	    android:layout_height="fill_parent"
+	    android:background="#000000"
+	    android:visibility="visible" 
+	    />
+	
+	<EditText
+	    android:id="@+id/manual_text5"
+	    android:layout_width="140px"
+	    android:layout_height="80px"
+	    android:imeOptions="flagNoExtractUi"
+	    android:textSize="20sp"
+	    android:gravity="center"
+	    android:textColor="#000000"
+	    />
+	
+	<View
+	    android:layout_width="0.5px"
+	    android:layout_height="fill_parent"
+	    android:background="#000000"
+	    android:visibility="visible" 
+	    />
+	
+	<EditText
+	    android:id="@+id/manual_text6"
+	    android:layout_width="140px"
+	    android:layout_height="80px"
+	    android:imeOptions="flagNoExtractUi"
+	    android:textSize="20sp"
+	    android:gravity="center"
+	    android:textColor="#000000"
+	    />
+	<View
+	    android:layout_width="0.5px"
+	    android:layout_height="fill_parent"
+	    android:background="#000000"
+	    android:visibility="visible" 
+	    />
+	
+</LinearLayout>

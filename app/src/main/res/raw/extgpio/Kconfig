@@ -1,0 +1,5 @@
+config EXT_GPIO
+	tristate "external gpio for printer"
+	default n
+	help
+		this is FPGA gpio driver for printer project

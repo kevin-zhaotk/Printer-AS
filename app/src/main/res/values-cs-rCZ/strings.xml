@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <string name="app_version">Ver:</string>
+    <string name="system_time">Čas:</string>
+    <string name="app_name">Tiskárna</string>
+    <string name="action_settings">Nastavit</string>
+    <string name="hello_world">Dobrý den!</string>
+	<string name="ControlTab">Ovládání</string>
+	<string name="manualCtrlTab">Man ovládání</string>
+	<string name="Edit">Edit</string>
+	<string name="Settings">Nastavení</string>
+	<string name="str_btn_start">Start</string>
+	<string name="str_btn_stop">Stop</string>
+	<string name="str_btn_clean">Vyčistit</string>
+	<string name="str_btn_open">Otevřít</string>
+	<string name="str_btn_new">Nový</string>
+	<string name="str_btn_save">Uložit</string>
+	<string name="str_btn_saveas">Uložit jako</string>
+	<string name="str_btn_prerecord">Nahoru</string>
+	<string name="str_btn_nextrecord">Dolů</string>
+	<string name="str_btn_send">Odeslat</string>
+	<string name="str_btn_set">Nastavit</string>
+	<string name="str_btn_get">Text</string>
+	<string name="str_btn_print">Tisk</string>
+	<string name="str_btn_finish">Dokončit</string>
+	<string name="str_btn_header1">Pero1</string>
+	<string name="str_btn_header2">Pero2</string>
+	<string name="str_btn_header3">Pero3</string>
+	<string name="str_btn_header4">Pero4</string>
+	<string name="strDate">Datum:</string>
+	<string name="strInklevel">Zbývá </string>
+	<string name="strPhotocellState">Fotobuňka</string>
+	<string name="strEncoderState">Enkodér</string>
+	<string name="strPrintstate">Tisk：</string>
+	<string name="strPrinting">Tisk</string>
+	<string name="strPrintok">Připraven</string>
+	<string name="strOn">Zap</string>
+	<string name="strOff">Vyp</string>
+	<string name="strwaitting">probíhá tisk......</string>
+	<string name="str_csvfile">Csv</string>
+	<string name="str_tlkfile">Tlk</string>
+	<string name="str_binfile">Otevřít</string>
+	<string name="str_openfile">Otevřít...</string>
+	<string name="str_mvforward">Vpřed</string>
+	<string name="str_mvbackward">Zpět</string>
+	<string name="str_preview">Náhled</string>
+	
+	<string name="str_del">Smazat</string>
+	<string name="str_multi_select">Group</string>
+	<string name="str_btn_shift">Směna</string>
+	<string name="str_btn_second">Sekunda</string>
+	
+	<string name="str_btn_upgrade">Upgrade</string>
+	<string name="str_btn_setDate">Nastavit datum</string>
+	<string name="str_btn_setTime">Nastavit čas</string>
+	<string name="str_btn_image">Logo</string>
+	
+	<string name="str_goto">přejít na</string>
+	<!-- object info table -->
+	<string name="strWidth">Šířka</string>
+	<string name="strHigh">Výška</string>
+	<string name="strXcor">X-kor</string>
+	<string name="strYcor">Y-kor</string>
+	<string name="strCnt">Obsah</string>
+	<string name="strDefault">0</string>
+	<string name="txtDefault">text</string>
+	<string name="strDragable">Lze přetáhnout</string>
+	<string name="strShow">Zobrazit</string>
+	<string name="strFont">Font</string>
+	<string name="strLinewidth">Šířka řádku</string>
+	<string name="strBits">Číslice</string>
+	<string name="strImage">Obraz</string>
+	<string name="strDirect">Směr</string>
+	<string name="strShift1">Směna1</string>
+	<string name="strShift2">Směna2</string>
+	<string name="strShift3">Směna3</string>
+	<string name="strShift4">Směna4</string>
+	<string name="strShift5">Směna5</string>
+	<string name="strInfoname">Objekt</string>
+	<string name="strHeadType">Typ pera</string>
+	<string name="strHeadResolution">Resolution</string>
+	<string name="strUpgradeConfirm">Upgradovat?</string>
+	<string name="strUpgradeNoApk">Soubor upgradu chybí!!!</string>
+	<string name="strSaving">ukládám, prosím, čekejte...</string>
+	<string name="strLoading">nahrávám, prosím, čekejte...</string>
+	<string name="strInsertSerial">Prosím, připojte zařízení...</string>
+	<string name="strReinsertSerial">Chyba, prosím, připojte zařízení znovu</string>
+	<string-array name="strPrinterArray">
+	    <item>12,7 mm HP hlava</item>
+	    <item>12,7 mm HP standardní</item>
+	    <item>25,4 mm HP duální</item>
+	    <item>16,3 mm Xaar hlava</item>
+	    <item>33 mm Xaar dvojitá</item>
+	    <item>38,1 mm HP trojitá</item>
+	    <item>50,8 mm HP čtverná</item>
+	    <item>7dot</item>
+	    <item>16dot</item>
+	    <item>--</item>
+	    <item>25.4mm fast ONE INCH</item>
+	    <item>--</item>
+	    <item>25.4mm x2 fast</item>
+	    <item>nova</item>
+	</string-array>
+	
+	<string-array name="strFontArray">
+	    <item>WelldrawH000</item>
+	</string-array>
+	
+	<string-array name="strFontFile">
+	    <item>WelldrawH000</item>
+	</string-array>
+	
+	<string-array name="strDirectArray">
+	    <item>zvýšit</item>
+	    <item>snížit</item>
+	</string-array>
+	<string name="strCode">Code Type</string>
+	<string-array name="strCodeArray">
+		<item>EAN8</item>
+		<item>EAN13</item>
+		<item>EAN128</item>
+		<item>CODE_128</item>
+		<item>CODE_39</item>
+		<item>UPC_A</item>
+		<item>ITF_14</item>
+		<item>QR</item>
+		<item>DM</item>
+	</string-array>
+	
+	<string-array name="strLineArray">
+	    <item>Souvislá čára</item>
+	    <item>Přerušovaná čára</item>
+	    <item>Tečkovaná čárae</item>
+	    <item>Čára z pomlček a teček</item>
+	    <item>Čára pomlčka, dvě tečky</item>
+	</string-array>
+	<string name="strLinetype">Typ čáry</string>
+	<string name="str_ok">OK</string>
+	<string name="strNativeBtn">Zrušit</string>
+	
+	<string name="strRtFmt">Formát</string>
+	<string-array name="strTimeFormat">
+	    <item>RRRR-MM-DD</item>
+	    <item>MM-DD-RRRR</item>
+	    <item>RR-MM-DD</item>
+	    <item>MM-DD-RR</item>
+	    <item>RRRR/MM/DD</item>
+	    <item>MM/DD/RRRR</item>
+	    <item>RR/MM/DD</item>
+	    <item>MM/DD/RR</item>
+	</string-array>
+	
+	<string-array name="strarrayCounter">
+	    <item>3 bit</item>
+	    <item>4 bit</item>
+	    <item>5 bit</item>
+	    <item>6 bit</item>
+	    <item>7 bit</item>
+	    <item>8 bit</item>
+	    <item>9 bit</item>
+	    <item>10 bit</item>
+	</string-array>
+	
+	<string-array name="strarrayFontSize">
+	    <item>1 mm</item>
+	    <item>2 mm</item>
+	    <item>3 mm</item>
+	    <item>4 mm</item>
+	    <item>5 mm</item>
+	    <item>6 mm</item>
+	    <item>7 mm</item>
+	    <item>8 mm</item>
+	    <item>9 mm</item>
+	    <item>10 mm</item>
+	    <item>11 mm</item>
+	    <item>12 mm</item>
+	    <item>12,7 mm</item>
+	</string-array>
+	
+	<string name="strOffset">Offset</string>
+	
+	<!-- object list -->
+	<string name="objectListName">Zobrazit seznam</string>
+	<string name="objectInfoName">Zobrazit TEXT</string>
+	<string name="object_Msg">TEXT</string>
+	<string name="object_text">Text</string>
+	<string name="object_realtime">Datum</string>
+	<string name="object_counter">Počitadlo</string>
+	<string name="object_bar">Čárový kód</string>
+	<string name="object_pic">Grafika</string>
+	<string name="object_julian">Juliánský</string>
+	<string name="object_line">Řádek</string>
+	<string name="object_rect">Pravoúh</string>
+	<string name="object_ellipse">Elipsa</string>
+	<string name="object_shift">Směna</string>
+	<string name="object_second">Sekunda</string>
+	<string name="object_msg_name">Předmět</string>
+	<!-- Settings frame -->
+	<string name="strParam0">00.Vyhrazeno</string>
+	<string name="strPrSpeedname">01.Rychlost</string>
+	<string name="strDelay_key">klávesa_zpoždění</string>
+	<string name="strDelayname">02.Zpoždění</string>
+	<string name="strDelay_summary">Nastavit zpoždění</string>
+	<string name="strParam3">03.Vyhrazeno</string>
+	<string name="strTrigger_key">klávesa_spuštění</string>
+	<string name="strTriggername">04.Spoušť</string>
+	<string name="strTrigger_summary">Režim spuštění</string>
+	<string name="strDirection_key">klávesa_směru</string>
+	<string name="strSyncname">05.Enkodér</string>
+	<string name="strDirectionname">05.Synch</string>
+	<string name="strBold">06.Tučně</string>
+	<string name="strFixlen">07.Délka</string>
+	<string name="strFixtime">08.Oprava času</string>
+	<string name="strHeadTemp">09.Teplota hlavy</string>
+	<string name="strResvTemp">10.Teplota zásobníku</string>
+	<string name="strfontwidth">11.Šířka fontu</string>
+	<string name="strDotname">12.Velikost bodu</string>
+	<string name="strDirection_summary">Vyberte směr</string>
+	<string name="strEncoder_key">enkodér</string>
+	<string name="strEncodername">03.Enkodér</string>
+	<string name="strEncoder_summary">Nastavit režim enkodéru</string>
+	<string name="strHoriRes_key">klávesa_hor.rozl.</string>
+	<string name="strHoriResname">04.Hori</string>
+	<string name="strHoriRes_summary">Nastavení hor. rozl.</string>
+	<string name="strVertRes_key">klávesa_vert. rozl.</string>
+	<string name="strVertResname">05.Vert</string>
+	<string name="strVertRes_summary">Nastavení vert. rozl.</string>
+	<string name="strTimeunit">ms</string>
+	<string name="strResunit">dpi</string>
+	<string name="strLenunit">0,1mmm</string>
+	<string name="strTempunit">C</string>
+	<string name="strPrSpeedUnit">HZ</string>
+	<string name="strResvname8">08.Vyhrazeno</string>
+	<string name="strResvname9">09.Vyhrazeno</string>
+	<string name="strResvname10">10.Vyhrazeno</string>
+	<string name="strResvname11">11.Vyhrazeno</string>
+	<string name="strResvname12">12.Vyhrazeno</string>
+	<string name="strResvname13">13.Vyhrazeno</string>
+	<string name="strResvname14">14.Vyhrazeno</string>
+	<string name="strResvname15">15.Vyhrazeno</string>
+	<string name="strResvname16">16.Vyhrazeno</string>
+	<string name="strResvname17">17.Vyhrazeno</string>
+	<string name="strResvname18">18.Vyhrazeno</string>
+	<string name="strResvname19">19.Vyhrazeno</string>
+	<string name="strResvname20">20.Vyhrazeno</string>
+	<string name="strResvname21">21.Vyhrazeno</string>
+	<string name="strResvname22">22.Vyhrazeno</string>
+	<string name="strResvname23">23.Vyhrazeno</string>
+	<string name="strResvname24">24.Vyhrazeno</string>
+	<string name="strResvname25">25.Vyhrazeno</string>
+	<string name="strResvname26">26.Vyhrazeno</string>
+	<string name="strResvname27">27.Vyhrazeno</string>
+	<string name="strResvname28">28.Vyhrazeno</string>
+	<string name="strResvname29">29.Vyhrazeno</string>
+	<string name="strResvname30">30.Vyhrazeno</string>
+	<string name="strResvname31">31.Vyhrazeno</string>
+	<string name="strResvname32">32.Vyhrazeno</string>
+	<string name="strResvname33">33.Vyhrazeno</string>
+	<string name="strResvname34">34.Vyhrazeno</string>
+	<string name="strResvname35">35.Vyhrazeno</string>
+	<string name="strResvname36">36.Vyhrazeno</string>
+	<string name="strResvname37">37.Vyhrazeno</string>
+	<string name="strResvname38">38.Vyhrazeno</string>
+	<string name="strResvname39">39.Vyhrazeno</string>
+	<string name="strResvname40">40.Vyhrazeno</string>
+	<string name="strResvname41">41.Vyhrazeno</string>
+	<string name="strResvname42">42.Vyhrazeno</string>
+	<string name="strResvname43">43.Vyhrazeno</string>
+	<string name="strResvname44">44.Vyhrazeno</string>
+	<string name="strResvname45">45.Vyhrazeno</string>
+	<string name="strResvname46">46.Vyhrazeno</string>
+	<string name="strResvname47">47.Vyhrazeno</string>
+	<string name="strResvname48">48.Vyhrazeno</string>
+	<string name="strResvname49">49.Vyhrazeno</string>
+	<string name="strResvname50">50.Vyhrazeno</string>
+	<string name="strResvname51">51.Vyhrazeno</string>
+	<string name="strResvname52">52.Vyhrazeno</string>
+	<string name="strResvname53">53.Vyhrazeno</string>
+	<string name="strResvname54">54.Vyhrazeno</string>
+	<string name="strResvname55">55.Vyhrazeno</string>
+	<string name="strResvname56">56.Vyhrazeno</string>
+	<string name="strResvname57">57.Vyhrazeno</string>
+	<string name="strResvname58">58.Vyhrazeno</string>
+	<string name="strResvname59">59.Vyhrazeno</string>
+	<string name="strResvname60">60.Vyhrazeno</string>
+	<string name="strResvname61">61.Vyhrazeno</string>
+	<string name="strResvname62">62.Vyhrazeno</string>
+	<string name="strResvname63">63.Vyhrazeno</string>
+	<string name="strResvname64">64.Vyhrazeno</string>
+
+	<string name="strBtnSave">Ok</string>
+	<string-array name="trigger_mode_name">
+	    <item>Zap</item>
+	    <item>Vyp</item>
+	</string-array>
+	
+	<string-array name="trigger_mode_value">
+	    <item>0</item>
+	    <item>1</item>
+	</string-array>
+	
+	<string-array name="direction_name">
+	    <item>Zleva doprava</item>
+	    <item>Zprava doleva</item>
+	</string-array>
+	
+	<string-array name="direction_value">
+	    <item>0</item>
+	    <item>1</item>
+	</string-array>
+	
+	<string-array name="encoder_name">
+	    <item>Zap</item>
+	    <item>Vyp</item>
+	</string-array>
+	
+	<string-array name="encoder_value">
+	    <item>0</item>
+	    <item>1</item>
+	</string-array>
+	
+	<string-array name="horires_name">
+	    <item>300</item>
+	    <item>600</item>
+	</string-array>
+	
+	<string-array name="horires_value">
+	    <item>300</item>
+	    <item>600</item>
+	</string-array>
+	
+	<string-array name="vertres_name">
+	    <item>300</item>
+	    <item>600</item>
+	</string-array>
+	
+	<string-array name="vertres_value">
+	    <item>300</item>
+	    <item>600</item>
+	</string-array>
+	
+	<string-array name="object_list_msg">
+	    <item>Název zprávy</item>
+	</string-array>
+	
+	
+	<string-array name="storage_dev">
+	    <item>SDkarta</item>
+	    <item>USB</item>
+	</string-array>
+	
+	<string name="str_fileicon_des">ikona souboru</string>
+	<string name="str_file_save"> Ok </string>
+	<string name="str_file_cancel">Zrušit</string>
+	<string name="str_setting_upgrade">Upgrade</string>
+	
+	<string name="str_month">Měsíc</string>
+	<string name="str_year">Rok</string>
+	<string name="str_date">Datum</string>
+	<string name="str_hour">Hodina</string>
+	<string name="str_minute">Minuta</string>
+	<string name="str_format">24-hod.formát</string>
+	<string name="str_format_24">Ano</string>
+	<string name="str_format_12">Ne</string>
+	<string name="cor_unit">dp</string>
+	<string name="font_unit">mm</string>
+	
+	<string name="str_trans">doprava</string>
+	
+	<string name="str_column_index">index</string>
+	<string name="str_column_pic1">obr1</string>
+	<string name="str_column_pic2">obr2</string>
+	<string name="str_column_pic3">obr3</string>
+	<string name="str_column_pic4">obr4</string>
+	<string name="str_column_text1">text1</string>
+	<string name="str_column_text2">text2</string>
+	<string name="str_column_text3">text3</string>
+	<string name="str_column_text4">text4</string>
+	<string name="str_column_text5">text5</string>
+	<string name="str_column_text6">text6</string>
+	<string name="str_column_text7">text7</string>
+	<string name="str_column_text8">text8</string>
+	<string name="str_column_text9">text9</string>
+	<string name="str_column_text10">text10</string>
+	<string name="str_column_text11">text11</string>
+	<string name="str_column_text12">text12</string>
+	<string name="str_column_text13">text13</string>
+	<string name="str_column_text14">text14</string>
+	<string name="str_column_text15">text15</string>
+	<string name="str_column_text16">text16</string>
+	<string name="str_notlkfile">Prosím, vyberte TLK soubor</string>
+	<string name="str_tlk_already_exist">Tlk soubor již existuje!!!</string>
+	<string name="str_createfile_failure">Chyba při vytváření</string>
+	<string name="str_no_print_target">Prosím, vyberte cíl</string>
+	
+	<string name="str_radioLocal">Místní</string>
+	<string name="str_radioUsb">USB</string>
+	<string name="str_radioUsb1">USB1</string>
+	<string name="str_radioUsb2">USB2</string>
+	<string name="str_radioSdcard">SDkarta</string>
+	
+	<string name="str_title_infodialog">Info o objektu</string>
+	
+	<string name="str_search">Vyhledat</string>
+
+<!-- 树莓派3 打印界面相关 -->	
+	<string name="str_msg_name">ZPR:</string>
+	<!-- 
+	<string name="str_state_inklevel">INK:  %1$d%%</string>
+	-->
+	<string name="str_state_inklevel">INK:</string>
+	<string name="str_invalid_ink">--</string>
+	<string name="str_state_battery">Napájení:%1$d</string>
+	<string name="str_hint_preview">náhled zprávy</string>
+	<string name="str_print_count">Záznamy: </string>
+	<string name="str_print_count_default">0</string>
+	<string name="str_print_printing">Tisková úloha již probíhá...</string>
+	<string name="str_print_startok">spuštění tiskové úlohy proběhlo úspěšně...</string>
+	<string name="str_print_stopok">zastavení tiskové úlohy proběhlo úspěšně...</string>
+	<string name="str_toast_no_bin">Bin soubor nenalezen !!!</string>
+	<string name="str_toast_emptycontent">Zvolená zpráva je prázdná!!!</string>
+	<string name="str_toast_no_message">Nejprve, prosím, vyberte soubor se zprávou!!!</string>
+	<string name="str_toast_no_ink">Nízká hladina inkoustu!!!</string>
+	<string name="str_rfid_initfail_notify">Chyba iniclaizace RFID！</string>
+	<string name="str_page_forward"> 《 </string>
+	<string name="str_page_backward"> 》 </string>
+	<string name="str_message_no_content">náhled nelze vytvořit</string>
+	<string name="str_state_printing">Tisk</string>
+	<string name="str_state_stopped">Připraveno</string>
+	
+<!-- 树莓派3 设置界面相关 -->
+	
+	<string name="str_textview_param1">01. Rychlost</string>
+	<string name="str_textview_param2">02. Směr</string>
+	<string name="str_textview_param3">03. Rozlišení</string> 
+	<string name="str_textview_param4">04. Zpoždění</string>
+	<string name="str_textview_param5">05. Fotobuňka</string>
+	<string name="str_textview_param6">06. Enkodér</string>
+	<string name="str_textview_param7">07. Opakovat tisk</string>
+	<string name="str_textview_param8">08. Výýběr trysky</string>
+	<string name="str_textview_param9">09. Průměr kola</string>
+	<string name="str_textview_param10">10. Enkodér PPR</string>
+	<string name="str_textview_param11">11.Pero1 offset</string>
+	<string name="str_textview_param12">12.Pero2 offset</string>
+	<string name="str_textview_param13">13.Pero1 Zrcadlově</string>
+	<string name="str_textview_param14">14.Pero2 Zrcadlově</string>
+	<string name="str_textview_param15">15.Pero1 Invertovat</string>
+	<string name="str_textview_param16">16.Pero2 Invertovat</string>
+	<string name="str_textview_param17">17.Pera</string>
+	<string name="str_textview_param18">18.Počitadlo</string>
+	<string name="str_textview_param19">19.Pero3 offset</string>
+	<string name="str_textview_param20">20.Pero4 offset</string>
+	<string name="str_textview_param21">21.Pero3 Zrcadlově</string>
+	<string name="str_textview_param22">22.Pero4 Zrcadlově</string>
+	<string name="str_textview_param23">23.Pero3 Invertovat</string>
+	<string name="str_textview_param24">24.Pen4 Invertovat</string>
+	<string name="str_textview_param25">25.Auto Napětí</string>
+	<string name="str_textview_param26">26.Napětí Nastavit</string>
+	<string name="str_textview_param27">27.Auto Impulz</string>
+	<string name="str_textview_param28">28.Impulz Nastavit</string>
+	<string name="str_textview_param29">29.Udržovat vlhké</string>
+	<string name="str_textview_param30">30.Fot Filtr</string>
+	<string name="str_textview_param31">31.Vyhrazeno</string>
+	<string name="str_textview_param32">32.Vyhrazeno</string>
+	<string name="str_textview_param33">33.Vyhrazeno</string>
+	<string name="str_textview_param34">34.Vyhrazeno</string>
+	<string name="str_textview_param35">35.Vyhrazeno</string>
+	<string name="str_textview_param36">36.Vyhrazeno</string>
+	<string name="str_textview_param37">37.Vyhrazeno</string>
+	<string name="str_textview_param38">38.Vyhrazeno</string>
+	<string name="str_textview_param39">39.Vyhrazeno</string>
+	<string name="str_textview_param40">40.Vyhrazeno</string>
+	<string name="str_textview_param41">41.Vyhrazeno</string>
+	<string name="str_textview_param42">42.Vyhrazeno</string>
+	<string name="str_textview_param43">43.Vyhrazeno</string>
+	<string name="str_textview_param44">44.Vyhrazeno</string>
+	<string name="str_textview_param45">45.Vyhrazeno</string>
+	<string name="str_textview_param46">46.Vyhrazeno</string>
+	<string name="str_textview_param47">47.Vyhrazeno</string>
+	<string name="str_textview_param48">48.Vyhrazeno</string>
+	<string name="str_textview_param49">49.Vyhrazeno</string>
+	<string name="str_textview_param50">50.Vyhrazeno</string>
+	<string name="str_textview_param51">51.Vyhrazeno</string>
+	<string name="str_textview_param52">52.Vyhrazeno</string>
+	<string name="str_textview_param53">53.Vyhrazeno</string>
+	<string name="str_textview_param54">54.Vyhrazeno</string>
+	<string name="str_textview_param55">55.Vyhrazeno</string>
+	<string name="str_textview_param56">56.Vyhrazeno</string>
+	<string name="str_textview_param57">57.Vyhrazeno</string>
+	<string name="str_textview_param58">58.Vyhrazeno</string>
+	<string name="str_textview_param59">59.Vyhrazeno</string>
+	<string name="str_textview_param60">60.Vyhrazeno</string>
+	<string name="str_textview_param61">61.Vyhrazeno</string>
+	<string name="str_textview_param62">62.Vyhrazeno</string>
+	<string name="str_textview_param63">63.Vyhrazeno</string>
+	<string name="str_textview_param64">64.Vyhrazeno</string>
+	<string name="str_btn_settings_sync">Ok</string>
+	
+	<string-array name="array_triger_mode">
+	    <item>1</item>
+	    <item>2</item>
+	    <item>3</item>
+	    <item>4</item>
+	</string-array>
+	
+	<string-array name="str_settings_params">
+	    <item>01. Fotobuňka</item>
+	    <item>02. Spoušť</item>
+	    <item>03. Filtr</item>
+	    <item>04. Zpoždění</item>
+	    <item>05. Rychlost</item>
+	    <item>06. Čas opakování</item>
+	    <item>07. Šířka enkodéru</item>
+	    <item>08. Opakovat impulz</item>
+	    <item>09. Zpoždění impulzu</item>
+	    <item>10. Velikost bodu</item>
+	    <item>11. Vyhrazeno</item>
+	    <item>12. Vyhrazeno</item>
+	    <item>13. Vyhrazeno</item>
+	    <item>14. Vyhrazeno</item>
+	    <item>15. Vyhrazeno</item>
+	    <item>16. Tučně</item>
+	    <item>17. Vyhrazeno</item>
+	    <item>18. Vyhrazeno</item>
+	    <item>19. Vyhrazeno</item>
+	    <item>20. Vyhrazeno</item>
+	    <item>21. Vyhrazeno</item>
+	    <item>22. Vyhrazeno</item>
+	    <item>23. Vyhrazeno</item>
+	    <item>24. Vyhrazeno</item>
+	    <item>25. Vyhrazeno</item>
+	    <item>26. Vyhrazeno</item>
+	    <item>27. Vyhrazeno</item>
+	    <item>28. Vyhrazeno</item>
+	    <item>29. Vyhrazeno</item>
+	    <item>30. Vyhrazeno</item>
+	    <item>31. Vyhrazeno</item>
+	    <item>32. Vyhrazeno</item>
+	    <item>33. Vyhrazeno</item>
+	    <item>34. Vyhrazeno</item>
+	    <item>35. Vyhrazeno</item>
+	    <item>36. Vyhrazeno</item>
+	    <item>37. Vyhrazeno</item>
+	    <item>38. Vyhrazeno</item>
+	    <item>39. Vyhrazeno</item>
+	    <item>40. Vyhrazeno</item>
+	    <item>41. Vyhrazeno</item>
+	    <item>42. Vyhrazeno</item>
+	    <item>43. Vyhrazeno</item>
+	    <item>44. Vyhrazeno</item>
+	    <item>45. Vyhrazeno</item>
+	    <item>46. Vyhrazeno</item>
+	    <item>47. Vyhrazeno</item>
+	    <item>48. Vyhrazeno</item>
+	    <item>49. Vyhrazeno</item>
+	    <item>50. Vyhrazeno</item>
+	    <item>51. Vyhrazeno</item>
+	    <item>52. Vyhrazeno</item>
+	    <item>53. Vyhrazeno</item>
+	    <item>54. Vyhrazeno</item>
+	    <item>55. Vyhrazeno</item>
+	    <item>56. Vyhrazeno</item>
+	    <item>57. Vyhrazeno</item>
+	    <item>58. Vyhrazeno</item>
+	    <item>59. Vyhrazeno</item>
+	    <item>60. Vyhrazeno</item>
+	    <item>61. Vyhrazeno</item>
+	    <item>62. Vyhrazeno</item>
+	    <item>63. Vyhrazeno</item>
+	    <item>64. Vyhrazeno</item>
+	</string-array>
+	
+	<string-array name="encoder_item_entries">
+	    <item>FO1</item>
+	    <item>FO2</item>
+	</string-array>
+	
+	<string-array name="direction_item_entries">
+	    <item>Vlevo</item>
+	    <item>Vpravo</item>
+	</string-array>
+	
+	<string-array name="resolution_item_entries">
+	    <item>150</item>
+	    <item>300</item>
+	    <item>450</item>
+	    <item>600</item>
+	    <item>750</item>
+	</string-array>
+	
+	<string-array name="pens_item_entries">
+	    <item>1</item>
+	    <item>2</item>
+	    <item>3</item>
+	    <item>4</item>
+	</string-array>
+	
+	
+	<string-array name="switch_item_entries">
+	    <item>Vyp</item>
+	    <item>Zap</item>
+	</string-array>
+	
+	<string-array name="photo_item_entries">
+	    <item>Vyp</item>
+	    <item>Pero</item>
+	    <item>Port</item>
+	</string-array>
+	
+	<string name="str_time_unit_0_1v">0,1V</string>
+	<string name="str_length_unit_mm">mm</string>
+	<string name="str_time_unit_mm">ms</string>
+	<string name="str_time_unit_ms">ms</string>
+	<string name="str_time_unit_mm_s">mm/s</string>
+	<string name="str_time_unit_0_1us">0,1us</string>
+	<string name="str_time_unit_us">us</string>
+	<string name="str_time_unit_100us">100us</string>
+	<string name="str_setting_time">Clock</string>
+	<string name="str_system_setting">Nastavení</string>
+	<string name="str_upgrade_progress">upgrade systému....</string>
+	<string name="str_time_format">%1$04d-%2$02d-%3$02d %4$02d:%5$02d:%6$02d</string>
+	<string name="str_toast_ink_unvalid">ˇuroveň velikosti bodu inkoustu nastavena na výchozí hodnotu：800</string>
+	<string name="str_toast_photoelectricity_delay">Horní hodnota zpoždění fotobuňky nastavena na výchozí hodnotu:100</string>
+	<string name="str_toast_photoelectricity_antishake">Hodnota ochrany fotobuňky proti otřesu nastavena na výchozí hodnotu:20</string>
+	<string name="str_toast_timingprint">Načasování výtisku nastaveno na výchozí hodnotu:1000</string>
+	
+<!-- 树莓派3 编辑界面相关 -->
+	<string name="str_edit_btn_insert">Vložit</string>
+	<string name="str_edit_btn_temp1">Tepl1</string>
+	<string name="str_edit_btn_temp2">Tepl2</string>
+	<string name="str_edit_btn_temp3">Tepl3</string>
+	<string name="str_edit_btn_temp4">Tepl4</string>
+	<string name="str_edit_btn_temp5">Tepl5</string>
+	
+	<string name="str_edit_line1">1. řádek:</string>
+	<string name="str_edit_line2">2. řádek:</string>
+	<string name="str_edit_line3">3. řádek:</string>
+	<string name="str_edit_line4">4. řádek:</string>
+	
+	<string name="str_notice_save">prosím, zadejte název zprávy:</string>
+	<string name="str_notice_no_objects">Chybí úkládaný objekt!</string>
+	<string name="str_file_title">Zpráva：</string>
+	<string name="str_file_hint">název souboru</string>
+	<string name="str_page_prev">PageUp</string>
+	<string name="str_page_next">PageDown</string>
+	<string name="str_filename_no">Nový</string>
+	<string name="str_btn_back">Zpět</string>
+	<string name="str_btn_up">Nahoru</string>
+	<string name="str_btn_detail">Nastavit</string>
+	<string name="cursor">Kurzor</string>
+<!-- 树莓派3  -->
+	<string name="str_dialog_msgnote">请选择信息行数：</string>
+	<string-array name="msglines_item_entries">
+	    <item>1</item>
+	    <item>2</item>
+	    <item>3</item>
+	    <item>4</item>
+	    <item>5</item>
+	    <item>6</item>
+	</string-array>
+	
+	<string name="str_no_upgrade">Již máte nejnovější verzi</string>
+	
+	<string name="str_cnt_min">Start</string>
+	<string name="str_cnt_max">Konec</string>
+</resources>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#436EEE"
+    android:orientation="vertical" >
+ <LinearLayout
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#436EEE"
+    android:gravity="center"
+   
+    > 
+    
+ <LinearLayout
+     
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#436EEE"
+    android:gravity="center"
+   
+    > 
+<LinearLayout
+   android:id="@+id/Devices"
+     android:layout_width="0dp"
+     android:layout_height="50dp"
+     android:orientation="vertical"
+     android:layout_weight="1"
+     android:gravity="center"
+     android:background="@drawable/socket_button"
+   
+   
+   
+    >   
+    <TextView
+                android:id="@+id/txtDevice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+              
+                android:gravity="center"
+                android:text="@string/str_net_device"
+                android:textColor="#fff"
+                 android:textSize="20sp" />
+<TextView
+                android:id="@+id/txtDevice_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                
+               
+                android:gravity="center"
+                android:text="@string/str_net_one"
+          
+                android:textColor="#fff"
+                 android:textSize="20sp" />
+</LinearLayout>
+
+<TextView
+            android:id="@+id/Linear_print"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginLeft="5dp"
+             android:layout_marginRight="5dp"
+            android:paddingLeft="15dip" 
+android:paddingTop="15dip" 
+android:paddingRight="15dip" 
+android:paddingBottom="15dip"
+android:clickable="true"
+            android:background="@drawable/socket_button"
+            android:text="@string/str_btn_print"
+            android:textColor="#fff"
+            android:textSize="20sp" />
+   <TextView
+            android:id="@+id/Linear_Purget"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:paddingLeft="15dip" 
+android:paddingTop="15dip" 
+android:paddingRight="15dip" 
+android:paddingBottom="15dip"
+android:clickable="true"
+	        android:layout_weight="1"
+	        android:background="@drawable/socket_button"
+            android:text="@string/str_btn_clean"
+            android:textColor="#fff"
+            android:textSize="20sp" />
+   
+    <TextView
+            android:id="@+id/Linear_Stop"
+            android:layout_width="0dp"
+           android:paddingLeft="15dip" 
+android:paddingTop="15dip" 
+android:paddingRight="15dip" 
+android:paddingBottom="15dip"
+ android:layout_marginRight="5dp"
+            android:layout_height="fill_parent"
+          android:background="@drawable/socket_button"
+             android:layout_weight="1"
+            android:gravity="center"
+            android:clickable="true"
+            android:text="@string/str_btn_stop"
+            android:textColor="#fff"
+            android:textSize="20sp" />
+<TextView
+	android:id="@+id/Linear_Query"
+	android:layout_width="0dp"
+	android:layout_height="fill_parent"
+	android:gravity="center"
+	android:paddingLeft="15dip" 
+	android:paddingTop="15dip" 
+	android:paddingRight="15dip" 
+	android:paddingBottom="15dip"
+	android:layout_marginRight="5dp"
+	android:background="@drawable/socket_button"
+	android:layout_weight="1"
+	android:text="@string/str_net_query"
+	android:textColor="#fff"
+ 	android:clickable="true"
+	android:textSize="20sp" />
+  
+ <TextView
+	android:id="@+id/Linear_Set"
+	android:layout_width="0dp"
+	android:layout_height="fill_parent"
+	android:gravity="center"
+	android:paddingLeft="15dip" 
+	android:paddingTop="15dip" 
+	android:paddingRight="15dip" 
+	android:paddingBottom="15dip"
+ 	android:background="@drawable/socket_button"
+	android:layout_weight="1"
+	android:clickable="true"
+	android:text="@string/str_btn_set"
+	android:textColor="#fff"
+	android:textSize="20sp"/>
+</LinearLayout>
+</LinearLayout>
+<View
+     android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#ffff"
+         android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+       
+    />
+<LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+       
+      
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+         >
+         <TextView
+                android:id="@+id/ip_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center"
+                android:text="@string/str_net_ipdefault"
+                android:textColor="#fff"
+                android:textSize="14sp" />
+            <TextView
+               
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center"
+                android:text="@string/str_net_device_ink"
+                android:textColor="#fff"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txtink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center"
+                android:text="@string/str_net_one"
+                android:textColor="#fff"
+                 android:textSize="14sp" />
+        
+            <TextView
+               
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center"
+                android:text="@string/str_net_device_times"
+                android:textColor="#fff"
+                 android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/txttimes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center"
+                android:text="@string/str_net_one"
+                android:textColor="#fff"
+                android:textSize="14sp" />
+        </LinearLayout>
+<View
+     android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#ffff"
+         android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="4dp"
+    />
+</LinearLayout>

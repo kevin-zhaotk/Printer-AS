@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    
+
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal"   
+            >
+            <TextView
+            android:id="@+id/Device_name"
+            style="@style/textSmallBlack"
+            android:layout_width="wrap_content"
+            android:text="@string/str_net_devname"
+            android:textColor="#fff"
+            android:textSize="18sp"
+               android:layout_weight="1"
+               /> 
+
+          <TextView
+            android:id="@+id/Ip_add"
+            style="@style/textSmallBlack"
+            android:layout_toRightOf="@id/Device_name"
+            android:layout_marginRight="10dip"
+            android:layout_marginLeft="10dip"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:text="@string/str_net_ipaddr"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:layout_weight="1"
+               /> 
+
+           <TextView
+            android:id="@+id/OnLine"
+            style="@style/textSmallBlack"
+            android:layout_toRightOf="@id/Ip_add"
+            android:layout_marginRight="10dip"
+            android:layout_marginLeft="10dip"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:text="@string/str_net_stat"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:layout_weight="1"
+               /> 
+
+           <CheckBox
+            android:id="@+id/checkbox"
+            style="@style/textSmallBlack"
+            android:layout_toRightOf="@id/OnLine"
+            android:layout_alignParentRight="true"
+            android:layout_weight="1"
+			android:textColor="#fff"
+            android:textSize="18sp"
+               /> 
+  </LinearLayout>
+        </LinearLayout>
+</LinearLayout>

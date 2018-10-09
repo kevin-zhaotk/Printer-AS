@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:id="@+id/create_user_dialog_view"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:background="@drawable/shape_white"
+ android:minWidth="400dp"
+ android:orientation="vertical"
+ android:padding="10dp"
+ android:paddingBottom="30dp"
+ android:paddingTop="30dp"> 
+  
+<TextView
+  android:id="@+id/Devce_Nubmer"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+ 
+  android:hint="@string/str_dialog_surecancel"
+  android:minHeight="45dp"
+  android:textSize="18sp" />   
+    
+  
+  
+ <TextView
+  android:id="@+id/Ports"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginTop="5dp"
+  android:gravity="center"
+  android:hint="@string/str_information"
+  android:minHeight="45dp"
+  android:maxLength="5"
+  android:maxEms="5"
+  android:textSize="18sp"/> 
+<LinearLayout
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:orientation="horizontal"
+ android:padding="10dp"
+> 
+  
+ <Button
+  android:id="@+id/BtnSave"
+  android:layout_weight="1"
+  android:layout_marginLeft="20dp"
+  android:layout_marginRight="20dp"
+  android:layout_marginTop="25dp"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:text="@string/str_btn_save"/> 
+  <Button
+   android:layout_marginLeft="20dp"
+   android:layout_marginRight="20dp"
+   android:layout_marginTop="25dp"
+  android:id="@+id/BtnCancel"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:layout_weight="1"
+  android:text="@string/str_btn_cancel" /> 
+  </LinearLayout>
+</LinearLayout> 
+
+ 

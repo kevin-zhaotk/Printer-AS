@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="600dp"
+    android:layout_height="wrap_content"
+    android:padding="30dp"
+    android:background="#436EEE" >
+    
+	<TextView
+	    android:id="@+id/message"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="30dp"
+	    android:layout_marginRight="30dp"
+	    android:textSize="36sp"
+	    />
+	
+	<LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/message"
+	    android:layout_marginTop="30dp"
+	    android:layout_centerHorizontal="true"
+	    android:orientation="horizontal"
+	    >
+		<Button
+		    android:id="@+id/positive"
+		    android:layout_width="160dp"
+		    android:layout_height="wrap_content"
+		    android:singleLine="true"
+		    android:background="@drawable/button_style"
+		    android:text="@string/str_ok"
+		    android:textSize="36sp" 
+		    />
+		
+		<Button
+		    android:id="@+id/nagitive"
+		    android:layout_width="160dp"
+		    android:layout_height="wrap_content"
+		    android:singleLine="true"
+		    android:layout_marginLeft="40dp"    
+		    android:background="@drawable/button_style"
+		    android:text="@string/strNativeBtn"
+		    android:textSize="36sp"
+		    />
+	</LinearLayout>
+</RelativeLayout>

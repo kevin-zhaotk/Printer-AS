@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/background"
+    >
+    
+    <include layout="@layout/obj_info_button"
+        android:id="@+id/buttons"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_alignParentBottom="true"
+	    	android:layout_marginTop="10dp"
+	    	/>
+    
+	<ScrollView android:id="@+id/viewInfo"
+		android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_marginTop="10dp"
+	    android:layout_above="@+id/buttons"
+	    >
+	        	
+	    <RelativeLayout
+	        android:id="@+id/objectInfoTable"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        >
+	        
+	        <include android:id="@+id/base_info_text"  layout="@layout/obj_info_base"/>
+	       
+	    </RelativeLayout>
+	</ScrollView>
+
+</RelativeLayout>

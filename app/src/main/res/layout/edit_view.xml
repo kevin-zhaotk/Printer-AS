@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffff">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        >
+        
+        <com.industry.printer.EditScrollView
+	        android:id="@+id/editView"
+	        android:layout_width="5000dp"
+	        android:layout_height="280dp"
+	        android:background="#ffffff"
+         	/>
+        
+        <View
+        android:layout_width="5000dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="153px"
+        android:background="@color/black"
+        />
+    </RelativeLayout>
+    
+    
+</HorizontalScrollView>

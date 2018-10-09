@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_detail" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_editbtn"
+			    />
+			<TextView
+			    android:id="@+id/btn_detail_tv"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:gravity="center"
+		        android:textSize="@dimen/editButtonsTextsize"
+		        android:textColor="#000000" 
+		        android:text="@string/str_btn_detail"
+			    />
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_list" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_editbtn"
+			    />
+			<TextView
+			    android:id="@+id/btn_list_tv"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:gravity="center"
+		        android:textSize="@dimen/editButtonsTextsize"
+		        android:textColor="#000000" 
+		        android:text="@string/strInfoname"
+			    />
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_insert" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_editbtn"
+			    />
+			<TextView
+			    android:id="@+id/btn_insert_tv"
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:gravity="center"
+		        android:textSize="@dimen/editButtonsTextsize"
+		        android:textColor="@color/black"
+		        android:text="@string/str_edit_btn_insert" 
+			    />
+	    </RelativeLayout>
+	    
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_zoomOut" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/high"
+			    />
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_zoomIn" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/low"
+			    />
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_left" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_left"
+			    />
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_down" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_down_edit"
+			    />
+			
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_right" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_right"
+			    />
+	    </RelativeLayout>
+</LinearLayout>

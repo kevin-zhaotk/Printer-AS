@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:id="@+id/create_user_dialog_view"
+ android:layout_width="fill_parent"
+ android:layout_height="wrap_content"
+ android:background="@drawable/shape_white"
+ android:minWidth="400dp"
+ android:orientation="vertical"
+ android:padding="10dp"
+ android:paddingBottom="30dp"
+ android:paddingTop="30dp"> 
+  
+ <EditText
+  android:id="@+id/Ip_Add"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:background="@drawable/shape_white"
+  android:hint="Ip_add"
+  android:minHeight="45dp"
+  android:textSize="18sp" /> 
+  
+ <EditText
+  android:id="@+id/Ports"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginTop="5dp"
+  android:background="@drawable/shape_white"
+  android:hint="Ports"
+  android:inputType="number"
+  android:minHeight="45dp"
+  android:maxLength="5"
+  android:maxEms="5"
+  android:textSize="18sp"/> 
+
+  
+ <Button
+   android:layout_marginTop="25dp"
+  android:id="@+id/BtnSave"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+ 
+  android:text="@string/str_btn_save" /> 
+   <Button
+   android:layout_marginTop="5dp"
+  android:id="@+id/BtnCancel"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+ 
+  android:text="@string/str_file_cancel" /> 
+</LinearLayout> 
+
+ 

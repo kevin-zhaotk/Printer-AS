@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/background"
+    >
+    
+    <include layout="@layout/obj_info_button"
+        android:id="@+id/buttons"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_alignParentBottom="true"
+	    	android:layout_marginTop="10dp"
+	    	/>
+    
+	<ScrollView android:id="@+id/viewInfo"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_marginTop="10dp"
+	    android:layout_above="@+id/buttons">
+	        	    
+	    <RelativeLayout
+	        android:id="@+id/objectInfoTable"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        >
+	        
+	        <include android:id="@+id/base_info_bar" layout="@layout/obj_info_base"/>
+	        
+	        
+	        <TextView
+		    	android:id="@+id/spinCode"
+		        android:layout_width="@dimen/settingsItemLength"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="150dp"
+		        android:layout_below="@id/base_info_bar"
+		        android:layout_marginTop="10dp"
+		        android:gravity="center_vertical"
+		        android:drawableRight="@drawable/spiner_down_btn"
+		        android:textSize="@dimen/objinfoTextsize"
+		        android:textColor="#000000"
+		        android:background="#ffffff"
+		        />
+	        
+	        <TextView android:id="@+id/viewCode"
+	            android:layout_marginLeft="10dp"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignBaseline="@id/spinCode"
+	            android:textSize="30sp"
+	            android:text="@string/strCode"
+	            android:textColor="#000000"
+	            />
+	        
+	        <CheckBox android:id="@+id/check_Num_show"
+	            android:layout_alignLeft="@id/spinCode"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/spinCode"
+				android:paddingLeft="15dp"
+				android:paddingRight="15dp"
+				style="@style/CheckboxTheme"
+	            android:checked="false"/>
+	        
+	        <TextView android:id="@+id/view_num_show"
+	            android:layout_alignLeft="@id/viewCode"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignBaseline="@id/check_Num_show"
+	            android:textSize="30sp"
+	            android:text="@string/strShow"
+	            android:textColor="#000000"/>
+	        
+	        <EditText
+	            android:id="@+id/et_text_size" 
+	            android:layout_alignLeft="@id/spinCode"
+	            android:layout_width="@dimen/settingsItemLength"
+	            android:layout_height="wrap_content"
+	            android:inputType="number"
+	            android:textSize="30sp"
+	            android:layout_below="@id/check_Num_show"
+				android:layout_marginTop="20dp"
+	            />
+	        
+	        <TextView android:id="@+id/view_text_size"
+	            android:layout_alignLeft="@id/viewCode"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignBaseline="@id/et_text_size"
+	            android:textSize="30sp"
+	            android:text="@string/strFontsize"
+	            android:textColor="#000000"/>
+	        
+	    </RelativeLayout>
+	</ScrollView>
+	    
+</RelativeLayout>

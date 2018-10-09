@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <string name="app_version">Версия:</string>
+    <string name="system_time">Время:</string>
+    <string name="app_name">Принтер</string>
+    <string name="action_settings">Задать</string>
+    <string name="hello_world">Hello world!</string>
+	<string name="ControlTab">Контроль</string>
+	<string name="manualCtrlTab">Руч.контроль</string>
+	<string name="Edit">Ред-ть</string>
+	<string name="Settings">Настройки</string>
+	<string name="str_btn_start">Старт</string>
+	<string name="str_btn_stop">Стоп</string>
+	<string name="str_btn_clean">Прокачка</string>
+	<string name="str_btn_open">Открыть</string>
+	<string name="str_remain_ink">Ink</string>
+	<string name="str_remain_ptimes">Total</string>
+	<string name="str_btn_new">Новый</string>
+	<string name="str_btn_save">Сохранить</string>
+	<string name="str_btn_saveas">Сохранить как</string>
+	<string name="str_btn_prerecord">Вверх</string>
+	<string name="str_btn_nextrecord">Вниз</string>
+	<string name="str_btn_send">Отправить</string>
+	<string name="str_btn_set">Задать</string>
+	<string name="str_btn_get">Текст</string>
+	<string name="str_btn_print">Печать</string>
+	<string name="str_btn_finish">Закончить</string>
+	<string name="str_btn_header1">ПГ 1</string>
+	<string name="str_btn_header2">ПГ 2</string>
+	<string name="str_btn_header3">ПГ 3</string>
+	<string name="str_btn_header4">ПГ 4</string>
+	<string name="strDate">Дата:</string>
+	<string name="strInklevel">Осталось </string>
+	<string name="strPhotocellState">Фотодатчик</string>
+	<string name="strEncoderState">Энкодер</string>
+	<string name="strPrintstate">Печать</string>
+	<string name="strPrinting">Печать</string>
+	<string name="strPrintok">Готов</string>
+	<string name="strOn">Вкл</string>
+	<string name="strOff">Выкл</string>
+	<string name="strwaitting">Печать......</string>
+	<string name="str_csvfile">Файл Csv</string>
+	<string name="str_tlkfile">Файл Tlk</string>
+	<string name="str_binfile">Открыть</string>
+	<string name="str_openfile">Открыть...</string>
+	<string name="str_mvforward">Вперед</string>
+	<string name="str_mvbackward">Назад</string>
+	<string name="str_preview">Пред.просмотр</string>
+	
+	<string name="str_del">Удалить</string>
+	<string name="str_multi_select">Group</string>
+	<string name="str_btn_shift">Сдвиг</string>
+	<string name="str_btn_second">Второй</string>
+	
+	<string name="str_btn_upgrade">Обновить</string>
+	<string name="str_btn_setDate">Задать дату</string>
+	<string name="str_btn_setTime">Задать время</string>
+	<string name="str_btn_image">Лого</string>
+	
+	<string name="str_goto">Перейти</string>
+	<!-- object info table -->
+	<string name="strWidth">Ширина</string>
+	<string name="strHigh">Высота</string>
+	<string name="strHightype">Stepwise</string>
+	<string name="strReverse">Reverse</string>
+	<string name="strXcor">Коорд. X</string>
+	<string name="strYcor">Коорд. Y</string>
+	<string name="strCnt">Содержимое</string>
+	<string name="strDefault">0</string>
+	<string name="txtDefault">Текст</string>
+	<string name="strDragable">Перенос</string>
+	<string name="strShow">Показать</string>
+	<string name="strFontsize">Font Size</string>
+	<string name="strFont">Шрифт</string>
+	<string name="strLinewidth">Ширина строки</string>
+	<string name="strBits">Цифры</string>
+	<string name="strImage">Изобр.</string>
+	<string name="strDirect">Направление</string>
+	<string name="strShift1">Сдвиг1</string>
+	<string name="strShift2">Сдвиг2</string>
+	<string name="strShift3">Сдвиг3</string>
+	<string name="strShift4">Сдвиг4</string>
+	<string name="strShift5">Сдвиг5</string>
+	<string name="strInfoname">Объект</string>
+	<string name="strHeadType">Тип ПГ</string>
+	<string name="strHeadResolution">Resolution</string>
+	<string name="strUpgradeConfirm">Обновить?</string>
+	<string name="strUpgradeNoApk">Нет файла обновления!!!</string>
+	<string name="strSaving">сохраняю, ждите...</string>
+	<string name="strLoading">загружаю, ждите...</string>
+	<string name="strInsertSerial">Подключите устройство...</string>
+	<string name="strReinsertSerial">Ошибка, переподключите устройство</string>
+	<string-array name="strPrinterArray">
+	    <item>ПГ HP 12,7 мм</item>
+	    <item>--</item>
+	    <item>ПГ HP двойная 25,4мм</item>
+	    <item>ПГ Xaar16,3мм</item>
+	    <item>ПГ Xaar двойная 33 мм</item>
+	    <item>ПГ HP тройная 38,1мм</item>
+	    <item>ПГ HP четверная 50,8мм</item>
+	    <item>7dot</item>
+	    <item>16dot</item>
+	    <item>--</item>
+	    <item>25.4mm fast ONE INCH</item>
+	    <item>--</item>
+	    <item>25.4mm x2 fast</item>
+	    <item>9mm</item>
+	    <item>nova</item>
+	</string-array>
+	
+	<string-array name="strFontArray">
+	    <item>0T+</item>
+	    <item>1+</item>
+	    <item>1B+</item>
+	    <item>1B2</item>
+	    <item>1BS</item>
+	    <item>1T</item>
+	    <item>2+</item>
+	    <item>2B</item>
+	    <item>2i</item>
+	    <item>3+</item>
+	    <item>3B</item>
+	    <item>3i</item>
+	    <item>3T</item>
+	    <item>4</item>
+	    <item>5</item>
+	    <item>6</item>
+	    <item>6B</item>
+	    <item>7</item>
+	    <item>8</item>
+	    <item>9</item>
+	</string-array>
+	
+	<string-array name="strFontTipsArray">
+	    <item>0T+ font</item>
+	    <item>1+ font</item>
+	    <item>1B+ font</item>
+	    <item>1B2 font</item>
+	    <item>1BS font</item>
+	    <item>1T font</item>
+	    <item>2+ font</item>
+	    <item>2B font</item>
+	    <item>2i font</item>
+	    <item>3+ font</item>
+	    <item>3B font</item>
+	    <item>3i font</item>
+	    <item>3T font</item>
+	    <item>4 font</item>
+	    <item>5 font</item>
+	    <item>6 font</item>
+	    <item>6B font</item>
+	    <item>7 font</item>
+	    <item>8 font</item>
+	    <item>9 font</item>
+	</string-array>
+	
+	<string-array name="strFontFile">
+	    <item>WelldrawH000</item>
+	</string-array>
+	
+	<string-array name="strDirectArray">
+	    <item>Увеличить</item>
+	    <item>Уменьшить</item>
+	</string-array>
+	<string name="strCode">Code Type</string>
+	<string-array name="strCodeArray">
+	    <item>EAN8</item>
+	    <item>EAN13</item>
+	    <item>EAN128</item>
+	    <item>CODE_128</item>
+	    <item>CODE_39</item>
+	    <item>UPC_A</item>
+	    <item>ITF_14</item>
+	    <item>QR</item>
+	</string-array>
+	
+	<string name="strBarsource">Data</string>
+	
+	<string-array name="strLineArray">
+	    <item>Сплошная</item>
+	    <item>Пунктирная</item>
+	    <item>Точечная</item>
+	    <item>Пунктирно-точечная</item>
+	    <item>Пунктир-двуточечная</item>
+	</string-array>
+	<string name="strLinetype">Тип линии</string>
+	<string name="str_ok">ОК</string>
+	<string name="strNativeBtn">Отмена</string>
+	
+	<string name="strRtFmt">Формат даты</string>
+	<string-array name="strTimeFormat">
+	    <item>YY-MM-DD</item>
+	    <item>MM-DD-YY</item>
+	    <item>YY/MM/DD</item>
+	    <item>MM/DD/YY</item>
+	    <item>DD/MM/YY</item>
+	    <item>YY</item>
+	    <item>MM</item>
+	    <item>DD</item>
+	    <item>HH:NN</item>
+	</string-array>
+	
+	<string-array name="strarrayCounter">
+	    <item>3 бит</item>
+	    <item>4 бит</item>
+	    <item>5 бит</item>
+	    <item>6 бит</item>
+	    <item>7 бит</item>
+	    <item>8 бит</item>
+	    <item>9 бит</item>
+	    <item>10 бит</item>
+	</string-array>
+	
+	<string-array name="strarrayFontSize">
+	    <item>1 mm</item>
+	    <item>1.5 mm</item>
+	    <item>2 mm</item>
+	    <item>2.5 mm</item>
+	    <item>3 mm</item>
+	    <item>4 mm</item>
+	    <item>5 mm</item>
+	    <item>6 mm</item>
+	    <item>7 mm</item>
+	    <item>8 mm</item>
+	    <item>9 mm</item>
+	    <item>10 mm</item>
+	    <item>11 mm</item>
+	    <item>12 mm</item>
+	    <item>12.7 mm</item>
+	</string-array>
+	
+	<string name="strOffset">Сдвиг</string>
+	
+	<!-- object list -->
+	<string name="objectListName">Показ.список</string>
+	<string name="objectInfoName">Показ.текст</string>
+	<string name="object_Msg">ТЕКСТ</string>
+	<string name="object_text">Текст</string>
+	<string name="object_realtime">Дата</string>
+	<string name="object_counter">Счетчик</string>
+	<string name="object_bar">Штрих-код</string>
+	<string name="object_pic">Лого</string>
+	<string name="object_julian">Юлиан.</string>
+	<string name="object_line">Линия</string>
+	<string name="object_rect">Треуг-к</string>
+	<string name="object_ellipse">Эллипс</string>
+	<string name="object_shift">Сдвиг</string>
+	<string name="object_second">Второй</string>
+	<string name="object_weekofyear">WeekOfYear</string>
+	<string name="object_weekday">WeekDay</string>
+	<string name="object_charHour">AlphaHour</string>
+	<string name="object_msg_name">Объект</string>
+	<string name="object_qr">QRCode</string>
+	<string name="object_dynamic_qr">DynamicQR</string>
+	<!-- Settings frame -->
+	<string name="strParam0">00.Резерв</string>
+	<string name="strPrSpeedname">01.Скорость</string>
+	<string name="strDelay_key">Задержка</string>
+	<string name="strDelayname">02.Задержка</string>
+	<string name="strDelay_summary">Задать задержку</string>
+	<string name="strParam3">03.Резерв</string>
+	<string name="strTrigger_key">Датчик</string>
+	<string name="strTriggername">04.Датчик</string>
+	<string name="strTrigger_summary">Режим датчика</string>
+	<string name="strDirection_key">Направление</string>
+	<string name="strSyncname">05.Энкодер</string>
+	<string name="strDirectionname">05.Синхр.</string>
+	<string name="strBold">06.Жирность</string>
+	<string name="strFixlen">07.Длина</string>
+	<string name="strFixtime">08.Фикс.время</string>
+	<string name="strHeadTemp">09.Темп-ра ПГ</string>
+	<string name="strResvTemp">10.Темп-ра системы</string>
+	<string name="strfontwidth">11.Ширина шрифта</string>
+	<string name="strDotname">12.Размер капли</string>
+	<string name="strDirection_summary">Выберите направление</string>
+	<string name="strEncoder_key">Энкодер</string>
+	<string name="strEncodername">03.Энкодер</string>
+	<string name="strEncoder_summary">Режим энкодера</string>
+	<string name="strHoriRes_key">Гориз.</string>
+	<string name="strHoriResname">04.гориз.разр-ие</string>
+	<string name="strHoriRes_summary">Задать гориз.разр-ие</string>
+	<string name="strVertRes_key">Верт.</string>
+	<string name="strVertResname">05.Верт.разр-ие</string>
+	<string name="strVertRes_summary">Задать верт.разр-ие</string>
+	<string name="strTimeunit">мс</string>
+	<string name="strResunit">dpi</string>
+	<string name="strLenunit">0.1мм</string>
+	<string name="strTempunit">C</string>
+	<string name="strPrSpeedUnit">HZ</string>
+	<string name="strResvname8">08.Резерв</string>
+	<string name="strResvname9">09.Резерв</string>
+	<string name="strResvname10">10.Резерв</string>
+	<string name="strResvname11">11.Резерв</string>
+	<string name="strResvname12">12.Резерв</string>
+	<string name="strResvname13">13.Резерв</string>
+	<string name="strResvname14">14.Резерв</string>
+	<string name="strResvname15">15.Резерв</string>
+	<string name="strResvname16">16.Резерв</string>
+	<string name="strResvname17">17.Резерв</string>
+	<string name="strResvname18">18.Резерв</string>
+	<string name="strResvname19">19.Резерв</string>
+	<string name="strResvname20">20.Резерв</string>
+	<string name="strResvname21">21.Резерв</string>
+	<string name="strResvname22">22.Резерв</string>
+	<string name="strResvname23">23.Резерв</string>
+	<string name="strResvname24">24.Резерв</string>
+	<string name="strResvname25">25.Резерв</string>
+	<string name="strResvname26">26.Резерв</string>
+	<string name="strResvname27">27.Резерв</string>
+	<string name="strResvname28">28.Резерв</string>
+	<string name="strResvname29">29.Резерв</string>
+	<string name="strResvname30">30.Резерв</string>
+	<string name="strResvname31">31.Резерв</string>
+	<string name="strResvname32">32.Резерв</string>
+	<string name="strResvname33">33.Резерв</string>
+	<string name="strResvname34">34.Резерв</string>
+	<string name="strResvname35">35.Резерв</string>
+	<string name="strResvname36">36.Резерв</string>
+	<string name="strResvname37">37.Резерв</string>
+	<string name="strResvname38">38.Резерв</string>
+	<string name="strResvname39">39.Резерв</string>
+	<string name="strResvname40">40.Резерв</string>
+	<string name="strResvname41">41.Резерв</string>
+	<string name="strResvname42">42.Резерв</string>
+	<string name="strResvname43">43.Резерв</string>
+	<string name="strResvname44">44.Резерв</string>
+	<string name="strResvname45">45.Резерв</string>
+	<string name="strResvname46">46.Резерв</string>
+	<string name="strResvname47">47.Резерв</string>
+	<string name="strResvname48">48.Резерв</string>
+	<string name="strResvname49">49.Резерв</string>
+	<string name="strResvname50">50.Резерв</string>
+	<string name="strResvname51">51.Резерв</string>
+	<string name="strResvname52">52.Резерв</string>
+	<string name="strResvname53">53.Резерв</string>
+	<string name="strResvname54">54.Резерв</string>
+	<string name="strResvname55">55.Резерв</string>
+	<string name="strResvname56">56.Резерв</string>
+	<string name="strResvname57">57.Резерв</string>
+	<string name="strResvname58">58.Резерв</string>
+	<string name="strResvname59">59.Резерв</string>
+	<string name="strResvname60">60.Резерв</string>
+	<string name="strResvname61">61.Резерв</string>
+	<string name="strResvname62">62.Резерв</string>
+	<string name="strResvname63">63.Резерв</string>
+	<string name="strResvname64">64.Резерв</string>
+
+	<string name="strBtnSave">ОК</string>
+	<string-array name="trigger_mode_name">
+	    <item>Вкл</item>
+	    <item>Выкл</item>
+	</string-array>
+	
+	<string-array name="trigger_mode_value">
+	    <item>0</item>
+	    <item>1</item>
+	</string-array>
+	
+	<string-array name="direction_name">
+	    <item>Слева-Направо</item>
+	    <item>Справа-Налево</item>
+	</string-array>
+	
+	<string-array name="direction_value">
+	    <item>0</item>
+	    <item>1</item>
+	</string-array>
+	
+	<string-array name="encoder_name">
+	    <item>Вкл</item>
+	    <item>Выкл</item>
+	</string-array>
+	
+	<string-array name="encoder_value">
+	    <item>0</item>
+	    <item>1</item>
+	</string-array>
+	
+	<string-array name="horires_name">
+	    <item>300</item>
+	    <item>600</item>
+	</string-array>
+	
+	<string-array name="horires_value">
+	    <item>300</item>
+	    <item>600</item>
+	</string-array>
+	
+	<string-array name="vertres_name">
+	    <item>300</item>
+	    <item>600</item>
+	</string-array>
+	
+	<string-array name="vertres_value">
+	    <item>300</item>
+	    <item>600</item>
+	</string-array>
+	
+	<string-array name="object_list_msg">
+	    <item>Имя сообщ.</item>
+	</string-array>
+	
+	
+	<string-array name="storage_dev">
+	    <item>SDCard</item>
+	    <item>USB</item>
+	</string-array>
+	
+	<string name="str_fileicon_des">значок файла</string>
+	<string name="str_file_save"> Ок </string>
+	<string name="str_file_cancel">Отмена</string>
+	<string name="str_setting_upgrade">Обновить</string>
+	
+	<string name="str_month">Месяц</string>
+	<string name="str_year">Год</string>
+	<string name="str_date">День</string>
+	<string name="str_hour">Час</string>
+	<string name="str_minute">Минута</string>
+	<string name="str_format">Формат 24ч</string>
+	<string name="str_format_24">Да</string>
+	<string name="str_format_12">Нет</string>
+	<string name="cor_unit">dpi</string>
+	<string name="font_unit">мм</string>
+	
+	<string name="str_trans">Направо</string>
+	
+	<string name="str_column_index">Индекс</string>
+	<string name="str_column_pic1">Рис.1</string>
+	<string name="str_column_pic2">Рис.2</string>
+	<string name="str_column_pic3">Рис.3</string>
+	<string name="str_column_pic4">Рис.</string>
+	<string name="str_column_text1">Текст1</string>
+	<string name="str_column_text2">Текст2</string>
+	<string name="str_column_text3">Текст3</string>
+	<string name="str_column_text4">Текст4</string>
+	<string name="str_column_text5">Текст5</string>
+	<string name="str_column_text6">Текст6</string>
+	<string name="str_column_text7">Текст7</string>
+	<string name="str_column_text8">Текст8</string>
+	<string name="str_column_text9">Текст9</string>
+	<string name="str_column_text10">Текст10</string>
+	<string name="str_column_text11">Текст11</string>
+	<string name="str_column_text12">Текст12</string>
+	<string name="str_column_text13">Текст13</string>
+	<string name="str_column_text14">Текст14</string>
+	<string name="str_column_text15">Текст15</string>
+	<string name="str_column_text16">Текст16</string>
+	<string name="str_notlkfile">PВыберите файл TLK</string>
+	<string name="str_tlk_already_exist">Файл TLK уже существуетt!!!</string>
+	<string name="str_createfile_failure">Ошибка создания</string>
+	<string name="str_no_print_target">Выберите источник</string>
+	
+	<string name="str_radioLocal">Внутр.</string>
+	<string name="str_radioUsb">USB</string>
+	<string name="str_radioUsb1">USB1</string>
+	<string name="str_radioUsb2">USB2</string>
+	<string name="str_radioSdcard">SDCard</string>
+	
+	<string name="str_title_infodialog">Инф. об объекте</string>
+	<string name="str_fileopt_del">DEL</string>
+	<string name="str_fileopt_cancel">Cancel</string>	
+	<string name="str_search">Поиск</string>
+
+<!-- 树莓派3 打印界面相关 -->	
+	<string name="str_msg_name">Сообщ.:</string>
+	<!-- 
+	<string name="str_state_inklevel">Чернила:  %1$d%%</string>
+	-->
+	<string name="str_state_inklevel">Чернила:</string>
+	<string name="str_invalid_ink">--</string>
+	<string name="str_state_battery">Питание:%1$d</string>
+	<string name="str_hint_preview">пред.просмотр сообщ.</string>
+	<string name="str_print_count">Записи: </string>
+	<string name="str_print_count_default">0</string>
+	<string name="str_print_printing">Задача печати в процессе...</string>
+	<string name="str_print_startok">Пуск задачи печати успешно...</string>
+	<string name="str_print_stopok">Стоп задачи печати успешно...</string>
+	<string name="str_toast_no_bin">Не найден bin-файл !!!</string>
+	<string name="str_toast_emptycontent">Выбранное сообщение пустое!!!</string>
+	<string name="str_toast_no_message">Сперва выберите сообщение!!!</string>
+	<string name="str_toast_no_ink">Мало чернил!!!</string>
+	<string name="str_rfid_initfail_notify">Ошибка инициализации чипа</string>
+	<string name="str_page_forward"> Вперед </string>
+	<string name="str_page_backward">Назад </string>
+	<string name="str_message_no_content">Пред.просмотр недоступен</string>
+	<string name="str_state_printing">Печать</string>
+	<string name="str_state_stopped">Готов</string>
+	
+<!-- 树莓派3 设置界面相关 -->
+	
+	<string name="str_textview_param1">01.Скорость</string>
+	<string name="str_textview_param2">02. Направление</string>
+	<string name="str_textview_param3">03. Разрешение</string> 
+	<string name="str_textview_param4">04. Задержка</string>
+	<string name="str_textview_param5">05. Фотодатчик</string>
+	<string name="str_textview_param6">06. Энкодер</string>
+	<string name="str_textview_param7">07. Повтор печати</string>
+	<string name="str_textview_param8">08. Выбор сопла</string>
+	<string name="str_textview_param9">09. Диаметр колеса</string>
+	<string name="str_textview_param10">10. Разр-ие энкодера</string>
+	<string name="str_textview_param11">11.ПГ1 сдвиг</string>
+	<string name="str_textview_param12">12.ПГ2 сдвиг</string>
+	<string name="str_textview_param13">13.ПГ1 зеркально</string>
+	<string name="str_textview_param14">14.ПГ2 зеркально</string>
+	<string name="str_textview_param15">15.ПГ1 инверт.</string>
+	<string name="str_textview_param16">16.ПГ2 инверт.</string>
+	<string name="str_textview_param17">17.ПГ</string>
+	<string name="str_textview_param18">18.Счетчик</string>
+	<string name="str_textview_param19">19.ПГ3 сдвиг</string>
+	<string name="str_textview_param20">20.ПГ4 сдвиг</string>
+	<string name="str_textview_param21">21.ПГ3 зеркально</string>
+	<string name="str_textview_param22">22.ПГ4 зеркально</string>
+	<string name="str_textview_param23">23.ПГ3 инверт.</string>
+	<string name="str_textview_param24">24.ПГ4 инверт.</string>
+	<string name="str_textview_param25">25.Напр-ие Авто</string>
+	<string name="str_textview_param26">26.Задать напр-ие</string>
+	<string name="str_textview_param27">27.Импульс Авто</string>
+	<string name="str_textview_param28">28.Задать импульс</string>
+	<string name="str_textview_param29">29.Увлажняйте</string>
+	<string name="str_textview_param30">30.Фильтр датчика</string>
+	<string name="str_textview_param31">31.Резерв</string>
+	<string name="str_textview_param32">32.Резерв</string>
+	<string name="str_textview_param33">33.Резерв</string>
+	<string name="str_textview_param34">34.Резерв</string>
+	<string name="str_textview_param35">35.Резерв</string>
+	<string name="str_textview_param36">36.Резерв</string>
+	<string name="str_textview_param37">37.Резерв</string>
+	<string name="str_textview_param38">38.Резерв</string>
+	<string name="str_textview_param39">39.Резерв</string>
+	<string name="str_textview_param40">40.Резерв</string>
+	<string name="str_textview_param41">41.Резерв</string>
+	<string name="str_textview_param42">42.Резерв</string>
+	<string name="str_textview_param43">43.Резерв</string>
+	<string name="str_textview_param44">44.Резерв</string>
+	<string name="str_textview_param45">45.Резерв</string>
+	<string name="str_textview_param46">46.Резерв</string>
+	<string name="str_textview_param47">47.Резерв</string>
+	<string name="str_textview_param48">48.Резерв</string>
+	<string name="str_textview_param49">49.Резерв</string>
+	<string name="str_textview_param50">50.Резерв</string>
+	<string name="str_textview_param51">51.Резерв</string>
+	<string name="str_textview_param52">52.Резерв</string>
+	<string name="str_textview_param53">53.Резерв</string>
+	<string name="str_textview_param54">54.Резерв</string>
+	<string name="str_textview_param55">55.Резерв</string>
+	<string name="str_textview_param56">56.Резерв</string>
+	<string name="str_textview_param57">57.Резерв</string>
+	<string name="str_textview_param58">58.Резерв</string>
+	<string name="str_textview_param59">59.Резерв</string>
+	<string name="str_textview_param60">60.Резерв</string>
+	<string name="str_textview_param61">61.Резерв</string>
+	<string name="str_textview_param62">62.Резерв</string>
+	<string name="str_textview_param63">63.Резерв</string>
+	<string name="str_textview_param64">64.Резерв</string>
+	<string name="str_btn_settings_sync">ОК</string>
+	
+	<string-array name="array_triger_mode">
+	    <item>1</item>
+	    <item>2</item>
+	    <item>3</item>
+	    <item>4</item>
+	</string-array>
+	
+	<string-array name="str_settings_params">
+	    <item>01. Фотодатчик</item>
+	    <item>02. Вн.датчик</item>
+	    <item>03. Фильтр</item>
+	    <item>04. Задержка</item>
+	    <item>05. Скорость</item>
+	    <item>06. Число повторов</item>
+	    <item>07. Диам.энкодера</item>
+	    <item>08. Пульс повтора</item>
+	    <item>09. Пульс задержки</item>
+	    <item>10. Размер капли</item>
+	    <item>11. Резерв</item>
+	    <item>12. Резерв</item>
+	    <item>13. Резерв</item>
+	    <item>14. Резерв</item>
+	    <item>15. Резерв</item>
+	    <item>16. Жирность</item>
+	    <item>17. Резерв</item>
+	    <item>18. Резерв</item>
+	    <item>19. Резерв</item>
+	    <item>20. Резерв</item>
+	    <item>21. Резерв</item>
+	    <item>22. Резерв</item>
+	    <item>23. Резерв</item>
+	    <item>24. Резерв</item>
+	    <item>25. Резерв</item>
+	    <item>26. Резерв</item>
+	    <item>27. Резерв</item>
+	    <item>28. Резерв</item>
+	    <item>29. Резерв</item>
+	    <item>30. Резерв</item>
+	    <item>31. Резерв</item>
+	    <item>32. Резерв</item>
+	    <item>33. Резерв</item>
+	    <item>34. Резерв</item>
+	    <item>35. Резерв</item>
+	    <item>36. Резерв</item>
+	    <item>37. Резерв</item>
+	    <item>38. Резерв</item>
+	    <item>39. Резерв</item>
+	    <item>40. Резерв</item>
+	    <item>41. Резерв</item>
+	    <item>42. Резерв</item>
+	    <item>43. Резерв</item>
+	    <item>44. Резерв</item>
+	    <item>45. Резерв</item>
+	    <item>46. Резерв</item>
+	    <item>47. Резерв</item>
+	    <item>48. Резерв</item>
+	    <item>49. Резерв</item>
+	    <item>50. Резерв</item>
+	    <item>51. Резерв</item>
+	    <item>52. Резерв</item>
+	    <item>53. Резерв</item>
+	    <item>54. Резерв</item>
+	    <item>55. Резерв</item>
+	    <item>56. Резерв</item>
+	    <item>57. Резерв</item>
+	    <item>58. Резерв</item>
+	    <item>59. Резерв</item>
+	    <item>60. Резерв</item>
+	    <item>61. Резерв</item>
+	    <item>62. Резерв</item>
+	    <item>63. Резерв</item>
+	    <item>64. Резерв</item>
+	</string-array>
+	
+	<string-array name="encoder_item_entries">
+	    <item>PHO1</item>
+	    <item>PHO2</item>
+	</string-array>
+	
+	<string-array name="direction_item_entries">
+	    <item>Налево</item>
+	    <item>Направо</item>
+	</string-array>
+	
+	<string-array name="resolution_item_entries">
+	    <item>150</item>
+	    <item>300</item>
+	    <item>450</item>
+	    <item>600</item>
+	    <item>750</item>
+	</string-array>
+	
+	<string-array name="pens_item_entries">
+	    <item>1</item>
+	    <item>2</item>
+	    <item>3</item>
+	    <item>4</item>
+	    <item>5</item>
+	    <item>6</item>
+	    <item>7</item>
+	    <item>8</item>
+	</string-array>
+	
+	
+	<string-array name="switch_item_entries">
+	    <item>Выкл</item>
+	    <item>Вкл</item>
+	</string-array>
+	
+	<string-array name="photo_item_entries">
+	    <item>Выкл</item>
+	    <item>ПГ</item>
+	    <item>Порт</item>
+	</string-array>
+	
+	<string-array name="message_dots">
+	    <item>128</item>
+	    <item>152</item>
+	    <item>384</item>
+	</string-array>
+	
+	<string name="str_time_unit_0_1v">0.1В</string>
+	<string name="str_length_unit_mm">мм</string>
+	<string name="str_length_unit_6_1mm">1/6mm</string>
+	<string name="str_time_unit_mm">мс</string>
+	<string name="str_time_unit_ms">мс</string>
+	<string name="str_time_unit_mm_s">мм/с</string>
+	<string name="str_time_unit_0_1us">0.1мкс</string>
+	<string name="str_time_unit_us">мкс</string>
+	<string name="str_time_unit_100us">100мкс</string>
+	<string name="str_setting_time">Часы</string>
+	<string name="str_system_setting">Настройки</string>
+	<string name="str_upgrade_progress">Обновление системы....</string>
+	<string name="str_time_format">%1$04d-%2$02d-%3$02d %4$02d:%5$02d:%6$02d</string>
+	<string name="str_toast_ink_unvalid">Капля вне заданных пределов, уст. по умолчанию:800</string>
+	<string name="str_toast_photoelectricity_delay">задержка фотодатчика вне заданных пределов, уст. по умолчанию:100</string>
+	<string name="str_toast_photoelectricity_antishake">Вибрации вне заданных пределов, уст. по умолчанию:20</string>
+	<string name="str_toast_timingprint">Время печати вне заданных пределов, уст. по умолчанию:1000</string>
+	
+<!-- 树莓派3 编辑界面相关 -->
+	<string name="str_edit_btn_insert">Вставить</string>
+	<string name="str_edit_btn_temp1">Врем.1</string>
+	<string name="str_edit_btn_temp2">Врем.2</string>
+	<string name="str_edit_btn_temp3">Врем.3</string>
+	<string name="str_edit_btn_temp4">Врем.4</string>
+	<string name="str_edit_btn_temp5">Врем.5</string>
+	
+	<string name="str_edit_line1">Строка 1:</string>
+	<string name="str_edit_line2">Строка 2:</string>
+	<string name="str_edit_line3">Строка 3:</string>
+	<string name="str_edit_line4">Строка 4:</string>
+	
+	<string name="str_notice_save">Введите имя сообщения:</string>
+	<string name="str_notice_no_objects">Пустое сообщение!</string>
+	<string name="str_file_title">Сообщение:</string>
+	<string name="str_file_hint">Имя файла</string>
+	<string name="str_page_prev">Вверх</string>
+	<string name="str_page_next">Вниз</string>
+	<string name="str_filename_no">Новое</string>
+	<string name="str_btn_back">Назад</string>
+	<string name="str_btn_up">Вверх</string>
+	<string name="str_btn_detail">Задать</string>
+	<string name="cursor">Курсор</string>
+<!-- 树莓派3  -->
+	<string name="str_dialog_msgnote">Задайте количество строк</string>
+	<string-array name="msglines_item_entries">
+	    <item>1</item>
+	    <item>2</item>
+	    <item>3</item>
+	    <item>4</item>
+	    <item>5</item>
+	    <item>6</item>
+	</string-array>
+	
+	<string name="str_no_upgrade">Установлена последняя версия ПО</string>
+	
+	<string name="str_cnt_min">Старт</string>
+	<string name="str_cnt_max">End</string>
+	<string name="str_loading">loading...</string>
+	
+	<string name="str_toast_no_qrfile">no QR.txt or QR.csv</string>
+	<string name="str_barcode_end">Barcode file is end</string>
+	<string name="str_recover_print">recover last print</string>
+	
+	<string name="str_net_devname">Device</string>
+	<string name="str_net_ipaddr">IP addr</string>
+	<string name="str_net_stat">State</string>
+	<string name="str_net_number">Number</string>
+	<string name="str_net_counts">Counts</string>
+	<string name="str_net_int">Ink</string>
+	<string name="str_net_commands">Commands</string>
+	<string name="str_net_back">Back</string>
+	<string name="str_net_one">1</string>
+	<string name="str_net_hundred">100</string>
+	<string name="str_net_thousand">1000</string>
+	<string name="str_net_connect">Connect</string>
+	
+	
+	<string name="str_tip_nothing">~ There is no picture !!!</string>
+	<string name="str_no_permission">Permission denied for access the files</string>
+	
+	<string name="str_message_tips">Message %s already exist, overwrite it?</string>
+	
+	<string name="str_flush_tips">Will Overwrite the settings, Confirm?</string>
+	
+	<string name="str_build_tlk_start">start building tlk... </string>
+	<string name="str_prepared">TLK parse success!!!</string>
+	<string name="str_prepare_fail">TLK parse failed!!!</string>
+	<string name="str_build_tlk_ok">build TLK success</string>
+	<string name="str_build_tlk_fail">build TLK failed</string>
+	
+	<string name="str_tlk_opening">tlk parsing...</string>
+	<string name="str_print_thread_create_err">print thread creation failed...</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 每列的有效位数 -->
+    <integer name="dots_per_column">152</integer>
+    <!-- 每列的总字节数 -->
+    <integer name="dots_per_column_total">32</integer>
+    
+    <!-- 每列占用的字节数，必须与 dots_per_column_total保持一致-->
+    <integer name="bytes_per_column">4</integer>
+    
+    <!-- 每列占用的字节数，必须与 dots_per_column_total保持一致-->
+    <integer name="chars_per_column">2</integer>
+    <!--  -->
+    <integer name="fixed_rows">64</integer>
+    
+    <integer name="total_params">32</integer>
+    
+    <integer name="max_digit_length">5</integer>
+</resources>

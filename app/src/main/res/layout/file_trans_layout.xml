@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="600dp"
+    android:layout_height="match_parent"
+    android:background="#cfcfcf" >
+    
+	<EditText android:id="@+id/dirEdit"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginTop="10dp"
+	    android:layout_width="200dp"
+	    android:layout_height="wrap_content"
+	    android:imeOptions="flagNoExtractUi"
+	    android:hint="@string/strDefault"
+	    android:focusable="false"
+	    android:singleLine="true"
+	    />
+	
+	<ListView
+	    android:id="@+id/dirList"
+	    android:layout_alignLeft="@id/dirEdit"
+	    android:layout_below="@id/dirEdit"
+	    android:layout_marginTop="5dp"
+	    android:layout_width="200dp"
+	    android:layout_height="200dp"
+	    android:background="#ffffff" 
+	    />
+	
+	<Button 
+	    android:id="@+id/btn_transTo"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="100dp"
+	    android:layout_toRightOf="@id/dirList"
+	    android:layout_marginLeft="20dp"
+	    android:text="@string/str_trans"
+	    android:textSize="20dp"
+	    />
+	
+	<Spinner
+	    android:id="@+id/dirSpiner"
+	    android:layout_alignBaseline="@id/dirEdit"
+	    android:layout_toRightOf="@id/btn_transTo"
+	    android:layout_marginLeft="20dp"
+	    android:layout_width="200dp"
+	    android:layout_height="wrap_content"
+	    android:entries="@array/storage_dev"
+	    />
+	
+	<ListView
+	    android:id="@+id/dest_obj"
+	    android:layout_width="200dp"
+	    android:layout_height="200dp"
+	    android:layout_below="@id/dirSpiner"
+	    android:layout_alignLeft="@id/dirSpiner"
+	    android:layout_alignTop="@id/dirList"
+		android:fastScrollEnabled="true"
+		android:cacheColorHint="@android:color/transparent"
+		android:divider="@null"
+	    ></ListView>
+	
+	<Button 
+	    android:id="@+id/btn_trans_ok"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/dirList"
+	    android:layout_marginLeft="50dp"
+	    android:layout_marginTop="20dp"
+	    android:text="@string/str_ok"
+	    android:textSize="20dp"
+	    />
+	
+	<Button 
+	    android:id="@+id/btn_trans_cnl"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/dirList"
+	    android:layout_toRightOf="@id/btn_trans_ok"
+	    android:layout_alignTop="@id/btn_trans_ok"
+	    android:layout_marginLeft="30dp"
+	    android:text="@string/strNativeBtn"
+	    android:textSize="20dp"
+	    />
+	
+</RelativeLayout>

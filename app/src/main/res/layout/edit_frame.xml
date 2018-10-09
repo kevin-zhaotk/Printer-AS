@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/EditTab"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#436EEE">
+
+<!-- 
+    <include layout="@layout/layout_buttons" />
+    <include layout="@layout/edit_view" />
+-->
+<!-- 顶部按键布局 -->	
+	<LinearLayout
+	    android:id="@+id/edit_buttons"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="10dp"
+	    android:orientation="horizontal"
+	    >
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_new" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_editbtn"
+			    />
+			<TextView
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:gravity="center"
+		        android:textSize="@dimen/editButtonsTextsize"
+		        android:textColor="#000000"
+		        android:text="@string/str_btn_new" 
+			    />
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_open" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_editbtn"
+			    />
+			<TextView
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:gravity="center"
+		        android:textSize="@dimen/editButtonsTextsize"
+		        android:textColor="#000000"
+		        android:text="@string/str_btn_open" 
+			    />
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_save" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_editbtn_pop"
+			    />
+			<TextView
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:gravity="center"
+		        android:textSize="@dimen/editButtonsTextsize"
+		        android:textColor="#000000"
+		        android:text="@string/str_btn_save" 
+			    />
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_saveas" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_editbtn"
+			    />
+			<TextView
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:gravity="center"
+		        android:textSize="@dimen/editButtonsTextsize"
+		        android:textColor="#000000"
+		        android:text="@string/str_edit_btn_insert" 
+			    />
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_page_up" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:focusable="false"
+	        android:layout_weight="1">
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_editbtn"
+			    />
+			<TextView
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:gravity="center"
+		        android:textSize="@dimen/editButtonsTextsize"
+		        android:textColor="#000000"
+		        android:text="@string/str_page_prev" 
+			    />
+	    </RelativeLayout>
+	    
+	    <RelativeLayout
+		    android:id="@+id/btn_page_down" 
+		    android:layout_width="0dp"
+	        android:layout_height="@dimen/editButtonsHeight"
+	        android:layout_weight="1"
+			android:focusable="false"
+	        >
+	        <ImageView 
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:src="@drawable/style_editbtn"
+			    />
+			<TextView
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    android:gravity="center"
+		        android:textSize="@dimen/editButtonsTextsize"
+		        android:textColor="#000000"
+		        android:text="@string/str_page_next" 
+			    />
+	    </RelativeLayout>
+	    
+	</LinearLayout>
+	
+	<ScrollView
+	    android:id="@+id/edit_scrollview_line1"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" 
+	    android:layout_below="@id/edit_buttons"
+        android:layout_marginTop="10dp"
+		android:layout_marginLeft="5dp"
+		android:layout_marginRight="5dp"
+	    >
+	<EditText
+		     android:id="@+id/edit_line1"
+		     android:layout_width="fill_parent"
+		     android:layout_height="wrap_content"
+		     android:layout_below="@id/edit_buttons"
+		     android:gravity="top"
+		     android:minHeight="300dp"
+		     android:singleLine="false"
+		     android:imeOptions="actionDone"
+		     android:scrollHorizontally="false"
+		     android:scrollbars="vertical"
+		     android:textSize="35sp"
+		    />
+	</ScrollView>
+<!-- 	   
+	<LinearLayout
+	    android:id="@+id/object_options"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:orientation="horizontal"
+	    android:layout_alignParentBottom="true">
+	    
+	    <Button
+	        android:id="@+id/btn_objinfo"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="3"
+	        android:textSize="@dimen/editButtonsTextsize"
+	        android:text="@string/objectInfoName"/>
+
+		<Spinner android:id="@+id/object_list"
+		    android:layout_width="fill_parent"
+		    android:layout_height="60dp"
+		    android:layout_weight="3"
+		    android:spinnerMode="dropdown"
+		 	/>
+		
+	</LinearLayout>
+	
+	<include layout="@layout/edit_view"
+	    android:layout_width="wrap_content"
+	    android:layout_height="fill_parent" 
+	    android:layout_below="@id/edit_buttons"
+	    android:layout_above="@id/object_options"
+	    android:layout_marginTop="10dp"
+	    android:layout_marginLeft="5dp"
+	    android:layout_marginRight="5dp"/>
+ -->
+ </RelativeLayout>

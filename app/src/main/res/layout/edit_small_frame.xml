@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/editmultitab"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#436eee" >
+
+    
+    <!--<include layout="@layout/edit_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttons"
+        android:layout_above="@+id/buttons_1"
+        android:layout_marginTop="10dp"
+        />-->
+    <HorizontalScrollView
+        android:id="@+id/edit_layout"
+        android:background="@drawable/background"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/buttons_1"
+        android:layout_marginTop="10dp"
+        >
+        <RelativeLayout
+            android:id="@+id/edit_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </RelativeLayout>
+    </HorizontalScrollView>
+	<include layout="@layout/edit_small_button" 
+        android:id="@+id/buttons_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttons_2"
+        android:layout_marginTop="10dp"
+        />
+	
+	<include layout="@layout/edit_small_button2" 
+        android:id="@+id/buttons_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        />
+<!-- 	        
+	<LinearLayout
+	    android:id="@+id/bottom"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:layout_marginTop="10dp"
+	    android:layout_alignParentBottom="true">
+	    
+	    <Button
+	        android:id="@+id/btn_objinfo"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="3"
+	        android:textSize="25sp"
+	        android:background="@drawable/button_style"
+	        android:text="@string/objectInfoName"/>
+
+		<Spinner android:id="@+id/object_list"
+		    android:layout_width="fill_parent"
+		    android:layout_height="60dp"
+		    android:layout_weight="3"
+		    android:spinnerMode="dropdown"
+		 	/>
+		
+	</LinearLayout>
+-->
+</RelativeLayout>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<objects>
+    <!-- 文本对象 -->
+    <object>
+        <id>001</id>
+        <flag>1</flag>
+    </object>
+    <!-- 计数器对象 -->
+    <object>
+        <id>002</id>
+        <flag>1</flag>
+    </object>
+	<!-- 实时年对象 -->
+    <object>
+        <id>003</id>
+        <flag>1</flag>
+    </object>
+	<!-- 实时月对象 -->
+    <object>
+        <id>004</id>
+        <flag>1</flag>
+    </object>
+	<!-- 实时日对象 -->
+    <object>
+        <id>005</id>
+        <flag>1</flag>
+    </object>
+	<!-- 实时时对象 -->
+    <object>
+        <id>006</id>
+        <flag>1</flag>
+    </object>
+	<!-- 实时分对象 -->
+    <object>
+        <id>007</id>
+        <flag>1</flag>
+    </object>
+	<!-- 实时一位对象 -->
+    <object>
+        <id>008</id>
+        <flag>0</flag>
+    </object>
+	<!-- 班次对象 -->
+    <object>
+        <id>009</id>
+        <flag>0</flag>
+    </object>
+	<!-- 偏移后年对象 -->
+    <object>
+        <id>013</id>
+        <flag>0</flag>
+    </object>
+	<!-- 偏移后月对象 -->
+    <object>
+        <id>014</id>
+        <flag>0</flag>
+    </object>
+	<!-- 偏移后日期对象 -->
+    <object>
+        <id>015</id>
+        <flag>0</flag>
+    </object>
+	<!-- 儒略日对象 -->
+    <object>
+        <id>025/id>
+        <flag>0</flag>
+    </object>
+	<!-- 图片对象 -->
+    <object>
+        <id>026</id>
+        <flag>0</flag>
+    </object>
+	<!-- 条形码对象 -->
+    <object>
+        <id>027</id>
+        <flag>0</flag>
+    </object>
+	<!-- 直线对象 -->
+    <object>
+        <id>028</id>
+        <flag>0</flag>
+    </object>
+	<!-- 矩形对象 -->
+    <object>
+        <id>029</id>
+        <flag>0</flag>
+    </object>
+	<!-- 椭圆对象 -->
+    <object>
+        <id>030</id>
+        <flag>0</flag>
+    </object>
+	<!-- 实时秒对象 -->
+    <object>
+        <id>032</id>
+        <flag>0</flag>
+    </object>
+	<!-- QR对象 -->
+    <object>
+        <id>033</id>
+        <flag>0</flag>
+    </object>
+	<!-- 星期数对象 -->
+    <object>
+        <id>034</id>
+        <flag>0</flag>
+    </object>
+	<!-- 周数对象 -->
+    <object>
+        <id>035</id>
+        <flag>0</flag>
+    </object>
+
+</objects>

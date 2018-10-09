@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/editmultitab"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#436eee" >
+
+    <include layout="@layout/layout_buttons" 
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <include layout="@layout/edit_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttons"
+        />
+
+	
+	        
+	<LinearLayout
+	    android:id="@+id/bottom"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:layout_alignParentBottom="true">
+	    
+	    <Button
+	        android:id="@+id/btn_objinfo"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="3"
+	        android:text="@string/objectInfoName"/>
+
+		<Spinner android:id="@+id/object_list"
+		    android:layout_width="fill_parent"
+		    android:layout_height="50dp"
+		    android:layout_weight="3"
+		    android:spinnerMode="dropdown"
+		 	/>
+		
+	</LinearLayout>
+</RelativeLayout>
