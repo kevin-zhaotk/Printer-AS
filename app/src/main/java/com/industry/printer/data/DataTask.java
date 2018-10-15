@@ -33,6 +33,7 @@ import com.industry.printer.object.WeekOfYearObject;
 import com.industry.printer.object.data.SegmentBuffer;
 
 import java.io.CharArrayReader;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -663,6 +664,66 @@ public class DataTask {
 		// BinCreater.saveBin(path, preview, getInfo().mBytesPerHFeed*8*getHeads());
 		Debug.d(TAG, "--->column=" + mBinInfo.mColumn + ", charperh=" + mBinInfo.mCharsPerHFeed);
 		return BinFromBitmap.Bin2Bitmap(preview, mBinInfo.mColumn, mBinInfo.mCharsFeed*16);
+	}
+
+
+	/**
+	 * expend along horizontal space, 1 column to 2/3 or any columns
+	 * big dot machine
+	 * extend buffer to 8 times filled with 0
+	 */
+	public void expendColumn(char[] buffer, int columns, int slant) {
+
+		if (mTask == null || mTask.getNozzle() == null || !mTask.getNozzle().buffer8Enable) {
+			return;
+		}
+		int extension = 0;
+		int shift = 0;
+		if (slant - 100 >= 0) {
+			extension = 8;
+			shift = slant - 100;
+		}
+		if (extension <= 0) {
+			return;
+		}
+		// CharArrayWriter writer = new CharArrayWriter();
+
+		int charsPerColumn = buffer.length/columns;
+		int columnH = charsPerColumn * 16;
+		int afterColumns = columns * 8 + (shift > 0 ? (shift - 1 + columnH) : 0);
+		mBuffer = new char[afterColumns * charsPerColumn];
+//		Log.i("XXX", "--->charsPerColumn: " + charsPerColumn + "  columnH: " + columnH + "  afterColumns: " + afterColumns);
+		// extension
+		for (int i = 0; i < afterColumns; i++) {
+
+			for (int j = 0; j < columnH; j++) {
+				int rowShift = shift > 0 ? (shift + j - 1) : 0;
+
+				if (i - rowShift < 0) {
+					continue;
+				}
+				int origin = (i - rowShift)/8;
+				int remainder = (i - rowShift)%8;
+
+				if (remainder == 0) {
+					int bit = 15 - j%16;
+					int index = (origin + j/16);
+					if (index >= buffer.length) {
+						continue;
+					}
+					char data = buffer[origin + j/16];
+//					Log.i("XXX", "--->data: " + String.format("0x%x",(int)data) + " bit: " + bit);
+					if ((data & (0x001 << bit)) > 0) {
+
+
+						mBuffer[i * charsPerColumn + j/16] |= (0x001 << bit);
+					}
+
+				}
+
+			}
+		}
+
 	}
 
 }
