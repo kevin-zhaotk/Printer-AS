@@ -331,7 +331,7 @@ public class BinInfo {
 		expend();
 
 		// column extension
-		expendColumn(8);
+		expendColumn(8, 8);
 
     	return extract(); // bmp.createScaledBitmap(bmp, columns, 150, true);
     }
@@ -388,7 +388,7 @@ public class BinInfo {
    		expend();
 
     	// column extension
-    	expendColumn(8);
+    	expendColumn(8, 8);
     	return extract();
     }
     
@@ -430,7 +430,7 @@ public class BinInfo {
     	expend();
 
    		// column extension
-   		expendColumn(8);
+   		expendColumn(8, 8);
     	return extract();
     }
     
@@ -602,7 +602,8 @@ public class BinInfo {
 	 * big dot machine
 	 * extend buffer to 8 times filled with 0
 	 */
-	public void expendColumn(int extension) {
+	public void expendColumn(int extension, int slant) {
+
 
 		if (mTask == null || mTask.getNozzle() == null) {
 			return;
@@ -623,4 +624,6 @@ public class BinInfo {
 		columnExtension = extension;
 		mBufferChars = writer.toCharArray();
 	}
+
+
 }

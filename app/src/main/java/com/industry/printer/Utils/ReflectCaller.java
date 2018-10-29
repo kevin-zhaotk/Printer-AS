@@ -21,9 +21,11 @@ public class ReflectCaller {
 			Method upgrade = managerClass.getDeclaredMethod("upgrade", (Class[])null);
 			upgrade.setAccessible(true);
 			PowerManager pwManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-			IPowerManager iManager = (IPowerManager) upgrade.invoke(pwManager, (Object[])null);
-			
-			iManager.upgrade();
+			upgrade.invoke(pwManager, (Object[])null);
+
+//			IPowerManager iManager = (IPowerManager) upgrade.invoke(pwManager, (Object[])null);
+//			iManager.upgrade();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -39,9 +41,10 @@ public class ReflectCaller {
 			Method hw = managerClass.getDeclaredMethod("SystemClockToHw", (Class[])null);
 			hw.setAccessible(true);
 			AlarmManager aManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-			IAlarmManager iManager = (IAlarmManager) hw.invoke(aManager, (Object[])null);
-			
-			iManager.SystemClockToHw();
+			hw.invoke(aManager, (Object[])null);
+
+//			IAlarmManager iManager = (IAlarmManager) hw.invoke(aManager, (Object[])null);
+//			iManager.SystemClockToHw();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -54,10 +57,12 @@ public class ReflectCaller {
 			Method hw = managerClass.getDeclaredMethod("HwToSystemClock", (Class[])null);
 			hw.setAccessible(true);
 			AlarmManager aManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-			IAlarmManager iManager = (IAlarmManager) hw.invoke(aManager, (Object[])null);
-			if (iManager != null) {
-				iManager.HwToSystemClock();
-			}
+			hw.invoke(aManager, (Object[])null);
+
+//			IAlarmManager iManager = (IAlarmManager) hw.invoke(aManager, (Object[])null);
+//			if (iManager != null) {
+//				iManager.HwToSystemClock();
+//			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();

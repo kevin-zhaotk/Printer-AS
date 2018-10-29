@@ -110,7 +110,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	
 	private TextView IP_address;// localhost ip
 	static {
-		//System.loadLibrary("Hardware_jni");
+		System.loadLibrary("Hardware_jni");
 	}
 	
 	@SuppressWarnings("deprecation")
