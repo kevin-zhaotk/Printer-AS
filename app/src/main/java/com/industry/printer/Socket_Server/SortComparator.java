@@ -1,5 +1,9 @@
 package com.industry.printer.Socket_Server;
 
+import java.lang.reflect.Method;
+import java.text.Collator;
+import java.util.Comparator;
+
 public class SortComparator implements java.lang.Comparable<SortComparator> {
     public SortComparator(String ss) {
         this.s = ss;

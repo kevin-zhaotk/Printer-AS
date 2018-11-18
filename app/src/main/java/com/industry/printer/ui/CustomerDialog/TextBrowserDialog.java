@@ -1,5 +1,21 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import com.industry.printer.R;
+import com.industry.printer.FileFormat.FilenameSuffixFilter;
+import com.industry.printer.FileFormat.TextInputStream;
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.ToastUtil;
+import com.industry.printer.ui.CustomerAdapter.ListViewButtonAdapter;
+import com.industry.printer.ui.CustomerAdapter.PreviewAdapter;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -7,20 +23,10 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
-
-import com.industry.printer.FileFormat.FilenameSuffixFilter;
-import com.industry.printer.FileFormat.TextInputStream;
-import com.industry.printer.R;
-import com.industry.printer.Utils.ConfigPath;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.ToastUtil;
-import com.industry.printer.ui.CustomerAdapter.PreviewAdapter;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 public class TextBrowserDialog extends CustomerDialogBase implements android.view.View.OnClickListener {
 	
@@ -77,7 +83,7 @@ public class TextBrowserDialog extends CustomerDialogBase implements android.vie
 		mFileAdapter = new PreviewAdapter(context, 
 				mContent, 
 				R.layout.text_browser_item, 
-				new String[]{"content"},
+				new String[]{"content"}, 
 				new int[] {R.id.text_browser_content});
 		mSuffix = null;
 	}
@@ -118,7 +124,7 @@ public class TextBrowserDialog extends CustomerDialogBase implements android.vie
 
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
+						int position, long id) {
 					Debug.d(TAG, "--->onitemclick " + position);
 					mFileAdapter.setChecked(position);
 					mFileAdapter.notifyDataSetChanged();
@@ -142,7 +148,7 @@ public class TextBrowserDialog extends CustomerDialogBase implements android.vie
 		 //mPath.setText(mCurPath);
 		 mContent.clear();
 		 Debug.d(TAG, ""+file.getPath()+", exists = "+file.exists());
-		 File[] files;
+		 File [] files;
 		 if(mSuffix == null)
 		 {
 			 Debug.d(TAG, "suffix is null");

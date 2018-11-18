@@ -1,36 +1,71 @@
 package com.industry.printer.ui.CustomerAdapter;
 
-import android.app.ActionBar.LayoutParams;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import com.industry.printer.BinInfo;
 import com.industry.printer.MessageTask;
 import com.industry.printer.R;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.DimenssionConvertion;
+import com.industry.printer.data.BinCreater;
+import com.industry.printer.data.BinFromBitmap;
+import com.industry.printer.data.DataTask;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import android.R.integer;
+import android.app.ActionBar.LayoutParams;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Color;
+import android.net.Uri;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
+
 
 //addbylk
+import android.R.color;
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Paint.FontMetrics;
+import android.graphics.Typeface;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.View;
+
+
+
+
+
+
+import android.graphics.BitmapFactory;//addbylk70507
 
 public class MessageListAdater extends BaseAdapter {
 	
@@ -41,12 +76,12 @@ public class MessageListAdater extends BaseAdapter {
 	 * @author zhaotongkai
 	 */
 	private class ItemViewHolder{
-		TextView mTitle;		//message title
-		TextView mAbstract;	//message abstract
+		TextView	mTitle;		//message title
+		TextView	mAbstract;	//message abstract
 		// ImageView	mImage;
 		LinearLayout mllPreview;
-		ImageView mMark;
-		ImageView mCheck;
+		ImageView	mMark;
+		ImageView	mCheck;
 	}
 	
 	/**
@@ -100,7 +135,7 @@ public class MessageListAdater extends BaseAdapter {
 	 * Construct
 	 */
 	public MessageListAdater(Context context, LinkedList<Map<String, Object>> list, int resource,
-                             String from[], int to[])
+			String from[], int to[])
 	{
 		mSelected = -1;
 		mCntList = list;
@@ -237,11 +272,11 @@ public class MessageListAdater extends BaseAdapter {
 			{  
 				bmp_disk = Bitmap.createBitmap(1500, 100, Configs.BITMAP_CONFIG);
 				String path = ConfigPath.getTlkDir(title) + MessageTask.MSG_PREV_IMAGE;
-			   Debug.e(TAG, "===="+path);
+			   Debug.e(TAG, "===="+path);			
 			    File file =new File(path);
 				if( file.exists() )
 				{
-					bmp_disk= BitmapFactory.decodeFile(path);
+					bmp_disk=BitmapFactory.decodeFile(path);
 					Debug.e(TAG, path);
 				}
 			}
@@ -266,7 +301,7 @@ public class MessageListAdater extends BaseAdapter {
 			
 			 
 			 mCan.drawBitmap(bmp_disk, new Rect(0, 0, iwidth, 100), new Rect(0, 0, iwidth, 100), null);
-			   Debug.e(TAG, "mSCroll mSCroll==11111=============="+mSCroll);
+			   Debug.e(TAG, "mSCroll mSCroll==11111=============="+mSCroll);	
 				
 		//	bmp_disk = Bitmap.createScaledBitmap(bmp_disk);//,bmp_disk.getWidth(), bmp_disk.getHeight() , true);		
 			
@@ -353,18 +388,12 @@ public class MessageListAdater extends BaseAdapter {
 				Debug.d(TAG, "---transparent");
 				mHolder.mMark.setVisibility(View.GONE);
 			}
+			mHolder.mCheck.setVisibility(View.GONE);
 		}
 	 	dispPreview(Bmp_bak);	
 		return convertView;
 	}
 
-	
-	
-	
-	
-	
-	
-	
 	
 	private void dispPreview(Bitmap bmp) {
 		int x=0,y=0;
@@ -372,7 +401,7 @@ public class MessageListAdater extends BaseAdapter {
 		if (bmp == null || bmp.getWidth() == 0 || bmp.getHeight() == 0) {
 			return;
 		}
-		float scale = (float) DimenssionConvertion.dip2px(mContext, 100)/bmp.getHeight();
+		float scale = (float)DimenssionConvertion.dip2px(mContext, 100)/bmp.getHeight();
 		mHolder.mllPreview.removeAllViews();
 		Debug.e(TAG, "-===================-->width= " + bmp.getWidth() + "  scale============================= " + scale);
 			for (int i = 0;x < bmp.getWidth(); i++) 
@@ -410,6 +439,14 @@ public class MessageListAdater extends BaseAdapter {
 	 * delete the selected message
 	 */
 	public void delete() {
+		if (mMultiMode) {
+			deleteMulti();
+		} else {
+			deleteSingle();
+		}
+	}
+	
+	public void deleteSingle() {
 		if (mSelected < 0 || mSelected >= mCntList.size()) {
 			return;
 		}
@@ -427,6 +464,33 @@ public class MessageListAdater extends BaseAdapter {
 		mCntList.remove(mSelected);
 		notifyDataSetChanged();
 	}
+	
+	public void deleteMulti() {
+		if (mMultiSelected == null) {
+			return;
+		}
+		Iterator<String> keys = mMultiSelected.keySet().iterator();
+		
+		while (keys.hasNext()) {
+			int index = Integer.parseInt(keys.next());
+			HashMap<String, Object> item = (HashMap<String, Object>)mCntList.get(index);
+			String title = (String) item.get(mKeys[0]);
+			File file = new File(ConfigPath.getTlkDir(title));
+			if (file.exists()) {
+				File[] list = file.listFiles();
+				for (int i = 0; i < list.length; i++) {
+					File f = list[i];
+					f.delete();
+				} 
+			}
+			file.delete();
+		}
+		mCntList.clear();
+		mMultiSelected.clear();
+//		mMultiMode = false;
+//		notifyDataSetChanged();
+	}
+	
 	public void Scroll(int left_rigt) 
 	{
 		
@@ -454,13 +518,13 @@ public class MessageListAdater extends BaseAdapter {
 			// }
 		}
 		
-		Debug.e(TAG, "------Scroll");
+		Debug.e(TAG, "------Scroll");	
 		if (mSelected < 0 || mSelected >= mCntList.size()) {
 			return;
 		}
 
 
-		Debug.e(TAG, "------Scroll2");
+		Debug.e(TAG, "------Scroll2");		
 		
 	}
 

@@ -1,6 +1,33 @@
 package com.industry.printer;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import rx.Observable;
+import rx.Observer;
+import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+
+import android.R.bool;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -8,11 +35,15 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.hardware.usb.UsbManager;
+import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -26,6 +57,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -38,33 +71,18 @@ import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.Utils.PlatformInfo;
+import com.industry.printer.Utils.StringUtil;
 import com.industry.printer.Utils.SystemPropertiesProxy;
 import com.industry.printer.Utils.ToastUtil;
+import com.industry.printer.Utils.ZipUtil;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
-import com.industry.printer.hardware.PWMAudio;
+import com.industry.printer.object.BaseObject;
 import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
 import com.industry.printer.ui.CustomerDialog.DialogListener;
 import com.industry.printer.ui.CustomerDialog.ImportDialog;
 import com.industry.printer.ui.CustomerDialog.ImportDialog.IListener;
 import com.industry.printer.ui.CustomerDialog.LoadingDialog;
-
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import rx.Observable;
-import rx.functions.Action0;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends Activity implements OnCheckedChangeListener, OnTouchListener, OnClickListener {
 
@@ -77,17 +95,17 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	TabHost mTab;
 
 	private RadioGroup mTabGroup;
-	public RadioButton mRadioCtl;
-	public RadioButton mRadioSet;
-	public RadioButton mRadioEdit;
-	public RadioButton btn_Other;
-	public TextView mExtStatus;
+	public RadioButton	mRadioCtl;
+	public RadioButton	mRadioSet;
+	public RadioButton	mRadioEdit;
+	public RadioButton	btn_Other;
+	public TextView		mExtStatus;
 	
-	public ControlTabActivity mControlTab;
+	public ControlTabActivity 	mControlTab;
 	public EditTabActivity		mEditTab;
 	public EditMultiTabActivity mEditFullTab;
 	public EditTabSmallActivity mEditSmallTab;
-	public SettingsTabActivity mSettingsTab;
+	public SettingsTabActivity	mSettingsTab;
 	
 	public RelativeLayout mCtrlExtra;
 	public TextView mCtrlTitle;
@@ -850,7 +868,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				// TODO Auto-generated method stub
 				Map<String, String> src = new HashMap<String, String>();
 				if (Configs.SYSTEM_CONFIG_MSG_PATH.equals(arg0)) {
-					src.put("source", Configs.TLK_PATH_FLASH);
+					src.put("source",Configs.TLK_PATH_FLASH);
 					src.put("dest", usbs.get(0) + arg0);
 					src.put("tips", MainActivity.this.getString(R.string.tips_export_message));
 				} else if (Configs.PICTURE_SUB_PATH.equals(arg0)) {
@@ -967,29 +985,29 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		window.setAttributes(localLP);
 	}
 	// locahost ip
-	public static String getLocalIpAddress() {
-			String hostIp = null;
+	public static String getLocalIpAddress() {  
+			String hostIp = null;  
 		    try {  
-		        Enumeration nis = NetworkInterface.getNetworkInterfaces();
-		        InetAddress ia = null;
+		        Enumeration nis = NetworkInterface.getNetworkInterfaces();  
+		        InetAddress ia = null;  
 		        while (nis.hasMoreElements()) {  
-		            NetworkInterface ni = (NetworkInterface) nis.nextElement();
-		            Enumeration<InetAddress> ias = ni.getInetAddresses();
+		            NetworkInterface ni = (NetworkInterface) nis.nextElement();  
+		            Enumeration<InetAddress> ias = ni.getInetAddresses();  
 		            while (ias.hasMoreElements()) {  
 		                ia = ias.nextElement(); 
 		                Debug.d(TAG, "--->ipAddr: " + ia.getHostAddress());
-		                if (ia instanceof Inet6Address) {
+		                if (ia instanceof Inet6Address) {  
 		                    continue;// skip ipv6  
 		                }  
-		                String ip = ia.getHostAddress();
+		                String ip = ia.getHostAddress();  
 		                if (!"127.0.0.1".equals(ip)) {  
 		                    hostIp = ia.getHostAddress();  
 		                    break;  
 		                }  
 		            }  
 		        }  
-		    } catch (SocketException e) {
-		        Log.i("error", "SocketException");
+		    } catch (SocketException e) {  
+		        Log.i("error", "SocketException");  
 		        e.printStackTrace();  
 		    }  
 		    return hostIp; 
@@ -1023,7 +1041,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		sDeviceInfor+=" versionCode:" + mPackageInfo.versionCode;
 		sDeviceInfor+=" Build_version:" + Build.VERSION.RELEASE;
 
-		sDeviceInfor+=" CPU ABI:"+ Build.CPU_ABI;
+		sDeviceInfor+=" CPU ABI:"+Build.CPU_ABI;
 		sDeviceInfor+=" Vendor:"+ Build.MANUFACTURER;
 		sDeviceInfor+=" MODEL:"+ Build.MODEL;
 		sDeviceInfor+=" SDK_INT:" + Build.VERSION.SDK_INT;

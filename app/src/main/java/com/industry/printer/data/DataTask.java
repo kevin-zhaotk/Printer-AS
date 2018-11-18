@@ -1,18 +1,33 @@
 package com.industry.printer.data;
 
+import java.io.CharArrayReader;
+import java.io.CharArrayWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Vector;
+import java.lang.System;
+
+import android.R.bool;
+import android.R.integer;
 import android.content.Context;
+import android.database.CharArrayBuffer;
 import android.graphics.Bitmap;
+import android.os.Message;
 import android.text.TextUtils;
 
 import com.industry.printer.BinInfo;
-import com.industry.printer.FileFormat.QRReader;
-import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.MessageTask;
 import com.industry.printer.MessageTask.MessageType;
+import com.industry.printer.FileFormat.QRReader;
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.data.BinCreater;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
 import com.industry.printer.object.BarcodeObject;
@@ -28,17 +43,10 @@ import com.industry.printer.object.RealtimeMonth;
 import com.industry.printer.object.RealtimeObject;
 import com.industry.printer.object.RealtimeYear;
 import com.industry.printer.object.ShiftObject;
+import com.industry.printer.object.TLKFileParser;
 import com.industry.printer.object.WeekDayObject;
 import com.industry.printer.object.WeekOfYearObject;
 import com.industry.printer.object.data.SegmentBuffer;
-
-import java.io.CharArrayReader;
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Vector;
 
 
 /**
@@ -50,7 +58,7 @@ public class DataTask {
 	
 	public static final String TAG = DataTask.class.getSimpleName();
 	
-	public Context mContext;
+	public Context	mContext;
 	public ArrayList<BaseObject> mObjList;
 	public MessageTask mTask;
 
@@ -551,7 +559,7 @@ public class DataTask {
 			columns = segmentBuffer.getColumns() > columns?segmentBuffer.getColumns():columns;
 			hight = segmentBuffer.mHight * buffers.size();
 		}
-		
+		Debug.d(TAG, "--->columns: " + columns + "  hight: " + hight);
 		mBuffer = new char[columns * hight];
 		/*处理完之后重新合并为一个buffer, 因为涉及到坐标平移，所以不能对齐的段要补0*/
 		for (int j=0; j < columns; j++) {
@@ -559,6 +567,10 @@ public class DataTask {
 				buffer.readColumn(mBuffer, j, j*hight + buffer.mHight * buffer.mType);
 			}
 		}
+		
+		int slant = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_SLANT);
+		Debug.d(TAG, "--->slant: " + slant);
+		expendColumn(mBuffer, columns, slant);
 		
 	}
 	/**
@@ -613,10 +625,10 @@ public class DataTask {
 	 * 用於清洗的buffer
 	 * @return
 	 */
-	public char[] preparePurgeBuffer() {
+	public char[] preparePurgeBuffer(String bin) {
 		InputStream stream;
 		try {
-			stream = mContext.getAssets().open("purge/single.bin");
+			stream = mContext.getAssets().open(bin);
 			mBinInfo = new BinInfo(stream, 1);
 			char[] buffer = mBinInfo.getBgBuffer();
 			stream.close();
@@ -666,7 +678,6 @@ public class DataTask {
 		return BinFromBitmap.Bin2Bitmap(preview, mBinInfo.mColumn, mBinInfo.mCharsFeed*16);
 	}
 
-
 	/**
 	 * expend along horizontal space, 1 column to 2/3 or any columns
 	 * big dot machine
@@ -679,51 +690,45 @@ public class DataTask {
 		}
 		int extension = 0;
 		int shift = 0;
-		if (slant - 100 >= 0) {
+		Debug.d(TAG, "--->slant: " + slant);
+		if (slant >= 100 ) {
 			extension = 8;
 			shift = slant - 100;
-		}
-		if (extension <= 0) {
+		} else {
 			return;
 		}
 		// CharArrayWriter writer = new CharArrayWriter();
-
+		Debug.d(TAG, "--->extension: " + extension + " shift: " + shift);
 		int charsPerColumn = buffer.length/columns;
 		int columnH = charsPerColumn * 16;
 		int afterColumns = columns * 8 + (shift > 0 ? (shift - 1 + columnH) : 0);
-		mBuffer = new char[afterColumns * charsPerColumn];
-//		Log.i("XXX", "--->charsPerColumn: " + charsPerColumn + "  columnH: " + columnH + "  afterColumns: " + afterColumns);
-		// extension
-		for (int i = 0; i < afterColumns; i++) {
-
-			for (int j = 0; j < columnH; j++) {
-				int rowShift = shift > 0 ? (shift + j - 1) : 0;
-
-				if (i - rowShift < 0) {
-					continue;
-				}
-				int origin = (i - rowShift)/8;
-				int remainder = (i - rowShift)%8;
-
-				if (remainder == 0) {
-					int bit = 15 - j%16;
-					int index = (origin + j/16);
-					if (index >= buffer.length) {
-						continue;
-					}
-					char data = buffer[origin + j/16];
-//					Log.i("XXX", "--->data: " + String.format("0x%x",(int)data) + " bit: " + bit);
-					if ((data & (0x001 << bit)) > 0) {
-
-
-						mBuffer[i * charsPerColumn + j/16] |= (0x001 << bit);
-					}
-
-				}
-
+		// buffer extend 8 times - a temperary buffer
+		char[] buffer_8 = new char[columns * 8 * charsPerColumn];
+		
+		// the  final extension and shift buffer
+		// mBuffer = new char[afterColumns * charsPerColumn];
+		Debug.d(TAG, "--->charsPerColumn: " + charsPerColumn + "  columnH: " + columnH + "  afterColumns: " + afterColumns + "  buffer.len: " + mBuffer.length);
+		for (int i = 0; i < buffer.length/charsPerColumn; i++) {
+			for (int j = 0; j < charsPerColumn; j++) {
+				buffer_8[i * 8 * charsPerColumn + j] = buffer[i * charsPerColumn + j];
 			}
 		}
-
+		if (shift == 0) {
+			mBuffer = buffer_8;
+			return;
+		}
+		
+		mBuffer = new char[afterColumns * charsPerColumn];
+		for (int i = 0; i < columns * 8; i++) {
+			for (int j = 0; j < columnH; j++) {
+				int rowShift = shift + j - 1;
+				int bit = j%16;
+				char data = buffer_8[i * charsPerColumn + j/16];
+				if ((data & (0x0001<< bit)) != 0) {
+					mBuffer[(i+rowShift)*charsPerColumn + j/16 ] |= (0x0001<< bit);
+				}	
+			}
+		}		
 	}
 
 }

@@ -1,15 +1,19 @@
 package com.industry.printer.object.data;
 
-import android.content.Context;
-
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.hardware.RFIDDevice;
-import com.industry.printer.hardware.RFIDManager;
+import java.io.BufferedReader;
+import java.io.CharArrayReader;
+import java.io.IOException;
 
 import org.apache.http.util.CharArrayBuffer;
 
-import java.io.CharArrayReader;
-import java.io.IOException;
+import android.content.Context;
+import android.util.Log;
+
+import com.industry.printer.BinInfo;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.data.BinCreater;
+import com.industry.printer.hardware.RFIDDevice;
+import com.industry.printer.hardware.RFIDManager;
 
 public class SegmentBuffer {
 	
@@ -76,7 +80,7 @@ public class SegmentBuffer {
 		for (int j = 0; j < mHight * shift; j++) {
 			mBuffer.append(feed);
 		}
-		
+		Debug.d(TAG, "--->mBuffer.length=" + mBuffer.length() );
 		for (int i = 0; i < mColumns; i++) {
 			
 			if (direction == DIRECTION_NORMAL) {
@@ -87,10 +91,11 @@ public class SegmentBuffer {
 		}
 		/*原始列数+偏移列数=该buffer的总列数*/
 		mColumns += shift;
-
+		Debug.d(TAG, "--->mBuffer.length=" + mBuffer.length() );
 		reverse(revert);
-
-		rotate(rotate);
+		Debug.d(TAG, "--->mBuffer.length=" + mBuffer.length() );
+// 旋转功能已废弃
+//		rotate(rotate);
 
 		mRfid = RFIDManager.getInstance(mContext).getDevice(mType);
 	}
@@ -115,20 +120,22 @@ public class SegmentBuffer {
 		if ((pattern & 0x0f) == 0x00) {
 			return;
 		}
-
+		Debug.d(TAG, "--->mBuffer.length=" + mBuffer.length() );
+		int realLen = mBuffer.length();
 		char[] buffer = mBuffer.buffer();
-		mBuffer = new CharArrayBuffer(0);
+		Debug.d(TAG, "--->buffer.length: " + buffer.length);
+		mBuffer = new CharArrayBuffer(realLen);
 
 		// 4头整体反转
 		if (pattern == 0x0f) {
-			for (int i = 0; i < buffer.length/2; i++) {
+			for (int i = 0; i < realLen/2; i++) {
 				int source = buffer[2 * i] | buffer[2*i +1];
 				mBuffer.append(source);
 			}
 			return;
 		}
 
-		for (int i = 0; i < buffer.length; i++) {
+		for (int i = 0; i < realLen; i++) {
 			// 1-2头数据
 			if (i % 2 == 0) {
 				// 1-2反转
@@ -170,7 +177,7 @@ public class SegmentBuffer {
 				}
 			}
 		}
-
+		Debug.d(TAG, "--->after revert buffer.length: " + mBuffer.length());
 	}
 
 	/**
@@ -284,7 +291,7 @@ public class SegmentBuffer {
 				output |= 0x01 << (15 - i);
 			}
 		}
-		Debug.d(TAG, "--->revertChar: 0x" + Integer.toHexString(output & 0x0ffff));
+//		Debug.d(TAG, "--->revertChar: 0x" + Integer.toHexString(output & 0x0ffff));
 		return (char)(output&0x0ffff);
 	}
 

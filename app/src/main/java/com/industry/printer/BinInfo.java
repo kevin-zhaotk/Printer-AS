@@ -1,5 +1,19 @@
 package com.industry.printer;
 
+import java.io.ByteArrayInputStream;
+import java.io.CharArrayReader;
+import java.io.CharArrayWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Logger;
+
+import org.apache.http.util.ByteArrayBuffer;
+
+import android.R.integer;
+import android.R.menu;
 import android.content.Context;
 import android.graphics.Bitmap;
 
@@ -10,15 +24,6 @@ import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.data.BinCreater;
 import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
-
-import org.apache.http.util.ByteArrayBuffer;
-
-import java.io.ByteArrayInputStream;
-import java.io.CharArrayReader;
-import java.io.CharArrayWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 
 /**
  * @author zhaotongkai
@@ -331,7 +336,7 @@ public class BinInfo {
 		expend();
 
 		// column extension
-		expendColumn(8, 8);
+//		expendColumn(8);
 
     	return extract(); // bmp.createScaledBitmap(bmp, columns, 150, true);
     }
@@ -388,7 +393,7 @@ public class BinInfo {
    		expend();
 
     	// column extension
-    	expendColumn(8, 8);
+//    	expendColumn(8);
     	return extract();
     }
     
@@ -430,7 +435,7 @@ public class BinInfo {
     	expend();
 
    		// column extension
-   		expendColumn(8, 8);
+//   		expendColumn(8);
     	return extract();
     }
     
@@ -519,12 +524,12 @@ public class BinInfo {
     public static void Matrix880(byte[] buffer){
     	byte[] tmp= new byte[110];
     	Debug.d(TAG, "===>Matrix880 : buffer len:"+buffer.length);
-    	for(int i = 0; i< buffer.length/(Configs.gDots/8); i++){
-    		for(int j = 0; j< Configs.gDots/(2*8); j++){
+    	for(int i=0; i< buffer.length/(Configs.gDots/8); i++){
+    		for(int j=0; j<Configs.gDots/(2*8); j++){
     			tmp[2*j] = buffer[i*(Configs.gDots/8)+j];
-    			tmp[2*j+1] = buffer[i*(Configs.gDots/8)+j+55];
+    			tmp[2*j+1] = buffer[i*(Configs.gDots/8)+j+55]; 
     		}
-    		for(int j = 0; j< Configs.gDots/8; j++){
+    		for(int j=0; j<Configs.gDots/8; j++){
     			buffer[i*(Configs.gDots/8)+j] = tmp[j];
     		}
     	}
@@ -537,12 +542,12 @@ public class BinInfo {
     public static void Matrix880Revert(byte[] buffer) {
     	byte[] tmp= new byte[110];
     	Debug.d(TAG, "===>Matrix880Revert : buffer len:"+buffer.length);
-    	for(int i = 0; i< buffer.length/(Configs.gDots/8); i++){
-    		for(int j = 0; j< Configs.gDots/(2*8); j++){
+    	for(int i=0; i< buffer.length/(Configs.gDots/8); i++){
+    		for(int j=0; j<Configs.gDots/(2*8); j++){
     			tmp[j] = buffer[i*(Configs.gDots/8)+2*j];
-    			tmp[j+55] = buffer[i*(Configs.gDots/8)+2*j+1];
+    			tmp[j+55] = buffer[i*(Configs.gDots/8)+2*j+1]; 
     		}
-    		for(int j = 0; j< Configs.gDots/8; j++){
+    		for(int j=0; j<Configs.gDots/8; j++){
     			buffer[i*(Configs.gDots/8)+j] = tmp[j];
     		}
     	}
@@ -602,8 +607,7 @@ public class BinInfo {
 	 * big dot machine
 	 * extend buffer to 8 times filled with 0
 	 */
-	public void expendColumn(int extension, int slant) {
-
+	public void expendColumn(int extension) {
 
 		if (mTask == null || mTask.getNozzle() == null) {
 			return;
@@ -624,6 +628,4 @@ public class BinInfo {
 		columnExtension = extension;
 		mBufferChars = writer.toCharArray();
 	}
-
-
 }

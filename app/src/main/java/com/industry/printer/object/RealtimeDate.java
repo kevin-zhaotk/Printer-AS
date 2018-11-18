@@ -1,15 +1,20 @@
 package com.industry.printer.object;
 
+import java.util.Calendar;
+
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.cache.FontCache;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.Paint.FontMetrics;
+import android.os.SystemClock;
 import android.text.format.Time;
-
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.cache.FontCache;
 
 public class RealtimeDate extends BaseObject {
 
@@ -66,7 +71,7 @@ public class RealtimeDate extends BaseObject {
 				.append(BaseObject.boolToFormatString(mDragable, 3))
 				.append("^")
 				.append("000^000^000^000^000^")
-				.append(mParent == null? "00000": BaseObject.intToFormatString(mParent.getOffset(), 5))
+				.append(mParent == null? "00000":BaseObject.intToFormatString(mParent.getOffset(), 5))
 				.append("^")
 				.append("00000000^00000000^00000000^0000^0000^")
 				.append(mFont)
@@ -94,7 +99,7 @@ public class RealtimeDate extends BaseObject {
 	{ 
 	}
 //////addbylk 
-	@Override
+	@Override	 
 	public Bitmap getpreviewbmp()
 	{		Debug.e(TAG, "===========--->content: " + getContent() );	
 		Bitmap bitmap;
@@ -143,7 +148,7 @@ public class RealtimeDate extends BaseObject {
 
 		mCan.drawText(str_new_content , 0, mHeight-fm.descent, mPaint);
 	
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);	
 	}	
 	
 }

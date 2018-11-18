@@ -1,29 +1,52 @@
 package com.industry.printer.Socket_Server;
 
-import android.app.Activity;
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.TextView;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.industry.printer.R;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
-public class Adapter_Net_Scan extends BaseAdapter {
+
+
+
+public class Adapter_Net_Scan extends BaseAdapter{
 	
 	Activity mConext;
 	private final LayoutInflater layoutFlater;
 	private List<HashMap<String, Object>> list;
 	
-	public Adapter_Net_Scan(Activity context, List<HashMap<String, Object>> mList){
+	public Adapter_Net_Scan(Activity context,List<HashMap<String, Object>> mList){
 		mConext = context;
 		layoutFlater = (LayoutInflater) mConext
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

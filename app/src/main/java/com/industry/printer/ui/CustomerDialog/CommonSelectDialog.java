@@ -1,21 +1,31 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.jar.Attributes.Name;
+
+import com.industry.printer.R;
+import com.industry.printer.Utils.Debug;
+
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
-
-import com.industry.printer.R;
 
 public class CommonSelectDialog extends Dialog implements android.view.View.OnClickListener, OnItemClickListener {
 

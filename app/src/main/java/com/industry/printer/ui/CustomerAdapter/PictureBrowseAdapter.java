@@ -1,20 +1,27 @@
 package com.industry.printer.ui.CustomerAdapter;
 
-import android.content.Context;
-import android.net.Uri;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import com.industry.printer.R;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.ui.Items.PictureItem;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import android.content.Context;
+import android.content.ClipData.Item;
+import android.graphics.Color;
+import android.net.Uri;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 public class PictureBrowseAdapter extends BaseAdapter {
 
@@ -29,8 +36,8 @@ public class PictureBrowseAdapter extends BaseAdapter {
 	private ViewHolder	mHolder;
 	
 	private class ViewHolder {
-		ImageView mImg;
-		TextView mTitle;
+		ImageView 	mImg;
+		TextView	mTitle;
 	}
 	
 	public PictureBrowseAdapter(Context context) {

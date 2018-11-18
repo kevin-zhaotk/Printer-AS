@@ -121,8 +121,32 @@
 		        android:textColor="#000000"
 		        android:text="@string/str_setting_upgrade" 
 			    />
-	    </RelativeLayout> 
-	    <RelativeLayout
+	    </RelativeLayout>
+
+		<RelativeLayout
+			android:id="@+id/btn_setting_clean"
+			android:layout_width="0dp"
+			android:layout_height="80dp"
+			android:layout_weight="1"
+			>
+			<ImageView
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:src="@drawable/style_setting_btn"
+				/>
+			<TextView
+				android:id="@+id/btn_clean"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:gravity="center"
+				android:textSize="@dimen/settingsBtnsize"
+				android:textColor="#000000"
+				android:text="@string/str_setting_clean"
+				/>
+		</RelativeLayout>
+
+
+		<RelativeLayout
 		    android:id="@+id/btn_setting_timeset" 
 		    android:layout_width="0dp"
 	        android:layout_height="80dp"

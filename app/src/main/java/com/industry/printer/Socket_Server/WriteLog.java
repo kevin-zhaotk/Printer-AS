@@ -1,15 +1,16 @@
 package com.industry.printer.Socket_Server;
 
-import android.content.Context;
-import android.os.Environment;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.TimeZone;
+
+import android.content.Context;
+import android.os.Environment;
 
 /*
  * 写日志类
@@ -24,7 +25,7 @@ public WriteLog(Context context)
 	this.context=context;
 
 }
-public static void recordLog(String LogDataStr) {
+public static void recordLog(String LogDataStr) {  
 	  
 
 
@@ -44,34 +45,34 @@ public static void recordLog(String LogDataStr) {
 	            }*/  
 
 
-	           File saveFile = new File(savaInfoToSD());
+	           File saveFile = new File(savaInfoToSD());  
 	            if (!saveType && saveFile.exists()) {  
 	               saveFile.delete();  
 	                saveFile.createNewFile();  
 	                // 保存结果到文件  
-	                OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(saveFile),"gbk");
-	                BufferedWriter writer=new BufferedWriter(write);
+	                OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(saveFile),"gbk");      
+	                BufferedWriter writer=new BufferedWriter(write);          
 	                writer.write(LogDataStr);      
 	                writer.close();   
 ;
 		            
 	            } else if (saveType && saveFile.exists()) {  
 	                //saveFile.createNewFile();  
-	            	 OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(saveFile),"gbk");
-		                BufferedWriter writer=new BufferedWriter(write);
+	            	 OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(saveFile),"gbk");      
+		                BufferedWriter writer=new BufferedWriter(write);          
 		                writer.write(LogDataStr);      
 		                writer.close();
 	            }else if (saveType && !saveFile.exists()) {  
 	                saveFile.createNewFile();  
-	                OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(saveFile),"gbk");
-	                BufferedWriter writer=new BufferedWriter(write);
+	                OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(saveFile),"gbk");      
+	                BufferedWriter writer=new BufferedWriter(write);          
 	                writer.write(LogDataStr);      
 	                writer.close();;
 	            }  
 	  
 	  
 	  
-	        } catch (Exception e) {
+	        } catch (Exception e) {  
 	            //recordLog(savePathStr, saveFileNameS, saveDataStr, saveTypeStr);  
 	              
 	            e.printStackTrace();  

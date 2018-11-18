@@ -33,7 +33,7 @@ public class MessageObject extends BaseObject {
 			"7x6" , "16x12", "32 Dots"
 	};
 	
-	public MessageObject(Context context, float x) {
+	public MessageObject(Context context,  float x) {
 		super(context, BaseObject.OBJECT_TYPE_MsgName, x);
 		//mIndex = index;
 		Debug.d(TAG, "--->MessageObject: " + context.getResources());
@@ -206,13 +206,13 @@ public class MessageObject extends BaseObject {
 		Debug.d(TAG, "--->getDisplayFSList mPNozzle.mType = " + mPNozzle.mType);
 		if (mPNozzle.mType == MessageType.MESSAGE_TYPE_12_7 || mPNozzle.mType == MessageType.MESSAGE_TYPE_12_7_S) { //single
 			for (int i = 0; i < size.length; i++) {
-				size[i] = String.valueOf(mBaseList[i]);
+				size[i] = String.valueOf(mBaseList[i]); 
 			}
 		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_25_4 || mPNozzle.mType == MessageType.MESSAGE_TYPE_33
 				|| mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH
 				|| mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH_FAST) { //dual
 			for (int i = 0; i < size.length; i++) {
-				size[i] = String.valueOf(mBaseList[i] * 2);
+				size[i] = String.valueOf(mBaseList[i] * 2); 
 			}
 		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_38_1) {// triple
 			for (int i = 0; i < size.length; i++) {

@@ -1,12 +1,12 @@
 package com.industry.printer.Socket_Server;
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
+import java.util.List;
 
 import com.industry.printer.Socket_Server.LinearLayoutViews.MNotifyDataSetChangedIF;
 
-import java.util.List;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
 
 public abstract class LinearLayoutBaseAdapter {
     private List<? extends Object> list;

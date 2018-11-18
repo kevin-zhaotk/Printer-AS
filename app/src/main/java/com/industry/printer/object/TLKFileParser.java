@@ -1,16 +1,5 @@
 package com.industry.printer.object;
 
-import android.content.Context;
-
-import com.industry.printer.FileFormat.SystemConfigFile;
-import com.industry.printer.FileFormat.TlkFile;
-import com.industry.printer.MessageTask;
-import com.industry.printer.MessageTask.MessageType;
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.StringUtil;
-import com.industry.printer.exception.PermissionDeniedException;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,9 +8,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.Buffer;
 import java.util.ArrayList;
+import java.util.Vector;
 
-public class TLKFileParser  extends TlkFile {
+import com.industry.printer.EditTabActivity;
+import com.industry.printer.MessageTask;
+import com.industry.printer.MessageTask.MessageType;
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.FileFormat.TlkFile;
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.StringUtil;
+import com.industry.printer.exception.PermissionDeniedException;
+import com.industry.printer.object.BaseObject;
+import com.industry.printer.object.LetterHourObject;
+
+import android.R.bool;
+import android.R.integer;
+import android.content.Context;
+import android.util.Log;
+
+public class TLKFileParser  extends TlkFile{
 	
 	public static final String TAG="TLKFileParser";
 	
@@ -115,7 +124,7 @@ public class TLKFileParser  extends TlkFile {
 		}
 		Debug.e(TAG, "==========>begin parse tlk");
 		try{
-			 InputStream instream = new FileInputStream(file);
+			 InputStream instream = new FileInputStream(file); 
 			 if(instream != null)
 			 {
 				 InputStreamReader inputreader = new InputStreamReader(instream,"UTF-8");
@@ -173,18 +182,18 @@ public class TLKFileParser  extends TlkFile {
 		if (StringUtil.isEmpty(str)) {
 			return;
 		}
-		String[] attr = str.split("\\^",0);
+		String [] attr = str.split("\\^",0);
 		if (attr == null || attr.length != 22) {
 			return ;
 		}
 		object.setIndex(StringUtil.parseInt(attr[0]));
 		if (object instanceof TextObject) {
 			object.setX(StringUtil.parseInt(attr[2])/(2*mProportion));
-			object.setWidth(StringUtil.parseInt(attr[4])/(2 * mProportion)- StringUtil.parseInt(attr[2])/(2 * mProportion));
+			object.setWidth(StringUtil.parseInt(attr[4])/(2 * mProportion)-StringUtil.parseInt(attr[2])/(2 * mProportion));
 		} else {
 			Debug.d(TAG, "--->x = " + (StringUtil.parseInt(attr[2]) / mProportion));
 			object.setX(StringUtil.parseInt(attr[2]) / mProportion);
-			object.setWidth(StringUtil.parseInt(attr[4])/mProportion- StringUtil.parseInt(attr[2])/mProportion);
+			object.setWidth(StringUtil.parseInt(attr[4])/mProportion-StringUtil.parseInt(attr[2])/mProportion);
 			Debug.d(TAG, "--->xEnd = " + object.getXEnd());
 		}
 		
@@ -194,7 +203,7 @@ public class TLKFileParser  extends TlkFile {
 	{
 		Debug.d(TAG, "*************************");
 		BaseObject obj = null;
-		String[] attr = str.split("\\^",0);
+		String [] attr = str.split("\\^",0);
 		if (attr == null || attr.length != 22) {
 			return null;
 		}
@@ -332,17 +341,17 @@ public class TLKFileParser  extends TlkFile {
 					obj instanceof WeekDayObject)
 			{
 				obj.setX(StringUtil.parseInt(attr[2])/mProportion);
-				obj.setWidth(StringUtil.parseInt(attr[4])/mProportion- StringUtil.parseInt(attr[2])/mProportion);
+				obj.setWidth(StringUtil.parseInt(attr[4])/mProportion-StringUtil.parseInt(attr[2])/mProportion);
 			}
 			else
 			{
 				obj.setX(StringUtil.parseInt(attr[2])/(2*mProportion));
-				obj.setWidth(StringUtil.parseInt(attr[4])/(2*mProportion)- StringUtil.parseInt(attr[2])/(2*mProportion));
+				obj.setWidth(StringUtil.parseInt(attr[4])/(2*mProportion)-StringUtil.parseInt(attr[2])/(2*mProportion));
 			}
 			
 			obj.setY(StringUtil.parseInt(attr[3])/(2*mProportion));
 			
-			obj.setHeight(StringUtil.parseInt(attr[5])/(2*mProportion)- StringUtil.parseInt(attr[3])/(2*mProportion));
+			obj.setHeight(StringUtil.parseInt(attr[5])/(2*mProportion)-StringUtil.parseInt(attr[3])/(2*mProportion));
 			obj.setDragable(Boolean.parseBoolean(attr[7]));
 			Debug.d(TAG, "--->attr[111] = " + attr[11]);
 			obj.setReverse(StringUtil.parseBool(attr[11]));
@@ -452,7 +461,7 @@ public class TLKFileParser  extends TlkFile {
 				break;
 		}
 		Debug.d(TAG, "--->setDotsPerClm dots = " + dots);
-		mProportion = dots/ Configs.gDots;
+		mProportion = dots/Configs.gDots;
 		if (type == MessageType.MESSAGE_TYPE_1_INCH || type == MessageType.MESSAGE_TYPE_1_INCH_FAST ) {
 			mProportion = 1f;
 		} else if (type == MessageType.MESSAGE_TYPE_1_INCH_DUAL || type == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST) {

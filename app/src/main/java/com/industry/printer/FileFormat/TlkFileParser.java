@@ -1,14 +1,21 @@
 package com.industry.printer.FileFormat;
 
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.object.TlkObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Vector;
+
+import android.graphics.Bitmap.Config;
+
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.object.TlkObject;
 
 public class TlkFileParser {
 

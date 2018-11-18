@@ -1,15 +1,14 @@
 package com.industry.printer.object;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-
-import com.industry.printer.Utils.Debug;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import com.industry.printer.Utils.Debug;
+
+import android.content.Context;
+import android.graphics.Bitmap;
 
 public class ShiftObject extends BaseObject {
 	public final String TAG="ShiftObject";
@@ -183,7 +182,7 @@ public class ShiftObject extends BaseObject {
 	
 	
 	public boolean checkNum(String args){
-		Pattern p= Pattern.compile("^[0-9]*");
+		Pattern p=Pattern.compile("^[0-9]*"); 
 		Matcher m=p.matcher(args);
 		if(m.matches())
 		return true;

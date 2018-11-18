@@ -1,11 +1,11 @@
 package com.industry.printer;
 
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.hardware.SerialController;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.hardware.SerialController;
 
 public class SerialService extends Service {
 
@@ -20,20 +20,20 @@ public class SerialService extends Service {
 		return null;
 	}
 
-	@Override
+	@Override  
     public void onCreate() {  
         Debug.d(TAG, "ServiceDemo onCreate");  
         super.onCreate();  
     }  
       
-    @Override
-    public void onStart(Intent intent, int startId) {
+    @Override  
+    public void onStart(Intent intent, int startId) {  
         Debug.d(TAG, "ServiceDemo onStart");  
         super.onStart(intent, startId);  
     }  
       
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    @Override  
+    public int onStartCommand(Intent intent, int flags, int startId) {  
         Debug.d(TAG, "ServiceDemo onStartCommand");  
         return super.onStartCommand(intent, flags, startId);  
     }

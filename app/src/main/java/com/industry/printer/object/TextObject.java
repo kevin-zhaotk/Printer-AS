@@ -1,13 +1,15 @@
 package com.industry.printer.object;
 
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.cache.FontCache;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.Paint.FontMetrics;
-
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.cache.FontCache;
 
 public class TextObject extends BaseObject {
 
@@ -57,7 +59,7 @@ public class TextObject extends BaseObject {
 		return str;
 	}
 //////addbylk 
-	@Override
+	@Override	 
 	public Bitmap getpreviewbmp()
 	{	Debug.e(TAG, "1===== " + getContent() );
 		Bitmap bitmap;
@@ -96,6 +98,6 @@ public class TextObject extends BaseObject {
 				
 		mCan.drawText(mContent , 0, mHeight-fm.descent, mPaint);
 	
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);	
 	}	
 }

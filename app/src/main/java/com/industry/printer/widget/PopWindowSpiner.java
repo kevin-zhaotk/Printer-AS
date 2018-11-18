@@ -1,5 +1,12 @@
 package com.industry.printer.widget;
 
+import java.util.ArrayList;
+
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter;
+import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
+import com.industry.printer.R;
+
 import android.app.ActionBar.LayoutParams;
 import android.content.Context;
 import android.view.Gravity;
@@ -13,13 +20,6 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.industry.printer.R;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter;
-import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
-
-import java.util.ArrayList;
-
 public class PopWindowSpiner extends PopupWindow implements OnItemClickListener, OnClickListener {
 
 	private final String TAG = PopWindowSpiner.class.getSimpleName();
@@ -29,8 +29,8 @@ public class PopWindowSpiner extends PopupWindow implements OnItemClickListener,
 	public IOnItemClickListener mItemClickListener;
 	
 	private TextView mView;
-	private Button mUp;
-	private Button mDown;
+	private Button	mUp;
+	private Button	mDown;
 	
 	public PopWindowSpiner(Context context) {
 		super(context);
@@ -81,7 +81,7 @@ public class PopWindowSpiner extends PopupWindow implements OnItemClickListener,
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
+			long id) {
 		Debug.d(TAG, "--->onItemclick");
 		if (isShowing()) {
 			dismiss();

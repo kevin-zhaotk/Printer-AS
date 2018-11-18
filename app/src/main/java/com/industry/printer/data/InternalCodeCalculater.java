@@ -1,9 +1,11 @@
 package com.industry.printer.data;
 
-import com.industry.printer.Utils.Debug;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
+
+import android.database.CharArrayBuffer;
+
+import com.industry.printer.Utils.Debug;
 
 public class InternalCodeCalculater {
 	
@@ -22,7 +24,7 @@ public class InternalCodeCalculater {
 			utf8 = value.getBytes("GB2312");
 			Debug.d("", "--->utf8<---");
 			for (int i = 0; i < utf8.length; i++) {
-				Debug.d("", ""+ Integer.toHexString(utf8[i]&0x0ff));
+				Debug.d("", ""+Integer.toHexString(utf8[i]&0x0ff));
 			}
 			Debug.d("", "--->utf8<---");
 		} catch (UnsupportedEncodingException e1) {
@@ -47,11 +49,11 @@ public class InternalCodeCalculater {
 		CharBuffer buffer = CharBuffer.allocate(code.length);
 		for (int i = 0; i < code.length; i++) {
 			if ((code[i]&0x0ff) > 0xA0 && (i+1) < code.length) {
-				Debug.d("", "--->code:"+ Integer.toHexString(code[i]<<8));
+				Debug.d("", "--->code:"+Integer.toHexString(code[i]<<8));
 				char qu = (char) (((code[i]&0x00ff) - 0xA0)<<8 );
 				char wei = (char) ((code[i+1] & 0x00ff) - 0xA0);
 				char c = (char) (qu + wei);
-				Debug.d("", "--->gbCode:"+ Integer.toHexString(c));
+				Debug.d("", "--->gbCode:"+Integer.toHexString(c));
 				buffer.append(c);
 				i++;
 			} else if ((code[i]&0x0ff) < 0xA0) {

@@ -1,15 +1,16 @@
 package com.industry.printer;
 
+import com.industry.printer.ui.CustomerAdapter.SettingsListAdapter;
+
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-
-import com.industry.printer.ui.CustomerAdapter.SettingsListAdapter;
 
 public class SettingsFragment extends Fragment {
 	
@@ -22,8 +23,8 @@ public class SettingsFragment extends Fragment {
 	public SettingsFragment(Context context) {
 		mContext = context;
 	}
-	@Override
-    public void onCreate(Bundle savedInstanceState)
+	@Override  
+    public void onCreate(Bundle savedInstanceState)  
     {  
         super.onCreate(savedInstanceState);  
     }

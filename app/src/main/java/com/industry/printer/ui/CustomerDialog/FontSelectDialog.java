@@ -1,5 +1,19 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.jar.Attributes.Name;
+
+import com.industry.printer.R;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.FileUtil;
+import com.industry.printer.cache.FontCache;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -7,27 +21,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.industry.printer.R;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.cache.FontCache;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class FontSelectDialog extends Dialog implements android.view.View.OnClickListener, OnItemClickListener {
 
-	private static final String TAG = FontSelectDialog.class.getSimpleName();
+	private static final String TAG = FontSelectDialog.class.getSimpleName(); 
 	private Context mContext;
 	private GridView mFontlist;
 	private FontItemAdapter mAdapter;

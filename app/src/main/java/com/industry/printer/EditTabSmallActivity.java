@@ -1,10 +1,22 @@
 package com.industry.printer;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.YuvImage;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.renderscript.BaseObj;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,6 +35,7 @@ import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
@@ -54,10 +67,6 @@ import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog.onDeleteListener;
 import com.industry.printer.ui.CustomerDialog.ObjectInsertDialog;
 import com.industry.printer.ui.MessageDisplayManager;
 import com.industry.printer.widget.PopWindowSpiner;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EditTabSmallActivity extends Fragment implements OnClickListener, OnTouchListener {
 	public static final String TAG="EditTabSmallActivity";
@@ -95,17 +104,17 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 	/************************
 	 * create Object buttons
 	 * **********************/
-	private ImageButton mBtnText;
-	private ImageButton mBtnCnt;
-	private ImageButton mBtnBar;
-	private ImageButton mImage;
-	private ImageButton mBtnDay;
-	private ImageButton mBtnTime;
-	private ImageButton mBtnLine;
-	private ImageButton mBtnRect;
-	private ImageButton mBtnEllipse;
-	private ImageButton mShift;
-	private ImageButton mScnd;
+	private ImageButton 	mBtnText;
+	private ImageButton 	mBtnCnt;
+	private ImageButton 	mBtnBar;
+	private ImageButton	mImage;
+	private ImageButton 	mBtnDay;
+	private ImageButton 	mBtnTime;
+	private ImageButton 	mBtnLine;
+	private ImageButton 	mBtnRect;
+	private ImageButton 	mBtnEllipse;
+	private ImageButton	mShift;
+	private ImageButton	mScnd;
 	
 	/********************************
 	 * when configure changed
@@ -521,13 +530,13 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 					dismissProgressDialog();
             		break;
             	case HANDLER_MESSAGE_SAVEAS:		//saveas
-            		Debug.d(TAG, "save as file="+ MessageSaveDialog.getTitle());
+            		Debug.d(TAG, "save as file="+MessageSaveDialog.getTitle());
             		mObjName = MessageSaveDialog.getTitle();
             		createfile=true;
                     saveAndPrint = msg.getData().getBoolean("saveAndPrint", false);
             		if (checkMsg(mObjName)) {
             			ConfirmDialog dialog = new ConfirmDialog(mContext, String.format(getString(R.string.str_message_tips), mObjName));
-            			dialog.setListener(new DialogListener(){
+            			dialog.setListener(new DialogListener (){
             				@Override
             				public void onConfirm() {
             					mHandler.sendEmptyMessage(HANDLER_MESSAGE_SAVE_CONFIRM);
@@ -845,7 +854,7 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 
                 @Override
                 public void onSaveAndPrint() {
-                    Message message = mHandler.obtainMessage(HANDLER_MESSAGE_SAVE);
+                    Message  message = mHandler.obtainMessage(HANDLER_MESSAGE_SAVE);
                     Bundle bundle = new Bundle();
                     bundle.putBoolean("saveAndPrint", true);
                     message.setData(bundle);
@@ -876,7 +885,7 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		dialog.setOnExtraClickedListener(new CustomerDialogBase.OnExtraListener() {
             @Override
             public void onClick() {
-                Message message = mHandler.obtainMessage(HANDLER_MESSAGE_SAVEAS);
+                Message  message = mHandler.obtainMessage(HANDLER_MESSAGE_SAVEAS);
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("saveAndPrint", true);
                 message.setData(bundle);

@@ -1,9 +1,36 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import com.industry.printer.R;
+import com.industry.printer.FileFormat.FilenameSuffixFilter;
+import com.industry.printer.R.drawable;
+import com.industry.printer.R.id;
+import com.industry.printer.R.layout;
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.ToastUtil;
+import com.industry.printer.data.BinCreater;
+import com.industry.printer.ui.CustomerAdapter.ListViewButtonAdapter;
+
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.View;
+import android.view.View.OnDragListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -13,20 +40,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
-
-import com.industry.printer.FileFormat.FilenameSuffixFilter;
-import com.industry.printer.R;
-import com.industry.printer.Utils.ConfigPath;
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.ToastUtil;
-import com.industry.printer.ui.CustomerAdapter.ListViewButtonAdapter;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class FileBrowserDialog extends CustomerDialogBase {
 	public static final String TAG="FileBrowserDialog";
@@ -106,7 +122,7 @@ public class FileBrowserDialog extends CustomerDialogBase {
 	 * FileBrowserDialog - construct function
 	 * @param context
 	 */
-	public FileBrowserDialog(Context context, int flag) {
+	public FileBrowserDialog(Context context,int flag) {
 		super(context);
 		// TODO Auto-generated constructor stub
 		
@@ -120,15 +136,15 @@ public class FileBrowserDialog extends CustomerDialogBase {
 		*/
 		mFileAdapter = new ListViewButtonAdapter(context, 
 				mContent, 
-				R.layout.file_browser,
-				new String[]{"icon", "name", "operation"},
+				R.layout.file_browser, 
+				new String[]{"icon", "name", "operation"}, 
 				new int[]{R.id.file_icon, R.id.file_name, R.id.file_operation});
 		//mCurPath="/storage/external_storage/sda1";
 		mCurPath =Configs.LOCAL_ROOT_PATH;
 		mSuffix = null;
 		mFlag = flag;
 	}
-
+	
 	/**
 	 * FileBrowserDialog - construct function
 	 * @param context
@@ -139,7 +155,7 @@ public class FileBrowserDialog extends CustomerDialogBase {
 		this(context,flag);
 		mCurPath = path;
 	}
-
+	
 	/**
 	 * FileBrowserDialog - construct function with path & suffix
 	 * @param context
@@ -175,12 +191,12 @@ public class FileBrowserDialog extends CustomerDialogBase {
 					if(pListener != null)
 						pListener.onClick();
 				}
-
+	        	
 	        });
-
+	        
 	        mCancel = (Button) findViewById(R.id.dialog_cancel);
 	        mCancel.setOnClickListener(new View.OnClickListener() {
-
+				
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
@@ -190,18 +206,18 @@ public class FileBrowserDialog extends CustomerDialogBase {
 						nListener.onClick();
 				}
 			});
-
+	        
 	        mName = (EditText) findViewById(R.id.name_input);
 	        //mName.setVisibility(View.INVISIBLE);
 	        if(mFlag == FLAG_OPEN_FILE)
 	        	mName.setVisibility(View.GONE);
 	        mFileList =(ListView) findViewById(R.id.file_list);
-
+	        
 	        mFileList.setOnItemClickListener(new OnItemClickListener(){
 
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
+						int position, long id) {
 					// TODO Auto-generated method stub
 					/*modify the background color when item clicked*/
 					if(mVSelected == null)
@@ -224,13 +240,13 @@ public class FileBrowserDialog extends CustomerDialogBase {
 						fileOpen(item);
 					}
 				}
-
+	        	
 	        });
-
+	        
 	        ArrayList<String> paths = ConfigPath.getMountedUsb();
 	        mUsbStorage = (RadioButton) findViewById(R.id.radio_usb1);
 	        mUsbStorage.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
+				
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					// TODO Auto-generated method stub
@@ -240,14 +256,14 @@ public class FileBrowserDialog extends CustomerDialogBase {
 						mCurPath = Configs.USB_ROOT_PATH;
 						fileOpen(new File(mCurPath));
 					}
-
+					
 				}
 			});
-
-
+	        
+	        
 	        mUsbStorage2 = (RadioButton) findViewById(R.id.radio_usb2);
 	        mUsbStorage2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
+				
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					// TODO Auto-generated method stub
@@ -270,12 +286,12 @@ public class FileBrowserDialog extends CustomerDialogBase {
 		        	}
 		        }
 			}
-
+	        
 	        Debug.d(TAG, "===>onCreate 1");
 	        fileOpen(new File(mCurPath));
 //	        mSDCard = (RadioButton) findViewById(R.id.radio_sdcard);
 //	        mSDCard.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-//
+//				
 //				@Override
 //				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 //					// TODO Auto-generated method stub
@@ -287,9 +303,9 @@ public class FileBrowserDialog extends CustomerDialogBase {
 //					}
 //				}
 //			});
-//
+//	        
 	 }
-
+	 
 	 /**
 	  * fileOpen - open the given file path
 	  * @param file
@@ -299,7 +315,7 @@ public class FileBrowserDialog extends CustomerDialogBase {
 		 //mPath.setText(mCurPath);
 		 mContent.clear();
 		 Debug.d(TAG, ""+file.getPath()+", exists = "+file.exists());
-		 File[] files;
+		 File [] files;
 		 if(mSuffix == null)
 		 {
 			 Debug.d(TAG, "suffix is null");
@@ -315,7 +331,7 @@ public class FileBrowserDialog extends CustomerDialogBase {
 			return;
 		 }
 		 //Debug.d(TAG, "files ="+files);
-
+		 
 		 if(!Configs.isRootpath(file.getPath()))
 		 {
 			 Map<String, Object> m = new HashMap<String, Object>();
@@ -330,7 +346,7 @@ public class FileBrowserDialog extends CustomerDialogBase {
 			 Debug.d(TAG,"file name="+files[i].toString());
 			 Map<String, Object> map = new HashMap<String, Object>();
 			 if(files[i].isDirectory())
-			 {
+			 {				 
 				 map.put("icon", R.drawable.icon_directory);
 			 }
 			 if(files[i].isFile())

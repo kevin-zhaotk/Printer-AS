@@ -3,6 +3,8 @@ package com.industry.printer.FileFormat;
 import java.io.File;
 import java.io.FilenameFilter;
 
+import com.industry.printer.Utils.Debug;
+
 public class FilenameSuffixFilter implements FilenameFilter {
 
 	public static final String TLK_SUFFIX=".tlk";

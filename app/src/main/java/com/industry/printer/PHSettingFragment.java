@@ -1,5 +1,15 @@
 package com.industry.printer;
 
+import java.util.Collection;
+import java.util.MissingResourceException;
+
+import com.industry.printer.R.string;
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter;
+import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
+import com.industry.printer.widget.PopWindowSpiner;
+
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -9,20 +19,18 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.industry.printer.FileFormat.SystemConfigFile;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter;
-import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
-import com.industry.printer.widget.PopWindowSpiner;
+import android.widget.Toast;
 
 public class PHSettingFragment extends Fragment implements OnItemSelectedListener, OnClickListener, IOnItemClickListener {
 	
@@ -104,8 +112,8 @@ public class PHSettingFragment extends Fragment implements OnItemSelectedListene
 	public PHSettingFragment(Context context) {
 		mContext = context;
 	}
-	@Override
-    public void onCreate(Bundle savedInstanceState)
+	@Override  
+    public void onCreate(Bundle savedInstanceState)  
     {  
         super.onCreate(savedInstanceState);  
     }
@@ -131,7 +139,7 @@ public class PHSettingFragment extends Fragment implements OnItemSelectedListene
 		
 		mSpiner = new PopWindowSpiner(getActivity());
 		mEncoderAdapter = new PopWindowAdapter(getActivity(), null);
-		String[] items = getResources().getStringArray(R.array.encoder_item_entries);
+		String[] items = getResources().getStringArray(R.array.encoder_item_entries); 
 		// ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item, R.id.textView_id, items);
 		for (int i = 0; i < items.length; i++) {
 			mEncoderAdapter.addItem(items[i]);
@@ -397,7 +405,7 @@ public class PHSettingFragment extends Fragment implements OnItemSelectedListene
 		
 		Debug.d(TAG, "--->onActivityCreated 384");
 		
-		mImm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+		mImm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE); 
 	}
 	
 	@Override
@@ -414,7 +422,7 @@ public class PHSettingFragment extends Fragment implements OnItemSelectedListene
 	
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
-                               long id) {
+			long id) {
 		switch (view.getId()) {
 			case R.id.ph_set_encoder_value:
 				mSysconfig.setParam(0, getEncoderIndex(mEncoder.getText().toString()));
@@ -460,7 +468,7 @@ public class PHSettingFragment extends Fragment implements OnItemSelectedListene
 	private static final int PRINTER_SETTINGS_CHANGED = 1;
 	private Handler mHandler = new Handler() {
 		
-		public void handleMessage(Message msg) {
+		public void handleMessage(Message msg) { 
 			switch (msg.what) {
 			case PRINTER_SETTINGS_CHANGED:
 				mSysconfig.saveConfig();
@@ -614,7 +622,7 @@ public class PHSettingFragment extends Fragment implements OnItemSelectedListene
 		}
 		@Override
 		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                      int arg3) {
+				int arg3) {
 			// TODO Auto-generated method stub
 			
 		}

@@ -1,5 +1,20 @@
 package com.industry.printer.ui.CustomerAdapter;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import com.industry.printer.R;
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
+import com.industry.printer.ui.CustomerDialog.HeaderSelectDialog;
+import com.industry.printer.ui.CustomerDialog.NewMessageDialog;
+import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
+import com.industry.printer.widget.PopWindowSpiner;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -11,17 +26,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.industry.printer.FileFormat.SystemConfigFile;
-import com.industry.printer.R;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
-import com.industry.printer.ui.CustomerDialog.HeaderSelectDialog;
-import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
-import com.industry.printer.widget.PopWindowSpiner;
-
-import java.util.HashMap;
+import android.widget.Toast;
 
 public class SettingsListAdapter extends BaseAdapter implements OnClickListener, IOnItemClickListener {
 
@@ -74,15 +81,15 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	 * @author zhaotongkai
 	 */
 	private class ItemViewHolder{
-		public TextView mTitleL;		//message title
-		public TextView mValueLTv;
-		public EditText mValueLEt;
-		public TextView mUnitL;
+		public TextView	mTitleL;		//message title
+		public TextView	mValueLTv;
+		public EditText	mValueLEt;
+		public TextView	mUnitL;
 		
-		public TextView mTitleR;		//message title
-		public TextView mValueRTv;
-		public EditText mValueREt;
-		public TextView mUnitR;
+		public TextView	mTitleR;		//message title
+		public TextView	mValueRTv;
+		public EditText	mValueREt;
+		public TextView	mUnitR;
 	}
 	
 	private class ItemType {
@@ -402,7 +409,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSpiner.setFocusable(true);
 		mSpiner.setOnItemClickListener(this);
 		
-		String[] items = mContext.getResources().getStringArray(R.array.switch_item_entries);
+		String[] items = mContext.getResources().getStringArray(R.array.switch_item_entries); 
 		// ArrayAdapter<String> adapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item, R.id.textView_id, items);
 		for (int i = 0; i < items.length; i++) {
 			mEncoderAdapter.addItem(items[i]);
@@ -489,7 +496,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mDots.addItem(items[i]);
 		}
 	}
-	private String getEntry(int id, int index) {
+	private String getEntry(int id,int index) {
 		String entries[] = mContext.getResources().getStringArray(id);
 		// Debug.d(TAG, "--->getEncoder:entries[" + index + "]=" + entries[index]);
 		if (entries == null || entries.length <= 0) {
@@ -642,7 +649,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		}
 		@Override
 		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                      int arg3) {
+				int arg3) {
 			// TODO Auto-generated method stub
 			
 		}

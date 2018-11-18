@@ -29,7 +29,7 @@ public class PrinterDBHelper extends SQLiteOpenHelper {
 	}
 	
 	public PrinterDBHelper(Context context, String name, CursorFactory factory,
-                           int version) {
+			int version) {
 		super(context, name, factory, version);
 	}
 	
@@ -75,7 +75,7 @@ public class PrinterDBHelper extends SQLiteOpenHelper {
 	
 	public int getCount(Context context) {
 		SQLiteDatabase db = this.getReadableDatabase();
-		String[] columns = {"value"};
+		String[] columns = {"value"}; 
 		Cursor cursor = db.query(TABLE_COUNT_NAME, columns, null, null, null, null, null);
 		Debug.d("", "===>" + cursor.getColumnIndex("value"));
 		cursor.getColumnIndex("value");
@@ -100,7 +100,7 @@ public class PrinterDBHelper extends SQLiteOpenHelper {
 	
 	public boolean getFirstBoot(Context context) {
 		SQLiteDatabase db = this.getReadableDatabase();
-		String[] columns = {"state"};
+		String[] columns = {"state"}; 
 		Cursor cursor = db.query(FIRST_BOOT_TABLE, columns, null, null, null, null, null);
 		cursor.getColumnIndex("state");
 		cursor.moveToFirst();

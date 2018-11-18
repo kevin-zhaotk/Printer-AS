@@ -1,16 +1,20 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import com.industry.printer.Utils.StringUtil;
+import com.industry.printer.Utils.ToastUtil;
+
+import rx.internal.util.atomic.MpscLinkedAtomicQueue;
+import android.R.string;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.industry.printer.R;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.StringUtil;
-import com.industry.printer.Utils.ToastUtil;
+import com.printer.corelib.Debug;
 
 public class PasswordDialog extends CustomerDialogBase implements View.OnClickListener {
 

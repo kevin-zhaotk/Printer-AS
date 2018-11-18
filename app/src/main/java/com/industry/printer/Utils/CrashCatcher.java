@@ -1,17 +1,20 @@
 package com.industry.printer.Utils;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
+import java.util.Calendar;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.industry.printer.DataTransferThread;
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.SettingsTabActivity;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.ArrayList;
-import java.util.Calendar;
 
 public class CrashCatcher implements UncaughtExceptionHandler {
 

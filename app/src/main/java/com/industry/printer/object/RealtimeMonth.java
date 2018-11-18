@@ -1,16 +1,21 @@
 package com.industry.printer.object;
 
+import java.util.Calendar;
+
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.cache.FontCache;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.Paint.FontMetrics;
+import android.os.SystemClock;
 import android.text.format.Time;
 import android.util.Log;
-
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.cache.FontCache;
 
 public class RealtimeMonth extends BaseObject {
 
@@ -88,7 +93,7 @@ public class RealtimeMonth extends BaseObject {
 		return str;
 	}
 //////addbylk 
-	@Override
+	@Override	 
 	public Bitmap getpreviewbmp()
 	{	Debug.d(TAG, "1===== " + getContent() );
 		Bitmap bitmap;
@@ -138,6 +143,6 @@ public class RealtimeMonth extends BaseObject {
 
 		mCan.drawText(str_new_content , 0, mHeight-fm.descent, mPaint);
 	
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);	
 	}	
 }

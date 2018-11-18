@@ -1,7 +1,34 @@
 package com.industry.printer.ui.CustomerDialog;
+ 
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+ 
 
 
+
+import com.industry.printer.R;
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.PlatformInfo;
+import com.industry.printer.Utils.StringUtil;
+import com.industry.printer.object.TLKFileParser;
+import com.industry.printer.ui.CustomerAdapter.ListViewButtonAdapter;
+import com.industry.printer.ui.CustomerAdapter.MessageListAdater;
+import com.industry.printer.ui.KZListView.KZListView;
+
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,28 +45,12 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.industry.printer.R;
-import com.industry.printer.Utils.ConfigPath;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.PlatformInfo;
-import com.industry.printer.Utils.StringUtil;
-import com.industry.printer.object.TLKFileParser;
-import com.industry.printer.ui.CustomerAdapter.MessageListAdater;
-import com.industry.printer.ui.KZListView.KZListView;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 public class MessageBrowserDialog extends CustomerDialogBase implements android.view.View.OnClickListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnTouchListener, OnScrollListener, TextWatcher {
 
@@ -246,7 +257,11 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 				break;
 			case R.id.btn_delete:
 				mFileAdapter.delete();
+				if (mMode) {
+					clearMultiSelect();
+				}
 				break;
+				
 			case R.id.btn_multi_select:
 				switchMultiSelect();
 
@@ -289,6 +304,15 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 				mVSelected = view;
 			}*/
 
+	}
+
+
+	private void clearMultiSelect() {
+		
+		mMode = false;
+		mTitles.clear();
+		mFileAdapter.setMode(mMode);
+		mFileAdapter.notifyDataSetChanged();
 	}
 
 	private void switchMultiSelect() {
@@ -596,13 +620,13 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 
 		@Override
 		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                      int arg3) {
+				int arg3) {
 			
 		}
 
 		@Override
 		public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                  int arg3) {
+				int arg3) {
 			
 		}
 		

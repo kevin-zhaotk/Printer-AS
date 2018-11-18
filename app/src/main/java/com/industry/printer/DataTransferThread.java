@@ -1,16 +1,30 @@
 package com.industry.printer;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import org.apache.http.impl.conn.IdleConnectionHandler;
+
+import android.R.bool;
+import android.R.color;
+import android.R.integer;
+import android.app.LauncherActivity;
+import android.app.PendingIntent.OnFinished;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 
+import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Rfid.RfidScheduler;
 import com.industry.printer.Rfid.RfidTask;
+import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.FileUtil;
+import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.data.BinCreater;
 import com.industry.printer.data.DataTask;
 import com.industry.printer.hardware.FpgaGpioOperation;
@@ -18,9 +32,6 @@ import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * class DataTransferThread
@@ -97,32 +108,101 @@ public class DataTransferThread {
 		return mIndex;
 	}
 	
+	boolean needRestore = false;
+	
 	public void purge(final Context context) {
+		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
+		final int head = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+		final boolean dotHd = (head == MessageType.MESSAGE_TYPE_16_DOT || head == MessageType.MESSAGE_TYPE_32_DOT);
+		
+		if (isRunning()) {
+			FpgaGpioOperation.uninit();
+			finish();
+			FpgaGpioOperation.clean();
+			needRestore = true;
+		}
+		
+		ThreadPoolManager.mThreads.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				DataTask task = new DataTask(context, null);
+				Debug.e(TAG, "--->task: " + task + "   dotHD: " + dotHd);
+				
+				String purgeFile = "purge/single.bin";
+				if (dotHd) {
+					purgeFile = "purge/bigdot.bin";
+				}
+				
+				char[] buffer = task.preparePurgeBuffer(purgeFile);
+				if (dotHd) {
+					purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
+					return;
+				}
+				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
+				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
+			
+				if (needRestore) {
+					launch(mContext);
+					needRestore = false;
+				}
+				
+			}
+		
+		});
+	}
+	
+	private void purge(Context context, DataTask task, char[] buffer, int purgeType) {
+		
+		Debug.e(TAG, "--->buffer len: " + buffer.length);
+		FpgaGpioOperation.updateSettings(context, task, purgeType);
+		FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		FpgaGpioOperation.clean();
+	}
+	
+	public void clean(final Context context) {
+		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
+		final int head = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
 		ThreadPoolManager.mThreads.execute(new Runnable() {
 			
 			@Override
 			public void run() {
 				DataTask task = new DataTask(context, null);
 				Debug.e(TAG, "--->task: " + task);
-				char[] buffer = task.preparePurgeBuffer();
-				Debug.e(TAG, "--->buffer len: " + buffer.length);
-				FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE1);
-				FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				String purgeFile = "purge/single.bin";
+				if (head == MessageType.MESSAGE_TYPE_16_DOT || head == MessageType.MESSAGE_TYPE_32_DOT) {
+					purgeFile = "purge/bigdot.bin";
 				}
-				FpgaGpioOperation.clean();
-				FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE2);
-				FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
-				try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				char[] buffer = task.preparePurgeBuffer(purgeFile);
+				
+				for (int i = 0; i < 20; i++) {
+					Debug.e(TAG, "--->buffer len: " + buffer.length);
+					
+					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE1);
+					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+					try {
+						Thread.sleep(3000 * 5);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					FpgaGpioOperation.clean();
+					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE2);
+					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+					try {
+						Thread.sleep(3000 * 5);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					FpgaGpioOperation.clean();
 				}
-				FpgaGpioOperation.clean();
 			}
+			
 		});
 	}
 	
@@ -186,6 +266,7 @@ public class DataTransferThread {
 				mDataTask.add(data);
 				data.prepareBackgroudBuffer();
 			}
+			setDotCount(task);
 			mNeedUpdate = true;
 		}
 	}
@@ -471,13 +552,9 @@ public class DataTransferThread {
 //							Debug.d(TAG, "===>buffer getPrintbuffer finish");
 //							isFirst = false;
 //						}
-						Debug.d(TAG, "===>buffer getPrintbuffer");
+						next();
 						buffer = mDataTask.get(index()).getPrintBuffer();
-						Debug.d(TAG, "===>buffer getPrintbuffer finish");
-						//BinCreater.saveBin("/mnt/sdcard/print_" + (testCount++) + ".bin", buffer, cH);
-						Debug.d(TAG, "===>write Data");
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
-						Debug.d(TAG, "===>write Data finish");
 						last = SystemClock.currentThreadTimeMillis();
 						countDown();
 						mInkListener.onCountChanged();
@@ -485,8 +562,6 @@ public class DataTransferThread {
 						if (mCallback != null) {
 							mCallback.onComplete();
 						}
-						next();
-						
 					}
 				}
 
@@ -497,6 +572,7 @@ public class DataTransferThread {
 					Debug.d(TAG, "===>buffer size="+buffer.length);
 					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
 					mHandler.sendEmptyMessageDelayed(MESSAGE_DATA_UPDATE, MESSAGE_EXCEED_TIMEOUT);
+					mNeedUpdate = false;
 				}
 				try {
 					Thread.sleep(10);

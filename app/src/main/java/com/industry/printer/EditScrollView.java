@@ -1,20 +1,27 @@
 package com.industry.printer;
 
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.data.BinCreater;
+import com.industry.printer.data.BinFromBitmap;
+import com.industry.printer.object.BaseObject;
+import com.industry.printer.object.MessageObject;
+
+import android.R.color;
+import android.R.integer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
-
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.object.BaseObject;
-import com.industry.printer.object.MessageObject;
+import android.widget.ScrollView;
 
 public class EditScrollView extends View {
 	
@@ -56,7 +63,7 @@ public class EditScrollView extends View {
 		getWindowPixels();
 		Debug.d(TAG, "==>EditScrollView 3");
 	}
-	@Override
+	@Override  
 	protected void onDraw(Canvas canvas) {
 		Debug.d(TAG, "====>onDraw needDraw = " + needDraw);
 		if (!needDraw) {

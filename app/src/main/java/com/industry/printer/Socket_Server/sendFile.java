@@ -1,6 +1,15 @@
 package com.industry.printer.Socket_Server;
 
-/*public class sendFile
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import android.R.bool;
+import android.content.Context;
+
+/*public class sendFile 
 {
 	private FileInputStream fileInputStream;
 	private int bufferSize=1024;

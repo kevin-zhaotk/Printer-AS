@@ -1,18 +1,24 @@
 package com.industry.printer.Utils;
 
 
-import android.content.Context;
-import android.graphics.Bitmap;
-
-import com.industry.printer.FileFormat.SystemConfigFile;
-import com.industry.printer.R;
-import com.industry.printer.object.BaseObject;
-import com.industry.printer.object.data.SegmentBuffer;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.InputStream;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Environment;
+import android.provider.ContactsContract.Directory;
+import android.view.ViewDebug.FlagToString;
+
+import com.industry.printer.R;
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.object.BaseObject;
+import com.industry.printer.object.data.SegmentBuffer;
 
 public class Configs {
 	
@@ -241,9 +247,9 @@ public class Configs {
 		parser.setInput(stream, "UTF-8");
 		
 		int eventType = parser.getEventType();  
-        while (eventType != XmlPullParser.END_DOCUMENT) {
+        while (eventType != XmlPullParser.END_DOCUMENT) {  
             switch (eventType) {  
-            case XmlPullParser.START_DOCUMENT:
+            case XmlPullParser.START_DOCUMENT:  
                 break;
             case XmlPullParser.START_TAG:
             	if (parser.getName().equals("object")) {

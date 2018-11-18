@@ -3,8 +3,17 @@ package com.industry.printer.Utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+import com.industry.printer.Socket_Server.Db.Server_Socket_Database;
+import com.industry.printer.Utils.PlatformInfo;
+
+import android.R.integer;
+import android.graphics.Path;
 
 /**
  * ConfigPath 选择系统设置的保持路径
@@ -61,16 +70,16 @@ public class ConfigPath {
 			return paths;
 		}
 		for (String path : paths) {
-			File rootDir = new File(path+ Configs.SYSTEM_CONFIG_DIR);
+			File rootDir = new File(path+Configs.SYSTEM_CONFIG_DIR);
 			if (rootDir.exists() && rootDir.isDirectory()) {
-				File tlkDir = new File(path+ Configs.TLK_FILE_SUB_PATH);
+				File tlkDir = new File(path+Configs.TLK_FILE_SUB_PATH);
 				if (tlkDir.exists() && tlkDir.isDirectory()) {
 					
 				} else {
 					tlkDir.mkdirs();
 				}
 			} else {
-				File tlkDir = new File(path+ Configs.TLK_FILE_SUB_PATH);
+				File tlkDir = new File(path+Configs.TLK_FILE_SUB_PATH);
 				tlkDir.mkdirs();
 			}
 		}
@@ -117,7 +126,7 @@ public class ConfigPath {
 		if (paths == null || paths.size() <= 0) {
 			return null;
 		}
-		return paths.get(0)+ Configs.TXT_FILES_PATH;
+		return paths.get(0)+Configs.TXT_FILES_PATH;
 	}
 	
 	

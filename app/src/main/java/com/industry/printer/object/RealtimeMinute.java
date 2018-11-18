@@ -1,15 +1,17 @@
 package com.industry.printer.object;
 
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.cache.FontCache;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.Paint.FontMetrics;
 import android.text.format.Time;
-
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.cache.FontCache;
 
 public class RealtimeMinute extends BaseObject {
 
@@ -30,7 +32,7 @@ public class RealtimeMinute extends BaseObject {
 	}
 	
 //////addby kevin
-	@Override
+	@Override	 
 	public Bitmap getpreviewbmp()
 	{		
 		Debug.e(TAG, "===========--->content: " + getContent() );	
@@ -81,7 +83,7 @@ public class RealtimeMinute extends BaseObject {
 		Debug.e(TAG, "--->content: " + getContent() + "  width=" + width);			
 		mCan.drawText(str_new_content , 0, mHeight-fm.descent, mPaint);
 	
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);	
 	}	
 	
 	

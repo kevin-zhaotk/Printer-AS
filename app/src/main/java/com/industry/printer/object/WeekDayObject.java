@@ -1,17 +1,19 @@
 package com.industry.printer.object;
 
+import java.util.Calendar;
+import java.util.Locale;
+
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.cache.FontCache;
+import com.industry.printer.Utils.Configs;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
-
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.cache.FontCache;
-
-import java.util.Calendar;
+import android.provider.ContactsContract.Contacts.Data;
 
 public class WeekDayObject extends BaseObject {
 
@@ -40,11 +42,11 @@ public class WeekDayObject extends BaseObject {
 	}
 	
 	
-	@Override
+	@Override	 
 	public Bitmap getpreviewbmp()
 	{
 		Bitmap bitmap;
-	    Paint Paint;
+	    Paint Paint; 
 		Paint = new Paint();
 		Paint.setTextSize(getfeed());
 		Paint.setAntiAlias(true);//.setAntiAlias(true);   
@@ -76,14 +78,14 @@ public class WeekDayObject extends BaseObject {
 		Canvas can = new Canvas(bitmap);
 		FontMetrics fm = Paint.getFontMetrics();
 		
-		Paint.setColor(Color.BLUE);
+		Paint.setColor(Color.BLUE); 
 	
 		
 		 
-		String str_new_content="D";
+		String str_new_content="D";	
 		can.drawText(str_new_content , 0, mHeight-fm.descent, Paint);
 	
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);	
 	}
 	
 	public String toString()

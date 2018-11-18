@@ -1,9 +1,41 @@
 package com.industry.printer.object;
 
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.datamatrix.DataMatrixWriter;
+//import com.google.zxing.datamatrix.DataMatrixWriter;
+import com.google.zxing.oned.EAN13Writer;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.google.zxing.qrcode.encoder.ByteMatrix;
+import com.google.zxing.qrcode.encoder.Encoder;
+import com.google.zxing.qrcode.encoder.QRCode;
+import com.industry.printer.FileFormat.QRReader;
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.data.BinCreater;
+import com.industry.printer.data.BinFileMaker;
+import com.industry.printer.data.BinFromBitmap;
+import com.industry.printer.object.BaseObject;
+
+import com.industry.printer.BinInfo;
+import com.industry.printer.R;																																																																								
+					
+import android.R.bool;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -11,28 +43,6 @@ import android.view.View.MeasureSpec;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.google.zxing.qrcode.encoder.ByteMatrix;
-import com.google.zxing.qrcode.encoder.Encoder;
-import com.google.zxing.qrcode.encoder.QRCode;
-import com.industry.printer.FileFormat.SystemConfigFile;
-import com.industry.printer.R;
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.data.BinFileMaker;
-import com.industry.printer.data.BinFromBitmap;
-
-import java.io.UnsupportedEncodingException;
-import java.util.Hashtable;
-import java.util.Map;
-
-//import com.google.zxing.datamatrix.DataMatrixWriter;
 
 
 public class BarcodeObject extends BaseObject {
@@ -89,6 +99,7 @@ public class BarcodeObject extends BaseObject {
 			mId = BaseObject.OBJECT_TYPE_QR;
 		} else if ("DM".equals(code)) {
 			mCode = 8;
+			mId = BaseObject.OBJECT_TYPE_QR;
 		} else {
 			return;
 		}
@@ -170,9 +181,11 @@ public class BarcodeObject extends BaseObject {
 		mSource  = dynamic;
 		if (dynamic) {
 			mName = mContext.getString(R.string.object_dynamic_qr);
+			setContent("dynamic");
 		} else {
 			mName = mContext.getString(R.string.object_bar);
 		}
+		
 	}
 	
 	@Override
@@ -189,7 +202,7 @@ public class BarcodeObject extends BaseObject {
 		return mName;
 	}
 	
-	private static final String CODE = "utf-8";
+	private static final String CODE = "utf-8"; 
 	
 	public Bitmap getScaledBitmap(Context context) {
 		if (!isNeedRedraw) {
@@ -206,7 +219,7 @@ public class BarcodeObject extends BaseObject {
 		} else {
 			mWidth = mHeight;
 			if (mFormat.equalsIgnoreCase("DM") || mFormat.equalsIgnoreCase("DATA_MATRIX")) {
-				return drawDataMatrix(mContent, (int) mWidth, (int) mHeight);
+				mBitmap = drawDataMatrix(mContent, (int) mWidth, (int) mHeight);
 			} else {
 				mBitmap = drawQR(mContent, (int) mWidth, (int) mHeight);
 			}
@@ -219,6 +232,9 @@ public class BarcodeObject extends BaseObject {
 	
 	@Override
 	public Bitmap getpreviewbmp() {
+		if (mBinmap == null || mWidth == 0 || mHeight == 0) {
+			getScaledBitmap(mContext);
+		}
 		return Bitmap.createScaledBitmap(mBitmap, (int) mWidth, (int) mHeight, false);
 	}
 
@@ -267,29 +283,29 @@ public class BarcodeObject extends BaseObject {
 
 	private Bitmap drawDataMatrix(String content, int w, int h) {
 		
-//		DataMatrixWriter writer = new DataMatrixWriter();
-//		
-//		BitMatrix matrix = writer.encode(content, getBarcodeFormat(mFormat), w, h);
-//		int width = matrix.getWidth();
-//		int height = matrix.getHeight();
-//		int[] pixels = new int[width * height];
-//
-//		for (int y = 0; y < height; y++)
-//		{
-//			for (int x = 0; x < width; x++)
-//			{
-//				if (matrix.get(x, y))
-//				{
-//					pixels[y * width + x] = mReverse ? 0xffffffff : 0xff000000;
-//				} else {
-//					pixels[y * width + x] = mReverse ? 0xff000000 : 0xffffffff;
-//				}
-//			}
-//		}
+		DataMatrixWriter writer = new DataMatrixWriter();
+		
+		BitMatrix matrix = writer.encode(content, getBarcodeFormat(mFormat), w, h);
+		int width = matrix.getWidth();
+		int height = matrix.getHeight();
+		int[] pixels = new int[width * height];
+
+		for (int y = 0; y < height; y++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				if (matrix.get(x, y))
+				{
+					pixels[y * width + x] = mReverse ? 0xffffffff : 0xff000000;
+				} else {
+					pixels[y * width + x] = mReverse ? 0xff000000 : 0xffffffff;
+				}
+			}
+		}
 		/* 条码/二维码的四个边缘空出20像素作为白边 */
-//		Bitmap bitmap = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
-		Bitmap bitmap = Bitmap.createBitmap(w, h, Configs.BITMAP_CONFIG);
-//		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+		Bitmap bitmap = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
+//		Bitmap bitmap = Bitmap.createBitmap(w, h, Configs.BITMAP_CONFIG);
+		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
 		return bitmap;
 	}
 	
@@ -304,7 +320,7 @@ public class BarcodeObject extends BaseObject {
 		Debug.d("BarcodeObject", "--->draw w : " + w + "  h: " + h + "  textH = " + textH);
 		try {
 			MultiFormatWriter writer = new MultiFormatWriter();
-			Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
+			Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();  
             hints.put(EncodeHintType.CHARACTER_SET, CODE);
             // hints.put(EncodeHintType.MARGIN, margin);
             BarcodeFormat format = getBarcodeFormat(mFormat);
@@ -464,38 +480,45 @@ public class BarcodeObject extends BaseObject {
     }
 	
 	public Bitmap getPrintBitmap(int totalW, int totalH, int w, int h, int y) {
-		BitMatrix matrix=null;
-		Debug.d(TAG, "--->getPrintBitmap : totalW = " + totalW + "  w = " + w);
-		MultiFormatWriter writer = new MultiFormatWriter();
-		Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
-        hints.put(EncodeHintType.CHARACTER_SET, CODE);
-        try {
-			matrix = writer.encode(mContent,
-					BarcodeFormat.QR_CODE, w, w, hints);
-			matrix = deleteWhite(matrix);
-        } catch (Exception e) {
-        	return null;
-        }
-		int width = matrix.getWidth();
-		int height = matrix.getHeight();
-		int[] pixels = new int[width * height];
-		for (int y1 = 0; y1 < height; y1++) 
-		{
-			for (int x = 0; x < width; x++) 
-			{
-				if (matrix.get(x, y1)) 
-				{
-					pixels[y1 * width + x] = 0xff000000;
-				} else {
-					pixels[y1 * width + x] = 0xffffffff;
-				}
-			}
-		}
+//		BitMatrix matrix=null;
+//		Debug.d(TAG, "--->getPrintBitmap : totalW = " + totalW + "  w = " + w);
+//		MultiFormatWriter writer = new MultiFormatWriter();
+//		Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();  
+//        hints.put(EncodeHintType.CHARACTER_SET, CODE);
+//        try {
+//			matrix = writer.encode(mContent,
+//					BarcodeFormat.QR_CODE, w, w, hints);
+//			matrix = deleteWhite(matrix);
+//        } catch (Exception e) {
+//        	return null;
+//        }
+//		int width = matrix.getWidth();
+//		int height = matrix.getHeight();
+//		int[] pixels = new int[width * height];
+//		for (int y1 = 0; y1 < height; y1++) 
+//		{
+//			for (int x = 0; x < width; x++) 
+//			{
+//				if (matrix.get(x, y1)) 
+//				{
+//					pixels[y1 * width + x] = 0xff000000;
+//				} else {
+//					pixels[y1 * width + x] = 0xffffffff;
+//				}
+//			}
+//		}
 		Bitmap bg = Bitmap.createBitmap(totalW, totalH, Configs.BITMAP_CONFIG);
 		Canvas canvas = new Canvas(bg);
-		Bitmap bitmap = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
+//		Bitmap bitmap = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
 		
-		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+//		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+		Debug.d(TAG, "--->mFormat: " + mFormat);
+		Bitmap bitmap = null;
+		if ("QR".equalsIgnoreCase(mFormat)) {
+			bitmap = drawQR(mContent, w, w);
+		} else {
+			bitmap = drawDataMatrix(mContent, w, w);
+		}
 		canvas.drawColor(Color.WHITE);
 		canvas.drawBitmap(Bitmap.createScaledBitmap(bitmap, w, h, true), 0, y, mPaint);
 		return bg;
@@ -508,7 +531,7 @@ public class BarcodeObject extends BaseObject {
 		return dots;
 	}
 
-	protected Bitmap createCodeBitmapFromTextView(String contents, int width, int height, boolean isBin) {
+	protected Bitmap createCodeBitmapFromTextView(String contents,int width,int height, boolean isBin) {
 		int heads = mTask.getHeads();
 		if (heads == 0) {
 			heads = 1;
@@ -527,22 +550,22 @@ public class BarcodeObject extends BaseObject {
         tv.setDrawingCacheEnabled(true);  
         tv.setTextColor(Color.BLACK);
         tv.measure(  
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),  
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));  
         tv.layout(0, 0, tv.getMeasuredWidth(),  
         		tv.getMeasuredHeight());
   
         tv.buildDrawingCache();  
         Bitmap bitmapCode=tv.getDrawingCache();
         Debug.d(TAG, "===>width=" + width + ", bmp width=" + bitmapCode.getWidth());
-        return isBin? Bitmap.createScaledBitmap(bitmapCode, (int) (bitmapCode.getWidth()*div), bitmapCode.getHeight(), true) : bitmapCode;
+        return isBin?Bitmap.createScaledBitmap(bitmapCode, (int) (bitmapCode.getWidth()*div), bitmapCode.getHeight(), true) : bitmapCode;
 	}
 	
 	protected Bitmap createCodeBitmapFromDraw(String content, int width, int height) {
 		if (TextUtils.isEmpty(content)) {
 			return null;
 		}
-		Paint paint = new Paint();
+		Paint paint = new Paint(); 
 		
 		paint.setTextSize(height - 5);
 		paint.setTextScaleX(2);
@@ -570,7 +593,7 @@ public class BarcodeObject extends BaseObject {
 			BarcodeFormat format = getBarcodeFormat(mFormat);
 			if(is2D())
 			{
-				Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
+				Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();  
 	            hints.put(EncodeHintType.CHARACTER_SET, CODE);
 	            
 				matrix = writer.encode(mContent,
@@ -774,7 +797,9 @@ public class BarcodeObject extends BaseObject {
 				.append("^")
 				.append(BaseObject.boolToFormatString(mDragable, 3))
 				.append("^")
-				.append("000^000^000^")
+				.append("000^")
+				.append("DM".equalsIgnoreCase(mFormat) ? "001" : "000")
+				.append("^000^")
 				.append(BaseObject.boolToFormatString(mReverse, 3))
 				.append("^")
 				.append("000")

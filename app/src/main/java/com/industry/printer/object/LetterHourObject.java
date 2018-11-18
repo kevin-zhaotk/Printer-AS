@@ -1,12 +1,8 @@
 package com.industry.printer.object;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.FontMetrics;
+import java.util.Calendar;
 
+import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
@@ -14,7 +10,14 @@ import com.industry.printer.cache.FontCache;
 import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.data.BinFromBitmap;
 
-import java.util.Calendar;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.Paint.FontMetrics;
 
 public class LetterHourObject extends BaseObject {
 
@@ -46,7 +49,7 @@ public class LetterHourObject extends BaseObject {
 		return HOUR_LETTER[hour];
 		
 	}
-	@Override
+	@Override	 
 	public Bitmap getScaledBitmap(Context context) {
 		Bitmap bitmap;
 		mPaint.setTextSize(getfeed());
@@ -79,7 +82,7 @@ public class LetterHourObject extends BaseObject {
 		mPaint.setColor(Color.BLUE);
 		mCan.drawText(getContent() , 0, mHeight-fm.descent, mPaint);
 	
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);	
 	}
 	
 	@Override
@@ -137,7 +140,7 @@ public class LetterHourObject extends BaseObject {
 	
 
 //////addbylk 
-	@Override
+	@Override	 
 	public Bitmap getpreviewbmp()
 	{	Debug.e(TAG, "1===== " + getContent() );
 		Bitmap bitmap;
@@ -176,7 +179,7 @@ public class LetterHourObject extends BaseObject {
 				
 		mCan.drawText(mContent , 0, mHeight-fm.descent, mPaint);
 	
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);	
 	}
 	
 	public String toString()

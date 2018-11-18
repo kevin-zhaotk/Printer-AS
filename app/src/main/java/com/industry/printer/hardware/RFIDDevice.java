@@ -23,24 +23,31 @@
 
 package com.industry.printer.hardware;
 
-import android.os.SystemClock;
-
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.PlatformInfo;
-import com.industry.printer.Utils.RFIDAsyncTask;
-import com.industry.printer.Utils.RFIDAsyncTask.RfidCallback;
-import com.printer.corelib.EncryptionMethod;
-import com.printer.corelib.RFIDData;
+import java.io.ByteArrayInputStream;
+import java.io.Closeable;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
+import java.util.List;
 
 import org.apache.http.util.ByteArrayBuffer;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import android.R.bool;
+import android.R.integer;
+import android.os.SystemClock;
 
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
 //import com.industry.printer.Utils.EncryptionMethod;
+import com.industry.printer.Utils.PlatformInfo;
+import com.industry.printer.Utils.RFIDAsyncTask;
+import com.industry.printer.Utils.RFIDAsyncTask.RfidCallback;
 
-public class RFIDDevice implements RfidCallback {
+import com.printer.corelib.RFIDData;
+import com.printer.corelib.EncryptionMethod;
+
+public class RFIDDevice implements RfidCallback{
 
 	//RFID操作 native接口
 	public static native int open(String dev);
@@ -193,7 +200,7 @@ public class RFIDDevice implements RfidCallback {
 	// 是否支持符合命令的新模塊
 	public static boolean isNewModel = false;
 	
-	private static List<RfidCallback> mCallbacks = new ArrayList<RfidCallback>();
+	private static List<RfidCallback> mCallbacks = new ArrayList<RFIDAsyncTask.RfidCallback>();
 
 	// 当前墨水量
 	private int mCurInkLevel = 0;

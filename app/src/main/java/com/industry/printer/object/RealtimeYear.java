@@ -1,17 +1,11 @@
 package com.industry.printer.object;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.FontMetrics;
-import android.text.format.Time;
+import java.util.Calendar;
 
-import com.industry.printer.Utils.Configs;
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.cache.FontCache;
-
+import com.industry.printer.Utils.Configs;
 /*
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,6 +13,28 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Color;
 */
+
+import android.R.color;
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Paint.FontMetrics;
+import android.graphics.Typeface;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.View;
+
+import android.graphics.Typeface;
+import android.graphics.Paint.FontMetrics;
+import android.text.format.Time;
+import android.util.Log;
 
 public class RealtimeYear extends BaseObject {
 
@@ -88,7 +104,7 @@ public class RealtimeYear extends BaseObject {
 				.append(BaseObject.boolToFormatString(mDragable, 3))
 				.append("^")
 				.append("000^000^000^000^000^")
-				.append(mParent == null? "00000": BaseObject.intToFormatString(mParent.getOffset(), 5))
+				.append(mParent == null? "00000":BaseObject.intToFormatString(mParent.getOffset(), 5))
 				.append("^00000000^00000000^00000000^0000^0000^")
 				.append(mFont)
 				.append("^000^000");
@@ -111,11 +127,11 @@ public class RealtimeYear extends BaseObject {
 		return str;
 	}
 //////addbylk 
-	@Override
+	@Override	 
 	public Bitmap getpreviewbmp()
 	{
 		Bitmap bitmap;
-	    Paint Paint;
+	    Paint Paint; 
 		Paint = new Paint();
 		Paint.setTextSize(getfeed());
 		Paint.setAntiAlias(true);//.setAntiAlias(true);   
@@ -163,6 +179,6 @@ public class RealtimeYear extends BaseObject {
 
 		can.drawText(str_new_content , 0, mHeight-fm.descent, Paint);
 	
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);	
 	}
 }

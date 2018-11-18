@@ -1,22 +1,30 @@
 package com.industry.printer.data;
 
-import android.content.Context;
-
-import com.industry.printer.Utils.ConfigPath;
-import com.industry.printer.Utils.Debug;
-
-import org.apache.http.util.ByteArrayBuffer;
-
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+
+import org.apache.http.util.ByteArrayBuffer;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.google.zxing.common.BitArray;
+import com.google.zxing.common.BitMatrix;
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
 
 public class DotMatrixReader {
 
-	private static final String TAG = DotMatrixReader.class.getSimpleName();
+	private static final String TAG = DotMatrixReader.class.getSimpleName(); 
 	public static DotMatrixReader mInstance;
 	
 	private File mDotFile;
@@ -178,11 +186,11 @@ public class DotMatrixReader {
 	 * @return 偏移量
 	 */
 	private int getOffsetByGBCode(char gbk) {
-		Debug.d(TAG, "--->gbk:"+ Integer.toHexString(gbk));
+		Debug.d(TAG, "--->gbk:"+Integer.toHexString(gbk));
 		int quCode=0, weiCode=0; 
 		quCode = (gbk>>8)&0x00ff;
 		weiCode = gbk & 0x00ff;
-		Debug.d(TAG, "--->gbk qu:"+ Integer.toHexString(quCode)+" , wei:"+ Integer.toHexString(weiCode));
+		Debug.d(TAG, "--->gbk qu:"+Integer.toHexString(quCode)+" , wei:"+Integer.toHexString(weiCode));
 		return (94*(quCode-1)+(weiCode-1))*32;
 	}
 	

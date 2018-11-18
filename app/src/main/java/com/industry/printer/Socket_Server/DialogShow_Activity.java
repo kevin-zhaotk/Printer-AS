@@ -1,6 +1,9 @@
 package com.industry.printer.Socket_Server;
 
 
+
+import com.industry.printer.R;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,8 +13,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.industry.printer.R;
 
 public class DialogShow_Activity extends Dialog {
 
@@ -54,7 +55,7 @@ public class DialogShow_Activity extends Dialog {
 
 		/**
 		 * Set the Dialog title from resource
-		 *
+		 * 
 		 * @param title
 		 * @return
 		 */
@@ -65,7 +66,7 @@ public class DialogShow_Activity extends Dialog {
 
 		/**
 		 * Set the Dialog title from String
-		 *
+		 * 
 		 * @param title
 		 * @return
 		 */
@@ -82,7 +83,7 @@ public class DialogShow_Activity extends Dialog {
 
 		/**
 		 * Set the positive button resource and it's listener
-		 *
+		 * 
 		 * @param positiveButtonText
 		 * @return
 		 */

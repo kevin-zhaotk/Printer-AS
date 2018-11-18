@@ -1,14 +1,17 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import com.industry.printer.R;
+import com.industry.printer.object.LetterHourObject;
+
+import android.animation.AnimatorSet.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
-
-import com.industry.printer.R;
 
 public class ConfirmDialog extends Dialog implements View.OnClickListener {
 

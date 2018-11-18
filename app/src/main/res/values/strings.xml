@@ -428,6 +428,7 @@
 	<string name="str_file_save"> Ok </string>
 	<string name="str_file_cancel">Cancel</string>
 	<string name="str_setting_upgrade">Upgrade</string>
+	<string name="str_setting_clean">Clean</string>
 	
 	<string name="str_month">Month</string>
 	<string name="str_year">Year</string>

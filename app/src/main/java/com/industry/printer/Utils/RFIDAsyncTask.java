@@ -1,8 +1,8 @@
 package com.industry.printer.Utils;
 
 import com.industry.printer.ThreadPoolManager;
-import com.industry.printer.hardware.RFIDDevice;
 import com.printer.corelib.RFIDData;
+import com.industry.printer.hardware.RFIDDevice;
 
 
 public class RFIDAsyncTask implements Runnable {
@@ -37,7 +37,7 @@ public class RFIDAsyncTask implements Runnable {
 		mCallback = callback;
 	}
 	
-	@Override
+	@Override  
     public void run() {
 		
 		Debug.print(RFIDDevice.RFID_DATA_SEND, mCmd.mTransData);

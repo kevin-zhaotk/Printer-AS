@@ -1,25 +1,11 @@
 package com.industry.printer;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import java.io.File;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Locale;
 
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.ConfigPath;
@@ -29,22 +15,42 @@ import com.industry.printer.Utils.KZFileObserver;
 import com.industry.printer.Utils.PackageInstaller;
 import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.Utils.ReflectCaller;
+import com.industry.printer.Utils.StringUtil;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.hardware.ExtGpio;
-import com.industry.printer.hardware.PWMAudio;
+import com.industry.printer.hardware.FpgaGpioOperation;
+import com.industry.printer.ui.ExtendMessageTitleFragment;
 import com.industry.printer.ui.CustomerAdapter.SettingsListAdapter;
 import com.industry.printer.ui.CustomerDialog.CalendarDialog;
-import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnNagitiveListener;
 import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListener;
+import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnNagitiveListener;;
 import com.industry.printer.ui.CustomerDialog.PasswordDialog;
-import com.industry.printer.ui.ExtendMessageTitleFragment;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-;
+import android.R.integer;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.PowerManager;
 //import android.os.SystemProperties;
+import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class SettingsTabActivity extends Fragment implements OnClickListener, OnTouchListener {
 public static final String TAG="SettingsTabActivity";
@@ -98,21 +104,22 @@ public static final String TAG="SettingsTabActivity";
 	public TextView mTime;
 	public TextView mVersion;
 
-	public RelativeLayout mSave;
+	public RelativeLayout		mSave;
 	
-	public RelativeLayout mUpgrade;
-	public RelativeLayout mSetDate;
-	public RelativeLayout mSettings;
-	public RelativeLayout mPagePrev;
-	public RelativeLayout mPageNext;
-	public RelativeLayout mTimeset;
+	public RelativeLayout		mUpgrade;
+	public RelativeLayout		mSetDate;
+	public RelativeLayout		mSettings;
+	public RelativeLayout 		mPagePrev;
+	public RelativeLayout 		mPageNext;
+	public RelativeLayout		mTimeset;
+	public RelativeLayout		mClean;
 
-	public Context mContext;
+	public Context 			mContext;
 	
-	public ScrollView mScrollView;
+	public ScrollView			mScrollView;
 	public PHSettingFragment 	mPHSettings;
 	public SettingsFragment		mSettingsFragment;
-	public ListView mListView;
+	public ListView 			mListView;
 	public SettingsListAdapter 	mAdapter;
 	
 	public ExtendMessageTitleFragment mMsgTitle;
@@ -168,6 +175,9 @@ public static final String TAG="SettingsTabActivity";
 		mSettings = (RelativeLayout) getView().findViewById(R.id.btn_system_setting);
 		mSettings.setOnClickListener(this);
 		mSettings.setOnTouchListener(this);
+		
+		mClean = (RelativeLayout) getView().findViewById(R.id.btn_setting_clean);
+		mClean.setOnClickListener(this);
 		
 		//mScrollView = (ScrollView) getView().findViewById(R.id.setting_frame);
 		
@@ -236,10 +246,10 @@ public static final String TAG="SettingsTabActivity";
 		Debug.d(TAG, "--->onDestroy");
 	}
 	
-	private TextView tv_btnOk;
+	private TextView tv_btnOk; 
 	private TextView tv_btnCancel;
 	private TextView tv_btnTime;
-	private TextView tv_btnSetting;
+	private TextView tv_btnSetting; 
 	
 	public void onConfigureChanged() {
 		mAdapter.notifyDataSetChanged();
@@ -285,9 +295,9 @@ public static final String TAG="SettingsTabActivity";
 	
 	public void setLocale()
 	{
-		Configuration config = getResources().getConfiguration();
-		DisplayMetrics dm = getResources().getDisplayMetrics();
-		config.locale = Locale.SIMPLIFIED_CHINESE;
+		Configuration config = getResources().getConfiguration(); 
+		DisplayMetrics dm = getResources().getDisplayMetrics(); 
+		config.locale = Locale.SIMPLIFIED_CHINESE; 
 		getResources().updateConfiguration(config, dm); 
 		
 	}
@@ -309,7 +319,7 @@ public static final String TAG="SettingsTabActivity";
 	}
 	
 	public Handler mTimeRefreshHandler = new Handler(){
-		public void handleMessage(Message msg) {
+		public void handleMessage(Message msg) { 
 			switch(msg.what)
 			{
 				case 0:		//
@@ -397,6 +407,11 @@ public static final String TAG="SettingsTabActivity";
 				CalendarDialog dialog = new CalendarDialog(this.getActivity(), R.layout.calendar_setting);
 				dialog.show();
 				break;
+
+			case R.id.btn_setting_clean:
+				DataTransferThread dThread = DataTransferThread.getInstance();
+				dThread.clean(mContext);
+				break;
 			default :
 				Debug.d(TAG, "===>unknown view clicked");
 				break;
@@ -413,6 +428,7 @@ public static final String TAG="SettingsTabActivity";
 			case R.id.btn_setting_upgrade:
 			case R.id.btn_setting_timeset:
 			case R.id.btn_system_setting:
+//			case R.id.btn_setting_clean:
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
 //					PWMAudio.Play();
 				}
@@ -445,7 +461,7 @@ public static final String TAG="SettingsTabActivity";
 		} 
 		else
 		{				Debug.i(TAG, "=333==>onclick");
-			  PlatformInfo.SetDotMatrixType(0);
+			  PlatformInfo.SetDotMatrixType(0);			
 		}
 		Debug.i(TAG, "===>onclick: " + mSysconfig.getParam(30));
 	}

@@ -1,5 +1,14 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import java.io.File;
+
+import com.industry.printer.R;
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.PlatformInfo;
+import com.industry.printer.ui.CustomerAdapter.PictureBrowseAdapter;
+import com.industry.printer.ui.Items.PictureItem;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -8,17 +17,11 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.industry.printer.R;
-import com.industry.printer.Utils.ConfigPath;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.ui.CustomerAdapter.PictureBrowseAdapter;
-import com.industry.printer.ui.Items.PictureItem;
-
-import java.io.File;
 
 public class PictureBrowseDialog extends CustomerDialogBase implements android.view.View.OnClickListener, OnItemClickListener {
 
@@ -28,9 +31,9 @@ public class PictureBrowseDialog extends CustomerDialogBase implements android.v
 	public RelativeLayout mCancel;
 	public RelativeLayout mPagePrev;
 	public RelativeLayout mPageNext;
-	public EditText mSearch;
-	public GridView mPicView;
-	private TextView mTips;
+	public EditText		  mSearch;
+	public GridView		  mPicView;	
+	private TextView	  mTips;
 	
 	public PictureBrowseAdapter mAdapter;
 	private PictureItem   mItem;
@@ -105,7 +108,7 @@ public class PictureBrowseDialog extends CustomerDialogBase implements android.v
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
+			long id) {
 		Debug.d(TAG, "--->onitemclick=" + position);
 		mItem = (PictureItem) mAdapter.getItem(position);
 		mAdapter.setChecked(position);

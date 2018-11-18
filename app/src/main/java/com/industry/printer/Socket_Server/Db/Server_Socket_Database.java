@@ -5,15 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
+import android.widget.Toast;
 
 
 public class Server_Socket_Database {
 	
 	/** 数据库名 */
 	private static final String SDCARD_ROOT = Environment.getExternalStorageDirectory().toString();
-	public static final String DB_NAME =SDCARD_ROOT+"/MSG/"+ "printer.db";
+	public static final String DB_NAME =SDCARD_ROOT+"/MSG/"+ "printer.db"; 
 	
-	private static SQLiteDatabase db;
+	private static SQLiteDatabase db; 
 	private static Server_Socket_Create_Table dbManager;
 
 	private static Server_Socket_Database instance;
@@ -70,7 +71,7 @@ public class Server_Socket_Database {
 	}
 	
 	
-	public boolean InsertData(String InsertSql, String UpDAtaSql, String QuerySql)
+	public boolean InsertData(String InsertSql,String UpDAtaSql,String QuerySql)
 	{
 		if(db == null || !db.isOpen()) {
 			db = dbManager.getWritableDatabase();

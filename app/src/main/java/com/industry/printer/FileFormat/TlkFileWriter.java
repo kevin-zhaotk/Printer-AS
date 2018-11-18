@@ -1,6 +1,12 @@
 package com.industry.printer.FileFormat;
 
-import android.content.Context;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 import com.industry.printer.MessageTask;
 import com.industry.printer.Utils.ConfigPath;
@@ -8,14 +14,9 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.RealtimeObject;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
+import android.content.Context;
 
-public class TlkFileWriter extends TlkFile {
+public class TlkFileWriter extends TlkFile{
 	
 	public static final String TAG = TlkFileWriter.class.getSimpleName();
 

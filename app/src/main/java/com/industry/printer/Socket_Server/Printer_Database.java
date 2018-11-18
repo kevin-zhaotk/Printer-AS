@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
+import android.widget.Toast;
 
 
 public class Printer_Database {
@@ -11,9 +13,9 @@ public class Printer_Database {
 	/** 数据库名 */
 	public static Paths_Create Paths=new Paths_Create();
 	//private static final String SDCARD_ROOT //.Environment.getExternalStorageDirectory().toString();
-	public static final String DB_NAME =Paths.getSDPath()+ "printer.db";
+	public static final String DB_NAME =Paths.getSDPath()+ "printer.db"; 
 	//public static final String DB_NAME ="QjFund.db"; 
-	private static SQLiteDatabase db;
+	private static SQLiteDatabase db; 
 	private static Printer_Dbase dbManager;
 
 	private static Printer_Database instance;
@@ -70,7 +72,7 @@ public class Printer_Database {
 	}
 	
 	
-	public boolean InsertData(String Sql, String QureySql)
+	public boolean InsertData(String Sql,String QureySql)
 	{
 		if(db == null || !db.isOpen()) {
 			db = dbManager.getWritableDatabase();

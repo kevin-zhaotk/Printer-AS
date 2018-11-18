@@ -1,8 +1,18 @@
 package com.industry.printer.ui.CustomerDialog;
 
 
+import java.util.Calendar;
+import java.util.logging.Logger;
+
+import com.industry.printer.R;
+import com.industry.printer.R.id;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.hardware.RTCDevice;
+
+import android.R.string;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
@@ -12,15 +22,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
-import com.industry.printer.R;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.hardware.RTCDevice;
-
-import java.util.Calendar;
-
 public class CalendarDialog extends Dialog {
 
-	public static final String TAG="CalendarDialog";
+	public static final String TAG="CalendarDialog"; 
 	private int mLayout;
 	public Button mPositive;
 	public Button mNegative;
@@ -60,7 +64,7 @@ public class CalendarDialog extends Dialog {
 		mDate = (EditText) findViewById(R.id.et_date);
 		mHour = (EditText) findViewById(R.id.et_hour);
 		mMinute = (EditText) findViewById(R.id.et_minute);
-
+		
 		Calendar c = Calendar.getInstance();
 		// mDPicker.init(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), null);
 		// mTPicker.setIs24HourView(true);
@@ -71,10 +75,10 @@ public class CalendarDialog extends Dialog {
 		mDate.setText(String.valueOf(c.get(Calendar.DAY_OF_MONTH)));
 		mHour.setText(String.valueOf(c.get(Calendar.HOUR_OF_DAY)));
 		mMinute.setText(String.valueOf(c.get(Calendar.MINUTE)));
-
+		
 		mPositive = (Button) findViewById(R.id.btn_setTimeOk);
 		mPositive.setOnClickListener(new View.OnClickListener() {
-
+			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -100,7 +104,7 @@ public class CalendarDialog extends Dialog {
 				dismiss();
 			}
 		});
-
+		
 		mNegative =  (Button) findViewById(R.id.btn_setTimeCnl);
 		mNegative.setOnClickListener(new View.OnClickListener() {
 			

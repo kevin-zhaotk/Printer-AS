@@ -1,14 +1,20 @@
 package com.industry.printer.Rfid;
 
-import android.content.Context;
-import android.os.SystemClock;
-
-import com.industry.printer.DataTransferThread;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.hardware.RFIDManager;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
+
+import com.industry.printer.DataTransferThread;
+import com.industry.printer.ThreadPoolManager;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.hardware.ExtGpio;
+import com.industry.printer.hardware.RFIDDevice;
+import com.industry.printer.hardware.RFIDManager;
+
+import android.app.AlarmManager;
+import android.content.Context;
+import android.os.SystemClock;
+import android.provider.AlarmClock;
 
 public class RfidScheduler {
 	

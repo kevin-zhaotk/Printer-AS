@@ -1,13 +1,14 @@
 package com.industry.printer.object;
 
+import com.industry.printer.R;
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Utils.Configs;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
-
-import com.industry.printer.R;
-import com.industry.printer.Utils.Configs;
 
 public class EllipseObject extends BaseObject {
 

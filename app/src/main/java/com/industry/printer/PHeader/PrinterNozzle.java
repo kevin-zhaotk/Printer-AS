@@ -1,5 +1,7 @@
 package com.industry.printer.PHeader;
 
+import com.industry.printer.MessageTask;
+
 public enum PrinterNozzle {
 
 

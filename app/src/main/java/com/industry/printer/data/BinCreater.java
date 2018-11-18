@@ -1,15 +1,22 @@
 package com.industry.printer.data;
 
-import android.graphics.Bitmap;
-
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.apache.http.util.ByteArrayBuffer;
+
+import com.industry.printer.R;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
+import android.widget.Toast;
 
 public class BinCreater {
 	

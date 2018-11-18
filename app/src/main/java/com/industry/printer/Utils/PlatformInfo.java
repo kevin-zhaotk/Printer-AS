@@ -1,15 +1,15 @@
 package com.industry.printer.Utils;
 
+import java.lang.reflect.Method;
+import java.security.PublicKey;
+
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
-import java.lang.reflect.Method;
-
 
 //import android.os.SystemProperties;
-
 /**
  * 系统属性调用SystemProperties是隐藏的{hide}无法直接调用
  * 因此通过类反射机制调用
@@ -172,15 +172,15 @@ public class PlatformInfo {
      * @param context 
      * @return 获取失败则返回null 
      */  
-    public static String getVersionName(Context context) {
+    public static String getVersionName(Context context) {  
         // 包管理者  
-        PackageManager mg = context.getPackageManager();
+        PackageManager mg = context.getPackageManager();  
         try {  
             // getPackageInfo(packageName 包名, flags 标志位（表示要获取什么数据）);  
             // 0表示获取基本数据  
-            PackageInfo info = mg.getPackageInfo(context.getPackageName(), 0);
+            PackageInfo info = mg.getPackageInfo(context.getPackageName(), 0);  
             return info.versionName;  
-        } catch (NameNotFoundException e) {
+        } catch (NameNotFoundException e) {  
             e.printStackTrace();  
         }  
         return null;  
@@ -191,15 +191,15 @@ public class PlatformInfo {
      * @param context 
      * @return 获取失败则返回0 
      */  
-    public static int getVersionCode(Context context) {
+    public static int getVersionCode(Context context) {  
         // 包管理者  
-        PackageManager mg = context.getPackageManager();
+        PackageManager mg = context.getPackageManager();  
         try {  
             // getPackageInfo(packageName 包名, flags 标志位（表示要获取什么数据）);  
             // 0表示获取基本数据  
-            PackageInfo info = mg.getPackageInfo(context.getPackageName(), 0);
+            PackageInfo info = mg.getPackageInfo(context.getPackageName(), 0);  
             return info.versionCode;  
-        } catch (NameNotFoundException e) {
+        } catch (NameNotFoundException e) {  
             e.printStackTrace();  
         }  
         return 0;  

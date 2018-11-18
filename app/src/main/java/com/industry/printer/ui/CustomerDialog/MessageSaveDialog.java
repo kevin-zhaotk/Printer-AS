@@ -1,13 +1,14 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import com.industry.printer.R;
+import com.industry.printer.Utils.Debug;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-
-import com.industry.printer.R;
 
 public class MessageSaveDialog extends CustomerDialogBase implements android.view.View.OnClickListener {
 

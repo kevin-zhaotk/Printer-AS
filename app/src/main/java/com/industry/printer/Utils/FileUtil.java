@@ -1,9 +1,5 @@
 package com.industry.printer.Utils;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.text.TextUtils;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -13,6 +9,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.text.TextUtils;
 
 public class FileUtil {
 
@@ -42,19 +42,19 @@ public class FileUtil {
 	}
  
 	// 复制文件   
-	public static void copyFile(File sourceFile, File targetFile) throws IOException {
+	public static void copyFile(File sourceFile,File targetFile) throws IOException{  
 		
 		if (targetFile.exists()) {
 			targetFile.delete();
 		}
 		Debug.d(TAG, "--->copyFile: " + sourceFile + "-- to --> " + targetFile);
         // 新建文件输入流并对它进行缓冲   
-        FileInputStream input = new FileInputStream(sourceFile);
-        BufferedInputStream inBuff=new BufferedInputStream(input);
+        FileInputStream input = new FileInputStream(sourceFile);  
+        BufferedInputStream inBuff=new BufferedInputStream(input);  
   
         // 新建文件输出流并对它进行缓冲   
-        FileOutputStream output = new FileOutputStream(targetFile);
-        BufferedOutputStream outBuff=new BufferedOutputStream(output);
+        FileOutputStream output = new FileOutputStream(targetFile);  
+        BufferedOutputStream outBuff=new BufferedOutputStream(output);  
           
         // 缓冲数组   
         byte[] b = new byte[1024 * 5];  
@@ -86,7 +86,7 @@ public class FileUtil {
 			return;
 		}
         // make directory  
-        (new File(targetDir)).mkdirs();
+        (new File(targetDir)).mkdirs();  
         File[] file = (new File(sourceDir)).listFiles();
         if (file == null || file.length <= 0) {
 			return;
@@ -94,16 +94,16 @@ public class FileUtil {
         for (int i = 0; i < file.length; i++) { 
             if (file[i].isFile()) {  
                 // source file
-                File sourceFile=file[i];
+                File sourceFile=file[i];  
                 // target file
-               File targetFile=new File(new File(targetDir).getAbsolutePath() + File.separator + file[i].getName());
+               File targetFile=new File(new File(targetDir).getAbsolutePath() + File.separator + file[i].getName());  
                 copyFile(sourceFile,targetFile);  
             }  
             if (file[i].isDirectory()) {  
                 // source directory 
-                String dir1 = sourceDir + (sourceDir.endsWith("/") ? "":"/") + file[i].getName();
+                String dir1 = sourceDir + (sourceDir.endsWith("/") ? "":"/") + file[i].getName();  
                 // target directory   
-                String dir2=targetDir + (targetDir.endsWith("/") ? "" : "/")+ file[i].getName();
+                String dir2=targetDir + (targetDir.endsWith("/") ? "" : "/")+ file[i].getName();  
                 copyDirectiory(dir1, dir2);  
             }  
         }  
@@ -130,12 +130,12 @@ public class FileUtil {
 		}
     }
     
-    public static void deleteFolder(String filePath) {
-    	if (!TextUtils.isEmpty(filePath)) {
+    public static void deleteFolder(String filePath) {       
+    	if (!TextUtils.isEmpty(filePath)) {  
     	    try {  
-    	        File file = new File(filePath);
+    	        File file = new File(filePath);  
     	        if (file.isDirectory()) { //目录  
-    	            File files[] = file.listFiles();
+    	            File files[] = file.listFiles();  
     	            for (int i = 0; i < files.length; i++) {
     	                deleteFolder(files[i].getAbsolutePath());  
     	            }  
@@ -148,7 +148,7 @@ public class FileUtil {
     	                file.delete();  
     	           }  
     	        }
-    	    } catch (Exception e) {
+    	    } catch (Exception e) {  
     	        e.printStackTrace();  
     	    }  
     	}  
@@ -164,62 +164,62 @@ public class FileUtil {
     	return filename;
     }
     
-    public static void releaseAssets(Context context, String assetsDir, String releaseDir) {
+    public static void releaseAssets(Context context, String assetsDir,  String releaseDir) {  
           
     	Debug.d(TAG, "context: " + context + ", " + assetsDir + ",  " + releaseDir);  
-        if (TextUtils.isEmpty(releaseDir)) {
+        if (TextUtils.isEmpty(releaseDir)) {  
             return;  
         } else if (releaseDir.endsWith("/")) {  
             releaseDir = releaseDir.substring(0, releaseDir.length() - 1);  
         }  
    
-        if (TextUtils.isEmpty(assetsDir) || assetsDir.equals("/")) {
+        if (TextUtils.isEmpty(assetsDir) || assetsDir.equals("/")) {  
             assetsDir = "";  
         } else if (assetsDir.endsWith("/")) {  
             assetsDir = assetsDir.substring(0, assetsDir.length() - 1);  
         }  
    
-        AssetManager assets = context.getAssets();
+        AssetManager assets = context.getAssets();  
         try {  
-            String[] fileNames = assets.list(assetsDir);//只能获取到文件(夹)名,所以还得判断是文件夹还是文件
+            String[] fileNames = assets.list(assetsDir);//只能获取到文件(夹)名,所以还得判断是文件夹还是文件  
             if (fileNames.length > 0) {// is dir  
             	
-                for (String name : fileNames) {
+                for (String name : fileNames) {  
                 	Debug.d(TAG, "--->releaseAssets 0 : " + name);
-                    if (!TextUtils.isEmpty(assetsDir)) {
-                        name = assetsDir + File.separator + name;//补全assets资源路径
+                    if (!TextUtils.isEmpty(assetsDir)) {  
+                        name = assetsDir + File.separator + name;//补全assets资源路径  
                     }  
 //                    Log.i(, brian name= + name);  
-                    String[] childNames = assets.list(name);//判断是文件还是文件夹
-                    if (!TextUtils.isEmpty(name) && childNames.length > 0) {
-                        checkFolderExists(releaseDir + File.separator + name);
+                    String[] childNames = assets.list(name);//判断是文件还是文件夹  
+                    if (!TextUtils.isEmpty(name) && childNames.length > 0) {  
+                        checkFolderExists(releaseDir + File.separator + name);  
                         releaseAssets(context, name, releaseDir);//递归, 因为资源都是带着全路径,   
                                                                                            //所以不需要在递归是设置目标文件夹的路径  
                     } else {  
-                        InputStream is = assets.open(name);
+                        InputStream is = assets.open(name);  
 //                        FileUtil.writeFile(releaseDir + File.separator + name, is); 
                         Debug.d(TAG, "--->releaseAssets : " + name);
-                        writeFile(releaseDir + File.separator + name, is);
+                        writeFile(releaseDir + File.separator + name, is);  
                     }  
                 }  
             } else {// is file  
-                InputStream is = assets.open(assetsDir);
+                InputStream is = assets.open(assetsDir);  
                 // 写入文件前, 需要提前级联创建好路径, 下面有代码贴出  
 //                FileUtil.writeFile(releaseDir + File.separator + assetsDir, is);  
-                writeFile(releaseDir + File.separator + assetsDir, is);
+                writeFile(releaseDir + File.separator + assetsDir, is);  
             }  
    
-        } catch (Exception e) {
+        } catch (Exception e) {  
             Debug.d(TAG, "--->e: " + e.getMessage());
         }  
     }  
     
-    private static boolean writeFile(String fileName, InputStream in) throws IOException
+    private static boolean writeFile(String fileName, InputStream in) throws IOException  
     {  
     	Debug.d(TAG, "--->writeFile: " + fileName);
         boolean bRet = true;  
         try {  
-            OutputStream os = new FileOutputStream(fileName);
+            OutputStream os = new FileOutputStream(fileName);  
             byte[] buffer = new byte[4112];  
             int read;  
             while((read = in.read(buffer)) != -1)  
@@ -232,7 +232,7 @@ public class FileUtil {
             os.close();  
             os = null;  
 //          Log.v(TAG, "copyed file: " + fileName);  
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {  
             // TODO Auto-generated catch block  
             e.printStackTrace();  
             bRet = false;  
@@ -240,9 +240,9 @@ public class FileUtil {
         return bRet;  
     }  
       
-    private static void checkFolderExists(String path)
+    private static void checkFolderExists(String path)  
     {  
-        File file = new File(path);
+        File file = new File(path);  
         if((file.exists() && !file.isDirectory()) || !file.exists())  
         {  
             file.mkdirs();  

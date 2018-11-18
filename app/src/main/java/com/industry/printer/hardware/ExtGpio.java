@@ -1,11 +1,11 @@
 package com.industry.printer.hardware;
 
-import com.industry.printer.Utils.Debug;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import com.industry.printer.Utils.Debug;
 
 public class ExtGpio {
 

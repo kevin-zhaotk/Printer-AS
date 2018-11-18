@@ -1,22 +1,24 @@
 package com.industry.printer.object.data;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
+import com.industry.printer.MessageTask;
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.data.BinCreater;
+import com.industry.printer.data.BinFileMaker;
+import com.industry.printer.data.BinFromBitmap;
+import com.industry.printer.object.BaseObject;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-
-import com.industry.printer.MessageTask;
-import com.industry.printer.Utils.ConfigPath;
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.data.BinFileMaker;
-import com.industry.printer.data.BinFromBitmap;
-import com.industry.printer.object.BaseObject;
-
-import java.io.File;
-import java.io.FileOutputStream;
+import android.graphics.Typeface;
 
 public class BitmapWriter {
 
@@ -30,7 +32,7 @@ public class BitmapWriter {
 	public static final double SCALE = 0.5;
 	private static final int BITMAP_FIX_HEIGHT = 152;
 	public Context mContext;
-	private Paint mPaint;
+	private Paint	mPaint;
 	
 	
 	public static BitmapWriter getInstance(Context context) {

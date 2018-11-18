@@ -1,18 +1,22 @@
 package com.industry.printer;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Handler;
+import java.util.ArrayList;
+import java.util.Vector;
 
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Debug;
-
-import java.util.ArrayList;
+import com.industry.printer.Utils.PlatformInfo;
 
 //import android.os.SystemProperties;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Handler;
+import android.util.Log;
 
 public class PrinterBroadcastReceiver extends BroadcastReceiver {
 	public static final String TAG="PrinterBroadcastReceiver";

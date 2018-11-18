@@ -1,21 +1,30 @@
 package com.industry.printer.FileFormat;
 
-import android.content.Context;
-import android.util.Xml;
-
-import com.industry.printer.MessageTask.MessageType;
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-
-import org.xmlpull.v1.XmlPullParser;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.xml.sax.InputSource;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import android.R.integer;
+import android.R.xml;
+import android.app.Application;
+import android.content.Context;
+import android.util.Xml;
+
+import com.industry.printer.MessageTask.MessageType;
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.hardware.RFIDDevice;
+import com.industry.printer.hardware.RFIDManager;
 
 
 public class SystemConfigFile{
@@ -90,6 +99,9 @@ public class SystemConfigFile{
 	public static final String LAST_MESSAGE = "message";
 	
 	public static final int INDEX_DAY_START = 35;
+	
+	public static final int INDEX_HEAD_TYPE = 30;
+	public static final int INDEX_SLANT = 35;
 	
 	public static final int INDEX_SPECIFY_HEADS = 42;
 	/*
@@ -1022,8 +1034,8 @@ public class SystemConfigFile{
 	
 	public int getHeads() {
 		int heads = 1;
-		Debug.d(TAG, "--->:getHeads: " + mParam[30]);
-		switch (mParam[30]) {
+		Debug.d(TAG, "--->:getHeads: " + mParam[INDEX_HEAD_TYPE]);
+		switch (mParam[INDEX_HEAD_TYPE]) {
 		case MessageType.MESSAGE_TYPE_12_7:
 		case MessageType.MESSAGE_TYPE_12_7_S:
 		case MessageType.MESSAGE_TYPE_16_3:

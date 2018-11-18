@@ -1,16 +1,21 @@
 package com.industry.printer.object;
 
+import com.industry.printer.MainActivity;
+import com.industry.printer.R;
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.data.BinFromBitmap;
+import com.industry.printer.cache.FontCache;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.Paint.FontMetrics;
-
-import com.industry.printer.R;
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.cache.FontCache;
-import com.industry.printer.data.BinFromBitmap;
+import android.renderscript.Sampler.Value;
+import android.util.Log;
 
 public class CounterObject extends BaseObject {
 
@@ -260,7 +265,7 @@ public class CounterObject extends BaseObject {
 		return str;
 	}
 //////add by lk 
-	@Override
+	@Override	 
 	public Bitmap getpreviewbmp()
 	{
 		Bitmap bitmap;
@@ -292,7 +297,7 @@ public class CounterObject extends BaseObject {
 		Debug.d(TAG,"--->getBitmap width="+mWidth+", mHeight="+mHeight);
 		mCan = new Canvas(bitmap);
 		FontMetrics fm = mPaint.getFontMetrics();
-		mPaint.setColor(Color.BLUE);//���� ���� �� λͼ �� Ϊ ��ɫ
+		mPaint.setColor(Color.BLUE);//���� ���� �� λͼ �� Ϊ ��ɫ 
 	 
 		String str_new_content = mContent;
 		str_new_content =	str_new_content.replace('0', 'c');	

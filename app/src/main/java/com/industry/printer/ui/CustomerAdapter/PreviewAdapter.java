@@ -1,19 +1,26 @@
 package com.industry.printer.ui.CustomerAdapter;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
-
-import com.industry.printer.R;
-import com.industry.printer.Utils.Debug;
-
 import java.util.List;
 import java.util.Map;
+
+import com.industry.printer.R;
+import com.industry.printer.R.id;
+import com.industry.printer.Utils.Debug;
+
+
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.SimpleAdapter;
+import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 public class PreviewAdapter extends SimpleAdapter {
 
@@ -24,7 +31,7 @@ public class PreviewAdapter extends SimpleAdapter {
 	public boolean mManual;
 	
 	public PreviewAdapter(Context context, List<? extends Map<String, ?>> data,
-                          int resource, String[] from, int[] to) {
+			int resource, String[] from, int[] to) {
 		super(context, data, resource, from, to);
 		mChecked=-1;
 		mlastChecked = -1;

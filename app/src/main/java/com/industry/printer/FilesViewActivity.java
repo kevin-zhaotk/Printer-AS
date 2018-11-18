@@ -1,7 +1,15 @@
 package com.industry.printer;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.industry.printer.R;
+
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.KeyEvent;
@@ -15,10 +23,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class FilesViewActivity extends Activity {
 	SimpleAdapter adapter;
@@ -50,7 +54,7 @@ public class FilesViewActivity extends Activity {
 		fileView.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				TextView isDirectory = (TextView)view.findViewById(R.id.file_type);
+				TextView isDirectory = (TextView)view.findViewById(R.id.file_type); 
 				TextView path = (TextView)view.findViewById(R.id.file_path);
 				TextView name = (TextView)view.findViewById(R.id.file_name);
 				
@@ -125,12 +129,12 @@ public class FilesViewActivity extends Activity {
 			Toast.makeText(getApplicationContext(), "该目录不能读取", Toast.LENGTH_SHORT).show();
 		}
 	}
-public boolean onKeyDown(int keyCode, KeyEvent event) {
+public boolean onKeyDown(int keyCode, KeyEvent event) {  
 		
-		if(keyCode == KeyEvent.KEYCODE_BACK){
+		if(keyCode == KeyEvent.KEYCODE_BACK){      
 			
 		}  
-		if(keyCode== KeyEvent.KEYCODE_HOME ){
+		if(keyCode==KeyEvent.KEYCODE_HOME ){
 			return true;
 			
 		}

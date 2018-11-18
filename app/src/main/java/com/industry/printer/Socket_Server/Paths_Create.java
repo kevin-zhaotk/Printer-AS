@@ -1,8 +1,9 @@
 package com.industry.printer.Socket_Server;
 
+import java.io.File;
+
 import android.os.Environment;
 
-import java.io.File;
 
 
 public class Paths_Create {
@@ -43,7 +44,7 @@ public String getSDPath() {
 		 for(int i=0;i<Apath.length;i++)
 		 {
 			 Srcpaths+=Apath[i]+"/";
-			 destDir = new File(Srcpaths);
+			 destDir = new File(Srcpaths); 
 			if (!destDir.exists()) {
 				destDir.mkdirs();
 			}
@@ -56,7 +57,7 @@ public String getSDPath() {
 	public int ListDirFiles(String dir)
 	{
 		 File destDir = null;
-		 destDir = new File(dir);
+		 destDir = new File(dir); 
 			if (!destDir.exists()) {
 				return -1;
 			}

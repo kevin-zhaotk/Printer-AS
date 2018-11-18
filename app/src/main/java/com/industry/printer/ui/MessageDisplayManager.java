@@ -1,16 +1,23 @@
 package com.industry.printer.ui;
 
+import android.R.integer;
+import android.app.ActionBar;
+import android.app.ActionBar.LayoutParams;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.opengl.Visibility;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ImageView.ScaleType;
 
 import com.industry.printer.MessageTask;
 import com.industry.printer.R;
@@ -194,7 +201,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
         Debug.d(TAG, "--->w: " + param.width);
 //        param.width = (int) object.getWidth();
 //        param.height = (int) object.getHeight();
-        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setOrientation(LinearLayout.HORIZONTAL); 
         layout.setLayoutParams(param);
         if (bmp == null) {
             return layout;

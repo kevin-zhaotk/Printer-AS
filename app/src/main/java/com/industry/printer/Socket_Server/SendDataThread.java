@@ -1,11 +1,5 @@
 package com.industry.printer.Socket_Server;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.util.Log;
-
-import com.industry.printer.Socket_Server.Db.Server_Socket_Database;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,6 +11,12 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+
+import com.industry.printer.Socket_Server.Db.Server_Socket_Database;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.util.Log;
 
 /**
  * 数据发送线程
@@ -30,7 +30,7 @@ public class SendDataThread extends Thread {
     private String sCommand;
     private ObserverCallBack callBack;
  
-    public SendDataThread(String ip, int port, String sCommand, Context context, ObserverCallBack callBack) {
+    public SendDataThread(String ip, int port,String sCommand,Context context,ObserverCallBack callBack) {
        this.ip = ip;
        this.port = port;
        this.sCommand=sCommand;

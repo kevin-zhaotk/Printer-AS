@@ -1,5 +1,8 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import com.industry.printer.R;
+import com.industry.printer.Utils.Debug;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -8,8 +11,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-
-import com.industry.printer.R;
 
 public class ImportDialog extends Dialog implements android.view.View.OnClickListener{
 

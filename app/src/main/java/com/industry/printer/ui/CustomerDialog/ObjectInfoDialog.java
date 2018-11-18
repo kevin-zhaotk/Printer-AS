@@ -1,45 +1,36 @@
 package com.industry.printer.ui.CustomerDialog;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.content.res.Resources;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import java.util.zip.Inflater;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.ChecksumException;
+import com.google.zxing.common.StringUtils;
+import com.google.zxing.maxicode.MaxiCodeReader;
 import com.industry.printer.R;
+import com.industry.printer.MessageTask.MessageType;
+import com.industry.printer.R.array;
+import com.industry.printer.R.id;
+import com.industry.printer.R.layout;
+import com.industry.printer.R.string;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.Utils.StringUtil;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
 import com.industry.printer.object.EllipseObject;
-import com.industry.printer.object.GraphicObject;
 import com.industry.printer.object.JulianDayObject;
 import com.industry.printer.object.LetterHourObject;
 import com.industry.printer.object.LineObject;
 import com.industry.printer.object.MessageObject;
-import com.industry.printer.object.RTSecondObject;
 import com.industry.printer.object.RealtimeObject;
 import com.industry.printer.object.RectObject;
-import com.industry.printer.object.ShiftObject;
 import com.industry.printer.object.TextObject;
+import com.industry.printer.object.GraphicObject;
+import com.industry.printer.object.JulianDayObject;
+import com.industry.printer.object.RTSecondObject;
+import com.industry.printer.object.ShiftObject;
 import com.industry.printer.object.WeekDayObject;
 import com.industry.printer.object.WeekOfYearObject;
 import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter;
@@ -49,16 +40,46 @@ import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListe
 import com.industry.printer.ui.Items.PictureItem;
 import com.industry.printer.widget.PopWindowSpiner;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
+import android.view.Window;
+import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 public class ObjectInfoDialog extends Dialog implements android.view.View.OnClickListener, IOnItemClickListener, OnCheckedChangeListener
 	, OnTouchListener, TextWatcher {
-
+	
 	public static final String TAG="ObjectInfoDialog";
 	public OnPositiveBtnListener mPListener;
 	public OnNagitiveBtnListener mNListener;
 	public onDeleteListener mDelListener;
-
+	
 	public BaseObject mObject;
-
+	
 	public TextView mXCorView;
 	public TextView mXCorUnit;
 	public TextView mYCorView;
@@ -76,8 +97,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	public TextView mNumshowView;
 	public TextView mLineView;
 	public TextView mLinetypeView;
-
-
+	
+	
 	public EditText mWidthEdit;
 	public TextView mHighEdit;
 	public EditText mXcorEdit;
@@ -104,28 +125,28 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	public EditText mShiftVal4;
 	private EditText mMin;
 	private EditText mMax;
-	public Button mBtnOk;
-	private Button mPageup;
-	private Button mPagedown;
+	public Button	mBtnOk;
+	private Button  mPageup;
+	private Button  mPagedown;
 	private ScrollView mScroll;
 	public TextView mLineType;
 	private EditText mTextsize;
 	private CheckBox mReverse;
 
-
+	
 	public EditText mMsg;
 	public CheckBox mMsgResolution;
 	public TextView mPrinter;
 	/*
-	 *
+	 * 
 	 */
 	public Button mOk;
 	public Button mCancel;
 	public Button mDelete;
-
+	
 	public Context mContext;
-
-	private PopWindowSpiner mSpiner;
+	
+	private PopWindowSpiner  mSpiner;
 	private PopWindowAdapter mFontAdapter;
 	private PopWindowAdapter mFormatAdapter;
 	private PopWindowAdapter mTypeAdapter;
@@ -137,7 +158,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	public final static int MSG_SELECTED_FONT = 1;
 	public final static int MSG_SELECTED_SIZE = 2;
 	public final static int MSG_SELECTED_HEADER = 3;
-
+	
 	public Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
@@ -163,7 +184,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			}
 		}
 	};
-
+	
 	public ObjectInfoDialog(Context context, BaseObject obj) {
 		super(context, R.style.Dialog_Fullscreen);
 		mContext = context;
@@ -179,11 +200,11 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	     if(mObject==null)
 	     {
 //	    	 Debug.d(TAG, "--->obj: " + mObject.mIndex);
-	    	 this.setContentView(R.layout.obj_info_msg);
+	    	 this.setContentView(R.layout.obj_info_msg); 
 	     }
 	     else if(mObject instanceof TextObject)
 	     {
-	    	 this.setContentView(R.layout.obj_info_text);
+	    	 this.setContentView(R.layout.obj_info_text); 	 
 	     }
 	     else if(mObject instanceof BarcodeObject)
 	     {
@@ -206,7 +227,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	     {
 	    	 this.setContentView(R.layout.obj_info_julian);
 	     }
-	     else if(mObject instanceof LineObject || mObject instanceof RectObject || mObject instanceof EllipseObject)
+	     else if(mObject instanceof LineObject || mObject instanceof RectObject || mObject instanceof EllipseObject )
 	     {
 	    	 this.setContentView(R.layout.obj_info_shape);
 	     }
@@ -224,16 +245,16 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	    	 mPrinter.setOnClickListener(this);
 	    	 mMsgResolution.setOnCheckedChangeListener(this);
 	     } else if (mObject instanceof LetterHourObject) {
-	    	this.setContentView(R.layout.obj_info_julian);
+	    	this.setContentView(R.layout.obj_info_julian); 
 	     } else if (mObject instanceof WeekOfYearObject
 	    		 || mObject instanceof WeekDayObject) {
-		   	this.setContentView(R.layout.obj_info_text);
+		   	this.setContentView(R.layout.obj_info_text); 
 		 }
 	     else {
 	    	 Debug.d(TAG, "--->obj: " + mObject.mIndex);
 	    	 this.setContentView(R.layout.obj_info_text);
 	     }
-
+	     
 	     mScroll = (ScrollView) findViewById(R.id.viewInfo);
 	     mScroll.setOnTouchListener(this);
 //	    mXCorView 	= (TextView) findViewById(R.id.xCorView);
@@ -253,16 +274,16 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 //	 	mNumshowView = (TextView) findViewById(R.id.view_num_show);
 //	 	mLineView 		= (TextView) findViewById(R.id.lineView);
 //	 	mLinetypeView = (TextView) findViewById(R.id.view_line_type);
-//
+//	 	
 	 	//Inflater inflater inflater= new Inflater();
 	 	//View v1 = inflater.inflate(R.id.)
 	 	if (! (mObject instanceof MessageObject)) {
-
+		
 		    mWidthEdit = (EditText)findViewById(R.id.widthEdit);
 		    mHighEdit = (TextView)findViewById(R.id.highEdit);
 		    mHeight_O = (EditText) findViewById(R.id.highEdit_o);
 		    mHighEdit.setOnClickListener(this);
-
+			
 		    mXcorEdit = (EditText)findViewById(R.id.xCorEdit);
 		    mYcorEdit = (EditText)findViewById(R.id.yCorEdit);
 		    mContent = (EditText)findViewById(R.id.cntEdit);
@@ -272,16 +293,16 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			}
 		    mHeightType = (CheckBox) findViewById(R.id.height_type);
 		    mHeightType.setOnCheckedChangeListener(this);
-
+		    
 		    mReverse = (CheckBox) findViewById(R.id.reverse_cb);
 		    mReverse.setOnCheckedChangeListener(this);
-
+		    
 		    if (mObject instanceof RealtimeObject) {
 		    	mRtFormat = (TextView) findViewById(R.id.rtFormat);
 			    mRtFormat.setOnClickListener(this);
 			    mOffset = (EditText) findViewById(R.id.et_offset);
 			}
-
+		    
 		    if (mObject instanceof CounterObject) {
 		    	mCntView = (TextView) findViewById(R.id.cntView);
 		    	mDigits = (EditText) findViewById(R.id.cntBits);
@@ -290,7 +311,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			    // mDir.setOnClickListener(this);
 			    mMin = (EditText) findViewById(R.id.et_start);
 			    mMax = (EditText) findViewById(R.id.et_end);
-
+			    
 			}
 		    if (mObject instanceof BarcodeObject) {
 			    mCode = (TextView) findViewById(R.id.spinCode);
@@ -298,27 +319,30 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			    mShow = (CheckBox) findViewById(R.id.check_Num_show);
 		    	//mContent.setEnabled(false);
 			    mTextsize = (EditText) findViewById(R.id.et_text_size);
+			    if (mObject.mSource) {
+					mContent.setEnabled(false);
+				}
 			} else if (mObject instanceof LetterHourObject) {
 				mContent.setEnabled(false);
 			} else if (mObject instanceof WeekOfYearObject) {
 				mContent.setEnabled(false);
 			}
-
+		    
 		    mLineWidth = (EditText) findViewById(R.id.lineWidth);
-
-		    if (mObject instanceof LineObject
+		    
+		    if (mObject instanceof LineObject 
 		    		|| mObject instanceof RectObject
 		    		|| mObject instanceof EllipseObject) {
 		    	mLineType = (TextView) findViewById(R.id.spin_line_type);
 			    mLineType.setOnClickListener(this);
 			}
-
+		    
 		    if (mObject instanceof GraphicObject) {
 			    mPicture = (TextView) findViewById(R.id.image);
 			    mPicture.setOnClickListener(this);
 			}
 	 	}
-
+	     
 	     mShift1 = (EditText) findViewById(R.id.edit_shift1);
 	     mShiftVal1 = (EditText) findViewById(R.id.edit_shiftValue1);
 	     mShift2 = (EditText) findViewById(R.id.edit_shift2);
@@ -333,7 +357,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	     selfInfoEnable();
 //	     mOk.setClickable(false);
 	     mOk.setOnClickListener(new View.OnClickListener(){
-
+	    	 
 				@Override
 				public void onClick(View v) {
 					if (mObject == null) {
@@ -344,7 +368,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						return;
 					}
 					try{
-
+						
 						if(mObject instanceof MessageObject)
 						{
 							mObject.setContent(mMsg.getText().toString());
@@ -355,8 +379,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 								mPListener.onClick();
 							return;
 						}
-
-
+						
+						
 						if (mObject instanceof TextObject) {
 							mObject.setContent(mContent.getText().toString());
 							Debug.d(TAG, "--->redraw: " + mObject.isNeedDraw());
@@ -371,7 +395,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						{
 							((CounterObject) mObject).setBits(Integer.parseInt(mDigits.getText().toString()));
 							// ((CounterObject) mObject).setDirection("increase".equals(mDir.getText().toString())?true:false);
-							((CounterObject) mObject).setRange(StringUtil.parseInt(mMin.getText().toString()),
+							((CounterObject) mObject).setRange(StringUtil.parseInt(mMin.getText().toString()), 
 									StringUtil.parseInt(mMax.getText().toString()));
 							((CounterObject) mObject).setContent(mContent.getText().toString());
 							// ((CounterObject) mObject).setMin(StringUtil.parseInt(mMin.getText().toString()));
@@ -379,7 +403,10 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						}
 						else if(mObject instanceof BarcodeObject)
 						{
-							mObject.setContent(mContent.getText().toString());
+							if (!mObject.mSource) {
+								mObject.setContent(mContent.getText().toString());
+							}
+							
 							((BarcodeObject) mObject).setCode(mCode.getText().toString());
 							((BarcodeObject) mObject).setShow(mShow.isChecked());
 							((BarcodeObject) mObject).setTextsize(Integer.parseInt(mTextsize.getText().toString()));
@@ -410,7 +437,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 							((ShiftObject) mObject).setShift(3, mShift4.getText().toString());
 							((ShiftObject) mObject).setValue(3, mShiftVal4.getText().toString());
 						} else if (mObject instanceof GraphicObject) {
-
+							
 						}
 						// mObject.setWidth(Float.parseFloat(mWidthEdit.getText().toString()));
 						// mObject.setHeight(Float.parseFloat(mHighEdit.getText().toString()));
@@ -426,9 +453,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						mObject.setX(Float.parseFloat(mXcorEdit.getText().toString())/2);
 						mObject.setY(Float.parseFloat(mYcorEdit.getText().toString())/2);
 						Debug.d(TAG, "content="+mContent.getText().toString());
-
+						
 						Resources res = mContext.getResources();
-
+						
 						String font = mFont.getText().toString();
 						mObject.setFont(font);
 						mObject.setReverse(mReverse.isChecked());
@@ -442,21 +469,21 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 					if(mPListener != null)
 						mPListener.onClick();
 				}
-
+				
 			});
-
+	     
 	     mCancel.setOnClickListener(new View.OnClickListener() {
-
+			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				dismiss();
 			}
 		});
-
+	     
 	     mDelete = (Button) findViewById(R.id.btn_delete);
 	     mDelete.setOnClickListener(new View.OnClickListener() {
-
+			
 			@Override
 			public void onClick(View arg0) {
 				dismiss();
@@ -465,13 +492,13 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				}
 			}
 		});
-
+	    
 	     /*mPageup = (Button) findViewById(R.id.btn_page_up);
 	     mPageup.setOnClickListener(this);
 	     mPagedown = (Button) findViewById(R.id.btn_page_down);
 	     mPagedown.setOnClickListener(this);*/
 	 }
-
+	 
 	 public void setObject(BaseObject obj)
 	 {
 		 mObject = obj;
@@ -487,7 +514,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		 if(mObject == null)
 			 return;
 		 if(mObject instanceof MessageObject)
-			{
+			{	
 				mMsg.setText(mObject.getContent());
 				mPrinter.setText(((MessageObject) mObject).getPrinterName());
 			}
@@ -501,7 +528,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				mYcorEdit.setText(String.valueOf((int)mObject.getY()*2));
 				mContent.setText(String.valueOf(mObject.getContent()));
 				mReverse.setChecked(mObject.getReverse());
-
+				
 				mFont.setText(mObject.getFont());
 				if(mObject instanceof RealtimeObject)
 				{
@@ -551,12 +578,12 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				}
 			}
 	 }
-
+	 
 	public void selfInfoEnable()
 	{
 		if(mObject == null ||(mObject instanceof MessageObject))
 			return ;
-
+		
 		if(mObject instanceof RealtimeObject ||
 				 mObject instanceof GraphicObject ||
 				 mObject instanceof RTSecondObject ||
@@ -565,48 +592,48 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				 mObject instanceof RectObject ||
 				 mObject instanceof LineObject ||
 				 mObject instanceof WeekOfYearObject ||
-				 mObject instanceof WeekDayObject)
+				 mObject instanceof WeekDayObject )
 		{
 			Debug.d(TAG, ">>>>>disable content");
 			mContent.setEnabled(false);
 		}
-
+		
 	}
-
+	 
 	 public void setOnPositiveBtnListener(OnPositiveBtnListener listener)
 	 {
-		mPListener = listener;
+		mPListener = listener; 
 	 }
-
+	 
 	 public void setOnNagitiveBtnListener(OnNagitiveBtnListener listener)
 	 {
 		 mNListener = listener;
 	 }
-
+	 
 	 public void setOnDeleteListener(onDeleteListener listener) {
 		 mDelListener = listener;
 	 }
-
+	 
 	 public interface OnPositiveBtnListener
 	 {
 		 void onClick();
 	 }
-
+	 
 	 public interface OnNagitiveBtnListener
 	 {
 		 void onClick();
 	 }
-
+	 
 	 public interface onDeleteListener {
 		 void onClick(BaseObject object);
 	 }
-
+	 
 	 private void initAdapter() {
-
+		 
 		mSpiner = new PopWindowSpiner(mContext);
 		mSpiner.setFocusable(true);
 		mSpiner.setOnItemClickListener(this);
-
+		
 		mFontAdapter = new PopWindowAdapter(mContext, null);
 		mFormatAdapter = new PopWindowAdapter(mContext, null);
 		mTypeAdapter = new PopWindowAdapter(mContext, null);
@@ -614,7 +641,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		// mDirAdapter = new PopWindowAdapter(mContext, null);
 		mHeightAdapter = new PopWindowAdapter(mContext, null);
 		mBarFormatAdapter = new PopWindowAdapter(mContext, null);
-
+		
 		// String[] heights = mContext.getResources().getStringArray(R.array.strarrayFontSize);
 		if (mObject != null) {
 			Debug.d(TAG, "--->initAdapter: " + mObject);
@@ -624,29 +651,29 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				Debug.d(TAG, "--->height: " + height);
 				mHeightAdapter.addItem(height);
 			}
-
+			
 		}
-
+		
 		String[] fonts = mContext.getResources().getStringArray(R.array.strFontArray);
 		for (String font : fonts) {
 			mFontAdapter.addItem(font);
 		}
-
+		
 		String[] formats = mContext.getResources().getStringArray(R.array.strTimeFormat);
 		for (String format : formats) {
 			mFormatAdapter.addItem(format);
 		}
-
+		
 		String[] types = mContext.getResources().getStringArray(R.array.strPrinterArray);
 		for (String type : types) {
 			mTypeAdapter.addItem(type);
 		}
-
+		
 		String[] lines = mContext.getResources().getStringArray(R.array.strLineArray);
 		for (String line : lines) {
 			mLineAdapter.addItem(line);
 		}
-
+		
 		String[] barFormats = mContext.getResources().getStringArray(R.array.strCodeArray);
 		for (String format : barFormats) {
 			mBarFormatAdapter.addItem(format);
@@ -658,7 +685,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		}
 		*/
 	 }
-
+	 
 	 private void setHFullScreen() {
 		 Window win = this.getWindow();
 		 win.getDecorView().setPadding(0, 0, 0, 0);
@@ -675,7 +702,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		}
 		mSpiner.setAttachedView(v);
 		mSpiner.setWidth(v.getWidth());
-
+		
 		switch (v.getId()) {
 		case R.id.highEdit:
 			// mSpiner.setAdapter(mHeightAdapter);
@@ -713,12 +740,12 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		case R.id.image:
 			final PictureBrowseDialog dialog = new PictureBrowseDialog(mContext);
 			dialog.setOnPositiveClickedListener(new OnPositiveListener() {
-
+				
 				@Override
 				public void onClick(String content) {
 					dialog.dismiss();
 				}
-
+				
 				@Override
 				public void onClick() {
 					PictureItem item = dialog.getSelect();
@@ -732,7 +759,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				}
 			});
 			dialog.setOnNagitiveClickedListener(new OnNagitiveListener() {
-
+				
 				@Override
 				public void onClick() {
 					dialog.dismiss();
@@ -813,7 +840,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count,
-                                  int after) {
+			int after) {
 	}
 
 	@Override

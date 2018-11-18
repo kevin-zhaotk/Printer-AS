@@ -1,13 +1,20 @@
 package com.industry.printer.hardware;
 
+import java.io.ByteArrayInputStream;
+
+import org.apache.http.util.ByteArrayBuffer;
+
+import android.R.integer;
+import android.R.string;
+import android.content.SharedPreferences;
+import android.util.Log;
+
 import com.industry.printer.Usb.CRC16;
 import com.industry.printer.Utils.Debug;
 
-import java.io.ByteArrayInputStream;
-
 public class UsbSerial {
 	
-	public static final String TAG="UsbSerial";
+	public static final String TAG="UsbSerial"; 
 	public static final int PACKAGE_MAX_LEN=132;
 	
 	/**
@@ -71,7 +78,7 @@ public class UsbSerial {
 		}
 		for(int i=0; i<response.length; i++)
 		{
-			Debug.d(TAG, "response["+i+"]="+ Integer.toHexString(response[i] & 0x0FF));
+			Debug.d(TAG, "response["+i+"]="+Integer.toHexString(response[i] & 0x0FF));
 		}
 		if(response[4] != 0)
 			ret = ERR_RESPONSE_ERROR;
@@ -120,7 +127,7 @@ public class UsbSerial {
 		}
 		for(int i=0; i<response.length; i++)
 		{
-			Debug.d(TAG, "buf["+i+"]="+ Integer.toHexString(response[i] & 0x0FF));
+			Debug.d(TAG, "buf["+i+"]="+Integer.toHexString(response[i] & 0x0FF));
 		}
 		if(response[4] != 0)
 		{
@@ -224,7 +231,7 @@ public class UsbSerial {
 		}
 		for(int i=0; i<response.length; i++)
 		{
-			Debug.d(TAG, "response["+i+"]="+ Integer.toHexString(response[i] & 0x0FF));
+			Debug.d(TAG, "response["+i+"]="+Integer.toHexString(response[i] & 0x0FF));
 		}
 		Debug.d(TAG,"<====setAllParam");
 		HardwareJni.close(fd);
@@ -482,7 +489,7 @@ public class UsbSerial {
 		}
 		for(int i=0; i<response.length; i++)
 		{
-			Debug.d(TAG, "response["+i+"]="+ Integer.toHexString(response[i] & 0x0FF));
+			Debug.d(TAG, "response["+i+"]="+Integer.toHexString(response[i] & 0x0FF));
 		}
 		Debug.d(TAG,"<====printData");
 		HardwareJni.close(fd);
@@ -583,7 +590,7 @@ public class UsbSerial {
 		}
 		for(int i=0; i<response.length; i++)
 		{
-			Debug.d(TAG, "response["+i+"]="+ Integer.toHexString(response[i] & 0x0FF));
+			Debug.d(TAG, "response["+i+"]="+Integer.toHexString(response[i] & 0x0FF));
 		}
 		Debug.d(TAG,"<====sendSettingData");
 		HardwareJni.close(fd);
@@ -624,7 +631,7 @@ public class UsbSerial {
 		}
 		for(int i=0; i<response.length; i++)
 		{
-			Debug.d(TAG, "response["+i+"]="+ Integer.toHexString(response[i] & 0x0FF));
+			Debug.d(TAG, "response["+i+"]="+Integer.toHexString(response[i] & 0x0FF));
 		}
 		if(info == null)
 		{

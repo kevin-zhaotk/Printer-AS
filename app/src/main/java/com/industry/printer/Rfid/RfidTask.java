@@ -1,15 +1,17 @@
 package com.industry.printer.Rfid;
 
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.RFIDAsyncTask.RfidCallback;
+import com.printer.corelib.RFIDData;
+import com.industry.printer.hardware.RFIDDevice;
+import com.industry.printer.hardware.RFIDManager;
+
+import android.R.bool;
+import android.R.integer;
 import android.content.Context;
 import android.os.SystemClock;
 
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.RFIDAsyncTask.RfidCallback;
-import com.industry.printer.hardware.RFIDDevice;
-import com.industry.printer.hardware.RFIDManager;
-import com.printer.corelib.RFIDData;
-
-public class RfidTask implements RfidCallback {
+public class RfidTask implements RfidCallback{
 	
 	private String TAG = RfidTask.class.getSimpleName();
 	

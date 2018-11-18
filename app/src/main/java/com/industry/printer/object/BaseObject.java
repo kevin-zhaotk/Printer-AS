@@ -1,31 +1,34 @@
 package com.industry.printer.object;
 
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+
+import org.apache.http.util.ByteArrayBuffer;
+
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Rect;
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.BinInfo;
 import com.industry.printer.MessageTask;
 import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.R;
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.cache.FontCache;
 import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.data.BinFromBitmap;
-
-import org.apache.http.util.ByteArrayBuffer;
-
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
 
 public class BaseObject{
 	public static final String TAG="BaseObject";
@@ -89,15 +92,15 @@ public class BaseObject{
 	 * 需要重新绘制bitmap的几种情况：1、宽高变化；2、字体修改； 3，内容变化
 	 */
 	protected boolean isNeedRedraw;
-	protected Bitmap mBitmap;
-	protected Bitmap mBitmapSelected;
+	protected Bitmap	mBitmap;
+	protected Bitmap	mBitmapSelected;
 	
 	public HashMap<String, byte[]> mVBuffer;
 	public MessageTask mTask;
 	
 
 //	public static final String DEFAULT_FONT = "0T+";//	
-	public static final String DEFAULT_FONT = "1+";// addbylk
+	public static final String DEFAULT_FONT = "1+";// addbylk	
 	/**
 	 * supported fonts
 	 */
@@ -247,7 +250,7 @@ public class BaseObject{
 	protected void drawSelected() {
 		// mPaint.setColor(Color.RED);
 		// Debug.d(TAG, "--->drawSelected");
-		mPaint.setColor(Color.BLACK);
+		mPaint.setColor(Color.BLACK);	
 		mBitmapSelected = draw();
 	}
 	
@@ -582,7 +585,7 @@ public class BaseObject{
 		singleW = (int)mWidth/mContent.length();
 
 		/*A full-size empty bitmap, width:singleW; height: Configs.gDots*/
-		Bitmap bg = Bitmap.createBitmap(singleW, Configs.gDots, Configs.BITMAP_CONFIG);
+		Bitmap bg = Bitmap.createBitmap(singleW, Configs.gDots, Configs.BITMAP_CONFIG); 
 		mCan = new Canvas(bg);
 		
 		for(int i =0; i<=9; i++)
@@ -754,7 +757,7 @@ public class BaseObject{
 		mIsSelected = s;
 		if(mIsSelected)
 		//	mPaint.setColor(Color.RED);//addbylk
-			mPaint.setColor(Color.BLACK);
+			mPaint.setColor(Color.BLACK);	
 		else
 			mPaint.setColor(Color.BLACK);
 	}
@@ -1049,7 +1052,7 @@ public class BaseObject{
 		if (isFixed) {
 			return isFixed;
 		}
-		String height = getDisplayHeight();
+		String  height = getDisplayHeight();
 		if (MessageObject.mDotSizes[0].equalsIgnoreCase(height) || MessageObject.mDotSizes[1].equalsIgnoreCase(height)) {
 			isFixed = true;
 		}

@@ -1,21 +1,24 @@
 package com.industry.printer.Socket_Server;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.os.Environment;
-import android.util.Log;
-
-import com.industry.printer.Socket_Server.Db.Server_Socket_Database;
-
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+
+import com.industry.printer.Socket_Server.Db.Server_Socket_Database;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.os.Environment;
+import android.util.Log;
 
 /**
  * 数据发送线程
@@ -27,7 +30,7 @@ public class ConnectDataThread extends Thread {
     private Server_Socket_Database Db;
     Cursor rc;
 
-    public ConnectDataThread(String ip, int port, Context context) {
+    public ConnectDataThread(String ip, int port,Context context) {
         this.ip = ip;
        
         this.port = port;

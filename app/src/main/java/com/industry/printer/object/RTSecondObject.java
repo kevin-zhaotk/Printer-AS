@@ -1,11 +1,11 @@
 package com.industry.printer.object;
 
-import android.content.Context;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.industry.printer.Utils.Debug;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import android.content.Context;
 
 public class RTSecondObject extends BaseObject {
 

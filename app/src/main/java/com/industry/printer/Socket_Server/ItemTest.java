@@ -7,9 +7,9 @@ import android.graphics.drawable.Drawable;
 public class ItemTest implements Comparable<ItemTest>
 {
 	/* 文件名 */
-	private String mText		= "";
+	private String		mText		= "";
 	/* 文件的图标ICNO */
-	private Drawable mIcon		= null;
+	private Drawable	mIcon		= null;
 	/* 能否选中 */
 	private boolean	mSelectable	= true;
 	public ItemTest(String text, Drawable bullet)

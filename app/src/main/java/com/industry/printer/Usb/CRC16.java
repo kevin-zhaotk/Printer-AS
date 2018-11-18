@@ -1,5 +1,7 @@
 package com.industry.printer.Usb;
 
+import android.util.Log;
+
 public class CRC16 {
 	public static String TAG="CRC16";
 	public static int CRC16_BASE = 0xA001;

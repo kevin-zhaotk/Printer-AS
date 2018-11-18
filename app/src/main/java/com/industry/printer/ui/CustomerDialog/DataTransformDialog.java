@@ -1,6 +1,20 @@
 package com.industry.printer.ui.CustomerDialog;
 
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
+import com.industry.printer.R;
+import com.industry.printer.R.drawable;
+import com.industry.printer.R.id;
+import com.industry.printer.R.layout;
+import com.industry.printer.Utils.Debug;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -10,23 +24,12 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 import android.widget.Spinner;
-
-import com.industry.printer.R;
-import com.industry.printer.Utils.Debug;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 public class DataTransformDialog extends Dialog {
 
@@ -73,49 +76,49 @@ public class DataTransformDialog extends Dialog {
 		 super.onCreate(savedInstanceState);
 	     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 	     this.setContentView( R.layout.file_trans_layout);
-
+	     
 	     mSdInserted=false;
 	     mUsbAInserted=false;
 	     mUsbBInserted=false;
 	     mUsbCInserted=false;
-
+	     
 	     mOk = (Button) findViewById(R.id.btn_trans_ok);
 	     mOk.setOnClickListener(new View.OnClickListener() {
-
+			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-
+				
 			}
 		});
 	     mCancel = (Button) findViewById(R.id.btn_trans_cnl);
 	     mCancel.setOnClickListener(new View.OnClickListener() {
-
+				
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					dismiss();
 				}
 			});
-
+	     
 	     mDirEdit = (EditText) findViewById(R.id.dirEdit);
 	     mDirEdit.setText("MSG");
-
+	     
 	     mContent = new LinkedList<Map<String, Object>>();
-	     mFileAdapter = new SimpleAdapter(mContext,
-					mContent,
-					R.layout.file_browser,
-					new String[]{"icon", "name"},
+	     mFileAdapter = new SimpleAdapter(mContext, 
+					mContent, 
+					R.layout.file_browser, 
+					new String[]{"icon", "name"}, 
 					new int []{R.id.file_icon, R.id.file_name});
-
+	     
 	     mFilelist = (ListView) findViewById(R.id.dirList);
 	     mFilelist.setOnItemClickListener(new OnItemClickListener(){
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+					int position, long id) {
 				// TODO Auto-generated method stub
-
+				
 				mSrcSelected = position;
 				Debug.d(TAG, "onItemClick, position="+position);
 				if(mSrcView == null)
@@ -129,38 +132,38 @@ public class DataTransformDialog extends Dialog {
 				}
 				view.setBackgroundColor(Color.BLUE);
 			}
-
+	    	 
 	     });
 	     filterObject();
-
+	     
 	     mTransTo = (Button) findViewById(R.id.btn_transTo);
 	     mTransTo.setOnClickListener(new View.OnClickListener() {
-
+			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				copyToDst();
 			}
 		});
-
+	     
 	     mDest = (Spinner) findViewById(R.id.dirSpiner);
-
+	     
 	     mDstContent=new LinkedList<Map<String, Object>>();
 	     mDstlist = (ListView) findViewById(R.id.dest_obj);
-	     mDstAdapter = new SimpleAdapter(mContext,
-					mDstContent,
-					R.layout.list_item_color,
-					new String[]{"icon", "name"},
+	     mDstAdapter = new SimpleAdapter(mContext, 
+					mDstContent, 
+					R.layout.list_item_color, 
+					new String[]{"icon", "name"}, 
 					new int []{R.id.file_img, R.id.file_tv});
-
+	     
 	     mDstlist.setOnItemClickListener(new OnItemClickListener(){
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+					int position, long id) {
 				// TODO Auto-generated method stub
 				mDstSelected = position;
-
+				
 				//View v = parent.getChildAt(position);
 				//v.setBackgroundColor(Color.BLUE);
 				/*
@@ -179,9 +182,9 @@ public class DataTransformDialog extends Dialog {
 				//view.setSelected(true);
 				parent.setSelection(position);
 			}
-
+	    	 
 	     });
-
+	     
 	     mDstlist.setOnTouchListener(new OnTouchListener(){
 
 			@Override
@@ -190,11 +193,11 @@ public class DataTransformDialog extends Dialog {
 				v.requestFocusFromTouch();
 				return false;
 			}
-
+	    	 
 	     });
 	     fillDstlist();
 	 }
-
+	 
 	 public void filterObject()
 	 {
 		 File dir = new File("/storage/sd_internal/MSG");
@@ -212,17 +215,17 @@ public class DataTransformDialog extends Dialog {
 		}
 		mFilelist.setAdapter(mFileAdapter);
 	 }
-
+	 
 	 private void fillDstlist()
 	 {
 		 mDstContent.clear();
 		 if( mDest.getSelectedItemPosition() == 0)  //SD
 		 {
-
+			 
 		 }
 		 else if( mDest.getSelectedItemPosition() == 1)  //USB
 		 {
-
+			 
 		 }
 		 for(int i=100;i <200; i++)
 		 {
@@ -241,7 +244,7 @@ public class DataTransformDialog extends Dialog {
 			 return;
 		 Debug.d(TAG, "index = "+mSrcSelected);
 		String path = (String) mContent.get(mSrcSelected).get("path");
-		String dest;
+		String dest;	
 		Debug.d(TAG, "copyToDst mDest.getSelectedItemPosition()="+mDest.getSelectedItemPosition());
 		if( mDest.getSelectedItemPosition() == 0)  //SD
 		{
@@ -271,7 +274,7 @@ public class DataTransformDialog extends Dialog {
 	 public boolean copyFolder(String oldPath, String newPath) {
 		 boolean isok = true;
 		 try {
-			 (new File(newPath)).mkdirs();
+			 (new File(newPath)).mkdirs(); 
 			 File a=new File(oldPath);
 			 String[] file=a.list();
 			 File temp=null;
@@ -281,7 +284,7 @@ public class DataTransformDialog extends Dialog {
 				 }
 				 else
 				 {
-					 temp=new File(oldPath+ File.separator+file[i]);
+					 temp=new File(oldPath+File.separator+file[i]);
 				 }
 				 if(temp.isFile()){
 					 FileInputStream input = new FileInputStream(temp);
@@ -308,7 +311,7 @@ public class DataTransformDialog extends Dialog {
 
 	 
 	 
-	 public class MyFileFilter implements FileFilter {
+	 public class MyFileFilter implements FileFilter{
 		 @Override
 		 public boolean accept (File pathname)
 		 {

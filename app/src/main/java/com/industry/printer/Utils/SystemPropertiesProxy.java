@@ -1,10 +1,8 @@
 package com.industry.printer.Utils;
 
-import android.content.Context;
-
 import java.io.File;
 import java.lang.reflect.Method;
-
+import android.content.Context;
 import dalvik.system.DexFile;
 
 
@@ -22,7 +20,7 @@ public class SystemPropertiesProxy
 
         try{
 
-          ClassLoader cl = context.getClassLoader();
+          ClassLoader cl = context.getClassLoader(); 
           @SuppressWarnings("rawtypes")
           Class SystemProperties = cl.loadClass("android.os.SystemProperties");
 
@@ -61,7 +59,7 @@ public class SystemPropertiesProxy
 
         try{
 
-          ClassLoader cl = context.getClassLoader();
+          ClassLoader cl = context.getClassLoader(); 
           @SuppressWarnings("rawtypes")
           Class SystemProperties = cl.loadClass("android.os.SystemProperties");
 
@@ -69,7 +67,7 @@ public class SystemPropertiesProxy
           @SuppressWarnings("rawtypes")
               Class[] paramTypes= new Class[2];
           paramTypes[0]= String.class;
-          paramTypes[1]= String.class;
+          paramTypes[1]= String.class;          
 
           Method get = SystemProperties.getMethod("get", paramTypes);
 
@@ -104,7 +102,7 @@ public class SystemPropertiesProxy
 
         try{
 
-          ClassLoader cl = context.getClassLoader();
+          ClassLoader cl = context.getClassLoader(); 
           @SuppressWarnings("rawtypes")
           Class SystemProperties = cl.loadClass("android.os.SystemProperties");
 
@@ -149,7 +147,7 @@ public class SystemPropertiesProxy
 
           ClassLoader cl = context.getClassLoader();
           @SuppressWarnings("rawtypes")
-          Class SystemProperties= cl.loadClass("android.os.SystemProperties");
+              Class SystemProperties= cl.loadClass("android.os.SystemProperties");
 
           //参数类型
           @SuppressWarnings("rawtypes")
@@ -193,7 +191,7 @@ public class SystemPropertiesProxy
 
         try{
 
-          ClassLoader cl = context.getClassLoader();
+          ClassLoader cl = context.getClassLoader(); 
           @SuppressWarnings("rawtypes")
           Class SystemProperties = cl.loadClass("android.os.SystemProperties");
 
@@ -235,7 +233,7 @@ public class SystemPropertiesProxy
           @SuppressWarnings("unused")
           DexFile df = new DexFile(new File("/system/app/Settings.apk"));
           @SuppressWarnings("unused")
-          ClassLoader cl = context.getClassLoader();
+          ClassLoader cl = context.getClassLoader(); 
           @SuppressWarnings("rawtypes")
           Class SystemProperties = Class.forName("android.os.SystemProperties");
 
@@ -243,7 +241,7 @@ public class SystemPropertiesProxy
           @SuppressWarnings("rawtypes")
               Class[] paramTypes= new Class[2];
           paramTypes[0]= String.class;
-          paramTypes[1]= String.class;
+          paramTypes[1]= String.class;  
 
           Method set = SystemProperties.getMethod("set", paramTypes);
 

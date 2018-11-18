@@ -1,19 +1,71 @@
 package com.industry.printer;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import java.util.logging.Logger;
+
+import com.industry.printer.FileFormat.TlkFileParser;
+import com.industry.printer.FileFormat.TlkFileWriter;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.PlatformInfo;
+import com.industry.printer.data.BinCreater;
+import com.industry.printer.data.BinFileMaker;
+import com.industry.printer.data.BinFromBitmap;
+import com.industry.printer.hardware.HardwareJni;
+import com.industry.printer.hardware.RFIDDevice;
+import com.industry.printer.object.BaseObject;
+import com.industry.printer.object.CounterObject;
+import com.industry.printer.object.TLKFileParser;
+import com.industry.printer.object.GraphicObject;
+import com.industry.printer.object.JulianDayObject;
+import com.industry.printer.object.MessageObject;
+import com.industry.printer.object.ObjectsFromString;
+import com.industry.printer.object.RealtimeObject;
+import com.industry.printer.object.ShiftObject;
+import com.industry.printer.object.TextObject;
+import com.industry.printer.ui.ExtendMessageTitleFragment;
+import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter;
+import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
+import com.industry.printer.ui.CustomerDialog.CustomerDialogBase;
+import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListener;
+import com.industry.printer.ui.CustomerDialog.FileBrowserDialog;
+import com.industry.printer.ui.CustomerDialog.LoadingDialog;
+import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog;
+import com.industry.printer.ui.CustomerDialog.MessageSaveDialog;
+import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
+import com.industry.printer.ui.CustomerDialog.ObjectInsertDialog;
+import com.industry.printer.ui.CustomerDialog.TextBrowserDialog;
+import com.industry.printer.widget.PopWindowSpiner;
+import com.industry.printer.widget.SpanableStringFormator;
+
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Spannable;
 import android.text.SpannableString;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,33 +77,7 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.hardware.PWMAudio;
-import com.industry.printer.object.BaseObject;
-import com.industry.printer.object.CounterObject;
-import com.industry.printer.object.GraphicObject;
-import com.industry.printer.object.MessageObject;
-import com.industry.printer.object.ObjectsFromString;
-import com.industry.printer.object.RealtimeObject;
-import com.industry.printer.object.TextObject;
-import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter;
-import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
-import com.industry.printer.ui.CustomerDialog.CustomerDialogBase;
-import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListener;
-import com.industry.printer.ui.CustomerDialog.FileBrowserDialog;
-import com.industry.printer.ui.CustomerDialog.LoadingDialog;
-import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog;
-import com.industry.printer.ui.CustomerDialog.MessageSaveDialog;
-import com.industry.printer.ui.CustomerDialog.ObjectInsertDialog;
-import com.industry.printer.ui.CustomerDialog.TextBrowserDialog;
-import com.industry.printer.ui.ExtendMessageTitleFragment;
-import com.industry.printer.widget.PopWindowSpiner;
-import com.industry.printer.widget.SpanableStringFormator;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.Toast;
 
 public class EditTabActivity extends Fragment implements OnClickListener, OnLongClickListener, IOnItemClickListener, OnTouchListener {
 	public static final String TAG="EditTabActivity";
@@ -77,9 +103,9 @@ public class EditTabActivity extends Fragment implements OnClickListener, OnLong
 	 * object operation buttons
 	 ************************/
 	public ImageButton mBtnLeft;			//move left
-	public ImageButton mBtnRight;			//move right
+	public ImageButton mBtnRight;			//move right 
 	public ImageButton mBtnUp;				//move up
-	public ImageButton mBtnDown;		//move down
+	public ImageButton mBtnDown;		//move down 
 	public ImageButton mBtnZoomoutX;//zoom out
 	public ImageButton mBtnZoominX;	//zoom in
 	public ImageButton mBtnZoomoutY;//zoom out
@@ -90,23 +116,23 @@ public class EditTabActivity extends Fragment implements OnClickListener, OnLong
 	/************************
 	 * 鏍戣帗娲�3-缂栬緫鐣岄潰鐩稿叧鎸夐挳
 	 ***********************/
-	public Button mInsert;
-	public Button mTest;
-	public Button mTest5;
+	public Button	mInsert;
+	public Button	mTest;
+	public Button 	mTest5;
 	/************************
 	 * create Object buttons
 	 * **********************/
-	public ImageButton mBtnText;
-	public ImageButton mBtnCnt;
-	public ImageButton mBtnBar;
-	public ImageButton mImage;
-	public ImageButton mBtnDay;
-	public ImageButton mBtnTime;
-	public ImageButton mBtnLine;
-	public ImageButton mBtnRect;
-	public ImageButton mBtnEllipse;
-	public ImageButton mShift;
-	public ImageButton mScnd;
+	public ImageButton 	mBtnText;
+	public ImageButton 	mBtnCnt;
+	public ImageButton 	mBtnBar;
+	public ImageButton	mImage;
+	public ImageButton 	mBtnDay;
+	public ImageButton 	mBtnTime;
+	public ImageButton 	mBtnLine;
+	public ImageButton 	mBtnRect;
+	public ImageButton 	mBtnEllipse;
+	public ImageButton	mShift;
+	public ImageButton	mScnd;
 	/**********************
 	 * Object Information Table
 	 * **********************/
@@ -198,7 +224,7 @@ public class EditTabActivity extends Fragment implements OnClickListener, OnLong
 					return false;
 				}
 				if (arg2.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);  
 					imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 					return true;
 				} else {
@@ -385,7 +411,7 @@ public class EditTabActivity extends Fragment implements OnClickListener, OnLong
 	
 	
 	Handler mHandler = new Handler(){
-		public void handleMessage(Message msg) {
+		public void handleMessage(Message msg) {  
 			//	String f;
 			String title = getResources().getString(R.string.str_file_title);;
 			boolean createfile=false;
@@ -397,7 +423,7 @@ public class EditTabActivity extends Fragment implements OnClickListener, OnLong
         			((MainActivity) getActivity()).mEditTitle.setText(getResources().getString(R.string.str_filename_no));
         			break;
             	case HANDLER_MESSAGE_OPEN:		//open
-            		Debug.d(TAG, "open file="+ MessageBrowserDialog.getSelected());
+            		Debug.d(TAG, "open file="+MessageBrowserDialog.getSelected());
 					List<String> objects = MessageBrowserDialog.getSelected();
 					mObjName = objects.get(0);
             		if (mObjName == null || mObjName.isEmpty()) {
@@ -412,7 +438,7 @@ public class EditTabActivity extends Fragment implements OnClickListener, OnLong
             		break;
             		
             	case HANDLER_MESSAGE_SAVEAS:		//saveas
-            		Debug.d(TAG, "save as file="+ MessageSaveDialog.getTitle());
+            		Debug.d(TAG, "save as file="+MessageSaveDialog.getTitle());
             		mObjName = MessageSaveDialog.getTitle();
             		createfile=true;
             		

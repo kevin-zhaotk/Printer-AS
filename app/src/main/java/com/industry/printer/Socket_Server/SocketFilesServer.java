@@ -1,16 +1,21 @@
 package com.industry.printer.Socket_Server;
 
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 
 public class SocketFilesServer {
 	private ServerSocket server;

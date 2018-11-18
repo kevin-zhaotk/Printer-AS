@@ -1,26 +1,38 @@
 package com.industry.printer;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Vector;
+
+import com.industry.printer.FileFormat.DotMatrixFont;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.data.BinCreater;
+import com.industry.printer.data.BinFromBitmap;
+import com.industry.printer.object.BaseObject;
+import com.industry.printer.object.MessageObject;
+import com.industry.printer.object.TlkObject;
+
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
-
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.data.BinFromBitmap;
-import com.industry.printer.object.TlkObject;
-
-import java.util.Vector;
 
 public class PreviewScrollView extends View {
 
 	public static final String TAG="PreviewScrollView";
 	public Paint mPaint;
 	
-	public static Bitmap mPreBitmap;
+	public static Bitmap	mPreBitmap;
 	public Vector<TlkObject> mList;
 	
 	public PreviewScrollView(Context context) {
@@ -85,7 +97,7 @@ public class PreviewScrollView extends View {
 	}
 
 	
-	@Override
+	@Override  
 	 protected void onDraw(Canvas canvas) {
 		Debug.d(TAG, "====>onDraw");
 		if(mPreBitmap == null)

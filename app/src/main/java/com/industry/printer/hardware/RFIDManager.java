@@ -1,24 +1,29 @@
 package com.industry.printer.hardware;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
+
+import android.R.integer;
 import android.content.Context;
+import android.graphics.Bitmap.Config;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.DataTransferThread;
 import com.industry.printer.ThreadPoolManager;
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.RFIDAsyncTask.RfidCallback;
 import com.printer.corelib.RFIDData;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class RFIDManager implements RfidCallback {
+public class RFIDManager implements RfidCallback{
 	
 	private static final String TAG = RFIDManager.class.getSimpleName();
 	
-	private static volatile RFIDManager mInstance=null;
+	private static volatile RFIDManager	mInstance=null;
 	private List<RFIDDevice> mRfidDevices = new ArrayList<RFIDDevice>();
 	private int mCurrent=0;
 	private int mLiveHeads = 1;

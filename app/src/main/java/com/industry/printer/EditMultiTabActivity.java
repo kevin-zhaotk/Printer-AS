@@ -1,29 +1,25 @@
 package com.industry.printer;
 
-import android.app.Fragment;
-import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.Spinner;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Vector;
 
+import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListener;
+import com.industry.printer.ui.CustomerDialog.CustomerDialogBase;
+import com.industry.printer.ui.CustomerDialog.LoadingDialog;
+import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog;
+import com.industry.printer.ui.CustomerDialog.MessageSaveDialog;
+import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
+import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog.OnPositiveBtnListener;
+import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.hardware.ExtGpio;
-import com.industry.printer.hardware.PWMAudio;
+//import com.industry.printer.hardware.PWMAudio;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
@@ -37,17 +33,51 @@ import com.industry.printer.object.RealtimeObject;
 import com.industry.printer.object.RectObject;
 import com.industry.printer.object.ShiftObject;
 import com.industry.printer.object.TextObject;
-import com.industry.printer.ui.CustomerDialog.CustomerDialogBase;
-import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListener;
-import com.industry.printer.ui.CustomerDialog.LoadingDialog;
-import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog;
-import com.industry.printer.ui.CustomerDialog.MessageSaveDialog;
-import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
-import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog.OnPositiveBtnListener;
 import com.industry.printer.ui.MessageDisplayManager;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.app.Fragment;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
+import android.content.DialogInterface.OnKeyListener;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 public class EditMultiTabActivity extends Fragment implements OnClickListener, OnTouchListener {
 	public static final String TAG="EditMultiTabActivity";
@@ -72,9 +102,9 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 	 * object operation buttons
 	 ************************/
 	public ImageButton mBtnLeft;			//move left
-	public ImageButton mBtnRight;			//move right
+	public ImageButton mBtnRight;			//move right 
 	public ImageButton mBtnUp;				//move up
-	public ImageButton mBtnDown;		//move down
+	public ImageButton mBtnDown;		//move down 
 	public ImageButton mBtnZoomoutX;//zoom out
 	public ImageButton mBtnZoominX;	//zoom in
 	public ImageButton mBtnZoomoutY;//zoom out
@@ -84,17 +114,17 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 	/************************
 	 * create Object buttons
 	 * **********************/
-	public ImageButton mBtnText;
-	public ImageButton mBtnCnt;
-	public ImageButton mBtnBar;
-	public ImageButton mImage;
-	public ImageButton mBtnDay;
-	public ImageButton mBtnTime;
-	public ImageButton mBtnLine;
-	public ImageButton mBtnRect;
-	public ImageButton mBtnEllipse;
-	public ImageButton mShift;
-	public ImageButton mScnd;
+	public ImageButton 	mBtnText;
+	public ImageButton 	mBtnCnt;
+	public ImageButton 	mBtnBar;
+	public ImageButton	mImage;
+	public ImageButton 	mBtnDay;
+	public ImageButton 	mBtnTime;
+	public ImageButton 	mBtnLine;
+	public ImageButton 	mBtnRect;
+	public ImageButton 	mBtnEllipse;
+	public ImageButton	mShift;
+	public ImageButton	mScnd;
 	/**********************
 	 * Object Information Table
 	 * **********************/
@@ -157,7 +187,7 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
+					int position, long id) {
 				// TODO Auto-generated method stub
 				Debug.d(TAG,"==========objlist item " + position +" clicked"+" of "+mObjList.getCount());
 				clearCurObj();
@@ -447,7 +477,7 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 	
 	
 	Handler mHandler = new Handler(){
-		public void handleMessage(Message msg) {
+		public void handleMessage(Message msg) {  
 			//	String f;
 			boolean createfile=false;
             switch (msg.what) {   

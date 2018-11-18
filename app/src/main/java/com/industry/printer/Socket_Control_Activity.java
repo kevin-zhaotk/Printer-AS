@@ -1,11 +1,48 @@
 package com.industry.printer;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.industry.printer.Socket_Server.LinearLayoutBaseAdapter;
+import com.industry.printer.Socket_Server.LinearLayoutViews;
+import com.industry.printer.Socket_Server.LinearLayoutViews.OnItemClickListener;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Socket_Server.ObserverCallBack;
+import com.industry.printer.Socket_Server.QueryDataThread;
+import com.industry.printer.Socket_Server.SendDataThread;
+import com.industry.printer.Socket_Server.SocketFilesServer;
+
+import com.industry.printer.Socket_Server.ConnectDataThread;
+import com.industry.printer.Socket_Server.DialogShow_Activity;
+import com.industry.printer.Socket_Server.Db.Server_Socket_Database;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnKeyListener;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.wifi.WifiInfo;
@@ -14,6 +51,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.renderscript.Allocation;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,30 +61,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.industry.printer.Socket_Server.ConnectDataThread;
-import com.industry.printer.Socket_Server.Db.Server_Socket_Database;
-import com.industry.printer.Socket_Server.DialogShow_Activity;
-import com.industry.printer.Socket_Server.LinearLayoutBaseAdapter;
-import com.industry.printer.Socket_Server.LinearLayoutViews;
-import com.industry.printer.Socket_Server.ObserverCallBack;
-import com.industry.printer.Socket_Server.QueryDataThread;
-import com.industry.printer.Socket_Server.SendDataThread;
-import com.industry.printer.Socket_Server.SocketFilesServer;
-import com.industry.printer.Utils.Configs;
-
-import org.json.JSONException;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.widget.Toast;
 
 public class Socket_Control_Activity extends Activity {
 	private TextView But_Print,Scan_device,But_pur,But_Stop;
@@ -111,11 +127,11 @@ public class Socket_Control_Activity extends Activity {
 		But_Print.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				int i = -1;
-
+			
 				ShowDialog.show();
 				ShowDialog.setCanceledOnTouchOutside(false);
 				Cr = Db.AllData_SqlData("select * from printer_info");
-
+				
 				while (Cr.moveToNext()) {
 					i++;
 					All_Divece_ID.add(i, Cr.getString(Cr.getColumnIndex("device_id")));
@@ -124,22 +140,22 @@ public class Socket_Control_Activity extends Activity {
 				}
 				Db.close();
 				Cr.close();
-
-
+				
+				
 				for(int y=0;y<All_Divece_ID.size();y++)
 				{
 					sDeviceNumber=All_Divece_ID.get(y);
 					PrintPath=All_Print_Path.get(y);
 					MakeIP();
-
-
-
-
+				
+					
+					
+					
 					new Thread(RepeatThreadSendPrint).start();
 				}
-
-
-
+					
+					
+				
 
 			}
 
@@ -147,7 +163,7 @@ public class Socket_Control_Activity extends Activity {
 		But_pur.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				int i = 0;
-
+				
 				ShowDialog.show();
 				ShowDialog.setCanceledOnTouchOutside(false);
 				while (Cr.moveToNext()) {
@@ -158,17 +174,17 @@ public class Socket_Control_Activity extends Activity {
 				}
 				Db.close();
 				Cr.close();
-
-
+				
+				
 				for(int y=0;y<All_Divece_ID.size();y++)
 				{
 					sDeviceNumber=All_Divece_ID.get(y);
 					PrintPath=All_Print_Path.get(y);
 					MakeIP();
-
-
-
-
+				
+					
+					
+					
 					new SendDataThread(sIp, 3550, "000B|0000|200|0|0|0000|0|0000|0D0A",
 							Socket_Control_Activity.this, callbackData).start();
 				}
@@ -176,11 +192,11 @@ public class Socket_Control_Activity extends Activity {
 			}
 
 		});
-
+		
 		But_Stop.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 	int i = 0;
-
+				
 				ShowDialog.show();
 				ShowDialog.setCanceledOnTouchOutside(false);
 				while (Cr.moveToNext()) {
@@ -191,17 +207,17 @@ public class Socket_Control_Activity extends Activity {
 				}
 				Db.close();
 				Cr.close();
-
-
+				
+				
 				for(int y=0;y<All_Divece_ID.size();y++)
 				{
 					sDeviceNumber=All_Divece_ID.get(y);
 					PrintPath=All_Print_Path.get(y);
 					MakeIP();
-
-
-
-
+				
+					
+					
+					
 					new SendDataThread(sIp, 3550, "000B|0000|500|0|0|0000|0|0000|0D0A",
 							Socket_Control_Activity.this, callbackData).start();
 				}
@@ -216,11 +232,11 @@ public class Socket_Control_Activity extends Activity {
 
 			public void onClick(View arg0) {
 				/*ShowDialog.show();
-
+				 
 				Db.deleteAll("device_info");
 				Db.close();
-
-
+				
+				
 				 //mThreadScanDevice.start();
 			  new Thread(mThreadScanDevice).start();*/
 				Dialog_SureCancel();
@@ -233,7 +249,7 @@ public class Socket_Control_Activity extends Activity {
 	}
 
 Runnable mThreadScanDevice = new Runnable() {
-
+		
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
@@ -245,15 +261,15 @@ Runnable mThreadScanDevice = new Runnable() {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+		
 		}
 	};
 	/*Thread mThreadScanDevice = new Thread() {
 		@Override
 		public void run() {
-
-
-
+           
+			
+            
 			ScanDevice();
 			ScanHander.sendEmptyMessage(0);
 
@@ -266,7 +282,7 @@ Runnable mThreadScanDevice = new Runnable() {
 			case 0: {
 				//CleanList();
 				UpDataList();
-
+				
 			}
 				break;
 			default:
@@ -274,13 +290,13 @@ Runnable mThreadScanDevice = new Runnable() {
 			}
 		}
 	};
-
+	
 Runnable RepeatThreadSendPrint = new Runnable() {
-
+		
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-
+			 
 				hander.sendEmptyMessage(0);
 
 			try {
@@ -289,19 +305,19 @@ Runnable RepeatThreadSendPrint = new Runnable() {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+		
 		}
-	};
+	};		
 Runnable mThreadSendFiles = new Runnable() {
-
+		
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
 			   String ss=safeFileName.get(0).toString();
 	            sSendpath=ss.substring(ss.indexOf("MSG"),ss.lastIndexOf("/"));
 	            //ss=sSendpath;
-
-
+				
+	            
 				SendFile(fileName, safeFileName, sIp, 9999);
 				hander.sendEmptyMessage(0);
 
@@ -311,7 +327,7 @@ Runnable mThreadSendFiles = new Runnable() {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+		
 		}
 	};
 
@@ -321,8 +337,8 @@ Runnable mThreadSendFiles = new Runnable() {
             String ss=safeFileName.get(0).toString();
             Print_Path=ss.substring(ss.indexOf("printer"),ss.lastIndexOf("/"));
             ss=sSendpath;
-
-
+			
+            
 			SendFile(fileName, safeFileName, sIp, 9999);
 			hander.sendEmptyMessage(0);
 
@@ -335,7 +351,7 @@ Runnable mThreadSendFiles = new Runnable() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 0: {
-
+				
 				new SendDataThread(sIp, 3550, "000B|0000|100|/"+PrintPath+"/|0|3702|0000|0|0000|0D0A",
 						Socket_Control_Activity.this, callbackData).start();
 			}
@@ -350,14 +366,14 @@ int getFiles(String path) {
 		File file = new File(path);
 		try {
 		File[] files = file.listFiles();
-
+		
 		for(int i =0;i<files.length;i++){
 			fileName.add(files[i].getAbsoluteFile().getName());
 			safeFileName.add(files[i].getAbsolutePath());
 			}
-
+		
 		return 0;
-
+		
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -366,7 +382,7 @@ int getFiles(String path) {
 		}
 	}
 	private void BeginData() {
-
+		
 		Map<String, Object> map;
 		list.clear();
 		for(int i=1;i<21;i++){
@@ -378,8 +394,8 @@ int getFiles(String path) {
 			list.add(map);
 
 		}
-
-
+		
+		
 	}
 	private void initData() {
 		Cr = Db.AllData_SqlData("select * from device_info");
@@ -395,7 +411,7 @@ int getFiles(String path) {
 		}
 		Db.close();
 		Cr.close();
-
+		
 	}
 	private void UpDataList() {
 		Cr = Db.AllData_SqlData("select * from device_info");
@@ -414,11 +430,11 @@ int getFiles(String path) {
 		Db.close();
 		Cr.close();
 		 adapter = new MyAdapter(Socket_Control_Activity.this, list);
-
+		
 		forListView.setAdapter(adapter);
 		ShowDialog.dismiss();
 	}
-
+	
 	private void DataUpDataList()
 	{
 		list.clear();
@@ -428,42 +444,42 @@ int getFiles(String path) {
 		fillDataInfo();
 		adapter = new MyAdapter(Socket_Control_Activity.this, list);
 		forListView.setAdapter(adapter);
-
-
+		
+		
 	}
 	private void fillDataInfo() {
-
+		
 		int nRows=0;
 		Cr = Db.AllData_SqlData("select * from device_info");
-
-
-
+		
+	
+		
 		while (Cr.moveToNext()) {
-
-
+			
+			
 			//mapFilll.put("device_ip", Cr.getString(Cr.getColumnIndex("device_ip")));
 			//mapFilll.put("Ink", Cr.getString(Cr.getColumnIndex("device_ink")));
 			//mapFilll.put("Counts", Cr.getString(Cr.getColumnIndex("device_print_counts")));
 			 ((Map)list.get(nRows)).put("device_id",Cr.getString(Cr.getColumnIndex("device_ip")));//
-
+			
 			 nRows++;
 		}
-
-
+		
+		
 		Db.close();
 		Cr.close();
-
+		
 	}
 	private void CleanList() {
-
+		
 		Map<String, Object> map = null;
 		list.clear();
-
-
+		
+		
 		adapter = new MyAdapter(Socket_Control_Activity.this, list);
-
+		
 		forListView.setAdapter(adapter);
-
+		
 		ShowDialog.dismiss();
 	}
 
@@ -488,7 +504,7 @@ int getFiles(String path) {
 			txtink.setText((String) list.get(position).get("Ink"));
 			txttimes.setText((String) list.get(position).get("Counts"));
 			ip_add.setText((String) list.get(position).get("device_id"));
-
+			
 			Devices.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					sDeviceNumber=Device_id.getText().toString();
@@ -510,7 +526,7 @@ int getFiles(String path) {
 					if("".equals(sIp)||(sIp==null))
 					{
 						DialogShows(Socket_Control_Activity.this,getString(R.string.str_dialog_surecancel),getString(R.string.str_ip_ed));
-
+						
 						return;
 					}
 					if(Configs.Device_Printer_Path==null||"".equals(Configs.Device_Printer_Path))
@@ -519,13 +535,13 @@ int getFiles(String path) {
 						while (Cr.moveToNext()) {
 							PrintPath=Cr.getString(Cr.getColumnIndex("printer_path"));
 						}
-
+						
 						Db.close();
 						Cr.close();
 						if(PrintPath==null||"".equals(PrintPath))
 						{
 							DialogShows(Socket_Control_Activity.this,getString(R.string.str_dialog_surecancel),getString(R.string.str_print_documents));
-
+							
 							return;
 						}
 						else
@@ -535,21 +551,21 @@ int getFiles(String path) {
 						new Thread(RepeatThreadSendPrint).start();
 						return;
 						}
-
+						
 					}
-
-					String ss= Configs.Device_Printer_Path;
+					
+					String ss=Configs.Device_Printer_Path;
 					PrintPath=ss.substring(ss.indexOf("/")+1,ss.lastIndexOf("/"));
 					sDeviceNumber=Device_id.getText().toString();
-
+					
 					ShowDialog.show();
-
-
+					
+					
 					/*Intent intent = new Intent();
 					intent.putExtra("Device", sDeviceNumber);
 					setResult(RESULT_OK, intent);
 					finish();*/
-
+					
 					//return;
 					// Flag=1;
 					Print_Files();
@@ -562,16 +578,16 @@ int getFiles(String path) {
 					sDeviceNumber=Device_id.getText().toString();
 					sIp="";
 					ShowDialog.show();
-
+					
 					MakeIP();
-
+					
 					if("".equals(sIp)||(sIp==null))
 					{
-
+						
 						ShowDialog.dismiss();
 						DialogShows(Socket_Control_Activity.this,getString(R.string.str_dialog_surecancel),getString(R.string.str_ip_ed));
-
-
+						
+						
 						return;
 					}
 					new SendDataThread(sIp, 3550, "000B|0000|200|0|0|0000|0|0000|0D0A",
@@ -586,14 +602,14 @@ int getFiles(String path) {
 					sDeviceNumber=Device_id.getText().toString();
 					sIp="";
 					ShowDialog.show();
-
+					
 					MakeIP();
 					if("".equals(sIp)||(sIp==null))
 					{
-
+						
 						ShowDialog.dismiss();
 						DialogShows(Socket_Control_Activity.this,getString(R.string.str_dialog_surecancel),getString(R.string.str_ip_ed));
-
+						
 						return;
 					}
 					new SendDataThread(sIp, 3550, "000B|0000|500|0|0|0000|0|0000|0D0A",
@@ -608,16 +624,16 @@ int getFiles(String path) {
 					sDeviceNumber=Device_id.getText().toString();
 					sIp="";
 					ShowDialog.show();
-
+					
 					MakeIP();
-
+					
 					if("".equals(sIp)||(sIp==null))
 					{
 						ShowDialog.dismiss();
 						DialogShows(Socket_Control_Activity.this,getString(R.string.str_dialog_surecancel),getString(R.string.str_ip_ed));
-
-
-
+						
+						
+						
 						return;
 					}
 					new QueryDataThread(sIp, 3550, "000B|0000|400|0|0|0000|0|0000|0D0A",
@@ -631,9 +647,9 @@ int getFiles(String path) {
 				public void onClick(View v) {
 					sDeviceNumber=Device_id.getText().toString();
 					sIp="";
-
+					
 					MakeIP();
-
+					
 					inputTitleDialog(sDeviceNumber, sCounts, sInK, Socket_Control_Activity.this);
 					Flag = 1;
 				}
@@ -659,7 +675,7 @@ int getFiles(String path) {
 			new ConnectDataThread(TmpIp, 3550, Socket_Control_Activity.this).start();// 消息发送方启动线程发送消息
 
 		}
-
+		
 	}
 
 	public String getIPAddressStr(Context context) {
@@ -695,7 +711,7 @@ int getFiles(String path) {
 	public void inputTitleDialog(final String position, String count, String inks, Context context) {
 		dialog = new AlertDialog.Builder(this).create();
 		dialog.setView(LayoutInflater.from(this).inflate(R.layout.dialogshow_two_button, null));
-
+		
 		dialog.show();
 		dialog.setCanceledOnTouchOutside(false);
 		// dialog.getWindow().setContentView(R.layout.alert_dialog);
@@ -712,7 +728,7 @@ int getFiles(String path) {
 		Ports.setEnabled(false);
 		Devce_Nubmer.setText(context.getString(R.string.str_device_number) + sDeviceNumber);
 		InsertSql = "insert into device_info values(null,'" + position + "','" + count + "','" + inks + "','";
-
+		
 		QuerySql="select * from device_info where device_id ='" + position + "'";
 		BtnSave.setOnClickListener(new OnClickListener() {
 
@@ -730,7 +746,7 @@ int getFiles(String path) {
 				InsertSql += Ip_Add.getText().toString() + "','" + Ports.getText().toString() + "');";
 				UpDAtaSql = "update device_info set device_id ='" + position + "',device_ip='" + Ip_Add.getText().toString()
 						+ "',device_port='" + Ports.getText().toString() + "'" + " where device_id='" + position + "'";
-
+				
 				Db.InsertData(InsertSql,UpDAtaSql, QuerySql);
 				DataUpDataList();
 				dialog.dismiss();
@@ -740,7 +756,7 @@ int getFiles(String path) {
 		BtnCancel.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View arg0) {
-
+				
 				dialog.dismiss();
 
 			}
@@ -756,7 +772,7 @@ int getFiles(String path) {
 
 	private ObserverCallBack callbackData = new ObserverCallBack() {
 		public void back(int data, int url,String[] Values) {
-
+			
 			switch (url) {
 			case 1: // 进行数据解析
 
@@ -772,15 +788,15 @@ int getFiles(String path) {
 					msg.what = 1;
 //					msg.obj = index;
 					mHandler.sendMessage(msg);
-
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 					// myApp.SetLogVents("99_进入e.printStackTrace();"+"\r\n");
 				}
 				break;
-			case 2:
+			case 2: 
 			{
-
+				
 				Message msg = new Message();
 				msg.what = 2;
 				// msg.obj = 2;
@@ -802,17 +818,17 @@ int getFiles(String path) {
 			Intent intent = null;
 			switch (msg.what) {
 			case 1:
-
+			
 				try {
 					JsonData(sValues);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-
+					
 				}
 				//Toast.makeText(Fina_Login_Activity.this, "测试数据 数据编号�?+datas, Toast.LENGTH_SHORT).show();
 				break;
-
+			
 			case 2:
 				break;
 			case 3:
@@ -840,35 +856,35 @@ int getFiles(String path) {
 
 
 
-
+ 
 public void JsonData(String[] s) throws JSONException
 	{
-
-	       analyticJson(s);
-
+		
+	       analyticJson(s);  
+	       
 	}
- public void analyticJson(String[] result) throws JSONException {
+ public void analyticJson(String[] result) throws JSONException{  
 	 sIp="";
 	 if(result==null)
 	 {   ShowDialog.dismiss();
 		 return;
 	 }
 	 txtink.setText(result[1].toString());
-	 txtink.setTextColor(Color.parseColor("#fff600"));
+	 txtink.setTextColor(Color.parseColor("#fff600")); 
 		txttimes.setText(result[2].toString());
-		txttimes.setTextColor(Color.parseColor("#fff600"));
-
+		txttimes.setTextColor(Color.parseColor("#fff600")); 
+		
 		ShowDialog.dismiss();
 		}
-
-
+	
+	
 	/**
 	 * 处理UI线程中数�?
 	 */
 	/*private Handler mHandler = new Handler() {
-
+		
 		public void handleMessage(Message msg) {
-
+			
 			Intent intent = null;
 			switch (msg.what) {
 			case 1: {
@@ -882,7 +898,7 @@ public void JsonData(String[] s) throws JSONException
 			{
 				//String ss=sValues[2].toString();
 				//ss=sValues[3].toString();
-
+				
 				//txtink.setText(sValues[2].toString());
 				//txttimes.setText(sValues[3].toString());
 				ShowDialog.dismiss();
@@ -909,7 +925,7 @@ public void JsonData(String[] s) throws JSONException
 				// Toast.LENGTH_SHORT).show();
 				break;
 			}
-
+			
 		};
 	};*/
 
@@ -929,13 +945,13 @@ public void JsonData(String[] s) throws JSONException
 		/*if (resultCode == 1) {
 			fileName = data.getStringArrayListExtra("fileName");
 			safeFileName = data.getStringArrayListExtra("safeFileName");
-
+			
 			Cr = Db.AllData_SqlData("select * from printer_info where device_id='" + sDeviceNumber + "'");
 			while (Cr.moveToNext()) {
 				fileName=getFiles(Cr.getString(Cr.getColumnIndex("printer_path")));
 			}
-
-
+			
+			
 			Cr = Db.AllData_SqlData("select * from device_info where device_id='" + sDeviceNumber + "'");
 			ShowDialog.show();
 			while (Cr.moveToNext()) {
@@ -954,30 +970,30 @@ public void JsonData(String[] s) throws JSONException
     private void All_Print_Files(String Device_id)
     {
     	String Print_Path = "";
-
+    		
 
 		Cr = Db.AllData_SqlData("select * from printer_info where device_id='" + Device_id + "'");
 		while (Cr.moveToNext()) {
 			Print_Path=Cr.getString(Cr.getColumnIndex("printer_path"));
 		}
-
+		
 		Db.close();
 		Cr.close();
-
+    	
     		if((Print_Path==null)||("".equals(Print_Path)))
     		{
     			DialogShows(Socket_Control_Activity.this,getString(R.string.str_dialog_surecancel),getString(R.string.str_print_documents));
-
+				
 				return;
-
+    			
     		}
-
+    		
     			getFiles(Print_Path);
-
-
+    			
+    		
     		ShowDialog.setCanceledOnTouchOutside(false);
     		new Thread(mThreadSendFiles).start();
-
+    	
     }
     private void Send_SetSystem_Files() {
 		String SavaPaths;
@@ -986,28 +1002,28 @@ public void JsonData(String[] s) throws JSONException
 		startActivityForResult(intent, 0);*/
 		String TmPath="";
 		//Configs.Device_Printer_Path="1/22";
-		String SDCarePath= Environment.getExternalStorageDirectory().toString();
+		String SDCarePath=Environment.getExternalStorageDirectory().toString();
 		 String path=SDCarePath+"/system/";
-
-
-
-
-
+		 
+		
+		
+		
+		
 			int nRet=getFiles(path);
 			if(nRet==-1)
 			{
 				return;
 			}
 			else {
-
-
+			
+		
 				ShowDialog.setCanceledOnTouchOutside(false);
 				new Thread(mThreadSendFiles).start();
 				 Print_Files();
-
+				
 			}
 	}
-
+	
 	private void Print_Files() {
 		String SavaPaths;
 		/*Intent intent = new Intent(getApplicationContext(), FilesViewActivity.class);
@@ -1015,16 +1031,16 @@ public void JsonData(String[] s) throws JSONException
 		startActivityForResult(intent, 0);*/
 		String TmPath="";
 		//Configs.Device_Printer_Path="1/22";
-		String SDCarePath= Environment.getExternalStorageDirectory().toString();
-		 String path=SDCarePath+"/MSG/"+ Configs.Device_Printer_Path;
-
-
-
+		String SDCarePath=Environment.getExternalStorageDirectory().toString();
+		 String path=SDCarePath+"/MSG/"+Configs.Device_Printer_Path;
+		 
+		
+		
 		Cr = Db.AllData_SqlData("select * from printer_info where device_id='" + sDeviceNumber + "'");
 		while (Cr.moveToNext()) {
 			TmPath=Cr.getString(Cr.getColumnIndex("printer_path"));
 		}
-
+		
 		Db.close();
 		Cr.close();
 		if((Configs.Device_Printer_Path==null)&&("".equals(TmPath)))
@@ -1038,7 +1054,7 @@ public void JsonData(String[] s) throws JSONException
 			getFiles(path);
 			SavaPaths=path;
 		}
-		else
+		else 
 		{
 			getFiles(TmPath);
 			SavaPaths=TmPath;
@@ -1047,11 +1063,11 @@ public void JsonData(String[] s) throws JSONException
 		Configs.Device_Printer_Path="";
 		SavaPaths="";
 		TmPath="";
-
+		
 		ShowDialog.setCanceledOnTouchOutside(false);
 		new Thread(mThreadSendFiles).start();
 	}
-
+	
 	private void FillPrintData(String Paths)
 	{
 		InsertSql = "insert into printer_info values(null,'"+sDeviceNumber+ "','" + Paths + "','0');";
@@ -1096,22 +1112,22 @@ public void JsonData(String[] s) throws JSONException
 	}
 
 	public void MakeIP() {
-
+		
 		Cr = Db.AllData_SqlData("select * from device_info where device_id='" + sDeviceNumber + "'");
-
+		
 		while (Cr.moveToNext()) {
 
 			sIp = Cr.getString(Cr.getColumnIndex("device_ip"));
 			sPort = Cr.getString(Cr.getColumnIndex("device_port"));
 
 		}
-
+		
 		Db.close();
 		Cr.close();
-
-	}
-public static void DialogShows(Context context, String Titles, String Message) {
-
+		
+	}	
+public static void DialogShows(Context context,String Titles,String Message) {
+		
 		builder.setMessage( Message);
 		builder.setTitle(Titles);
 		builder.setPositiveButton(context.getString(R.string.str_device_but_sure), new DialogInterface.OnClickListener() {
@@ -1121,7 +1137,7 @@ public static void DialogShows(Context context, String Titles, String Message) {
 			}
 		});
 
-
+		
 
 		builder.create().show();
 	}
@@ -1129,24 +1145,24 @@ public static void DialogShows(Context context, String Titles, String Message) {
 public void Dialog_SureCancel() {
 	dialog = new AlertDialog.Builder(this).create();
 	dialog.setView(LayoutInflater.from(this).inflate(R.layout.dialog_surecancel, null));
-
+	
 	dialog.show();
 	dialog.setCanceledOnTouchOutside(false);
 	// dialog.getWindow().setContentView(R.layout.alert_dialog);
 	Button BtnSave = (Button) dialog.findViewById(R.id.BtnSave);
 	Button BtnCancel = (Button) dialog.findViewById(R.id.BtnCancel);
-
-
-
+	
+	
+	
 	BtnSave.setOnClickListener(new OnClickListener() {
 
 		public void onClick(View arg0) {
 			ShowDialog.show();
-
+			 
 			Db.deleteAll("device_info");
 			Db.close();
-
-
+			
+			
 			 //mThreadScanDevice.start();
 		  new Thread(mThreadScanDevice).start();
 			dialog.dismiss();
@@ -1156,35 +1172,35 @@ public void Dialog_SureCancel() {
 	BtnCancel.setOnClickListener(new OnClickListener() {
 
 		public void onClick(View arg0) {
-
+			
 			dialog.dismiss();
 
 		}
 	});
 
 }
-public void onBackPressed() {
-	super.onBackPressed();
-
-}
-
-public boolean onKeyDown(int keyCode, KeyEvent event) {
-	if ((keyCode == KeyEvent.KEYCODE_BACK))
-    {
-
-		return false;
+public void onBackPressed() {    
+	super.onBackPressed();    
+	           
+}    
+   
+public boolean onKeyDown(int keyCode, KeyEvent event) {    
+	if ((keyCode == KeyEvent.KEYCODE_BACK)) 
+    {    
+		   
+		return false;    
     }
-  else
-   {
-	return super.onKeyDown(keyCode, event);
-   }
+  else 
+   {    
+	return super.onKeyDown(keyCode, event);    
+   }    
+        
+}    
+   
+protected void onDestroy() {    
+super.onDestroy();    
 
-}
-
-protected void onDestroy() {
-super.onDestroy();
-
-}
+}       
 public String GetSdPath(){
 	File sdDir = null;
 	boolean sdCardExist = Environment.getExternalStorageState()

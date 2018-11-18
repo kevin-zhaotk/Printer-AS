@@ -1,1 +1,1 @@
-include ':app', ':systemapi'
+include ':app', ':systemapi', ':hardware'

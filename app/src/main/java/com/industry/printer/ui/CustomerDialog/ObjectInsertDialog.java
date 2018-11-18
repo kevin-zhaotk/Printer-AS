@@ -1,5 +1,6 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import android.R.menu;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -7,6 +8,9 @@ import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.industry.printer.R;
 import com.industry.printer.object.BaseObject;
@@ -17,22 +21,22 @@ public class ObjectInsertDialog extends Dialog implements android.view.View.OnCl
 	public static final String OBJECT_FORMAT = "ObjFormat";
 	public static final String OBJECT_SOURCE = "ObjSource";
 	
-	private Context mContext;
-	public Button mText;
-	public Button mRTime;
-	public Button mCounter;
-	public Button mBarcode;
-	public Button mBarcodeV;
-	public Button mJulian;
-	public Button mGraphic;
-	public Button mLine;
-	public Button mRect;
-	public Button mEllipse;
-	public Button mHour;
-	public Button mWoy;
-	public Button mWday;
+	private Context 	mContext;
+	public Button 	mText;
+	public Button 	mRTime;
+	public Button 	mCounter;
+	public Button	mBarcode;
+	public Button	mBarcodeV;
+	public Button	mJulian;
+	public Button	mGraphic;
+	public Button	mLine;
+	public Button	mRect;
+	public Button	mEllipse;
+	public Button 	mHour;
+	public Button 	mWoy;
+	public Button 	mWday;
 	
-	public Message mDismissMsg;
+	public Message		mDismissMsg;
 	
 	public ObjectInsertDialog(Context context) {
 		super(context);

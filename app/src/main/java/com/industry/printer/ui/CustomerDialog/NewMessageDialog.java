@@ -1,11 +1,12 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import com.industry.printer.R;
+import com.industry.printer.R.layout;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Window;
-
-import com.industry.printer.R;
 
 public class NewMessageDialog extends Dialog {
 

@@ -1,16 +1,19 @@
 package com.industry.printer.Utils;
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
+import java.io.File;
 
 import com.industry.printer.R;
 import com.industry.printer.ui.CustomerDialog.LoadingDialog;
 
-import java.io.File;
-
+import android.R.integer;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 //import android.content.pm.IPackageInstallObserver;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
+import android.os.PowerManager;
+import android.widget.Toast;
 
 public class PackageInstaller {
 	public static final String TAG = PackageInstaller.class.getSimpleName();

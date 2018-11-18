@@ -2,10 +2,11 @@ package com.industry.printer;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import com.industry.printer.Utils.Debug;
 
 public class PrinterFileFilter implements FilenameFilter {
 
-	private final String TAG="PrinterFileFilter";
+	private final String TAG="PrinterFileFilter"; 
 	public String mPrefix;
 	
 	PrinterFileFilter(String prefix)

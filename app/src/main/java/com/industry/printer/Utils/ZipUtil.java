@@ -34,7 +34,7 @@ public class ZipUtil {
     public static void UnZipFolder(String zipFileString, String outPathString) throws Exception {
         ZipInputStream inZip = new ZipInputStream(new FileInputStream(zipFileString));
         ZipEntry zipEntry;
-        String szName = "";
+        String  szName = "";
         while ((zipEntry = inZip.getNextEntry()) != null) {
             szName = zipEntry.getName();
             if (zipEntry.isDirectory()) {
@@ -66,7 +66,7 @@ public class ZipUtil {
         inZip.close();
     }
 
-    public static void UnZipFolder(String zipFileString, String outPathString, String szName) throws Exception {
+    public static void UnZipFolder(String zipFileString, String outPathString,String  szName) throws Exception {
         ZipInputStream inZip = new ZipInputStream(new FileInputStream(zipFileString));
         ZipEntry zipEntry;
          while ((zipEntry = inZip.getNextEntry()) != null) {
@@ -113,7 +113,7 @@ public class ZipUtil {
         //创建文件
         File file = new File(srcFileString);
         //压缩
-        ZipFiles(file.getParent()+ File.separator, file.getName(), outZip);
+        ZipFiles(file.getParent()+File.separator, file.getName(), outZip);
         //完成和关闭
         outZip.finish();
         outZip.close();
@@ -126,7 +126,7 @@ public class ZipUtil {
      * @param zipOutputSteam
      * @throws Exception
      */
-    private static void ZipFiles(String folderString, String fileString, ZipOutputStream zipOutputSteam)throws Exception {
+    private static void ZipFiles(String folderString, String fileString, ZipOutputStream zipOutputSteam)throws Exception{
         if(zipOutputSteam == null)
             return;
         File file = new File(folderString+fileString);
@@ -147,7 +147,7 @@ public class ZipUtil {
             String fileList[] = file.list();
             //没有子文件和压缩
             if (fileList.length <= 0) {
-                ZipEntry zipEntry =  new ZipEntry(fileString+ File.separator);
+                ZipEntry zipEntry =  new ZipEntry(fileString+File.separator);
                 zipOutputSteam.putNextEntry(zipEntry);
                 zipOutputSteam.closeEntry();
             }

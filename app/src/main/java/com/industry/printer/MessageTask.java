@@ -1,7 +1,16 @@
 package com.industry.printer;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -37,14 +46,6 @@ import com.industry.printer.object.WeekDayObject;
 import com.industry.printer.object.WeekOfYearObject;
 import com.industry.printer.object.data.BitmapWriter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * MessageTask包含多个object
  * @author zhaotongkai
@@ -64,7 +65,7 @@ public class MessageTask {
 	private int mIndex;
 	
 	private SaveTask mSaveTask;
-	private Handler mCallback;
+	private Handler mCallback; 
 	
 	public MessageTask(Context context) {
 		mName="";
@@ -103,7 +104,7 @@ public class MessageTask {
 	public MessageTask(Context context, String tlk) {
 		this(context);
 		Debug.d(TAG, "--->tlk: " + tlk);
-		String path = "";
+		String path = ""; 
 		if (tlk.startsWith(File.separator)) {
 			File file = new File(tlk);
 			setName(file.getName());
@@ -377,7 +378,7 @@ public class MessageTask {
 		float div = (float) (2.0/(getHeads() == 0 ? 1 : getHeads()));
 		
 		Bitmap bmp = Bitmap.createBitmap(width , Configs.gDots, Configs.BITMAP_CONFIG);
-		Debug.d(TAG, "drawAllBmp width="+width+", height="+ Configs.gDots);
+		Debug.d(TAG, "drawAllBmp width="+width+", height="+Configs.gDots);
 		Canvas can = new Canvas(bmp);
 		can.drawColor(Color.WHITE);
 		for(BaseObject o:mObjects)
@@ -430,7 +431,7 @@ public class MessageTask {
 			dots = 304;
 		}
 		Debug.d(TAG, "+++dots=" + dots);
-		float prop = dots/ Configs.gDots;
+		float prop = dots/Configs.gDots;
 		Debug.d(TAG, "+++prop=" + prop);
 		/** 生成bin的bitmap要进行处理，高度根据message的类型调整
 		 * 注： 为了跟PC端保持一致，生成的bin文件宽度为1.tlk中坐标的四分之一，在提取点阵之前先对原始Bitmap进行X坐标缩放（为原图的1/4）
@@ -735,7 +736,7 @@ public class MessageTask {
 		}
 
 		Bitmap bmp = Bitmap.createBitmap(width , Configs.gDots, Configs.BITMAP_PRE_CONFIG);
-		Debug.d(TAG, "drawAllBmp width="+width+", height="+ Configs.gDots);
+		Debug.d(TAG, "drawAllBmp width="+width+", height="+Configs.gDots);
 		Canvas can = new Canvas(bmp);
 		can.drawColor(Color.WHITE);
 
@@ -1093,7 +1094,7 @@ public class MessageTask {
 	}
 	
 	
-	public class SaveTask extends AsyncTask<Void, Void, Void> {
+	public class SaveTask extends AsyncTask<Void, Void, Void>{
 
 		@Override
 		protected Void doInBackground(Void... params) {

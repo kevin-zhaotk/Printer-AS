@@ -1,17 +1,17 @@
 package com.industry.printer.hardware;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
 import com.printer.corelib.RFIDData;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class SerialController {
 
 	private final String TAG = SerialController.class.getSimpleName();
 	public int fd = -1;
-	public Map<String, String> mControlList;
+	public Map<String, String> mControlList; 
 	
 	
 	public SerialController() {

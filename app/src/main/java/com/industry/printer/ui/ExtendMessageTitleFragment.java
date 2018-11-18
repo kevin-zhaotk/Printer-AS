@@ -1,5 +1,8 @@
 package com.industry.printer.ui;
 
+import com.industry.printer.R;
+import com.industry.printer.Utils.Debug;
+
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -7,9 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.industry.printer.R;
-import com.industry.printer.Utils.Debug;
 
 public class ExtendMessageTitleFragment extends Fragment {
 	

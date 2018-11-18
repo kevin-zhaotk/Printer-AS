@@ -1,8 +1,8 @@
 package com.industry.printer.object;
 
-import android.content.Context;
-
 import com.industry.printer.Utils.Debug;
+
+import android.content.Context;
 
 public class WeeksObject extends BaseObject {
 

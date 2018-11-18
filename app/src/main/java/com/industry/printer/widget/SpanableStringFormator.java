@@ -1,10 +1,7 @@
 package com.industry.printer.widget;
 
-import android.graphics.Color;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.BackgroundColorSpan;
-
+import java.util.ArrayList;
+import java.util.List;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
@@ -12,8 +9,10 @@ import com.industry.printer.object.ObjectsFromString;
 import com.industry.printer.object.RealtimeObject;
 import com.industry.printer.object.TextObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.graphics.Color;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.BackgroundColorSpan;
 
 public class SpanableStringFormator extends SpannableStringBuilder {
 

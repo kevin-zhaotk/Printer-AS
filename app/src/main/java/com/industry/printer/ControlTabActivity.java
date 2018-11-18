@@ -1,79 +1,5 @@
 package com.industry.printer;
 
-import android.app.ActionBar.LayoutParams;
-import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
-import com.industry.printer.FileFormat.DotMatrixFont;
-import com.industry.printer.FileFormat.QRReader;
-import com.industry.printer.FileFormat.SystemConfigFile;
-import com.industry.printer.Socket_Server.Network;
-import com.industry.printer.Socket_Server.Paths_Create;
-import com.industry.printer.Socket_Server.Printer_Database;
-import com.industry.printer.Utils.ConfigPath;
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.PlatformInfo;
-import com.industry.printer.Utils.PreferenceConstants;
-import com.industry.printer.Utils.PrinterDBHelper;
-import com.industry.printer.Utils.ToastUtil;
-import com.industry.printer.data.BinFromBitmap;
-import com.industry.printer.data.DataTask;
-import com.industry.printer.hardware.ExtGpio;
-import com.industry.printer.hardware.FpgaGpioOperation;
-import com.industry.printer.hardware.LRADCBattery;
-import com.industry.printer.hardware.PWMAudio;
-import com.industry.printer.hardware.RFIDDevice;
-import com.industry.printer.hardware.RFIDManager;
-import com.industry.printer.hardware.RTCDevice;
-import com.industry.printer.hardware.UsbSerial;
-import com.industry.printer.interceptor.ExtendInterceptor;
-import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
-import com.industry.printer.object.BarcodeObject;
-import com.industry.printer.object.BaseObject;
-import com.industry.printer.object.CounterObject;
-import com.industry.printer.object.TlkObject;
-import com.industry.printer.ui.CustomerAdapter.PreviewAdapter;
-import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
-import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListener;
-import com.industry.printer.ui.CustomerDialog.DialogListener;
-import com.industry.printer.ui.CustomerDialog.LoadingDialog;
-import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog;
-import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog.OpenFrom;
-import com.industry.printer.ui.CustomerDialog.MessageGroupsortDialog;
-import com.industry.printer.ui.ExtendMessageTitleFragment;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -102,6 +28,80 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.industry.printer.FileFormat.DotMatrixFont;
+import com.industry.printer.FileFormat.QRReader;
+import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Socket_Server.Network;
+import com.industry.printer.Socket_Server.Paths_Create;
+import com.industry.printer.Socket_Server.Printer_Database;
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+
+import com.industry.printer.Utils.PlatformInfo;
+import com.industry.printer.Utils.PreferenceConstants;
+import com.industry.printer.Utils.PrinterDBHelper;
+import com.industry.printer.Utils.ToastUtil;
+import com.industry.printer.data.BinFromBitmap;
+import com.industry.printer.data.DataTask;
+import com.industry.printer.hardware.ExtGpio;
+import com.industry.printer.hardware.FpgaGpioOperation;
+import com.industry.printer.hardware.LRADCBattery;
+import com.industry.printer.hardware.RFIDDevice;
+import com.industry.printer.hardware.RFIDManager;
+import com.industry.printer.hardware.RTCDevice;
+import com.industry.printer.hardware.UsbSerial;
+import com.industry.printer.interceptor.ExtendInterceptor;
+import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
+import com.industry.printer.object.BarcodeObject;
+import com.industry.printer.object.BaseObject;
+import com.industry.printer.object.CounterObject;
+import com.industry.printer.object.TlkObject;
+import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
+import com.industry.printer.ui.CustomerDialog.DialogListener;
+import com.industry.printer.ui.CustomerDialog.MessageGroupsortDialog;
+import com.industry.printer.ui.ExtendMessageTitleFragment;
+import com.industry.printer.ui.CustomerAdapter.PreviewAdapter;
+import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListener;
+import com.industry.printer.ui.CustomerDialog.LoadingDialog;
+import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog;
+import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog.OpenFrom;
+
+import android.app.ActionBar.LayoutParams;
+import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 public class ControlTabActivity extends Fragment implements OnClickListener, InkLevelListener, OnTouchListener, DataTransferThread.Callback {
 	public static final String TAG="ControlTabActivity";
 	
@@ -115,17 +115,17 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public ExtendMessageTitleFragment mMsgTitle;
 	public int mCounter;
 	public RelativeLayout mBtnStart;
-	public TextView mTvStart;
+	public TextView		  mTvStart; 
 	public RelativeLayout mBtnStop;
-	public TextView mTvStop;
+	public TextView		  mTvStop;
 	public RelativeLayout mBtnClean;
-	public TextView mTvClean;
+	public TextView		  mTvClean;
 	public Button mBtnOpen;
-	public TextView mTvOpen;
+	public TextView		  mTvOpen;
 	//public Button mGoto;
 	//public EditText mDstline;
 	
-	public RelativeLayout mBtnOpenfile;
+	public RelativeLayout	mBtnOpenfile;
 	public LinearLayout mllPreview;
 	public HorizontalScrollView mScrollView;
 	public TextView mMsgFile;
@@ -133,13 +133,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	// public EditText mMsgPreview;
 	public TextView mMsgPreview;
 	public ImageView mMsgPreImg;
-	public Button mBtnview;
-	public RelativeLayout mForward;
-	public RelativeLayout mBackward;
+	public Button 	mBtnview;
+	public RelativeLayout	mForward;
+	public RelativeLayout 	mBackward;
 	
 	public TextView mRecords;
 	
-	public LinkedList<Map<String, String>> mMessageMap;
+	public LinkedList<Map<String, String>>	mMessageMap;
 	public PreviewAdapter mMessageAdapter;
 	public ListView mMessageList;
 	
@@ -183,7 +183,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public TextView mTime;
 
 	private ImageButton mMsgNext;
-	private ImageButton mMsgPrev;
+	private  ImageButton mMsgPrev;
 
 
 	public SystemConfigFile mSysconfig;
@@ -330,7 +330,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		private int SendFileFlag=0;
 		private int CleanFlag=0;
 		private int StopFlag=0;
-		private Socket Gsocket;
+		private Socket Gsocket;  
 		
 		//Socket___________________________________________________________________________________________
 	
@@ -350,7 +350,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		return inflater.inflate(R.layout.control_frame, container, false);
 	}
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(Bundle savedInstanceState) {	
 		super.onActivityCreated(savedInstanceState);
 		mIndex=0;
 		mTlkList = new Vector<Vector<TlkObject>>();
@@ -667,7 +667,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				mPowerStat.setImageResource(R.drawable.battery0);
 			} else {
 				// mPower.setText("--");
-				mPowerStat.setImageResource(R.drawable.battery0);
+//				mPowerStat.setImageResource(R.drawable.battery0);
+				mPowerStat.setVisibility(View.GONE);
 			}
 			//mPowerV.setText(String.valueOf(power));
 			// mTime.setText("0");
@@ -839,6 +840,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					dispPreview(mPreBitmap);
 					// BinCreater.saveBitmap(mPreBitmap, "prev.png");
 					// mMsgPreImg.setImageURI(Uri.parse("file://" + "/mnt/usbhost0/MSG1/100/1.bmp"));
+					refreshInk();
 					refreshCount();
 					mMsgFile.setText(mObjPath);
 
@@ -1299,8 +1301,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				mTvOpen.setTextColor(Color.DKGRAY);
 				mTVPrinting.setVisibility(View.VISIBLE);
 				mTVStopped.setVisibility(View.GONE);
-				mBtnClean.setEnabled(false);
-				mTvClean.setTextColor(Color.DKGRAY);
+				//mBtnClean.setEnabled(false);
+				// mTvClean.setTextColor(Color.DKGRAY);
 
 				// mMsgNext.setClickable(false);
 				// mMsgPrev.setClickable(false);
@@ -1861,8 +1863,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	
 	private void sendToRemote(String msg) {
 		try {
-			PrintWriter pout = new PrintWriter(new BufferedWriter(
-                     new OutputStreamWriter(Gsocket.getOutputStream())),true);
+			PrintWriter pout = new PrintWriter(new BufferedWriter(  
+                     new OutputStreamWriter(Gsocket.getOutputStream())),true); 
              pout.println(msg);
 		} catch (Exception e) {
 		}
@@ -1889,7 +1891,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 				
 		//接收线程处理
-			myHandler =new Handler(){
+			myHandler =new Handler(){	
 			public void handleMessage(Message msg)
 				{ 
 					if(msg.what==0x1234)
@@ -1904,38 +1906,38 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				}
 				};
 			}
-			public static String toStringHex(String s) {
+			public static String toStringHex(String s) {  
 			    byte[] baKeyword = new byte[s.length() / 2];  
 			    for (int i = 0; i < baKeyword.length; i++) {  
 			        try {  
-			            baKeyword[i] = (byte) (0xff & Integer.parseInt(s.substring(i * 2, i * 2 + 2), 16));
-			        } catch (Exception e) {
+			            baKeyword[i] = (byte) (0xff & Integer.parseInt(s.substring(i * 2, i * 2 + 2), 16));  
+			        } catch (Exception e) {  
 			            
 			        }  
 			    }  
 			    try {  
-			        s = new String(baKeyword, "utf-8");// UTF-16le:Not
-			    } catch (Exception e1) {
+			        s = new String(baKeyword, "utf-8");// UTF-16le:Not  
+			    } catch (Exception e1) {  
 			         
 			    }  
 			    return s;  
 			}  
 			
 			//获取本机地址
-			public static String getLocalIpAddress() {
+			public static String getLocalIpAddress() {  
 			        try {  
-			            for (Enumeration<NetworkInterface> en = NetworkInterface
+			            for (Enumeration<NetworkInterface> en = NetworkInterface  
 			                            .getNetworkInterfaces(); en.hasMoreElements();) {  
-			                        NetworkInterface intf = en.nextElement();
-			                       for (Enumeration<InetAddress> enumIpAddr = intf
+			                        NetworkInterface intf = en.nextElement();  
+			                       for (Enumeration<InetAddress> enumIpAddr = intf  
 			                                .getInetAddresses(); enumIpAddr.hasMoreElements();) {  
-			                            InetAddress inetAddress = enumIpAddr.nextElement();
+			                            InetAddress inetAddress = enumIpAddr.nextElement();  
 			                            if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {  
 			                            return inetAddress.getHostAddress().toString();  
 			                            }  
 			                       }  
 			                    }  
-			                } catch (SocketException ex) {
+			                } catch (SocketException ex) {  
 			                    Debug.e("WifiPreference IpAddress", ex.toString());
 			                }  
 			             return null; 
@@ -1944,41 +1946,41 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			
 			   
 			//Server服务
-		    class ServerThread extends Thread {
+		    class ServerThread extends Thread {  
 		          
 		        public void stopServer(){  
 		            try {                
 		                if(server!=null){                   
 		                	server.close();  
-		                    System.out.println("close task successed");
+		                    System.out.println("close task successed");    
 		                }  
-		            } catch (IOException e) {
-		                System.out.println("close task failded");
+		            } catch (IOException e) {               
+		                System.out.println("close task failded");          
 		                }  
 		        }  
 		    public void run() {  
 		              
 		                try {  
-		                	server = new ServerSocket(PORT);
-		                } catch (IOException e1) {
+		                	server = new ServerSocket(PORT);  
+		                } catch (IOException e1) {  
 		                    // TODO Auto-generated catch block  
-		                    System.out.println("S2: Error");
+		                    System.out.println("S2: Error");  
 		                    e1.printStackTrace();  
 		                }  
-		                mExecutorService = Executors.newCachedThreadPool();  //鍒涘缓涓?涓嚎绋嬫睜
-		                System.out.println("鏈嶅姟鍣ㄥ凡鍚姩...");
-		                Socket client = null;
+		                mExecutorService = Executors.newCachedThreadPool();  //鍒涘缓涓?涓嚎绋嬫睜  
+		                System.out.println("鏈嶅姟鍣ㄥ凡鍚姩...");  
+		                Socket client = null;  
 		                while(flag) {  
 		                    try {  
-		                        System.out.println("S3: Error");
+		                        System.out.println("S3: Error");  
 		                    client = server.accept(); 
 		                    //client.setSoTimeout(5000);
 		                 //   System.out.println("S4: Error");  
 		                    //鎶婂鎴风鏀惧叆瀹㈡埛绔泦鍚堜腑  
 		                    mList.add(client);  
 		                    mExecutorService.execute(new Service(client)); //鍚姩涓?涓柊鐨勭嚎绋嬫潵澶勭悊杩炴帴  
-		                     }catch ( IOException e) {
-		                         System.out.println("S1: Error");
+		                     }catch ( IOException e) {  
+		                         System.out.println("S1: Error");  
 		                        e.printStackTrace();  
 		                    }  
 		                }  
@@ -1989,16 +1991,16 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		    
 		   
 		    //线程池，子线程
-		    class Service implements Runnable {
+		    class Service implements Runnable {  
 		         private volatile boolean kk=true;  
 		      
-		         private BufferedReader in = null;
-		         private String msg = "";
+		         private BufferedReader in = null;  
+		         private String msg = "";  
 		           
-		         public Service(Socket socket) {
+		         public Service(Socket socket) {  
 		        	 Gsocket = socket;  
 		             try {  
-		                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));  
 		                 
 		         		 	 
 		         		//map=obtainSimpleInfo(mContext); 
@@ -2006,7 +2008,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		         		
 		                 //this.sendmsg(Querydb.QuerySqlData("select * from System"));  
 		                 this.sendmsg("connected success!!!");  
-		             } catch (IOException e) {
+		             } catch (IOException e) {  
 		                 e.printStackTrace();  
 		             }  
 		               
@@ -2128,7 +2130,15 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                    			message.save();*/
 		                            	//文字生成赵工写好了，再测试
 		                            	this.sendmsg(getString(R.string.str_build_tlk_start));
-		                            	MakeTlk(msg);
+		                            	String[] parts = msg.split("\\|");
+		                            	for (int j = 0; j < parts.length; j++) {
+		                            		Debug.d(TAG, "--->parts[" + j + "] = " + parts[j]);
+										}
+		                            	
+		                            	if (parts != null || parts.length > 4) {
+		                            		MakeTlk(parts[3]);
+										}
+//		                            	MakeTlk(parts[3]);
 		                    			this.sendmsg(getString(R.string.str_build_tlk_ok));
 		                            }
 		                            else if(msg.indexOf("800")>=0)
@@ -2164,19 +2174,19 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	}
 		                            }
 		                            else {  
-		                                 Message msgLocal = new Message();
+		                                 Message msgLocal = new Message();  
 		                                 msgLocal.what = 0x1234;  
 		                                 msgLocal.obj =msg+"" ;  
-		                                 System.out.println(msgLocal.obj.toString());
-		                                 System.out.println(msg);
+		                                 System.out.println(msgLocal.obj.toString());  
+		                                 System.out.println(msg);  
 		                                 myHandler.sendMessage(msgLocal);  
 		                               
 		                                 this.sendmsg(msg+"command error or Execution execution");  
 		                                    }  
 		                                          
 		                                 }  
-		                 } catch (IOException e) {
-		                        System.out.println("close");
+		                 } catch (IOException e) {  
+		                        System.out.println("close");  
 		                        kk=false;  
 		                        // TODO Auto-generated catch block  
 		                        e.printStackTrace(); 
@@ -2189,15 +2199,15 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		             
 		         }  
 		         //向客户端发信息
-		         public void sendmsg(String msg) {
+		         public void sendmsg(String msg) {  
 		            //System.out.println(msg);
 		        
-		             PrintWriter pout = null;
+		             PrintWriter pout = null;  
 		             try {  
-		                 pout = new PrintWriter(new BufferedWriter(
-		                         new OutputStreamWriter(Gsocket.getOutputStream())),true);
+		                 pout = new PrintWriter(new BufferedWriter(  
+		                         new OutputStreamWriter(Gsocket.getOutputStream())),true);  
 		                 pout.println(msg);  
-		             }catch (IOException e) {
+		             }catch (IOException e) {  
 		                 e.printStackTrace();  
 		             }  
 		      }  
@@ -2240,14 +2250,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				return map;
 			}
 			//接收信息，并写文件	
-			private String WriteFiles(Socket socket, String msg ) {
+			private String WriteFiles(Socket socket,String msg ) {
 				
 		        if (socket == null)
 		        {
 		            return "";
 		        }
 		       
-		        InputStream in=null;
+		        InputStream in=null; 
 		        
 		        try {
 		            //
@@ -2263,7 +2273,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		        	       
 		        
 		        	savePath=TmpsavePath+TmpFiles;
-				 InputStream inb=null;
+				 InputStream inb=null; 
 				 AddPaths="";
 			        	inb = socket.getInputStream();
 				    	
@@ -2317,10 +2327,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	}
 	private void MakeTlk(String msg)
 	{
-		String tlk =msg.substring(msg.indexOf("/"), msg.lastIndexOf("/"));
-		String Name=tlk.substring(msg.indexOf("/"),tlk.lastIndexOf("/"));
-		Name=Name.substring(Name.lastIndexOf("/")+1);
-		tlk=tlk.replace("msg", "MSG");
+		Debug.d(TAG, "--->msg: " + msg);
+		File file = new File(msg);
+		if (file == null) {
+			return;
+		}
+		String tlk = file.getAbsolutePath();
+		String Name = file.getParentFile().getName();
+		Debug.d(TAG, "--->tlk: " + tlk + "   Name = " + Name);
 		MessageForPc message = new MessageForPc(mContext, tlk,Name);
 		message.reCreate(mContext);
 	}
@@ -2462,7 +2476,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	    public void onComplete() {
 			String msg=mCounter+" \r\nink"+mRfidManager.getLocalInk(0)+"\r\n"+mObjPath+"\r\n";
 			Debug.d(TAG, "--->onComplete: msg = " + msg);
-			PrintWriter pout = null;
+			PrintWriter pout = null;  
 //	        try {
 //	            pout = new PrintWriter(new BufferedWriter(  
 //	                   new OutputStreamWriter(Gsocket.getOutputStream())),true);  

@@ -1,13 +1,12 @@
 package com.industry.printer.Utils;
 
-import android.app.AlarmManager;
-
-import android.app.IAlarmManager;
-import android.content.Context;
-import android.os.IPowerManager;
-import android.os.PowerManager;
-
 import java.lang.reflect.Method;
+
+import android.app.AlarmManager;
+import android.content.Context;
+import android.os.PowerManager;
+import android.os.IPowerManager;
+import android.app.IAlarmManager;
 
 public class ReflectCaller {
 
@@ -22,10 +21,7 @@ public class ReflectCaller {
 			upgrade.setAccessible(true);
 			PowerManager pwManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 			upgrade.invoke(pwManager, (Object[])null);
-
-//			IPowerManager iManager = (IPowerManager) upgrade.invoke(pwManager, (Object[])null);
-//			iManager.upgrade();
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -43,8 +39,6 @@ public class ReflectCaller {
 			AlarmManager aManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 			hw.invoke(aManager, (Object[])null);
 
-//			IAlarmManager iManager = (IAlarmManager) hw.invoke(aManager, (Object[])null);
-//			iManager.SystemClockToHw();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -59,11 +53,6 @@ public class ReflectCaller {
 			AlarmManager aManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 			hw.invoke(aManager, (Object[])null);
 
-//			IAlarmManager iManager = (IAlarmManager) hw.invoke(aManager, (Object[])null);
-//			if (iManager != null) {
-//				iManager.HwToSystemClock();
-//			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

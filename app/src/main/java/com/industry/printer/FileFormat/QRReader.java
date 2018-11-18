@@ -1,16 +1,21 @@
 package com.industry.printer.FileFormat;
 
-import android.content.Context;
-import android.text.TextUtils;
-
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
+import java.util.List;
+
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
+
+import android.content.Context;
+import android.text.TextUtils;
 
 /**
  * 從QR.data文件中讀取二維碼數據
@@ -68,7 +73,7 @@ public class QRReader {
 		
 		try {
 			if (!last.exists()) {
-				mRow = 1;
+				mRow = 0;
 				last.createNewFile();
 			}
 			FileReader reader = new FileReader(last);
@@ -77,11 +82,11 @@ public class QRReader {
 			try {
 				mRow = Integer.parseInt(row);
 			} catch (Exception e) {
-				mRow = 1;
+				mRow = 0;
 			}
 			Debug.d("XXX", "--->row: " + mRow);
-			if (mRow <= 0) {
-				mRow = 1;
+			if (mRow < 0) {
+				mRow = 0;
 			}
 			String path = null;
 			if (new File(Configs.QR_CSV).exists()) {
@@ -111,6 +116,7 @@ public class QRReader {
 		try {
 			String line = mReader.readLine();
 			if (TextUtils.isEmpty(line)) {
+				Debug.e("XXX", "--->read out null");
 				return null;
 			}
 			int index = line.indexOf(",");

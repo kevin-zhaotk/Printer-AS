@@ -1,11 +1,19 @@
 package com.industry.printer.FileFormat;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.CharBuffer;
+
+import com.industry.printer.Utils.Debug;
+
+import android.nfc.Tag;
 
 public class TextInputStream {
 

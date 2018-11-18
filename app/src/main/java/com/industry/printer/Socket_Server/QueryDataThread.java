@@ -1,11 +1,5 @@
 package com.industry.printer.Socket_Server;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.util.Log;
-
-import com.industry.printer.Socket_Server.Db.Server_Socket_Database;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -18,6 +12,12 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import com.industry.printer.Socket_Server.Db.Server_Socket_Database;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.util.Log;
+
 public class QueryDataThread extends Thread {
     private Socket socket;
     private String ip="";//接收方的IP
@@ -28,7 +28,7 @@ public class QueryDataThread extends Thread {
     private ObserverCallBack callBack;
     private String[] sValues;
  
-    public QueryDataThread(String ip, int port, String sCommand, Context context, ObserverCallBack callBack) {
+    public QueryDataThread(String ip, int port,String sCommand,Context context,ObserverCallBack callBack) {
        this.ip = ip;
        this.port = port;
        this.sCommand=sCommand;

@@ -1,19 +1,22 @@
 package com.industry.printer.Socket_Server;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-
 public class ClientThread implements Runnable {
     private Socket s;
-    private Socket[] s_array=new Socket[20];
+    private Socket [] s_array=new Socket[20];
     private Handler handler;
     public Handler revHandler;
     BufferedReader br = null;
@@ -21,7 +24,7 @@ public class ClientThread implements Runnable {
    
     String ip;
     String port;
-    public ClientThread(Handler handler, String ip, String port) {
+    public ClientThread(Handler handler,String ip,String port) {
         this.handler = handler;
         this.ip=ip;
         this.port=port;

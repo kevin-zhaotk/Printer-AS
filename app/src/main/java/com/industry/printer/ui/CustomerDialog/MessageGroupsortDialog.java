@@ -1,19 +1,21 @@
 package com.industry.printer.ui.CustomerDialog;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.industry.printer.MessageTask;
 import com.industry.printer.R;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.ui.CustomerAdapter.MessageListAdater;
 
 import java.io.File;
@@ -32,7 +34,7 @@ public class MessageGroupsortDialog extends CustomerDialogBase implements View.O
     private ImageButton mUp;
     private ImageButton mDown;
     private RelativeLayout mOk;
-    private ListView mListview;
+    private ListView    mListview;
     private MessageListAdater mFileAdapter;
     
     private int mSelected = -1;
