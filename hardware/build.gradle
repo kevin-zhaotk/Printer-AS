@@ -15,7 +15,7 @@ android {
 
         ndk {
             moduleName "Hardware_jni"
-            abiFilters "armeabi", "armeabi-v7a", "x86"
+            abiFilters "armeabi-v7a", "x86" //"armeabi",
         }
     }
 
