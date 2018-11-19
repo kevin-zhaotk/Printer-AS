@@ -17,6 +17,11 @@ public class TextObject extends BaseObject {
 		super( context, BaseObject.OBJECT_TYPE_TEXT, x);
 	}
 
+	@Override
+	public void setContent(String content) {
+		super.setContent(content);
+		mWidth = 0;
+	}
 	public String toString()
 	{
 		float prop = getProportion();

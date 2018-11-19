@@ -9,7 +9,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 17
         versionCode 1
-        versionName "08092905172"
+        versionName "08111905172"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
 //        ndk {
@@ -47,7 +47,7 @@ dependencies {
 //    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/corelibrary.jar')
     provided files('libs/systemapi.jar')
-    compile project(':hardware');
+//    compile project(':hardware');
     compile 'com.android.support:support-v4:25.3.0'
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'com.google.zxing:core:3.3.3'

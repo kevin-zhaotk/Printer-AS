@@ -532,7 +532,7 @@ public class DataTransferThread {
 //					Debug.d(TAG, "--->pollstate " + writable);
 				} else {
 //					
-//					Debug.d(TAG, "--->FPGA buffer is empty");
+					Debug.d(TAG, "--->FPGA buffer is empty");
 					mInterval = SystemClock.currentThreadTimeMillis() - last;
 					mHandler.removeMessages(MESSAGE_DATA_UPDATE);
 					mNeedUpdate = false;
