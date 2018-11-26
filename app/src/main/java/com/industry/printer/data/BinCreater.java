@@ -263,6 +263,9 @@ public class BinCreater {
      */
     public static boolean saveBin(String f, char[] c_dots, int single) {
     	int bytesPerCol = 0;
+		if (c_dots == null || c_dots.length == 0) {
+			return false;
+		}
     	bytesPerCol = single%8==0? single/8 : (single/8+1);
     	byte[] dots = new byte[c_dots.length * 2];
     	for(int i=0; i<c_dots.length; i++ ) {

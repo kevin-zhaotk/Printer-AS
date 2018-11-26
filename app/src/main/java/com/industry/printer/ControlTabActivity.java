@@ -20,9 +20,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -316,6 +318,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		private volatile ServerSocket server=null; //socket service object
 		private ExecutorService mExecutorService = null; //hnadle ExecutorService
 		private List<Socket> mList = new ArrayList<Socket>(); //socket list
+		private Map<Socket, Service> mServices = new HashMap<Socket, Service>();
 		private volatile boolean flag= true;// status flag
 		private String PrnComd="";//printing word
 		private Printer_Database Querydb;// database class
@@ -523,6 +526,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	{
 		mContext.unregisterReceiver(mReceiver);
 		super.onDestroy();
+
 		//UsbSerial.close(mFd);
 	}
 	
@@ -564,7 +568,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if (mRfid >= RFIDManager.TOTAL_RFID_DEVICES || mRfid >= heads) {
 			mRfid = 0;
 		}
-		Debug.d(TAG, "--->switchRfid to: " + mRfid);
+//		Debug.d(TAG, "--->switchRfid to: " + mRfid);
 		refreshInk();
 		// refreshCount();
 		mHandler.sendEmptyMessageDelayed(MESSAGE_SWITCH_RFID, 3000);
@@ -581,7 +585,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	private void refreshInk() {
 		
 		float ink = mRfidManager.getLocalInk(mRfid);
-		Debug.d(TAG, "--->refresh ink: " + mRfid + " = " + ink);
+//		Debug.d(TAG, "--->refresh ink: " + mRfid + " = " + ink);
 		String level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");
 		
 		if (!mRfidManager.isValid(mRfid)) {
@@ -721,7 +725,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if (auto) {
 			RFIDDevice device = mRfidManager.getDevice(0);
 			int pulse = device.getFeature(5);
-			Debug.d(TAG, "--->pulse: " + pulse);
+//			Debug.d(TAG, "--->pulse: " + pulse);
 			mTime.setText(String.valueOf(pulse));
 		} else {
 			mTime.setText(String.valueOf(mSysconfig.getParam(27)));
@@ -1967,7 +1971,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                } catch (IOException e1) {  
 		                    // TODO Auto-generated catch block  
 		                    System.out.println("S2: Error");  
-		                    e1.printStackTrace();  
+		                    e1.printStackTrace();
+							return;
 		                }  
 		                mExecutorService = Executors.newCachedThreadPool();  //鍒涘缓涓?涓嚎绋嬫睜  
 		                System.out.println("鏈嶅姟鍣ㄥ凡鍚姩...");  
@@ -1979,8 +1984,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                    //client.setSoTimeout(5000);
 		                 //   System.out.println("S4: Error");  
 		                    //鎶婂鎴风鏀惧叆瀹㈡埛绔泦鍚堜腑  
-		                    mList.add(client);  
-		                    mExecutorService.execute(new Service(client)); //鍚姩涓?涓柊鐨勭嚎绋嬫潵澶勭悊杩炴帴  
+//		                    mList.add(client);
+
+								Service service = new Service(client);
+								stopOthers();
+							mServices.put(client, service);
+		                    mExecutorService.execute(service); //鍚姩涓?涓柊鐨勭嚎绋嬫潵澶勭悊杩炴帴
 		                     }catch ( IOException e) {  
 		                         System.out.println("S1: Error");  
 		                        e.printStackTrace();  
@@ -1991,7 +2000,16 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		        }  
 		    }      
 		    
-		   
+			public void stopOthers() {
+				Iterator<Socket> keys = mServices.keySet().iterator();
+				for (;keys.hasNext();) {
+					Socket socket = keys.next();
+					Service service = mServices.get(socket);
+					service.stop();
+				}
+				mServices.clear();
+			}
+
 		    //线程池，子线程
 		    class Service implements Runnable {  
 		         private volatile boolean kk=true;  
@@ -2015,7 +2033,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		             }  
 		               
 		         }  
-		  
+
+				public void stop() {
+					Debug.d(TAG, "--->stop: " + Thread.currentThread().getName());
+					kk = false;
+				}
 		         public void run() {  
 		               
 		                 while(kk) {  
@@ -2036,7 +2058,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            		if (Apath == null || Apath.length < 4) {
 		                            			continue;
 											}
-		                                 	mObjPath= Apath[3];
+
+											File msgfile = new File(Apath[3]);
+
+		                                 	mObjPath= msgfile.getName();
 		                                 	int nRet=Paths.ListDirFiles( Apath[3]);
 		                                 	//if(nRet==1)
 		                                 	//{
@@ -2070,7 +2095,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	if(SendFileFlag==0)//发文件等赵工写好了，再测试
 		                            	{
 		                            		SendFileFlag=1;
-		                            	this.sendmsg(WriteFiles(Gsocket,msg));
+		                            		this.sendmsg(WriteFiles(Gsocket,msg));
 		                            	}
 		                           
 		                            }
@@ -2197,7 +2222,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                    }  
 		                     
 		                 }  
-		                         
+					     Debug.d(TAG, "--->thread " + Thread.currentThread().getName() + " stop");
 		             
 		         }  
 		         //向客户端发信息
@@ -2297,6 +2322,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		              if (read == -1) {
 		                  break;
 		              }
+					  Debug.d(TAG, "--->read: " + read);
 		              //下面进度条本为图形界面的prograssBar做的，这里如果是打文件，可能会重复打印出一些相同的百分比
 		              //System.out.println("文件接收了" +  (passedlen * 100/ len) + "%\n");
 		              file.write(buffer, 0, read);
@@ -2336,6 +2362,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		String tlk = file.getAbsolutePath();
 		String Name = file.getParentFile().getName();
+		if (!tlk.endsWith("TLK")) {
+			return;
+		}
 		Debug.d(TAG, "--->tlk: " + tlk + "   Name = " + Name);
 		MessageForPc message = new MessageForPc(mContext, tlk,Name);
 		message.reCreate(mContext);
@@ -2364,11 +2393,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	     */
 	    public boolean deleteDirectory(String filePath) {
 	    boolean flag = false;
+			Debug.d(TAG, "--->filePath: " + filePath);
 	        //如果filePath不以文件分隔符结尾，自动添加文件分隔符
 	    filePath=filePath.substring(filePath.indexOf("/"), filePath.lastIndexOf("/"));
 	        if (!filePath.endsWith(File.separator)) {
 	            filePath = filePath + File.separator;
 	        }
+			Debug.d(TAG, "--->filePath: " + filePath);
 	        File dirFile = new File(filePath);
 	        if (!dirFile.exists() || !dirFile.isDirectory()) {
 	            return false;

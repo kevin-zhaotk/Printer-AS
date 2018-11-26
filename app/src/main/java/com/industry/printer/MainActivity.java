@@ -516,7 +516,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		fts.remove(mEditSmallTab);
 		fts.remove(mEditFullTab);
 		FpgaGpioOperation.close();
-
 	}
 
 	@Override

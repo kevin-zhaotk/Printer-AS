@@ -15,7 +15,6 @@ public class PrinterApplication extends Application {
 
 	private KZFileObserver sysObserver;
 
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -47,4 +46,5 @@ public class PrinterApplication extends Application {
 	public void registerCallback(String path, KZFileObserver.KZFileObserverInterface callback) {
 		sysObserver.registerCallback(path, callback);
 	}
+
 }
