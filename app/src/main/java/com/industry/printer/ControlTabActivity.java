@@ -1890,7 +1890,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				hostip = getLocalIpAddress(); //获取本机
 				
 				
-				ServerThread serverThread=new ServerThread();
+				final ServerThread serverThread=new ServerThread();
 				//flag=true;
 				serverThread.start();//线程开始
 				
@@ -1904,6 +1904,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					{
 						 String ss=msg.obj.toString();
 						// RecInfo(msg.obj.toString());
+					} else if (msg.what == EditMultiTabActivity.HANDLER_MESSAGE_SAVE_SUCCESS) {
+						sendMsg(getString(R.string.str_build_tlk_ok));
 					}
 					else
 					{
@@ -1998,7 +2000,16 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		             
 		              
 		        }  
-		    }      
+		    }
+
+		    public void sendMsg(String msg) {
+				Iterator<Socket> clients = mServices.keySet().iterator();
+				for (;clients.hasNext();) {
+					Socket socket = clients.next();
+					Service service = mServices.get(socket);
+					service.sendmsg(msg);
+				}
+			}
 		    
 			public void stopOthers() {
 				Iterator<Socket> keys = mServices.keySet().iterator();
@@ -2166,7 +2177,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            		MakeTlk(parts[3]);
 										}
 //		                            	MakeTlk(parts[3]);
-		                    			this.sendmsg(getString(R.string.str_build_tlk_ok));
+		                    			//this.sendmsg(getString(R.string.str_build_tlk_ok));
 		                            }
 		                            else if(msg.indexOf("800")>=0)
 		                            {
@@ -2367,7 +2378,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		Debug.d(TAG, "--->tlk: " + tlk + "   Name = " + Name);
 		MessageForPc message = new MessageForPc(mContext, tlk,Name);
-		message.reCreate(mContext);
+		message.reCreate(mContext, myHandler);
 	}
 	public boolean deleteFile(String filePath) {
 		//delete file

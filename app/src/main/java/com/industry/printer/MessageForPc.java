@@ -8,6 +8,8 @@ import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.MessageObject;
 import com.industry.printer.object.TLKFileParser;
 
+import android.os.Handler;
+
 public class MessageForPc {
 
 	private Context mContext;
@@ -77,8 +79,8 @@ public class MessageForPc {
 		mTask.save(null);
 	}
 	
-	public void reCreate(Context context) {
+	public void reCreate(Context context, Handler handler) {
 		mTask.createTaskFolderIfNeed();
-		mTask.save(null); 
+		mTask.save(handler);
 	}
 }
