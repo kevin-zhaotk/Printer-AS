@@ -232,6 +232,8 @@ public class FpgaGpioOperation {
 		for (int i = 0; i < 24; i++) {
 			data[i] = (char) paramter.getFPGAParam(i);
  		}
+		// S10 lower 4 bits represent print-header type
+		data[9] = (char) config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
 		
 		if (type != SETTING_TYPE_NORMAL) {
 			data[1] = 4;
