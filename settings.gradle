@@ -1,1 +1,1 @@
-include ':app', ':systemapi', ':hardware', ':corelib'
+include ':app', ':systemapi', ':corelib', ':hardware'
