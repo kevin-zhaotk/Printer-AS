@@ -282,6 +282,10 @@ public class FpgaGpioOperation {
 		data[25] = (char)config.getParam(31-1);
 		//雙列偏移量
 		data[26] = (char) config.getParam(32-1);
+
+		for (int i = 0; i < data.length; i++) {
+			Debug.e(TAG, "--->mFPGAParam[" + i + "]=" + data[i]);
+		}
 		//时间参数放在最后3个
 		/*
 		Calendar c = Calendar.getInstance();

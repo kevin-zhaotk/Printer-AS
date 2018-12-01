@@ -184,9 +184,9 @@ public class Paramter {
 	    mFPGAParam[19] = param[28];
 	    // 参数30
 	    mFPGAParam[2] = param[29];
-	    for (int i = 0; i < mFPGAParam.length; i++) {
-			Debug.e(TAG, "--->mFPGAParam[" + i + "]=" + mFPGAParam[i]);
-		}
+//	    for (int i = 0; i < mFPGAParam.length; i++) {
+//			Debug.e(TAG, "--->mFPGAParam[" + i + "]=" + mFPGAParam[i]);
+//		}
 	    mFPGAParam[13] = (int) ((param[9] * 25.4 * 128)/(param[8] * 3.14)/param[2]);
 	    mFPGAParam[14] = param[34];
 	    mFPGAParam[20] = param[36];
