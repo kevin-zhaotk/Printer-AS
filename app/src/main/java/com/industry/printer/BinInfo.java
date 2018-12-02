@@ -355,7 +355,9 @@ public class BinInfo {
 			} catch (Exception e) {
 				n = (int)v.charAt(0) - (int)"A".charAt(0);
 			}
-   			
+   			if (mBuffer == null || mBuffer.length < (n+1) * mColPerElement * mBytesPerColumn) {
+				continue;
+			}
    			Debug.d(TAG, "===>mColPerElement:" + mColPerElement + ", mBytesPerH=" + mBytesPerH + ", type=" + mType);
    			/* 如果每列的字节数为单数，则需要在每列尾部补齐一个字节 */
    			for (int k = 0; k < mColPerElement; k++) {

@@ -17,7 +17,9 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 
 import com.industry.printer.FileFormat.TlkFileWriter;
@@ -838,8 +840,13 @@ public class MessageTask {
 		}
 	}
 
+
 	public void save(Handler handler) {
-		
+		save(handler, null);
+	}
+
+	public void save(Handler handler, String message) {
+
 //		resetIndexs();
 //		//保存1.TLK文件
 //		// saveTlk(mContext);
@@ -862,7 +869,7 @@ public class MessageTask {
 			Debug.e(TAG, "--->There is already a save task running");
 			return;
 		}
-		mSaveTask = new SaveTask();
+		mSaveTask = new SaveTask(message);
 		mSaveTask.execute((Void[])null);
 	}
 	
@@ -1096,6 +1103,10 @@ public class MessageTask {
 	
 	public class SaveTask extends AsyncTask<Void, Void, Void>{
 
+		private String message;
+		public SaveTask(String message) {
+			this.message = message;
+		}
 		@Override
 		protected Void doInBackground(Void... params) {
 			resetIndexs();
@@ -1121,8 +1132,16 @@ public class MessageTask {
 		}
 		@Override
         protected void onPostExecute(Void result) {
+			Message msg = new Message();
+			msg.what = EditTabSmallActivity.HANDLER_MESSAGE_SAVE_SUCCESS;
+
+			if (this.message != null) {
+				Bundle bundle = new Bundle();
+				bundle.putString("pcCommand", this.message);
+				msg.setData(bundle);
+			}
 			if (mCallback != null) {
-				mCallback.sendEmptyMessage(EditTabSmallActivity.HANDLER_MESSAGE_SAVE_SUCCESS);
+				mCallback.sendMessage(msg);
 				mSaveTask = null;
 			}
 		}

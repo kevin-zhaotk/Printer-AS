@@ -238,7 +238,7 @@ public class FpgaGpioOperation {
 		if (type != SETTING_TYPE_NORMAL) {
 			data[1] = 4;
 			data[3] = 100;
-			data[4] = 200;
+			data[4] = 200 * 4;
 			data[5] = 100;
 			data[15] = 1;
 		}
@@ -284,7 +284,7 @@ public class FpgaGpioOperation {
 		data[26] = (char) config.getParam(32-1);
 
 		for (int i = 0; i < data.length; i++) {
-			Debug.e(TAG, "--->mFPGAParam[" + i + "]=" + data[i]);
+			Debug.e(TAG, "--->mFPGAParam[" + i + "]=" + (int)data[i]);
 		}
 		//时间参数放在最后3个
 		/*

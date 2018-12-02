@@ -741,7 +741,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					progressDialog();
 					
 					mObjPath = msg.getData().getString("file");
-
+					final String msgPC = msg.getData().getString("pcMessage");
 					final boolean printAfterLoad = msg.getData().getBoolean("printAfterLoad", false);
 
 					//load next during printing
@@ -776,7 +776,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 								mHandler.sendEmptyMessage(MESSAGE_OPEN_NEXT_MSG_SUCCESS);
 								return;
 							}
-							mHandler.sendEmptyMessage(MESSAGE_OPEN_MSG_SUCCESS);
+							Message mesg = mHandler.obtainMessage(MESSAGE_OPEN_MSG_SUCCESS);
+							if (msgPC != null) {
+								Bundle bundle = new Bundle();
+								bundle.putString("pcMessage", msgPC);
+								mesg.setData(bundle);
+							}
+//							mHandler.sendEmptyMessage(MESSAGE_OPEN_MSG_SUCCESS);
+							mesg.sendToTarget();
 							if (printAfterLoad) {
 								mHandler.sendEmptyMessageDelayed(MESSAGE_PRINT_CHECK_UID, 1000);
 							}
@@ -784,7 +791,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 						}
 					}.start();
-					sendToRemote(mContext.getString(R.string.str_tlk_opening));
+
 					break;
 				case MESSAGE_OPEN_GROUP:
 					Debug.d(TAG, "--->group");
@@ -824,8 +831,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 					break;
 				case MESSAGE_OPEN_MSG_SUCCESS:
-					
-					sendToRemote(mContext.getString(R.string.str_prepared));
+
 
 					if (mPreBitmap != null) {
 						BinFromBitmap.recyleBitmap(mPreBitmap);
@@ -855,8 +861,15 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					if("100".equals(PrnComd))	
 					{
 						 msg = mHandler.obtainMessage(MESSAGE_PRINT_START);
+						String pcMsg = msg.getData().getString("pcMessage");
+						if (pcMsg != null) {
+							Bundle bundle = new Bundle();
+							bundle.putString("pcMessage", pcMsg);
+							msg.setData(bundle);
+						}
+
 						 mHandler.sendMessage(msg);
-						
+
 						PrnComd="";
 					}
 					break;
@@ -925,31 +938,31 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				case RFIDManager.MSG_RFID_CHECK_SUCCESS:
 				case MESSAGE_PRINT_START: 
 					Debug.d(TAG, "--->print start");
+					String pcMsg = msg.getData().getString("pcMessage");
 					if (mDTransThread != null && mDTransThread.isRunning()) {
-						sendToRemote("error: " + mContext.getString(R.string.str_print_thread_create_err));
+						sendToRemote("1111-error: " + pcMsg);
 						break;
 					}
 					if (!checkRfid()) {
 						ToastUtil.show(mContext, R.string.str_toast_no_ink);
-						sendToRemote("error: " + mContext.getString(R.string.str_toast_no_ink));
+						sendToRemote("1111-error: " + pcMsg);
 						return;
 					}
 					Debug.d(TAG, "--->check rfid ok");
 					if (mDTransThread != null && mDTransThread.isRunning()) {
 						ToastUtil.show(mContext, R.string.str_print_printing);
-						sendToRemote("error: " + mContext.getString(R.string.str_print_printing));
+						sendToRemote("1111-error: " + pcMsg);
 						break;
 					}
 					if (mObjPath == null || mObjPath.isEmpty()) {
 						ToastUtil.show(mContext, R.string.str_toast_no_message);
-						sendToRemote("error: " + mContext.getString(R.string.str_toast_no_message));
+						sendToRemote("1111-error: " + pcMsg);
 						break;
 					}
 					if (!checkQRFile()) {
 						// Toast.makeText(mContext, R.string.str_toast_no_qrfile, Toast.LENGTH_LONG).show();
 						ToastUtil.show(mContext, R.string.str_toast_no_qrfile);
-						sendToRemote("error: " + mContext.getString(R.string.str_toast_no_qrfile));
-						/* 娌掓湁QR.txt鎴朡R.csv鏂囦欢灏卞牨璀� */
+						sendToRemote("1111-error: " + pcMsg);
 						mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
 						break;
 					} else {
@@ -958,25 +971,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					Debug.d(TAG, "--->checkQRFile ok");
 					List<DataTask> tasks = mDTransThread.getData();
 					DataTask task = tasks.get(0);
-//					if (task == null || task.getObjList() == null || task.getObjList().size() == 0) {
-//						ToastUtil.show(mContext, R.string.str_toast_emptycontent);
-//						sendToRemote("error: " + mContext.getString(R.string.str_toast_emptycontent));
-//						break;
-//					}
-					/**
-					 * 娴嬭瘯buffer鐢熸垚鏄惁姝ｇ‘锛屾寜鎵撳嵃鎸夐挳鎶婃墦鍗板唴瀹逛繚瀛樺埌u鐩�
-					 */
-//					char[] buf = dt.getPrintBuffer();
-//					Debug.d(TAG, "--->save print bin");
-//					ArrayList<String> usbs = ConfigPath.getMountedUsb();
-//					if (usbs != null && usbs.size() > 0) {
-//						String path = usbs.get(0);
-//						File file = new File(path + "/print.bin");
-//						if (file.exists()) {
-//							file.delete();
-//						}
-//						BinCreater.saveBin( path + "/print.bin", buf, dt.mBinInfo.getBytesFeed() * 8);
-//					}
+
 					Debug.d(TAG, "--->clean");
 					/**
 					 * 鍚姩鎵撳嵃鍚庤瀹屾垚鐨勫嚑涓伐浣滐細
@@ -991,23 +986,23 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					Debug.d(TAG, "--->update settings");
 					FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 					Debug.d(TAG, "--->launch thread");
-					/*鎵撳嵃瀵硅薄鍦╫penfile鏃跺凡缁忚缃紝鎵�浠ヨ繖閲岀洿鎺ュ惎鍔ㄦ墦鍗颁换鍔″嵆鍙�*/
+
 					if (!mDTransThread.launch(mContext)) {
 						ToastUtil.show(mContext, R.string.str_toast_no_bin);
-						sendToRemote("error: " + mContext.getString(R.string.str_toast_no_bin));
+						sendToRemote("1111-error: " + pcMsg);
 						break;
 					}
 					Debug.d(TAG, "--->finish TrheadId=" + Thread.currentThread().getId());
 					// FpgaGpioOperation.init();
 					ToastUtil.show(mContext, R.string.str_print_startok);
-					sendToRemote(mContext.getString(R.string.str_print_startok));
+					sendToRemote("0000-ok: " + pcMsg);
 					break;
 				case MESSAGE_PRINT_STOP:
-					/**
-					 * 鍋滄鎵撳嵃鍚庤瀹屾垚鐨勫嚑涓伐浣滐細
-					 * 1銆佽皟鐢╥octl鍋滄鍐呮牳绾跨▼锛屽仠姝㈣疆璁璅PGA鐘舵��
-					 * 2銆佸仠姝ataTransfer绾跨▼
-					 */
+					// do nothing if not in printing state
+					if (mDTransThread == null || !mDTransThread.isRunning()) {
+						sendToRemote("0000-ok: " + msg.getData().getString("pcMessage"));
+						break;
+					}
 					if (mDTransThread != null && !mDTransThread.isRunning()) {
 						switchState(STATE_STOPPED);
 						FpgaGpioOperation.clean();
@@ -1019,7 +1014,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //						mDTransThread = null;
 //						initDTThread();
 					}
-					sendToRemote(mContext.getString(R.string.str_print_stopok));
+					sendToRemote("0000-ok: " + msg.getData().getString("pcMessage"));
 					/*鎵撳嵃浠诲姟鍋滄鍚庡厑璁稿垏鎹㈡墦鍗板璞�*/
 					switchState(STATE_STOPPED);
 					
@@ -1034,7 +1029,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					FpgaGpioOperation.uninit();
 					switchState(STATE_STOPPED);
 					FpgaGpioOperation.clean();
-					sendToRemote(mContext.getString(R.string.str_print_stopok));
 					break;
 				case MESSAGE_INKLEVEL_CHANGE:
 					int devIndex = msg.arg1;
@@ -1905,8 +1899,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						 String ss=msg.obj.toString();
 						// RecInfo(msg.obj.toString());
 					} else if (msg.what == EditMultiTabActivity.HANDLER_MESSAGE_SAVE_SUCCESS) {
-						sendMsg(getString(R.string.str_build_tlk_ok));
-					}
+						String cmd = msg.getData().getString("0000-ok: " + "pcCommand");
+						sendMsg(cmd);
+					} //else if (msg.what)
 					else
 					{
 					 String ss=msg.obj.toString();
@@ -1977,7 +1972,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							return;
 		                }  
 		                mExecutorService = Executors.newCachedThreadPool();  //鍒涘缓涓?涓嚎绋嬫睜  
-		                System.out.println("鏈嶅姟鍣ㄥ凡鍚姩...");  
+		                //System.out.println("鏈嶅姟鍣ㄥ凡鍚姩...");
 		                Socket client = null;  
 		                while(flag) {  
 		                    try {  
@@ -2049,6 +2044,24 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					Debug.d(TAG, "--->stop: " + Thread.currentThread().getName());
 					kk = false;
 				}
+
+				private boolean isTlkReady(File tlk) {
+					if (tlk == null) {
+						return false;
+					}
+					File[] files = tlk.listFiles();
+					if (files == null || files.length <= 0) {
+						return false;
+					}
+					List<String> list = new ArrayList<String>();
+					for (int i = 0; i < files.length; i++) {
+						list.add(files[i].getName());
+					}
+					if (list.contains("1.TLK") && list.contains("1.bin")) {
+						return true;
+					}
+					return false;
+				}
 		         public void run() {  
 		               
 		                 while(kk) {  
@@ -2057,7 +2070,17 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                             //100是打印  
 		                          //	msg= toStringHex(msg); 
 		                        	Debug.d(TAG, "--->fromPc: " + msg);
-		                            if(msg.indexOf("100")>=0) { 
+		                            if(msg.indexOf("100")>=0) {
+										String[] Apath = msg.split("\\|");
+										if (Apath == null || Apath.length < 4) {
+											continue;
+										}
+
+										File msgfile = new File(Apath[3]);
+										if (!isTlkReady(msgfile)) {
+											sendmsg("1111-error: " + msg);
+											return;
+										}
 		                            	if(PrinterFlag==0)
 		                            	{
 		                            		//打印赵工写好了，再测试
@@ -2065,24 +2088,17 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	    PrinterFlag=1;
 		                            		StopFlag=1;
 		                            		CleanFlag=0;
-		                            		String[] Apath = msg.split("\\|");
-		                            		if (Apath == null || Apath.length < 4) {
-		                            			continue;
-											}
-
-											File msgfile = new File(Apath[3]);
 
 		                                 	mObjPath= msgfile.getName();
-		                                 	int nRet=Paths.ListDirFiles( Apath[3]);
-		                                 	//if(nRet==1)
-		                                 	//{
-		                                 	Message msg = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
+
+		                                 	Message message = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
 		                                 	Bundle bundle = new Bundle();
 		         							bundle.putString("file", mObjPath);  // f表示信息名称
-		         							msg.setData(bundle);
-		         							mHandler.sendMessage(msg);
+											bundle.putString("pcMessage", msg);
+		         							message.setData(bundle);
+		         							mHandler.sendMessage(message);
 		         							// msg = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
-		         							this.sendmsg(msg+"recv success!");
+		         							//this.sendmsg(msg+"0000-ok: " + msg);
 		                                 	//}
 		                                 //	else
 		                                 	//{
@@ -2093,11 +2109,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            else if(msg.indexOf("200")>=0)
 		                            {
 		                            	//200是清洗
-		                            	this.sendmsg(msg+"recv success!");
+//		                            	this.sendmsg("");
 		                            		CleanFlag=1;
 		                            	DataTransferThread thread = DataTransferThread.getInstance();
 		                				thread.purge(mContext);
-		                				this.sendmsg("purge complete!");
+		                				this.sendmsg("0000-ok: " + msg);
 		                            }
 		                            else if(msg.indexOf("300")>=0)
 		                            {
@@ -2116,7 +2132,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	for(int i=0;i<7;i++)
 		                            	{
 		                            	sendmsg(mCounter+" |\r\nink|"+mRfidManager.getLocalInk(i));//+"|\r\n"+mMsgTask.getName()+"|\r\n");//获取INK无显示问题，赵工这地方改好，前面注示去掉就OK了
-		                            	this.sendmsg(msg+"recv success!");
+		                            	this.sendmsg("0000-ok: " + msg);
 		                            	}
 		                            }
 		                            else if(msg.indexOf("500")>=0)
@@ -2126,8 +2142,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	{
 		                            		StopFlag=0;
 		                            		PrinterFlag=0;
-		                            	mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
-		                            	this.sendmsg(msg+"recv success!");
+											Message message = mHandler.obtainMessage(MESSAGE_PRINT_STOP);
+											Bundle bundle = new Bundle();
+											bundle.putString("pcMessage", msg);
+											message.setData(bundle);
+		                            		message.sendToTarget();
+		                            		//this.sendmsg(msg+"recv success!");
 		                            	
 		                            	}
 		                            }
@@ -2138,11 +2158,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                    			String[] strArray = msg.split("\\|");
 		                    			
 		                    			StrInfo_Stack.push(strArray[3]);//用堆栈存储收的信息，先进称出;
-		                    			/*MessageForPc message = new MessageForPc(mContext,strArray[3]);
-		                    			TextObject text = new TextObject(mContext, strArray[3].length());
-		                    			message.insert(text);
-		                    			message.save();*/
-		                    			this.sendmsg(msg+"recv success!");
+
 		                    			try {
 											int count = Integer.parseInt(strArray[3]);
 											for (MessageTask task : mMsgTask) {
@@ -2154,20 +2170,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 											}
 										} catch (Exception e) {
 											// TODO: handle exception
+											this.sendmsg("1111-error: " + msg);
 										}
+										this.sendmsg("0000-ok: " + msg);
 		                            }
 		                            else if(msg.indexOf("700")>=0)
 		                            {
-		                           //600字符串长成所需文件
-		                    			//String[] strArray = msg.split("\\|");
-		                    			
-		                    			//StrInfo_Stack.push(strArray[3]);//用堆栈存储收的信息，先进称出;
-		                    			/*MessageForPc message = new MessageForPc(mContext,strArray[3]);
-		                    			TextObject text = new TextObject(mContext, strArray[3].length());
-		                    			message.insert(text);
-		                    			message.save();*/
-		                            	//文字生成赵工写好了，再测试
-		                            	this.sendmsg(getString(R.string.str_build_tlk_start));
+		                           		//700
+		                    			this.sendmsg(getString(R.string.str_build_tlk_start));
 		                            	String[] parts = msg.split("\\|");
 		                            	for (int j = 0; j < parts.length; j++) {
 		                            		Debug.d(TAG, "--->parts[" + j + "] = " + parts[j]);
@@ -2176,39 +2186,23 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	if (parts != null || parts.length > 4) {
 		                            		MakeTlk(parts[3]);
 										}
-//		                            	MakeTlk(parts[3]);
-		                    			//this.sendmsg(getString(R.string.str_build_tlk_ok));
 		                            }
 		                            else if(msg.indexOf("800")>=0)
 		                            {
-		                           //600字符串长成所需文件
-		                    			//String[] strArray = msg.split("\\|");
-		                    			
-		                    			//StrInfo_Stack.push(strArray[3]);//用堆栈存储收的信息，先进称出;
-		                    			/*MessageForPc message = new MessageForPc(mContext,strArray[3]);
-		                    			TextObject text = new TextObject(mContext, strArray[3].length());
-		                    			message.insert(text);
-		                    			message.save();*/
-		                            	if (deleteFile(msg)) {
-		                            		this.sendmsg("delete file " + msg + " success");
+		                           		//600字符串长成所需文件
+		                    			if (deleteFile(msg)) {
+		                            		this.sendmsg("0000-ok: " + msg);
 		                            	} else {
-		                    			this.sendmsg("delete file " + msg + " failed");
+		                    			this.sendmsg("1111-error: " + msg);
 		                            	}
 		                            }
 		                            else if(msg.indexOf("900")>=0)
 		                            {
-		                           //600字符串长成所需文件
-		                    			//String[] strArray = msg.split("\\|");
-		                    			
-		                    			//StrInfo_Stack.push(strArray[3]);//用堆栈存储收的信息，先进称出;
-		                    			/*MessageForPc message = new MessageForPc(mContext,strArray[3]);
-		                    			TextObject text = new TextObject(mContext, strArray[3].length());
-		                    			message.insert(text);
-		                    			message.save();*/
-		                            	if (deleteDirectory(msg)) {
-		                            		this.sendmsg("delete directory " + msg + " success");
+		                           		//600字符串长成所需文件
+		                    			if (deleteDirectory(msg)) {
+		                            		this.sendmsg("0000-ok: " + msg);
 		                            	} else {
-		                            		this.sendmsg("delete directory " + msg + " failed");
+		                            		this.sendmsg("1111-error: " + msg);
 		                            	}
 		                            }
 		                            else {  
@@ -2219,16 +2213,15 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                                 System.out.println(msg);  
 		                                 myHandler.sendMessage(msgLocal);  
 		                               
-		                                 this.sendmsg(msg+"command error or Execution execution");  
+		                                 this.sendmsg("1111-error: " + msg);
 		                                    }  
 		                                          
-		                                 }  
+								}
 		                 } catch (IOException e) {  
 		                        System.out.println("close");  
 		                        kk=false;  
-		                        // TODO Auto-generated catch block  
-		                        e.printStackTrace(); 
-		                        this.sendmsg(msg+"Socket fail");
+		                        e.printStackTrace();
+		                        this.sendmsg("1111-error: "+ msg);
 		                        return;
 		                    }  
 		                     
@@ -2359,10 +2352,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				//SendMessage(0, "1188.rar" + "鎺ユ敹瀹屾垚");
 				//socket.close();
 			}catch(Exception e){
-				//SendMessage(0, "鎺ユ敹閿欒:\n" + e.getMessage());
+				return "111-error: " + msg;
 			}
 		        SendFileFlag=0;
-		 return "File Recv success";
+		 return "000-ok: " + msg;
 	}
 	private void MakeTlk(String msg)
 	{
@@ -2378,7 +2371,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		Debug.d(TAG, "--->tlk: " + tlk + "   Name = " + Name);
 		MessageForPc message = new MessageForPc(mContext, tlk,Name);
-		message.reCreate(mContext, myHandler);
+
+		message.reCreate(mContext, myHandler, msg);
 	}
 	public boolean deleteFile(String filePath) {
 		//delete file

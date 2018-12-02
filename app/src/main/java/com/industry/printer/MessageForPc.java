@@ -79,8 +79,8 @@ public class MessageForPc {
 		mTask.save(null);
 	}
 	
-	public void reCreate(Context context, Handler handler) {
+	public void reCreate(Context context, Handler handler, String message) {
 		mTask.createTaskFolderIfNeed();
-		mTask.save(handler);
+		mTask.save(handler, message);
 	}
 }

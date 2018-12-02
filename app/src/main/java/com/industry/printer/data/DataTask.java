@@ -304,6 +304,7 @@ public class DataTask {
 				BinInfo info = new BinInfo(mContext, bmp, mExtendStat);
 
 				BinInfo.overlap(mPrintBuffer, info.getBgBuffer(), (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
+				continue;
 			} else if(o instanceof CounterObject)
 			{
 				String str = prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext();
@@ -417,8 +418,10 @@ public class DataTask {
 			{
 				Debug.d(TAG, "not Variable object");
 			}
+
 		}
 	}
+
 	
 	
 	public ArrayList<BaseObject> getObjList() {
@@ -701,13 +704,14 @@ public class DataTask {
 		Debug.d(TAG, "--->extension: " + extension + " shift: " + shift);
 		int charsPerColumn = buffer.length/columns;
 		int columnH = charsPerColumn * 16;
-		int afterColumns = columns * 8 + (shift > 0 ? (shift - 1 + columnH) : 0);
+		int afterColumns = columns * 8 + (shift > 0 ? ((shift - 1) * columnH) : 0);
 		// buffer extend 8 times - a temperary buffer
 		char[] buffer_8 = new char[columns * 8 * charsPerColumn];
 		
 		// the  final extension and shift buffer
 		// mBuffer = new char[afterColumns * charsPerColumn];
 		Debug.d(TAG, "--->charsPerColumn: " + charsPerColumn + "  columnH: " + columnH + "  afterColumns: " + afterColumns + "  buffer.len: " + mBuffer.length);
+		// 8 times extension buffer
 		for (int i = 0; i < buffer.length/charsPerColumn; i++) {
 			for (int j = 0; j < charsPerColumn; j++) {
 				buffer_8[i * 8 * charsPerColumn + j] = buffer[i * charsPerColumn + j];
@@ -717,11 +721,12 @@ public class DataTask {
 			mBuffer = buffer_8;
 			return;
 		}
-		
+
+		// shift operation
 		mBuffer = new char[afterColumns * charsPerColumn];
 		for (int i = 0; i < columns * 8; i++) {
 			for (int j = 0; j < columnH; j++) {
-				int rowShift = shift + j - 1;
+				int rowShift = shift * (j - 1);
 				int bit = j%16;
 				char data = buffer_8[i * charsPerColumn + j/16];
 				if ((data & (0x0001<< bit)) != 0) {

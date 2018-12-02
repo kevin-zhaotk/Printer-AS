@@ -155,6 +155,7 @@ public class RfidScheduler {
 						break;
 					}
 					schedule();
+					task.clearStat();
 					Debug.d(TAG, "--->last=" + last + "  current=" + mCurrent + "  state=" + task.getStat());
 					//如果是單頭信息，需要加上這個條件來判斷是否同步完成
 					if (last == mCurrent && task.getStat() == RfidTask.STATE_IDLE) {
