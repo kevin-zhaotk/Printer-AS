@@ -15,6 +15,7 @@ import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -29,6 +30,7 @@ import java.util.Stack;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 
 import com.industry.printer.FileFormat.DotMatrixFont;
 import com.industry.printer.FileFormat.QRReader;
@@ -1977,7 +1979,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                while(flag) {  
 		                    try {  
 		                        System.out.println("S3: Error");  
-		                    client = server.accept(); 
+		                    client = server.accept();
+		                    // set time out of Socket to 5s
+		                    client.setSoTimeout(5 * 1000);
 		                    //client.setSoTimeout(5000);
 		                 //   System.out.println("S4: Error");  
 		                    //鎶婂鎴风鏀惧叆瀹㈡埛绔泦鍚堜腑  
@@ -2217,7 +2221,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                                    }  
 		                                          
 								}
-		                 } catch (IOException e) {  
+		                 } catch (SocketTimeoutException e) {
+
+						 }catch (IOException e) {
 		                        System.out.println("close");  
 		                        kk=false;  
 		                        e.printStackTrace();
@@ -2288,9 +2294,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		            return "";
 		        }
 		       
-		        InputStream in=null; 
-		        
-		        try {
+		        InputStream in=null;
+				FileOutputStream file = null;
+				try {
 		            //
 		 
 		        	String savePath=msg.substring(msg.indexOf("/")+1,msg.lastIndexOf("/"));
@@ -2304,54 +2310,48 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		        	       
 		        
 		        	savePath=TmpsavePath+TmpFiles;
-				 InputStream inb=null; 
-				 AddPaths="";
+				 	InputStream inb=null;
+				 	AddPaths="";
 			        	inb = socket.getInputStream();
 				    	
 			        	
-			        	
-				FileOutputStream file = new FileOutputStream(savePath, false);
+			        file = new FileOutputStream(savePath, false);
 				
-				byte[] buffer = new byte[8192];
+					byte[] buffer = new byte[8192];
 				
-				int size = -1;
+					int size = -1;
 				
 				
-				  while (true) {
-		              int read = 0;
-		              if (inb != null) {
-		                  read = inb.read(buffer);
-		              }
-		              //passedlen += read;
-		              if (read == -1) {
-		                  break;
-		              }
-					  Debug.d(TAG, "--->read: " + read);
-		              //下面进度条本为图形界面的prograssBar做的，这里如果是打文件，可能会重复打印出一些相同的百分比
-		              //System.out.println("文件接收了" +  (passedlen * 100/ len) + "%\n");
-		              file.write(buffer, 0, read);
-		          }
+					while (true) {
+						int read = 0;
+						if (inb != null) {
+							read = inb.read(buffer);
+						}
+						//passedlen += read;
+						if (read == -1) {
+							break;
+						}
+						Debug.d(TAG, "--->read: " + read);
+
+						//下面进度条本为图形界面的prograssBar做的，这里如果是打文件，可能会重复打印出一些相同的百分比
+						//System.out.println("文件接收了" +  (passedlen * 100/ len) + "%\n");
+						file.write(buffer, 0, read);
+					}
 		         
-				
-				
-				
-				/*try{
-				while ((size = inb.read(buffer)) != -1){
-					file.write(buffer, 0 ,size);
-				}
-				}
-				catch(Exception e)
-				{
-				file.close();
-				}*/
+
 				file.close();
 				file.flush();
-				//socket.close();
-				//dataStream.close();
-				//data.close();
-				//SendMessage(0, "1188.rar" + "鎺ユ敹瀹屾垚");
-				//socket.close();
-			}catch(Exception e){
+			} catch (SocketTimeoutException e) {
+					try {
+						file.close();
+						file.flush();
+					} catch (Exception ex) {
+
+					}
+
+				return "000-ok: " + msg;
+		    }
+			catch(Exception e){
 				return "111-error: " + msg;
 			}
 		        SendFileFlag=0;

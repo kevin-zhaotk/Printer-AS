@@ -37,6 +37,11 @@ public class Configs {
 	 * 开关配置：大字机的特殊版本，buffer宽度x8
 	 */
 	public static final boolean BUFFER_8 = false;
+
+	/**
+	 * slant 参数，>=100时固定的buffer拓宽倍数
+	 */
+	public static final int CONST_EXPAND = 32;
 	
 	
 	/** 每列的有效点阵数 **/

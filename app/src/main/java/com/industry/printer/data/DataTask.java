@@ -695,7 +695,7 @@ public class DataTask {
 		int shift = 0;
 		Debug.d(TAG, "--->slant: " + slant);
 		if (slant >= 100 ) {
-			extension = 8;
+			extension = Configs.CONST_EXPAND;
 			shift = slant - 100;
 		} else {
 			return;
@@ -704,9 +704,9 @@ public class DataTask {
 		Debug.d(TAG, "--->extension: " + extension + " shift: " + shift);
 		int charsPerColumn = buffer.length/columns;
 		int columnH = charsPerColumn * 16;
-		int afterColumns = columns * 8 + (shift > 0 ? ((shift - 1) * columnH) : 0);
+		int afterColumns = columns * Configs.CONST_EXPAND + (shift > 0 ? ((shift - 1) * columnH) : 0);
 		// buffer extend 8 times - a temperary buffer
-		char[] buffer_8 = new char[columns * 8 * charsPerColumn];
+		char[] buffer_8 = new char[columns * Configs.CONST_EXPAND * charsPerColumn];
 		
 		// the  final extension and shift buffer
 		// mBuffer = new char[afterColumns * charsPerColumn];
@@ -714,7 +714,7 @@ public class DataTask {
 		// 8 times extension buffer
 		for (int i = 0; i < buffer.length/charsPerColumn; i++) {
 			for (int j = 0; j < charsPerColumn; j++) {
-				buffer_8[i * 8 * charsPerColumn + j] = buffer[i * charsPerColumn + j];
+				buffer_8[i * Configs.CONST_EXPAND * charsPerColumn + j] = buffer[i * charsPerColumn + j];
 			}
 		}
 		if (shift == 0) {
@@ -724,7 +724,7 @@ public class DataTask {
 
 		// shift operation
 		mBuffer = new char[afterColumns * charsPerColumn];
-		for (int i = 0; i < columns * 8; i++) {
+		for (int i = 0; i < columns * Configs.CONST_EXPAND; i++) {
 			for (int j = 0; j < columnH; j++) {
 				int rowShift = shift * (j - 1);
 				int bit = j%16;
