@@ -33,6 +33,7 @@ import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.data.BinFromBitmap;
 import com.industry.printer.exception.PermissionDeniedException;
+import com.industry.printer.exception.TlkNotFoundException;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
@@ -62,6 +63,8 @@ public class MessageTask {
 	private int mDots[]; 
 	private String mName;
 	private ArrayList<BaseObject> mObjects;
+
+	private boolean error;
 
 	public int mType;
 	private int mIndex;
@@ -94,6 +97,10 @@ public class MessageTask {
 			parser.parse(context, this, mObjects);
 		} catch (PermissionDeniedException e) {
 			ToastUtil.show(mContext, R.string.str_no_permission);
+			error = true;
+		} catch (TlkNotFoundException ex) {
+			ToastUtil.show(mContext, R.string.str_tlk_not_found);
+			error = true;
 		}
 		mDots = parser.getDots();
 	}
@@ -122,6 +129,7 @@ public class MessageTask {
 				parser.setTlk(path);
 			}
 		} catch (PermissionDeniedException e) {
+			error = true;
 			((MainActivity)context).runOnUiThread(new  Runnable() {
 				@Override
 				public void run() {
@@ -129,6 +137,15 @@ public class MessageTask {
 				}
 			});
 			
+		} catch (TlkNotFoundException ex) {
+			((MainActivity)context).runOnUiThread(new  Runnable() {
+				@Override
+				public void run() {
+					ToastUtil.show(mContext, R.string.str_tlk_not_found);
+				}
+			});
+
+			error = true;
 		}
 		mDots = parser.getDots();
 	}
@@ -1217,5 +1234,9 @@ public class MessageTask {
 
 		}
 		return null;
+	}
+
+	public boolean isError() {
+		return error;
 	}
 }

@@ -794,6 +794,7 @@
 	
 	<string name="str_tlk_opening">tlk parsing...</string>
 	<string name="str_print_thread_create_err">print thread creation failed...</string>
+	<string name="str_tlk_not_found">1.TLK not found</string>
 	
 	<string name="password_title">Please Enter Password</string>
 	

@@ -204,6 +204,7 @@ public static final String TAG="SettingsTabActivity";
 				reloadSettings();
 			}
 		});
+
 	}
 	
 	private void setupViews() {

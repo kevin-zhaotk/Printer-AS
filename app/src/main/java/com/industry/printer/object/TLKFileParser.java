@@ -22,6 +22,7 @@ import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.StringUtil;
 import com.industry.printer.exception.PermissionDeniedException;
+import com.industry.printer.exception.TlkNotFoundException;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.LetterHourObject;
 
@@ -104,7 +105,7 @@ public class TLKFileParser  extends TlkFile{
 		}
 	}
 	*/
-	public void parse(Context context, MessageTask task, ArrayList<BaseObject> objlist) throws PermissionDeniedException
+	public void parse(Context context, MessageTask task, ArrayList<BaseObject> objlist) throws PermissionDeniedException, TlkNotFoundException
 	{
 		int i;
 		BaseObject pObj = null;
@@ -173,6 +174,8 @@ public class TLKFileParser  extends TlkFile{
 			Debug.d(TAG, "parse error: "+e.getMessage());
 			if (e.getMessage().contains("Permission denied")) {
 				throw new PermissionDeniedException();
+			} else {
+				throw new TlkNotFoundException();
 			}
 		}
 		Debug.e(TAG, "<==========end parse tlk");

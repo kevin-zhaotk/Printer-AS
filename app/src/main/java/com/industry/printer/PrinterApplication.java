@@ -14,6 +14,7 @@ import java.util.Map;
 public class PrinterApplication extends Application {
 
 	private KZFileObserver sysObserver;
+	private KZFileObserver qrObserver;
 
 	@Override
 	public void onCreate() {
@@ -26,7 +27,9 @@ public class PrinterApplication extends Application {
 	private void registerFileListener() {
 		// system_config.xml
 		sysObserver = new KZFileObserver(this, Configs.CONFIG_PATH_FLASH + Configs.SYSTEM_CONFIG_DIR);
+		qrObserver = new KZFileObserver(this, Configs.QR_DIR);
 		sysObserver.startWatching();
+		qrObserver.startWatching();
 	}
 
 	/**
@@ -45,6 +48,13 @@ public class PrinterApplication extends Application {
 
 	public void registerCallback(String path, KZFileObserver.KZFileObserverInterface callback) {
 		sysObserver.registerCallback(path, callback);
+//		sysObserver.registerCallback(Configs.QR_DATA,callback);
 	}
+
+	public void registeQRCallback(String path, KZFileObserver.KZFileObserverInterface callback) {
+		qrObserver.registerCallback(path, callback);
+//		sysObserver.registerCallback(Configs.QR_DATA,callback);
+	}
+
 
 }

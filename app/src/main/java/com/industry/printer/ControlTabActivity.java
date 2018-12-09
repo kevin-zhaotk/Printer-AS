@@ -42,6 +42,7 @@ import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 
+import com.industry.printer.Utils.KZFileObserver;
 import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.Utils.PreferenceConstants;
 import com.industry.printer.Utils.PrinterDBHelper;
@@ -470,6 +471,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		refreshCount();
 		SocketBegin();// Beging Socket service start;
 		Querydb=new Printer_Database(mContext);
+
 	}
 
 	@Override
@@ -938,7 +940,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					ToastUtil.show(mContext, R.string.toast_rfid_changed);
 					break;
 				case RFIDManager.MSG_RFID_CHECK_SUCCESS:
-				case MESSAGE_PRINT_START: 
+				case MESSAGE_PRINT_START:
+
 					Debug.d(TAG, "--->print start");
 					String pcMsg = msg.getData().getString("pcMessage");
 					if (mDTransThread != null && mDTransThread.isRunning()) {
@@ -973,6 +976,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					Debug.d(TAG, "--->checkQRFile ok");
 					List<DataTask> tasks = mDTransThread.getData();
 					DataTask task = tasks.get(0);
+					if (task.mTask.isError()) {
+						ToastUtil.show(mContext, R.string.str_tlk_not_found);
+						break;
+					}
 
 					Debug.d(TAG, "--->clean");
 					/**
@@ -1981,7 +1988,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                        System.out.println("S3: Error");  
 		                    client = server.accept();
 		                    // set time out of Socket to 5s
-		                    client.setSoTimeout(5 * 1000);
+		                    client.setSoTimeout(2 * 1000);
 		                    //client.setSoTimeout(5000);
 		                 //   System.out.println("S4: Error");  
 		                    //鎶婂鎴风鏀惧叆瀹㈡埛绔泦鍚堜腑  
@@ -2321,41 +2328,39 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				
 					int size = -1;
 				
-				
+					int totalReceived = 0;
 					while (true) {
 						int read = 0;
-						if (inb != null) {
-							read = inb.read(buffer);
+						try {
+							if (inb != null) {
+								read = inb.read(buffer);
+							}
+						} catch (SocketTimeoutException e) {
+							Debug.d(TAG, "--->SocketTimeout: " + read);
+							if (totalReceived != 0) {
+								read = -1;
+							}
+
 						}
 						//passedlen += read;
 						if (read == -1) {
 							break;
 						}
 						Debug.d(TAG, "--->read: " + read);
-
+						totalReceived += read;
 						//下面进度条本为图形界面的prograssBar做的，这里如果是打文件，可能会重复打印出一些相同的百分比
 						//System.out.println("文件接收了" +  (passedlen * 100/ len) + "%\n");
 						file.write(buffer, 0, read);
 					}
-		         
 
-				file.close();
 				file.flush();
-			} catch (SocketTimeoutException e) {
-					try {
-						file.close();
-						file.flush();
-					} catch (Exception ex) {
+				file.close();
 
-					}
-
-				return "000-ok: " + msg;
-		    }
-			catch(Exception e){
+			} catch(Exception e){
 				return "111-error: " + msg;
 			}
-		        SendFileFlag=0;
-		 return "000-ok: " + msg;
+		    SendFileFlag=0;
+		 	return "000-ok: " + msg;
 	}
 	private void MakeTlk(String msg)
 	{

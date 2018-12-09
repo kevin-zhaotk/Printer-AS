@@ -173,6 +173,7 @@ public class BarcodeObject extends BaseObject {
 	public void setContent(String content)
 	{
 		mContent=content;
+		mWidth = 0;
 		isNeedRedraw = true;
 	}
 	
@@ -389,7 +390,7 @@ public class BarcodeObject extends BaseObject {
 			return bitmap;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			Debug.d(TAG, "--->exception: " + e.getMessage());
 		}
 		return null;
 	}
@@ -681,9 +682,46 @@ public class BarcodeObject extends BaseObject {
         }
         return resMatrix;
     }
-	
-	
-	
+
+
+	private String checkSum(int length) {
+		String code = "";
+		int odd = 0, even = 0;
+		if (mContent.length() < length) {
+			String add = "";
+			for (int i = 0; i < length - mContent.length(); i++) {
+				add += "0";
+			}
+			code = mContent + add;
+		} else if (mContent.length() > length) {
+			code = mContent.substring(0, length);
+		} else {
+			code = mContent;
+		}
+		Debug.d(TAG, "--->content: " + mContent);
+		mContent = code;
+		Debug.d(TAG, "--->code: " + code);
+		for (int i = 0; i < code.length(); i++) {
+			try {
+				if (i%2 == 0) {
+					odd += Integer.parseInt(code.substring(i, i+1));
+				} else {
+					even += Integer.parseInt(code.substring(i, i+1));
+				}
+			} catch (Exception e){
+				Debug.e(TAG, "--->" + e.getMessage());
+			}
+		}
+		int temp = odd * 3 + even;
+		int sum = 10 - temp%10;
+		if (sum >= 10) {
+			sum = 0;
+		}
+		Debug.d(TAG, "--->sum: " + sum);
+		code += sum;
+		Debug.d(TAG, "--->code: " + code);
+		return code;
+	}
 	/**
 	 * 計算EAN13的校驗和
 	 * 奇数位和：6 + 0 + 2 + 4 + 6 + 8 = 26
@@ -698,7 +736,7 @@ public class BarcodeObject extends BaseObject {
 		int odd = 0, even = 0;
 		if (mContent.length() < 12) {
 			String add = "";
-			for (int i = 0; i < 12-mContent.length(); i++) {
+			for (int i = 0; i < 12 - mContent.length(); i++) {
 				add += "0";
 			}
 			code = mContent + add;
@@ -737,7 +775,8 @@ public class BarcodeObject extends BaseObject {
 		if ("EAN13".equals(mFormat)) {
 			content = checkSum();
 		} else if ("EAN8".equals(mFormat)) {
-			content = checkLen(8);
+//			content = checkLen(8);
+			content = checkSum(7);
 		} else if ("ITF_14".equals(mFormat)) {
 			content = checkLen(14);
 		} else if ("UPC_A".equals(mFormat)) {
