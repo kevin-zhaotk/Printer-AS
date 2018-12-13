@@ -102,8 +102,14 @@ public class SystemConfigFile{
 	
 	public static final int INDEX_HEAD_TYPE = 30;
 	public static final int INDEX_SLANT = 35;
+
+
 	
 	public static final int INDEX_SPECIFY_HEADS = 42;
+
+	// lightness during screen save mode
+	public static final int INDEX_LIGHTNESS = 43;
+
 	/*
 	 * 目前參數使用情況：
 	 * 1、參數1~24：分配給FPGA

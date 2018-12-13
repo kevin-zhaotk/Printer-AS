@@ -66,6 +66,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.industry.printer.FileFormat.QRReader;
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
@@ -993,7 +994,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			return;
 		}
 		mScreensaveMode = save;
-		int brightness = mScreensaveMode ? (int)(255 * 0.6) : 255;
+		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
+		float percent = config.getParam(SystemConfigFile.INDEX_LIGHTNESS) / 100.0f;
+		int brightness = mScreensaveMode ? (int)(255 * percent) : 255;
 		Window window = getWindow();
 		WindowManager.LayoutParams localLP = window.getAttributes();
 		float f = brightness / 255.0f;

@@ -531,8 +531,8 @@
 	<string name="str_textview_param40">40.Резерв</string>
 	<string name="str_textview_param41">41.Резерв</string>
 	<string name="str_textview_param42">42.Резерв</string>
-	<string name="str_textview_param43">43.Резерв</string>
-	<string name="str_textview_param44">44.Резерв</string>
+	<string name="str_textview_param43">43.Pens</string>
+	<string name="str_textview_param44">44.Lightness</string>
 	<string name="str_textview_param45">45.Резерв</string>
 	<string name="str_textview_param46">46.Резерв</string>
 	<string name="str_textview_param47">47.Резерв</string>

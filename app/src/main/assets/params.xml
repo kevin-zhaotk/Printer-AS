@@ -210,4 +210,12 @@
 		<max>384</max>
 		<default>152</default>
 	</param>
+
+
+	<param>
+		<id>44</id>
+		<min>40</min>
+		<max>100</max>
+		<default>50</default>
+	</param>
 </Params>
