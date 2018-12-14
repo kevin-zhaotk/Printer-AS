@@ -173,7 +173,9 @@ public class BarcodeObject extends BaseObject {
 	public void setContent(String content)
 	{
 		mContent=content;
-		mWidth = 0;
+		if (!is2D()) {
+			mWidth = 0;
+		}
 		isNeedRedraw = true;
 	}
 	

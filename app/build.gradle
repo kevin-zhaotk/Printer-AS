@@ -8,8 +8,8 @@ android {
         applicationId "com.industry.printer"
         minSdkVersion 17
         targetSdkVersion 17
-        versionCode 20181213
-        versionName "08121305172"
+        versionCode 201812141
+        versionName "08121405172"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
 //        ndk {
@@ -51,7 +51,8 @@ dependencies {
     compile project(':hardware');
     compile 'com.android.support:support-v4:25.3.0'
     compile 'io.reactivex:rxjava:1.1.0'
-    compile 'com.google.zxing:core:3.3.3'
+    compile project(':zxingcore')
+//    compile 'com.google.zxing:core:3.3.3'
     //    compile 'io.reactivex:rxandroid:1.3.4'
 //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
     compile project(':corelib')
