@@ -22,7 +22,7 @@
 	<string name="str_btn_save">Save</string>
 	<string name="str_btn_saveprint">Save&#038;Print</string>
 	<string name="str_btn_cancel">Cancel</string>
-	<string name="str_ip_add">Ip Add</string>
+	<string name="str_ip_add">Ip Addr</string>
 	<string name="str_device_number">Device:</string>
 	<string name="str_dialog_surecancel">warning:</string>
 	<string name="str_device_but_sure">Sure</string>
@@ -816,4 +816,8 @@
 	
 
 	<string name="message_confirm_printnext">Sure for changing message?</string>
+	<string name="str_net_number">Number</string>
+	<string name="str_net_counts">Counts</string>
+	<string name="str_net_int">Ink</string>
+	<string name="str_net_commands">Command</string>
 </resources>
