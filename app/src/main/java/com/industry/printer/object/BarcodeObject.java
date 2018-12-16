@@ -39,10 +39,13 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.TextureView;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 
 public class BarcodeObject extends BaseObject {
@@ -618,6 +621,9 @@ public class BarcodeObject extends BaseObject {
 	
 	private boolean is2D() {
 		Debug.d(TAG, "is2D? " + mFormat);
+		if (TextUtils.isEmpty(mFormat)) {
+			return false;
+		}
 		if (mFormat.equalsIgnoreCase("QR")
 				|| mFormat.equalsIgnoreCase("DATA_MATRIX")
 				|| mFormat.equalsIgnoreCase("DM")
