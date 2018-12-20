@@ -730,7 +730,11 @@ public class DataTask {
 				int bit = j%16;
 				char data = buffer_8[i * charsPerColumn + j/16];
 				if ((data & (0x0001<< bit)) != 0) {
-					mBuffer[(i+rowShift)*charsPerColumn + j/16 ] |= (0x0001<< bit);
+					int index = (i+rowShift)*charsPerColumn + j/16;
+					if (index < 0 || index >= mBgBuffer.length) {
+						continue;
+					}
+					mBuffer[index] |= (0x0001<< bit);
 				}	
 			}
 		}		
