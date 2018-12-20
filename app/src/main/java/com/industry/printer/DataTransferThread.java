@@ -141,7 +141,10 @@ public class DataTransferThread {
 				}
 				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
 				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
-			
+
+
+				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
+				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
 				if (needRestore) {
 					launch(mContext);
 					needRestore = false;
@@ -158,7 +161,7 @@ public class DataTransferThread {
 		FpgaGpioOperation.updateSettings(context, task, purgeType);
 		FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
