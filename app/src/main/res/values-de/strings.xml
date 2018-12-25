@@ -665,5 +665,20 @@
 	<string name="str_cnt_min">Start</string>
 	<string name="str_cnt_max">End</string>
 	
-	<string name="password_title">Please Enter Password</string>
+	<string name="password_title">Bitte geben Sie Ihr Passwort ein</string>
+    <string name="str_F1">F1</string>
+	<string name="str_net_ipdefault">192.168.1.101</string>
+	<string name="tips_export_sysconf">Systemkonfiguration exportieren ...</string>
+	<string name="tips_import_font">Schriftarten importieren ...</string>
+	<string name="tips_import_sysconf">Systemkonfiguration importieren ...</string>
+	<string name="tips_import_resource">"Ressourcendateien importieren ... "</string>
+	<string name="tips_import_message">Informationen importieren ...</string>
+	<string name="toast_rfid_changed">Tintenwert ändert sich</string>
+	<string name="toast_content_empty">Der Inhalt darf nicht leer sein</string>
+	<string name="toast_passwd_error">Das Passwort ist falsch !!!</string>
+	<string name="toast_plug_usb">Bitte stecken Sie ein USB-Flashlaufwerk ein</string>
+	<string name="toast_save_success">Erfolgreich gespeichert</string>
+	<string name="str_tlk_not_found">1.TLK fehlt</string>
+	<string name="str_print_thread_create_err">Taskerstellung fehlgeschlagen</string>
+	<string name="str_tlk_opening">TLK auflösen ...</string>
 </resources>

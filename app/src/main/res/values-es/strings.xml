@@ -761,6 +761,19 @@
 	<string name="str_build_tlk_ok">build TLK success</string>
 	<string name="str_build_tlk_fail">build TLK failed</string>
 	
-	<string name="str_tlk_opening">tlk parsing...</string>
-	<string name="str_print_thread_create_err">print thread creation failed...</string>
+	<string name="str_tlk_opening">Resolviendo TLK ...</string>
+	<string name="str_print_thread_create_err">La creación de la tarea falló</string>
+    <string name="str_F1">F1</string>
+	<string name="str_net_ipdefault">192.168.1.101</string>
+	<string name="tips_import_font">Importando fuentes ...</string>
+	<string name="tips_import_sysconf">Importando la configuración del sistema ...</string>
+	<string name="tips_import_resource">" Importando archivos de recursos ..."</string>
+	<string name="tips_import_message">Importando información ...</string>
+	<string name="toast_rfid_changed">Cambios en el valor de la tinta</string>
+	<string name="toast_content_empty">El contenido no puede estar vacío</string>
+	<string name="toast_passwd_error">La contraseña es incorrecta !!!</string>
+	<string name="toast_plug_usb">Por favor inserte una unidad flash USB</string>
+	<string name="password_title">" Por favor ingrese su contraseña"</string>
+	<string name="toast_save_success">Guardado exitosamente</string>
+	<string name="str_tlk_not_found">1.TLK no se encuentra</string>
 </resources>

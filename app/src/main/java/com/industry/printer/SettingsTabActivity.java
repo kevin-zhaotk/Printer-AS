@@ -253,6 +253,7 @@ public static final String TAG="SettingsTabActivity";
 	private TextView tv_btnSetting; 
 	
 	public void onConfigureChanged() {
+		mAdapter.loadSettings();
 		mAdapter.notifyDataSetChanged();
 		tv_btnOk = (TextView) getView().findViewById(R.id.btn_ok_tv);
 		tv_btnOk.setText(R.string.str_btn_settings_sync);
@@ -442,7 +443,7 @@ public static final String TAG="SettingsTabActivity";
 	private void saveParam() {
 		Debug.d(TAG, "===>onclick");
 		mAdapter.checkParams();
-		mAdapter.notifyDataSetChanged();
+//		mAdapter.notifyDataSetChanged();
 
 		PrinterApplication application = (PrinterApplication) mContext.getApplicationContext();
 		application.pauseFileListener();

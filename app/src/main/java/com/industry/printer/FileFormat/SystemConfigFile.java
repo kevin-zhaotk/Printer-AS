@@ -97,7 +97,10 @@ public class SystemConfigFile{
 	public static final String PH_SETTING_RESERVED_64 = "_10064";
 	
 	public static final String LAST_MESSAGE = "message";
-	
+
+	// 设置里的计数器
+	public static final int INDEX_COUNTER = 17;
+
 	public static final int INDEX_DAY_START = 35;
 	
 	public static final int INDEX_HEAD_TYPE = 30;
