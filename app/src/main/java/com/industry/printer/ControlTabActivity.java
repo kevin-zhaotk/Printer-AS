@@ -965,6 +965,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						sendToRemote(Constants.pcErr(pcMsg));
 						break;
 					}
+					// reset value of counter object to system config value
+					resetCounterIfNeed();
 					if (!checkQRFile()) {
 						// Toast.makeText(mContext, R.string.str_toast_no_qrfile, Toast.LENGTH_LONG).show();
 						ToastUtil.show(mContext, R.string.str_toast_no_qrfile);
@@ -1184,6 +1186,25 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			ready = qrReady;
 		}
 		return ready;
+	}
+
+	private void resetCounterIfNeed() {
+		List<DataTask> tasks = mDTransThread.getData();
+		if (tasks == null) {
+			return;
+		}
+		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
+		for (DataTask task : tasks) {
+			if (task == null) {
+				continue;
+			}
+			List<BaseObject> objects = task.getObjList();
+			for (BaseObject object : objects) {
+				if (object instanceof CounterObject) {
+					((CounterObject) object).setValue(config.getParam(SystemConfigFile.INDEX_COUNTER));
+				}
+			}
+		}
 	}
 
 	private void dispPreview(Bitmap bmp) {

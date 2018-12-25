@@ -726,6 +726,20 @@
 	<string name="str_prepared">TLK parse success!!!</string>
 	<string name="str_prepare_fail">TLK parse failed!!!</string>
 	
-	<string name="password_title">Please Enter Password</string>
-	
+	<string name="password_title">Per favore inserisci la tua password</string>
+    <string name="str_F1">F1</string>
+    <string name="str_net_ipdefault">192.168.1.101</string>
+    <string name="tips_import_font">" Importazione di caratteri ..."</string>
+    <string name="tips_import_sysconf">Importazione della configurazione del sistema ...</string>
+    <string name="tips_import_resource">" Importazione di file di risorse ..."</string>
+    <string name="tips_import_message">Importazione di informazioni ...</string>
+    <string name="toast_rfid_changed">Variazioni del valore dell\'inchiostro</string>
+    <string name="toast_content_empty">" Il contenuto non può essere vuoto"</string>
+    <string name="toast_passwd_error">" La password è sbagliata !!!"</string>
+    <string name="toast_plug_usb">Si prega di inserire un\'unità flash USB</string>
+    <string name="toast_save_success">Salvato con successo</string>
+    <string name="str_tlk_not_found">"1.TLK Manca "</string>
+    <string name="str_print_thread_create_err">La creazione dell\'attività non è riuscita</string>
+    <string name="str_tlk_opening">Risoluzione di TLK ...</string>
+
 </resources>

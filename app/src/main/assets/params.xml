@@ -214,7 +214,7 @@
 
 	<param>
 		<id>44</id>
-		<min>40</min>
+		<min>30</min>
 		<max>100</max>
 		<default>50</default>
 	</param>

@@ -742,13 +742,13 @@
 	<string name="str_loading">正在加载...</string>
 	
 	<string name="str_toast_no_qrfile">沒有找到 QR.txt或QR.csv</string>
-	<string name="str_barcode_end">QR.txt已經打印結束</string>
+	<string name="str_barcode_end">QR.txt已经打印结束</string>
 	<string name="str_recover_print">recover last print</string>
 	
 	<string name="str_net_devname">设备名称</string>
 	<string name="str_net_ipaddr">IP地址</string>
 	<string name="str_net_stat">在线状态</string>
-	<string name="str_net_number">Number</string>
+	<string name="str_net_number">号码</string>
 	<string name="str_net_counts">计数</string>
 	<string name="str_net_int">墨水</string>
 	<string name="str_net_commands">命令</string>
@@ -758,14 +758,14 @@
 	<string name="str_net_thousand">1000</string>
 	<string name="str_net_connect">连接</string>
 	<string name="str_net_tips">提示</string>
-	<string name="str_net_textview">TextView</string>
+	<string name="str_net_textview">文本</string>
 	
 	<string name="str_tip_nothing">~ 没有找到图片!!!</string>
 	<string name="str_no_permission">权限不足</string>
 	<string name="str_flush_tips">将会覆盖原有系统设置信息，确定?</string>
 	
 	<string name="str_message_tips">信息%s已经存在，是否覆盖?</string>
-	<string name="str_prepared">TLK parse success!!!</string>
+	<string name="str_prepared">TLK解析完成!!!</string>
 	<string name="str_prepare_fail">TLK parse failed!!!</string>
 	
 	<string name="password_title">请输入密码</string>
@@ -788,4 +788,29 @@
 
 	<string name="message_confirm_printnext">确定切换打印信息?</string>
     <string name="str_time_unit_mm">ms</string>
+    <string name="str_ip_add">IP地址</string>
+	<string name="str_device_number">设备:</string>
+	<string name="str_dialog_surecancel">警告:</string>
+	<string name="str_device_but_sure">确认</string>
+	<string name="str_ip_ed">请设置IP后重试</string>
+	<string name="str_port">端口</string>
+	<string name="str_information">确认执行?</string>
+	<string name="str_net_device_ink">锁值</string>
+	<string name="str_net_error">网络配置错误</string>
+	<string name="str_setting_clean">清洗</string>
+	<string name="all_print">打印全部</string>
+	<string name="all_purge">清洗全部</string>
+	<string name="all_stop">全部停止</string>
+	<string name="str_F1">F1</string>
+	<string name="str_F2">扫描设备</string>
+	<string name="str_net_query">查询</string>
+	<string name="str_net_device">设备:</string>
+	<string name="str_net_device_times">次数:</string>
+	<string name="str_net_ipdefault">192.168.1.101</string>
+	<string name="str_build_tlk_start">开始构建TLK...</string>
+	<string name="str_build_tlk_ok">TLK构建成功</string>
+	<string name="str_build_tlk_fail">TLK构建失败</string>
+	<string name="str_tlk_opening">解析TLK中...</string>
+	<string name="str_print_thread_create_err">任务创建失败</string>
+	<string name="str_tlk_not_found">1.TLK缺失</string>
 </resources>

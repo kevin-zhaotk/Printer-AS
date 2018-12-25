@@ -744,10 +744,10 @@
 	<string name="str_net_devname">Device</string>
 	<string name="str_net_ipaddr">IP addr</string>
 	<string name="str_net_stat">State</string>
-	<string name="str_net_number">Number</string>
-	<string name="str_net_counts">Counts</string>
-	<string name="str_net_int">Ink</string>
-	<string name="str_net_commands">Commands</string>
+	<string name="str_net_number">Nombre</string>
+	<string name="str_net_counts">Comte</string>
+	<string name="str_net_int">Encre</string>
+	<string name="str_net_commands">Commande</string>
 	<string name="str_net_back">Back</string>
 	<string name="str_net_one">1</string>
 	<string name="str_net_hundred">100</string>
@@ -762,6 +762,23 @@
 	<string name="str_prepared">TLK parse success!!!</string>
 	<string name="str_prepare_fail">TLK parse failed!!!</string>
 	
-	<string name="password_title">Please Enter Password</string>
-	
+	<string name="password_title">Veuillez entrer votre mot de passe</string>
+    <string name="str_F1">F1</string>
+	<string name="str_net_ipdefault">192.168.1.101</string>
+	<string name="message_confirm_printnext">Etes-vous sûr de changer les informations d\'impression?</string>
+	<string name="tips_export_resource">Exporter un fichier de ressources ...</string>
+	<string name="tips_export_sysconf">Exportation de la configuration du système ...</string>
+	<string name="tips_import_font">Importer des polices ...</string>
+	<string name="tips_import_sysconf">Importation de la configuration du système ...</string>
+	<string name="tips_import_resource">Importation de fichiers de ressources ...</string>
+	<string name="tips_import_message">Importer des informations ...</string>
+	<string name="toast_rfid_changed">Changements de valeur d\'encre</string>
+	<string name="toast_content_empty">Le contenu ne peut pas être vide</string>
+	<string name="toast_passwd_error">" Le mot de passe est faux !!!"</string>
+	<string name="toast_plug_usb">S\'il vous plaît insérez un lecteur flash USB</string>
+	<string name="toast_save_success">Enregistré avec succès</string>
+	<string name="str_tlk_not_found">.TLK est manquant</string>
+	<string name="str_print_thread_create_err">La création de tâche a échoué</string>
+	<string name="str_tlk_opening">Résolution de TLK ...</string>
+
 </resources>

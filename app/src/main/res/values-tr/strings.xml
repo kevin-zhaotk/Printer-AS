@@ -727,6 +727,20 @@
 	<string name="str_prepared">TLK parse success!!!</string>
 	<string name="str_prepare_fail">TLK parse failed!!!</string>
 	
-	<string name="password_title">Please Enter Password</string>
-	
+	<string name="password_title">Lütfen şifrenizi girin</string>
+    <string name="str_F1">F1</string>
+    <string name="str_net_ipdefault">192.168.1.101</string>
+    <string name="tips_import_font">Yazı tipleri alınıyor ...</string>
+    <string name="tips_import_sysconf">Sistem yapılandırması alınıyor ...</string>
+    <string name="tips_import_resource">Kaynak dosyaları içe aktarılıyor ...</string>
+    <string name="tips_import_message">Bilgi alınıyor ...</string>
+    <string name="toast_rfid_changed">Mürekkep değeri değişir</string>
+    <string name="toast_content_empty">İçerik boş olamaz</string>
+    <string name="toast_passwd_error">Şifre yanlış !!!</string>
+    <string name="toast_plug_usb">Lütfen bir USB flash sürücü takın</string>
+    <string name="toast_save_success">Başarıyla kaydedildi</string>
+    <string name="str_tlk_not_found">1.TLK eksik</string>
+    <string name="str_print_thread_create_err">Görev oluşturma başarısız oldu</string>
+    <string name="str_tlk_opening">TLK çözülüyor ...</string>
+
 </resources>
