@@ -682,9 +682,22 @@ public class DataTask {
 	}
 
 	/**
-	 * expend along horizontal space, 1 column to 2/3 or any columns
+	 * expend along horizontal space, 1 column to 32 or any columns
 	 * big dot machine
 	 * extend buffer to 8 times filled with 0
+	 * 只针对大字机buffer处理：
+	 * 	1、slant = 100，将buffer拓宽32（@link Configs.CONST_EXPAND）倍；
+	 * 		详细描述：
+	 * 			1、在每两列之间插入31列空白列
+	 * 			2、总列数变为 Nx32
+	 *
+	 * 	2、slant > 100，在拓宽的基础上将buffer进行逐列偏移
+	 * 		详细描述：shift = slant - 100；如果shift == 0，不执行旋转操作
+	 * 				第0行，不动
+	 * 				第1行，向右偏移shift列
+	 * 				第2行，向右偏移（2 * shift）列
+	 * 				...
+	 * 				第n行，向右偏移（n * shift）列
 	 */
 	public void expendColumn(char[] buffer, int columns, int slant) {
 
@@ -704,7 +717,7 @@ public class DataTask {
 		Debug.d(TAG, "--->extension: " + extension + " shift: " + shift);
 		int charsPerColumn = buffer.length/columns;
 		int columnH = charsPerColumn * 16;
-		int afterColumns = columns * Configs.CONST_EXPAND + (shift > 0 ? ((shift - 1) * columnH) : 0);
+		int afterColumns = columns * Configs.CONST_EXPAND + (shift > 0 ? shift * (columnH - 1) : 0);
 		// buffer extend 8 times - a temperary buffer
 		char[] buffer_8 = new char[columns * Configs.CONST_EXPAND * charsPerColumn];
 		
@@ -725,8 +738,8 @@ public class DataTask {
 		// shift operation
 		mBuffer = new char[afterColumns * charsPerColumn];
 		for (int i = 0; i < columns * Configs.CONST_EXPAND; i++) {
-			for (int j = 0; j < columnH; j++) {
-				int rowShift = shift * (j - 1);
+			for (int j = 1; j < columnH; j++) {
+				int rowShift = shift * j;
 				int bit = j%16;
 				char data = buffer_8[i * charsPerColumn + j/16];
 				if ((data & (0x0001<< bit)) != 0) {
