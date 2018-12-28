@@ -48,7 +48,7 @@
     <string name="str_mvbackward">Indietro</string>
     <string name="str_preview">Anteprima</string>
     <string name="str_del">Elimina</string>
-    <string name="str_multi_select">Group</string>
+    <string name="str_multi_select">gruppo</string>
     <string name="str_btn_shift">Shift</string>
     <string name="str_btn_second">Secondo</string>
     <string name="str_btn_upgrade">Aggiorna</string>
@@ -57,7 +57,7 @@
     <string name="str_btn_image">Logo</string>
     <string name="str_goto">Vai a</string>
     
-	<string name="str_remain_ink">Ink</string>
+	<string name="str_remain_ink">Inchiostro</string>
 	<string name="str_remain_ptimes">Total</string>
 	
     <!-- object info table -->
@@ -731,5 +731,20 @@
     <string name="tips_import_sysconf">Importazione della configurazione del sistema ...</string>
     <string name="tips_import_resource">" Importazione di file di risorse ..."</string>
     <string name="tips_import_message">Importazione di informazioni ...</string>
+    <string name="str_ip_add">IP</string>
+    <string name="str_btn_saveprint">SavePrint</string>
+    <string name="str_net_device_ink">Inchiostro</string>
+    <string name="toast_rfid_changed">Variazioni del valore dell\'inchiostro</string>
+    <string name="str_port">porto</string>
+    <string name="str_btn_cancel">annullato</string>
+    <string name="str_net_device">dispositivo:</string>
+    <string name="str_device_number">dispositivo:</string>
+    <string name="str_dialog_surecancel">avvertimento</string>
+    <string name="str_ip_ed">"Si prega di impostare l'IP e riprovare "</string>
+    <string name="str_device_but_sure">si</string>
+    <string name="str_information">"Determina l'esecuzione? "</string>
+    <string name="strReverse">Inversione</string>
+    <string name="strHeadResolution">HD</string>
+    <string name="str_net_error">"Errore di configurazione di rete "</string>
 
 </resources>

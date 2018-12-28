@@ -670,4 +670,24 @@
 	<string name="str_tlk_not_found">1.TLK está faltando</string>
 	<string name="str_print_thread_create_err">A criação de tarefas falhou</string>
 	<string name="str_tlk_opening">" Resolvendo o TLK ..."</string>
+    <string name="str_btn_cancel">Cancelar</string>
+    <string name="str_ip_add">IP</string>
+	<string name="str_device_number">Dispositivo:</string>
+	<string name="str_dialog_surecancel">Aviso</string>
+	<string name="str_device_but_sure">Sim</string>
+	<string name="str_ip_ed">"Por favor, defina o IP e tente novamente "</string>
+	<string name="str_port">Porto</string>
+	<string name="str_information">"Determinar a execução? "</string>
+	<string name="str_net_device_ink">Tinta</string>
+	<string name="str_net_device">Dispositivo:</string>
+	<string name="str_net_device_times">Times:</string>
+	<string name="str_btn_saveprint">SavePrint</string>
+	<string name="str_remain_ink">Tinta</string>
+	<string name="str_remain_ptimes">Total</string>
+	<string name="str_multi_select">Group</string>
+	<string name="strReverse">Inversão</string>
+	<string name="strFontsize">Font</string>
+	<string name="strHeadResolution">HD</string>
+	<string name="strCopying">"Copiando ... "</string>
+	<string name="str_net_error">"Erro de configuração de rede "</string>
 </resources>

@@ -48,7 +48,7 @@
 	<string name="str_mvbackward">Revenir</string>
 	<string name="str_preview">Apercu</string>
 	
-	<string name="str_remain_ink">Ink</string>
+	<string name="str_remain_ink">Encre</string>
 	<string name="str_remain_ptimes">Total</string>
 	
 	<string name="str_del">Efface</string>
@@ -66,7 +66,7 @@
 	<string name="strWidth">Largeur</string>
 	<string name="strHigh">Hauteur</string>
 	<string name="strHightype">Stepwise</string>	
-	<string name="strReverse">Reverse</string>
+	<string name="strReverse">Inversion</string>
 	<string name="strXcor">X-Cor</string>
 	<string name="strYcor">Y-Cor</string>
 	<string name="strCnt">Contenu</string>
@@ -74,7 +74,7 @@
 	<string name="txtDefault">texte</string>
 	<string name="strDragable">Draggable</string>
 	<string name="strShow">Montrer</string>
-	<string name="strFontsize">Font Size</string>
+	<string name="strFontsize">Police</string>
 	<string name="strFont">Font</string>
 	<string name="strLinewidth">Largeur de ligne</string>
 	<string name="strBits">Chiffres</string>
@@ -87,7 +87,7 @@
 	<string name="strShift5">Déménagement 5</string>
 	<string name="strInfoname">Objet</string>
 	<string name="strHeadType">Type de stylo</string>
-	<string name="strHeadResolution">Resolution</string>
+	<string name="strHeadResolution">HD</string>
 	<string name="strUpgradeConfirm">Faites la mise à niveau?</string>
 	<string name="strUpgradeNoApk">Aucun fichier de mise à jour!</string>
 	<string name="strSaving">Enregistrement, en cours</string>
@@ -780,5 +780,18 @@
 	<string name="str_tlk_not_found">.TLK est manquant</string>
 	<string name="str_print_thread_create_err">La création de tâche a échoué</string>
 	<string name="str_tlk_opening">Résolution de TLK ...</string>
+    <string name="str_btn_cancel">Annuler</string>
+    <string name="str_ip_add">IP</string>
+	<string name="str_device_number">Appareil:</string>
+	<string name="str_dialog_surecancel">Avertissement</string>
+	<string name="str_device_but_sure">Déterminer</string>
+	<string name="str_ip_ed">S\'il vous plaît définir l\'adresse IP et essayez à nouveau</string>
+	<string name="str_port">Port</string>
+	<string name="str_information">Déterminer l\'exécution?</string>
+	<string name="str_net_device_ink">Encre</string>
+	<string name="str_net_device">Appareil:</string>
+	<string name="str_net_device_times">Times:</string>
+	<string name="str_btn_saveprint">SavePrint</string>
+	<string name="str_net_error">Erreur de configuration du réseau</string>
 
 </resources>

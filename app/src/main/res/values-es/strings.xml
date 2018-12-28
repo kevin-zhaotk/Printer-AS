@@ -14,7 +14,7 @@
 	<string name="str_btn_stop">Stop</string>
 	<string name="str_btn_clean">Purga</string>
 	<string name="str_btn_open">Abrir</string>
-	<string name="str_remain_ink">Ink</string>
+	<string name="str_remain_ink">TINTA</string>
 	<string name="str_remain_ptimes">Total</string>
 	<string name="str_btn_new">Nuevo</string>
 	<string name="str_btn_save">Guardar</string>
@@ -776,4 +776,21 @@
 	<string name="password_title">" Por favor ingrese su contraseña"</string>
 	<string name="toast_save_success">Guardado exitosamente</string>
 	<string name="str_tlk_not_found">1.TLK no se encuentra</string>
+    <string name="str_btn_cancel">Cancelar</string>
+    <string name="str_ip_add">IP</string>
+	<string name="str_device_number">Dispositivo:</string>
+	<string name="str_dialog_surecancel">Advertencia</string>
+	<string name="str_device_but_sure">Si</string>
+	<string name="str_ip_ed">"Por favor, establezca la IP e intente de nuevo "</string>
+	<string name="str_port">Puerto</string>
+	<string name="str_information">"¿Determinar ejecución? "</string>
+	<string name="str_net_device_ink">TINTA</string>
+	<string name="str_net_device">Dispositivo:</string>
+	<string name="str_net_device_times">Times:</string>
+	<string name="str_btn_saveprint">SavePrint</string>
+	<string name="strReverse">Инверсия</string>
+	<string name="strFontsize">Fuente</string>
+	<string name="strHeadResolution">HD</string>
+	<string name="strCopying">Copiando ...</string>
+	<string name="str_net_error">"Error de configuración de red "</string>
 </resources>
