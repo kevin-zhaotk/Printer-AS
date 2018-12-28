@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 import java.lang.System;
@@ -736,7 +737,7 @@ public class DataTask {
 		}
 
 		// shift operation
-		mBuffer = new char[afterColumns * charsPerColumn];
+		char[] shiftBuffer = new char[afterColumns * charsPerColumn];
 		for (int i = 0; i < columns * Configs.CONST_EXPAND; i++) {
 			for (int j = 1; j < columnH; j++) {
 				int rowShift = shift * j;
@@ -744,13 +745,20 @@ public class DataTask {
 				char data = buffer_8[i * charsPerColumn + j/16];
 				if ((data & (0x0001<< bit)) != 0) {
 					int index = (i+rowShift)*charsPerColumn + j/16;
-					if (index < 0) {
-						continue;
-					}
-					mBuffer[index] |= (0x0001<< bit);
+
+					shiftBuffer[index] |= (0x0001<< bit);
 				}	
 			}
-		}		
+		}
+		int realColumns = afterColumns;
+		for (int i = afterColumns; i > 0; i--) {
+			if (shiftBuffer[charsPerColumn * i] == 0 && shiftBuffer[charsPerColumn *i + 1] == 0) {
+				realColumns--;
+				continue;
+			}
+
+		}
+		mBuffer = Arrays.copyOf(shiftBuffer, realColumns * charsPerColumn);
 	}
 
 }
