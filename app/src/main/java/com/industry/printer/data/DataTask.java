@@ -752,11 +752,10 @@ public class DataTask {
 		}
 		int realColumns = afterColumns;
 		for (int i = afterColumns; i > 0; i--) {
-			if (shiftBuffer[charsPerColumn * i] == 0 && shiftBuffer[charsPerColumn *i + 1] == 0) {
-				realColumns--;
-				continue;
+			if (shiftBuffer[charsPerColumn * i] != 0 || shiftBuffer[charsPerColumn *i + 1] != 0) {
+				break;
 			}
-
+			realColumns--;
 		}
 		mBuffer = Arrays.copyOf(shiftBuffer, realColumns * charsPerColumn);
 	}
