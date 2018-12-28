@@ -14,7 +14,7 @@
 	<string name="str_btn_stop">Стоп</string>
 	<string name="str_btn_clean">Прокачка</string>
 	<string name="str_btn_open">Открыть</string>
-	<string name="str_remain_ink">Ink</string>
+	<string name="str_remain_ink">Чернила</string>
 	<string name="str_remain_ptimes">Total</string>
 	<string name="str_btn_new">Новый</string>
 	<string name="str_btn_save">Сохранить</string>
@@ -71,7 +71,7 @@
 	<string name="txtDefault">Текст</string>
 	<string name="strDragable">Перенос</string>
 	<string name="strShow">Показать</string>
-	<string name="strFontsize">Font Size</string>
+	<string name="strFontsize">шрифт</string>
 	<string name="strFont">Шрифт</string>
 	<string name="strLinewidth">Ширина строки</string>
 	<string name="strBits">Цифры</string>
@@ -84,7 +84,7 @@
 	<string name="strShift5">Сдвиг5</string>
 	<string name="strInfoname">Объект</string>
 	<string name="strHeadType">Тип ПГ</string>
-	<string name="strHeadResolution">Resolution</string>
+	<string name="strHeadResolution">HD</string>
 	<string name="strUpgradeConfirm">Обновить?</string>
 	<string name="strUpgradeNoApk">Нет файла обновления!!!</string>
 	<string name="strSaving">сохраняю, ждите...</string>
@@ -781,4 +781,18 @@
 	<string name="password_title">Пожалуйста, введите ваш пароль</string>
 	<string name="toast_save_success">Сохранено успешно</string>
 	<string name="str_tlk_not_found">1.ТLК отсутствует</string>
+    <string name="str_btn_cancel">отменен</string>
+    <string name="str_ip_add">IP</string>
+	<string name="str_device_number">устройство:</string>
+	<string name="str_dialog_surecancel">предупреждение</string>
+	<string name="str_device_but_sure">Здесь</string>
+	<string name="str_ip_ed">"Пожалуйста, установите IP и попробуйте снова "</string>
+	<string name="str_port">порт</string>
+	<string name="str_information">"Определить исполнение? "</string>
+	<string name="str_net_device_ink">Чернила</string>
+	<string name="str_net_device">устройство:</string>
+	<string name="str_net_device_times">Times:</string>
+	<string name="str_btn_saveprint">SavePrint</string>
+	<string name="strCopying">Копирование ...</string>
+	<string name="str_net_error">"Ошибка конфигурации сети "</string>
 </resources>

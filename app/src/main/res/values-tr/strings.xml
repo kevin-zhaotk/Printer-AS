@@ -57,14 +57,14 @@
     <string name="str_btn_image">Logo</string>
     <string name="str_goto">git</string>
     
-	<string name="str_remain_ink">Ink</string>
+	<string name="str_remain_ink">MÜRK</string>
 	<string name="str_remain_ptimes">Total</string>
 	
     <!-- object info table -->
     <string name="strWidth">Genişlik</string>
     <string name="strHigh">Yükseklik</string>
     <string name="strHightype">Stepwise</string>
-    <string name="strReverse">Reverse</string>
+    <string name="strReverse">Inversion</string>
     <string name="strXcor">X-Cor</string>
     <string name="strYcor">Y-Cor</string>
     <string name="strCnt">İçerik</string>
@@ -72,7 +72,7 @@
     <string name="txtDefault">mesaj</string>
     <string name="strDragable">Sürüklenebilir</string>
     <string name="strShow">Göster</string>
-	<string name="strFontsize">Font Size</string>
+	<string name="strFontsize">yazı</string>
     <string name="strFont">Yazı tipi</string>
     <string name="strLinewidth">Satır Genişliği</string>
     <string name="strBits">Rakamlar</string>
@@ -85,7 +85,7 @@
     <string name="strShift5">Variya5</string>
     <string name="strInfoname">Bilgi</string>
     <string name="strHeadType">KalemTipi</string>
-    <string name="strHeadResolution">Resolution</string>
+    <string name="strHeadResolution">HD</string>
     <string name="strUpgradeConfirm">Yükseltmek istiyor musunuz?</string>
     <string name="strUpgradeNoApk">Yükseltme dosyası yok!!!</string>
     <string name="strSaving">kaydediliyor, lütfen bekleyin...</string>
@@ -742,5 +742,18 @@
     <string name="str_tlk_not_found">1.TLK eksik</string>
     <string name="str_print_thread_create_err">Görev oluşturma başarısız oldu</string>
     <string name="str_tlk_opening">TLK çözülüyor ...</string>
+    <string name="str_btn_cancel">iptal edildi</string>
+    <string name="str_device_number">cihaz:</string>
+    <string name="str_ip_add">IP</string>
+    <string name="str_dialog_surecancel">uyarı</string>
+    <string name="str_device_but_sure">öyle</string>
+    <string name="str_ip_ed">"Lütfen IP’yi ayarlayın ve tekrar deneyin "</string>
+    <string name="str_port">liman</string>
+    <string name="str_information">" İcra belirlenir mi?"</string>
+    <string name="str_net_device_ink">MÜRK</string>
+    <string name="str_net_device">cihaz:</string>
+    <string name="str_net_device_times">Times:</string>
+    <string name="str_btn_saveprint">SavePrint</string>
+    <string name="str_net_error">"Ağ yapılandırma hatası "</string>
 
 </resources>

@@ -20,7 +20,7 @@
 	<string name="str_remain_ptimes">打印次数</string>
 	<string name="str_btn_new">新建</string>
 	<string name="str_btn_save">保存</string>
-	<string name="str_btn_saveprint">保存&#038;打印</string>
+	<string name="str_btn_saveprint">保存并打印</string>
 	<string name="str_btn_saveas">另存为</string>
 	<string name="str_btn_cancel">取消</string>
 	<string name="str_btn_prerecord">上翻</string>
@@ -721,7 +721,7 @@
 	<string name="str_page_next">下翻</string>
 	<string name="str_filename_no">新建</string>
 	<string name="str_btn_back">返回</string>
-	<string name="str_btn_up"></string>
+	<string name="str_btn_up">上移</string>
 	<string name="str_btn_detail">属性</string>
 	<string name="cursor">光标</string>
 <!-- 树莓派3  -->

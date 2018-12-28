@@ -79,7 +79,7 @@
 	<string name="strShift5">Směna5</string>
 	<string name="strInfoname">Objekt</string>
 	<string name="strHeadType">Typ pera</string>
-	<string name="strHeadResolution">Resolution</string>
+	<string name="strHeadResolution">HD</string>
 	<string name="strUpgradeConfirm">Upgradovat?</string>
 	<string name="strUpgradeNoApk">Soubor upgradu chybí!!!</string>
 	<string name="strSaving">ukládám, prosím, čekejte...</string>

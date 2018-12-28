@@ -20,7 +20,7 @@
 	<string name="str_remain_ptimes">Total</string>
 	<string name="str_btn_new">New</string>
 	<string name="str_btn_save">Save</string>
-	<string name="str_btn_saveprint">Save&#038;Print</string>
+	<string name="str_btn_saveprint">SavePrint</string>
 	<string name="str_btn_cancel">Cancel</string>
 	<string name="str_ip_add">Ip Addr</string>
 	<string name="str_device_number">Device:</string>
@@ -75,7 +75,7 @@
 	<string name="strWidth">Width</string>
 	<string name="strHigh">Height</string>
 	<string name="strHightype">Stepwise</string>
-	<string name="strReverse">Reverse</string>
+	<string name="strReverse">Inversion</string>
 	<string name="strXcor">X-Cor</string>
 	<string name="strYcor">Y-Cor</string>
 	<string name="strCnt">Content</string>
@@ -96,7 +96,7 @@
 	<string name="strShift5">Shift5</string>
 	<string name="strInfoname">Object</string>
 	<string name="strHeadType">PenType</string>
-	<string name="strHeadResolution">Resolution</string>
+	<string name="strHeadResolution">HD</string>
 	<string name="strUpgradeConfirm">Do upgrade?</string>
 	<string name="strUpgradeNoApk">No Upgrade file!!!</string>
 	<string name="strSaving">saving, please wait...</string>
@@ -769,7 +769,7 @@
 	<string name="str_net_query">Query</string>
 	<string name="str_net_device">Device:</string>
 	
-	<string name="str_net_device_times">times:</string>
+	<string name="str_net_device_times">Times:</string>
 	<string name="str_net_one">1</string>
 	<string name="str_net_hundred">100</string>
 	<string name="str_net_thousand">1000</string>

@@ -681,4 +681,23 @@
 	<string name="str_tlk_not_found">1.TLK fehlt</string>
 	<string name="str_print_thread_create_err">Taskerstellung fehlgeschlagen</string>
 	<string name="str_tlk_opening">TLK auflösen ...</string>
+    <string name="str_btn_cancel">Abbrechen</string>
+    <string name="str_ip_add">IP</string>
+	<string name="str_device_number">Gerät:</string>
+	<string name="str_dialog_surecancel">Warnung</string>
+	<string name="str_device_but_sure">Ja</string>
+	<string name="str_ip_ed">"Bitte stellen Sie die IP ein und versuchen Sie es erneut "</string>
+	<string name="str_port">Port</string>
+	<string name="str_information">"Ausführung bestimmen? "</string>
+	<string name="str_net_device_ink">Ink</string>
+	<string name="str_net_device">Gerät:</string>
+	<string name="str_net_device_times">Times:</string>
+	<string name="str_btn_saveprint">SavePrint</string>
+	<string name="str_remain_ink">Ink</string>
+	<string name="str_remain_ptimes">Total</string>
+	<string name="strReverse">Inversion</string>
+	<string name="strFontsize">Schriftart</string>
+	<string name="strHeadResolution">HD</string>
+	<string name="strCopying">Kopieren ...</string>
+	<string name="str_net_error">"Fehler bei der Netzwerkkonfiguration "</string>
 </resources>
