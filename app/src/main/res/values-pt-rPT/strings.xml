@@ -690,4 +690,7 @@
 	<string name="strHeadResolution">HD</string>
 	<string name="strCopying">"Copiando ... "</string>
 	<string name="str_net_error">"Erro de configuração de rede "</string>
+    <string name="strBarsource">Fontes</string>
+	<string name="object_weekofyear">Semana</string>
+	<string name="object_weekday">WeekDay</string>
 </resources>
