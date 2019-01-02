@@ -700,4 +700,7 @@
 	<string name="strHeadResolution">HD</string>
 	<string name="strCopying">Kopieren ...</string>
 	<string name="str_net_error">"Fehler bei der Netzwerkkonfiguration "</string>
+    <string name="strBarsource">Source</string>
+	<string name="object_weekofyear">Woche</string>
+	<string name="object_weekday">WeekDay</string>
 </resources>

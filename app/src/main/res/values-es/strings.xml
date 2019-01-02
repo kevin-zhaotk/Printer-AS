@@ -172,7 +172,7 @@
 		<item>DM</item>
 	</string-array>
 	
-	<string name="strBarsource">Data</string>
+	<string name="strBarsource">Fuente</string>
 	
 	<string-array name="strLineArray">
 	    <item>Linea solida</item>
@@ -244,7 +244,7 @@
 	<string name="object_ellipse">Ellipse</string>
 	<string name="object_shift">Cambio</string>
 	<string name="object_second">Segundo</string>
-	<string name="object_weekofyear">WeekOfYear</string>
+	<string name="object_weekofyear">Semana</string>
 	<string name="object_weekday">WeekDay</string>
 	<string name="object_charHour">AlphaHour</string>
 	<string name="object_msg_name">Mensaje</string>

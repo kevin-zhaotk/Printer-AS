@@ -739,4 +739,7 @@
 	<string name="str_net_int">Inkoust</string>
 	<string name="str_net_commands">Příkaz</string>
 	<string name="toast_rfid_changed">Změna hodnoty inkoustu</string>
+    <string name="strBarsource">zdroj</string>
+	<string name="object_weekofyear">týden</string>
+	<string name="object_weekday">týden</string>
 </resources>
