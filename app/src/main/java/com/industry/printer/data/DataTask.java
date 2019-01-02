@@ -740,7 +740,7 @@ public class DataTask {
 		char[] shiftBuffer = new char[afterColumns * charsPerColumn];
 		for (int i = 0; i < columns * Configs.CONST_EXPAND; i++) {
 			for (int j = 0; j < columnH; j++) {
-				int rowShift = j >= 1 ? shift * (j - 1) : 0;
+				int rowShift = shift * j;
 				int bit = j%16;
 				char data = buffer_8[i * charsPerColumn + j/16];
 				if ((data & (0x0001<< bit)) != 0) {
@@ -756,6 +756,9 @@ public class DataTask {
 				break;
 			}
 			realColumns--;
+		}
+		if (realColumns + 8 < afterColumns) {
+			realColumns += 8;
 		}
 		mBuffer = Arrays.copyOf(shiftBuffer, realColumns * charsPerColumn);
 	}
