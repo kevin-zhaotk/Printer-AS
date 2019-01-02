@@ -739,8 +739,8 @@ public class DataTask {
 		// shift operation
 		char[] shiftBuffer = new char[afterColumns * charsPerColumn];
 		for (int i = 0; i < columns * Configs.CONST_EXPAND; i++) {
-			for (int j = 1; j < columnH; j++) {
-				int rowShift = shift * j;
+			for (int j = 0; j < columnH; j++) {
+				int rowShift = j >= 1 ? shift * (j - 1) : 0;
 				int bit = j%16;
 				char data = buffer_8[i * charsPerColumn + j/16];
 				if ((data & (0x0001<< bit)) != 0) {
