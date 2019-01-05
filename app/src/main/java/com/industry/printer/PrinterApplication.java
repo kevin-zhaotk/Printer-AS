@@ -16,12 +16,19 @@ public class PrinterApplication extends Application {
 	private KZFileObserver sysObserver;
 	private KZFileObserver qrObserver;
 
+	private static PrinterApplication sInstance = null;
+
+	public static PrinterApplication getInstance() {
+		return sInstance;
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		CrashCatcher catcher = CrashCatcher.getInstance();
 		catcher.init(getApplicationContext());
 		registerFileListener();
+		sInstance = this;
 	}
 
 	private void registerFileListener() {

@@ -68,7 +68,7 @@ public class LetterHourObject extends BaseObject {
 			mFont = DEFAULT_FONT;
 		}
 		try {
-			mPaint.setTypeface(FontCache.getFromExternal(mFont));
+			mPaint.setTypeface(FontCache.get(context, mFont));
 		} catch (Exception e) {}
 		int width = (int)mPaint.measureText("W");
 		Debug.d(TAG, "--->content: " + getContent() + "  width=" + width);
@@ -98,7 +98,7 @@ public class LetterHourObject extends BaseObject {
 		scaleW =scaleW / 2;
 		
 		try {
-			paint.setTypeface(FontCache.getFromExternal(mFont));
+			paint.setTypeface(FontCache.get(ctx, mFont));
 		} catch (Exception e) {
 			
 		}
@@ -160,7 +160,7 @@ public class LetterHourObject extends BaseObject {
 			mFont = DEFAULT_FONT;
 		}
 		try {
-			mPaint.setTypeface(FontCache.getFromExternal(mFont));
+			mPaint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {}
 		
 		int width = (int)mPaint.measureText(getContent());
