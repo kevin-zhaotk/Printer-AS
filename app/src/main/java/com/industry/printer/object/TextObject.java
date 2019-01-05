@@ -84,7 +84,7 @@ public class TextObject extends BaseObject {
 			mFont = DEFAULT_FONT;
 		}
 		try {
-			mPaint.setTypeface(FontCache.getFromExternal(mFont));
+			mPaint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {}
 		
 		int width = (int)mPaint.measureText(getContent());

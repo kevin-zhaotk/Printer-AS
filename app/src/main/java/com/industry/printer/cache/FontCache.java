@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.HashMap;
 
 import com.industry.printer.Utils.Configs;
@@ -22,9 +23,27 @@ import com.printer.corelib.Debug;
 
 public class FontCache {
 
+    // font library stay at asset if true, sdcard else.
+    private static final boolean ASSETS = true;
+
     public static final HashMap FONT_CACHE = new HashMap<String, Typeface>();
 
-    public static Typeface getFromExternal(String font) {
+    /**
+     * return the typeface of the specified font name
+     * @param ctx
+     * @param font
+     * @return
+     */
+    public static Typeface get(Context ctx, String font) {
+
+        if (ASSETS) {
+            return getFromAssets(ctx, font);
+        } else {
+            return getFromExternal(font);
+        }
+    }
+
+    private static Typeface getFromExternal(String font) {
         synchronized (FONT_CACHE) {
             Typeface tf = (Typeface) FONT_CACHE.get(font);
             if (tf == null) {
@@ -35,18 +54,27 @@ public class FontCache {
         }
     }
     
-	public static Typeface getFromAssets(Context ctx, String font) {
+	private static Typeface getFromAssets(Context ctx, String font) {
         synchronized (FONT_CACHE) {
             Typeface tf = (Typeface) FONT_CACHE.get(font);
             if (tf == null) {
-                tf = Typeface.createFromAsset(ctx.getAssets(), font);
+                tf = Typeface.createFromAsset(ctx.getAssets(), Configs.FONT_PATH + File.separator + font);
                 FONT_CACHE.put(font, tf);
             }
             return tf;
         }
     }
-	
-	public static String[] getFonts() {
+
+    public static String[] getFonts(Context ctx) {
+
+        if (ASSETS) {
+            return getFontsAsset(ctx);
+        } else {
+            return getFontsExternal();
+        }
+    }
+
+	private static String[] getFontsExternal() {
 		File dir = new File(Configs.FONT_DIR);
 		File[] fonts = dir.listFiles(new FileFilter() {
 			
@@ -68,4 +96,23 @@ public class FontCache {
 		}
 		return fontName;
 	}
+
+	private static String[] getFontsAsset(Context ctx) {
+
+        String[] fontName = null;
+        try {
+            String[] fonts = ctx.getAssets().list(Configs.FONT_PATH);
+            if (fonts == null || fonts.length <= 0) {
+                return null;
+            }
+            fontName = new String[fonts.length];
+            for (int i = 0; i < fontName.length; i++) {
+                fontName[i] = FileUtil.getFileNameNoEx(fonts[i]);
+            }
+        } catch (IOException e) {
+
+        } finally {
+            return fontName;
+        }
+    }
 }

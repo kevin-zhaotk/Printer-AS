@@ -90,7 +90,7 @@ public class FontSelectDialog extends Dialog implements android.view.View.OnClic
 		private void init() {
 			// String[] name = mContext.getResources().getStringArray(R.array.strFontArray);
 			// String[] tips = mContext.getResources().getStringArray(R.array.strFontTipsArray);
-			String[] name = FontCache.getFonts();
+			String[] name = FontCache.getFonts(mContext);
 			if (name == null) {
 				return;
 			}
@@ -141,7 +141,7 @@ public class FontSelectDialog extends Dialog implements android.view.View.OnClic
 			String font = mFonts.get(position).get(FONT_NAME);
 			mHolder.mText.setText(font);
 			Debug.d(TAG, "--->font: " + font);
-			Typeface tf = FontCache.getFromExternal(font);
+			Typeface tf = FontCache.get(mContext, font);
 			mHolder.mTips.setTypeface(tf);
 			mHolder.mTips.setText(mFonts.get(position).get(FONT_TIPS));
 			mHolder.mText.setSelected(position == this.position);

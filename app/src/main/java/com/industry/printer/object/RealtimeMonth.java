@@ -113,7 +113,7 @@ public class RealtimeMonth extends BaseObject {
 			mFont = DEFAULT_FONT;
 		}
 		try {
-			mPaint.setTypeface(FontCache.getFromExternal(mFont));
+			mPaint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {}
 
 		String str_new_content="";

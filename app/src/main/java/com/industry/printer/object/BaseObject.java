@@ -21,6 +21,7 @@ import com.industry.printer.BinInfo;
 import com.industry.printer.MessageTask;
 import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.PHeader.PrinterNozzle;
+import com.industry.printer.PrinterApplication;
 import com.industry.printer.R;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.ConfigPath;
@@ -104,7 +105,7 @@ public class BaseObject{
 	/**
 	 * supported fonts
 	 */
-	public static String[] mFonts = FontCache.getFonts();
+	public static String[] mFonts = FontCache.getFonts(PrinterApplication.getInstance());
 	
 	public BaseObject(Context context, String id, float x)
 	{
@@ -297,7 +298,7 @@ public class BaseObject{
 		mFont = verifyFont();
 		Debug.d(TAG,"--->draw font = " + mFont +"  h: " + mHeight);
 		try {
-			mPaint.setTypeface(FontCache.getFromExternal(mFont));
+			mPaint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {
 			Debug.d(TAG, "--->e: " + e.getMessage());
 		}
@@ -345,7 +346,7 @@ public class BaseObject{
 		boolean isCorrect = false;
 		
 		try {
-			paint.setTypeface(FontCache.getFromExternal(font));
+			paint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {
 			
 		}
@@ -400,7 +401,7 @@ public class BaseObject{
 	{
 		//mPaint.setColor(Color.RED);
 		//Debug.d(TAG,"getBitmap mContent="+mContent);
-		mPaint.setTypeface(FontCache.getFromExternal(mFont));
+		mPaint.setTypeface(FontCache.get(context, mFont));
 		int width = (int)mPaint.measureText(getContent());
 		int height = (int)mPaint.getTextSize();
 		
@@ -430,7 +431,7 @@ public class BaseObject{
 		paint.setFilterBitmap(true); //对位图进行滤波处理
 		
 		try {
-			paint.setTypeface(FontCache.getFromExternal(mFont));
+			paint.setTypeface(FontCache.get(ctx, mFont));
 		} catch (Exception e) {
 			
 		}
@@ -802,7 +803,7 @@ public class BaseObject{
 			return;
 		mFont = font;
 		try {
-			mPaint.setTypeface(FontCache.getFromExternal(mFont));
+			mPaint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {}
 		isNeedRedraw = true;
 		Debug.d(TAG, "--->setFont: " + mFont);

@@ -149,7 +149,7 @@ public class RealtimeYear extends BaseObject {
 			mFont = DEFAULT_FONT;
 		}
 		try {
-			Paint.setTypeface(FontCache.getFromExternal(mFont));
+			Paint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {}
 
 		String str_new_content="";
