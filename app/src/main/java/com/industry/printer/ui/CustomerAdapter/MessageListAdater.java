@@ -122,6 +122,8 @@ public class MessageListAdater extends BaseAdapter {
 	
 	private int[] mSCroll;
 
+	private int item_layout;
+
 	/**
 	 * multi select mode
 	 */
@@ -139,6 +141,7 @@ public class MessageListAdater extends BaseAdapter {
 	{
 		mSelected = -1;
 		mCntList = list;
+		item_layout = resource;
 		mContext = context;
 		mKeys = new String[from.length];
 		Debug.d(TAG, "====key size="+mKeys.length);
@@ -209,7 +212,7 @@ public class MessageListAdater extends BaseAdapter {
 		else
 		{
 			//prepare a empty view 
-			convertView = mInflater.inflate(R.layout.message_item_layout, null);
+			convertView = mInflater.inflate(item_layout, null);
 			mHolder = new ItemViewHolder();
 			// mHolder.mTitle = (TextView) convertView.findViewById(mViewIDs[0]);
 			// mHolder.mAbstract = (TextView) convertView.findViewById(mViewIDs[1]);
