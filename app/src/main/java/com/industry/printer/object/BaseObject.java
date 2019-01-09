@@ -1077,4 +1077,27 @@ public class BaseObject{
 			return true;
 		}
 	}
+
+	/**
+	 * judge if this object need vx.bin file
+	 * @return
+	 */
+	public boolean needVBin() {
+		if ((this instanceof CounterObject) ||
+				(this instanceof RealtimeYear) ||
+				(this instanceof RealtimeMonth) ||
+				(this instanceof RealtimeDate) ||
+				(this instanceof RealtimeHour) ||
+				(this instanceof RealtimeMinute) ||
+				(this instanceof JulianDayObject) ||
+				(this instanceof WeekDayObject) ||
+				(this instanceof WeekOfYearObject) ||
+				(this instanceof WeeksObject) ||
+				(this instanceof RTSecondObject) ||
+				(this instanceof LetterHourObject)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

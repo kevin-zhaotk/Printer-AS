@@ -21,24 +21,13 @@ public class FileUtil {
 	 * copy file
 	 */
 	public static void copyFile(String oldPath, String newPath) {
+		File srcFile = new File(oldPath);
+		File target = new File(newPath);
 		try {
-			int bread=0;
-			File oldFile = new File(oldPath);
-			if (oldFile.exists()) {
-				InputStream inStream = new FileInputStream(oldFile);
-				FileOutputStream outStream = new FileOutputStream(newPath);
-				byte[] buffer = new byte[1024];
-				while ((bread = inStream.read(buffer)) != -1) {
-					outStream.write(buffer, 0, bread);
-				}
-				inStream.close();
-				outStream.flush();
-				outStream.close();
-			}
-			
-		} catch (Exception e) {
-			Debug.e(TAG, "--->err:" + e.getCause());
-		}
+            copyFile(srcFile, target);
+        } catch (IOException e) {
+		    Debug.e(TAG, "--->copy error: " + e.getMessage());
+        }
 	}
  
 	// 复制文件   
