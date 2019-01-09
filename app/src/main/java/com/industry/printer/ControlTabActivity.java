@@ -281,6 +281,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	public static final int MESSAGE_OPEN_NEXT_MSG_SUCCESS = 20;
 
+	public static final int MESSAGE_OPEN_PREVIEW = 21;
+
 	/**
 	 * the bitmap for preview
 	 */
@@ -541,7 +543,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if (f == null || f.isEmpty() || !new File(ConfigPath.getTlkDir(f)).exists()) {
 			return;
 		}
-		Message msg = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
+		Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
 		Bundle bundle = new Bundle();
 		bundle.putString("file", f);
 		msg.setData(bundle);
@@ -553,7 +555,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	 * @param message
 	 */
 	public void loadAndPrint(String message) {
-		Message msg = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
+		Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
 		Bundle bundle = new Bundle();
 		bundle.putString("file", message);
 		bundle.putBoolean("printAfterLoad", true);
@@ -736,21 +738,46 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			mTime.setText(String.valueOf(mSysconfig.getParam(27)));
 		}
 	}
-	
+
+
+	private boolean messageNew = false;
+	private void setMessage(String message) {
+		mObjPath = message;
+		messageNew = true;
+	}
+
 	public int testdata=0;
 	public Handler mHandler = new Handler(){
 		public void handleMessage(Message msg) {
 			switch(msg.what)
 			{
+				case MESSAGE_OPEN_PREVIEW:
+					String tlk = msg.getData().getString("file");
+					setMessage(tlk);
+					if (mPreBitmap != null) {
+						BinFromBitmap.recyleBitmap(mPreBitmap);
+					}
+					mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
+
+					dispPreview(mPreBitmap);
+					mMsgFile.setText(mObjPath);
+					mSysconfig.saveLastMsg(mObjPath);
+					final boolean printAfterLoad = msg.getData().getBoolean("printAfterLoad", false);
+					if (printAfterLoad) {
+						mHandler.sendEmptyMessage(MESSAGE_OPEN_TLKFILE);
+					}
+					break;
+
 				case MESSAGE_OPEN_TLKFILE:		//
+					final boolean printNext = msg.getData().getBoolean("printNext", false);
+					if (!printNext && !messageNew ) {
+						mHandler.sendEmptyMessage(MESSAGE_OPEN_MSG_SUCCESS);
+						break;
+					}
 					progressDialog();
 					
 					mObjPath = msg.getData().getString("file");
 					final String msgPC = msg.getData().getString(Constants.PC_CMD);
-					final boolean printAfterLoad = msg.getData().getBoolean("printAfterLoad", false);
-
-					//load next during printing
-					final boolean printNext = msg.getData().getBoolean("printNext", false);
 
 					Debug.d(TAG, "open tlk :" + mObjPath );
 					//startPreview();
@@ -789,10 +816,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							}
 //							mHandler.sendEmptyMessage(MESSAGE_OPEN_MSG_SUCCESS);
 							mesg.sendToTarget();
-							if (printAfterLoad) {
-								mHandler.sendEmptyMessageDelayed(MESSAGE_PRINT_CHECK_UID, 1000);
-							}
-
 
 						}
 					}.start();
@@ -812,7 +835,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						public void onClick(String content) {
 							Debug.d(TAG, "--->group: " + content);
 							// save group information & send message to handle opening
-							Message msg = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
+							Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
 							Bundle b = new Bundle();
 							b.putString("file", content);
 							msg.setData(b);
@@ -863,6 +886,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 					mSysconfig.saveLastMsg(mObjPath);
 					dismissProgressDialog();
+
+					if (Configs.IGNORE_RFID) {
+						mHandler.sendEmptyMessage(MESSAGE_PRINT_START);
+					} else {
+						mHandler.sendEmptyMessage(MESSAGE_PRINT_CHECK_UID);
+					}
+
 					if("100".equals(PrnComd))	
 					{
 						 msg = mHandler.obtainMessage(MESSAGE_PRINT_START);
@@ -979,8 +1009,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					Debug.d(TAG, "--->checkQRFile ok");
 					List<DataTask> tasks = mDTransThread.getData();
 					DataTask task = tasks.get(0);
-					if (task.mTask.isError()) {
-						ToastUtil.show(mContext, R.string.str_tlk_not_found);
+					if (!task.mTask.isPrintable()) {
+						ToastUtil.show(mContext, task.mTask.unPrintableTips());
 						break;
 					}
 
@@ -1608,11 +1638,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		// ExtGpio.playClick();
 		switch (v.getId()) {
 			case R.id.StartPrint:
-				if (Configs.IGNORE_RFID) {
-					mHandler.sendEmptyMessage(MESSAGE_PRINT_START);
-				} else {
-					mHandler.sendEmptyMessage(MESSAGE_PRINT_CHECK_UID);
-				}
+				mHandler.sendEmptyMessage(MESSAGE_OPEN_TLKFILE);
 				break;
 			case R.id.StopPrint:
 				// mHandler.removeMessages(MESSAGE_PAOMADENG_TEST);
@@ -1634,7 +1660,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							return;
 						}
 						/** 如果选择内容为多个，表示需要新建组 */
-						Message msg = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
+						Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
 						Bundle bundle = new Bundle();
 						if (f.size() > 1) {
 							msg = mHandler.obtainMessage(MESSAGE_OPEN_GROUP);

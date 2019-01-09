@@ -64,7 +64,10 @@ public class MessageTask {
 	private String mName;
 	private ArrayList<BaseObject> mObjects;
 
-	private boolean error;
+	private boolean isPrintable;
+
+	// error message resource id
+	private int unPrintableTips;
 
 	public int mType;
 	private int mIndex;
@@ -76,6 +79,7 @@ public class MessageTask {
 		mName="";
 		mContext = context;
 		mObjects = new ArrayList<BaseObject>();
+		isPrintable = true;
 	}
 	
 	/**
@@ -97,12 +101,21 @@ public class MessageTask {
 			parser.parse(context, this, mObjects);
 		} catch (PermissionDeniedException e) {
 			ToastUtil.show(mContext, R.string.str_no_permission);
-			error = true;
+			isPrintable = false;
 		} catch (TlkNotFoundException ex) {
 			ToastUtil.show(mContext, R.string.str_tlk_not_found);
-			error = true;
+			isPrintable = false;
 		}
 		mDots = parser.getDots();
+		if (!checkBin()) {
+			isPrintable = false;
+			unPrintableTips = R.string.str_toast_no_bin;
+		}
+
+		if (!checkVBin()) {
+			isPrintable = false;
+			unPrintableTips = R.string.str_toast_no_bin;
+		}
 	}
 	
 	/**
@@ -121,6 +134,8 @@ public class MessageTask {
 		} else {
 			setName(tlk);
 		}
+		// check 1.bin
+
 		
 		TLKFileParser parser = new TLKFileParser(context, mName);
 		try {
@@ -129,7 +144,7 @@ public class MessageTask {
 				parser.setTlk(path);
 			}
 		} catch (PermissionDeniedException e) {
-			error = true;
+			isPrintable = false;
 			((MainActivity)context).runOnUiThread(new  Runnable() {
 				@Override
 				public void run() {
@@ -145,9 +160,19 @@ public class MessageTask {
 				}
 			});
 
-			error = true;
+			isPrintable = false;
 		}
+
 		mDots = parser.getDots();
+		if (!checkBin()) {
+			isPrintable = false;
+			unPrintableTips = R.string.str_toast_no_bin;
+		}
+
+		if (!checkVBin()) {
+			isPrintable = false;
+			unPrintableTips = R.string.str_toast_no_bin;
+		}
 	}
 	
 	/**
@@ -379,7 +404,6 @@ public class MessageTask {
 	
 	/**
 	 * 使用系统字库，生成bitmap，然后通过灰度化和二值化之后提取点阵生成buffer
-	 * @param f
 	 */
 	private void saveObjectBin()
 	{
@@ -592,7 +616,7 @@ public class MessageTask {
 	
 	/**
 	 * 从16*16的点阵字库中提取点阵，生成打印buffer
-	 * @param f
+	 *
 	 */
 	private void saveBinDotMatrix() {
 		if(mObjects==null || mObjects.size() <= 0)
@@ -1236,7 +1260,49 @@ public class MessageTask {
 		return null;
 	}
 
-	public boolean isError() {
-		return error;
+	public boolean isPrintable() {
+		return isPrintable;
+	}
+
+	public int unPrintableTips() {
+		return unPrintableTips;
+	}
+
+	/**
+	 * check if 1.bin file exists
+	 * @return true if exist, false otherwise
+	 */
+	private boolean checkBin() {
+		String bin = ConfigPath.getBinAbsolute(mName);
+		File bf = new File(bin);
+		if (!bf.exists()) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * check if all Vx.bin exist
+	 * @return
+	 */
+	private boolean checkVBin() {
+		if (mObjects == null || mObjects.size() == 0) {
+			return true;
+		}
+
+		boolean vbOk = true;
+		for (BaseObject object : mObjects) {
+			if (!object.needVBin()) {
+				continue;
+			}
+			String v = ConfigPath.getVBinAbsolute(mName, object.getIndex());
+			File vf = new File(v);
+			if (vf.exists()) {
+				vbOk &= true;
+			} else {
+				vbOk &= false;
+			}
+		}
+		return vbOk;
 	}
 }
