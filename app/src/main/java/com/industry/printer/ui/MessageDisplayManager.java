@@ -27,6 +27,7 @@ import com.industry.printer.object.MessageObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.zip.Inflater;
 
 /**
  * Created by kevin on 2017/7/17.
@@ -38,6 +39,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
     private Context mContext;
     private ViewGroup mContainer;
     private MessageTask mTask;
+    private View mCursor;
     
     /** 
      * The select shadow, show up when object selected 
@@ -53,6 +55,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
         mShadow = new ImageView(mContext);
         
         mImageMap = new HashMap<BaseObject, ViewGroup>();
+
         reset();
     }
 
@@ -67,6 +70,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
         if (mShadow != null) {
             mContainer.addView(mShadow, 0);
         }
+        initCursor();
 //        mShadow.setLayoutParams(new RelativeLayout.LayoutParams(150, 150));
     }
 
@@ -129,6 +133,11 @@ public class MessageDisplayManager implements View.OnTouchListener {
 
     public void update(BaseObject object) {
         if (object instanceof MessageObject) {
+            if (object.mIsSelected) {
+                showCursor((int) object.getX(), (int) object.getY());
+            } else {
+                hideCursor();
+            }
             return;
         }
         if (!mImageMap.containsKey(object)) {
@@ -147,6 +156,40 @@ public class MessageDisplayManager implements View.OnTouchListener {
         view.setLayoutParams(params);
         showSelectRect(params.leftMargin, params.topMargin, params.width, params.height);
     }
+
+    /**
+     * initialize cross cursor
+     */
+    private void initCursor() {
+
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mCursor = inflater.inflate(R.layout.layout_cross_cursor, null);
+
+        mCursor.setVisibility(View.GONE);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.leftMargin = 0;
+        lp.topMargin = 0;
+        mContainer.addView(mCursor, lp);
+
+    }
+
+    /**
+     * show cross cursor at the specified position
+     * @param x
+     * @param y
+     */
+    private void showCursor(int x, int y) {
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mCursor.getLayoutParams();
+        lp.topMargin = y - 15;
+        lp.leftMargin = x - 15;
+        mCursor.setLayoutParams(lp);
+        mCursor.setVisibility(View.VISIBLE);
+    }
+
+    private void hideCursor() {
+        mCursor.setVisibility(View.GONE);
+    }
+
     
     public void updateDraw(BaseObject object) {
         if (object instanceof MessageObject) {
@@ -255,7 +298,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
         for(BaseObject obj : objects)
         {
             if (obj.getSelected()) {
-                ViewGroup view = mImageMap.get(obj);
+                // ViewGroup view = mImageMap.get(obj);
                 obj.setSelected(false);
             }
 
