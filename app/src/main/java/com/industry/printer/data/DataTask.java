@@ -760,6 +760,7 @@ public class DataTask {
 		if (realColumns + 8 < afterColumns) {
 			realColumns += 8;
 		}
+
 		mBuffer = Arrays.copyOf(shiftBuffer, realColumns * charsPerColumn);
 	}
 

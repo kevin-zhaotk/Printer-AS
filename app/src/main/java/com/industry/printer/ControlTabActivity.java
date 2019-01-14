@@ -777,7 +777,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					}
 					progressDialog();
 					
-					mObjPath = msg.getData().getString("file");
+//					mObjPath = msg.getData().getString("file");
 					final String msgPC = msg.getData().getString(Constants.PC_CMD);
 
 					Debug.d(TAG, "open tlk :" + mObjPath );
