@@ -540,7 +540,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public boolean dispatchTouchEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			Debug.d(TAG, "--->dispatch down event");
-//			setScreenBrightness(false);
+			setScreenBrightness(false);
 		}
 		return super.dispatchTouchEvent(event);
 	}
