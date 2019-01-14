@@ -749,6 +749,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public int testdata=0;
 	public Handler mHandler = new Handler(){
 		public void handleMessage(Message msg) {
+			String pcMsg = msg.getData().getString(Constants.PC_CMD, "");
 			switch(msg.what)
 			{
 				case MESSAGE_OPEN_PREVIEW:
@@ -782,6 +783,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					Debug.d(TAG, "open tlk :" + mObjPath );
 					//startPreview();
 					if (mObjPath == null) {
+						dismissProgressDialog();
 						break;
 					}
 					
@@ -870,22 +872,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
 					// mPreBitmap = mDTransThread.mDataTask.get(0).getPreview();
 					
-					/*濡傛灉鍦栫墖灏哄閬庡ぇ灏辩劇娉曢’绀�*/
-//					if (mPreBitmap.getWidth() > 1280) {
-//						Bitmap b = Bitmap.createBitmap(mPreBitmap, 0, 0, 1280, mPreBitmap.getHeight());
-//						BinFromBitmap.recyleBitmap(mPreBitmap);
-//						mPreBitmap = b;
-//					}
-					//mMsgPreImg.setImageBitmap(mPreBitmap);
-					dispPreview(mPreBitmap);
-					// BinCreater.saveBitmap(mPreBitmap, "prev.png");
-					// mMsgPreImg.setImageURI(Uri.parse("file://" + "/mnt/usbhost0/MSG1/100/1.bmp"));
+//					dispPreview(mPreBitmap);
+
 					refreshInk();
 					refreshCount();
 					mMsgFile.setText(mObjPath);
 
 					mSysconfig.saveLastMsg(mObjPath);
-					dismissProgressDialog();
+//					dismissProgressDialog();
 
 					if (Configs.IGNORE_RFID) {
 						mHandler.sendEmptyMessage(MESSAGE_PRINT_START);
@@ -896,7 +890,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					if("100".equals(PrnComd))	
 					{
 						 msg = mHandler.obtainMessage(MESSAGE_PRINT_START);
-						String pcMsg = msg.getData().getString(Constants.PC_CMD);
+
 						if (pcMsg != null) {
 							Bundle bundle = new Bundle();
 							bundle.putString(Constants.PC_CMD, pcMsg);
@@ -940,8 +934,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mHandler.sendEmptyMessageDelayed(MESSAGE_PAOMADENG_TEST, 1000);
 					break;
 				case MESSAGE_PRINT_CHECK_UID:
+
 					if (mDTransThread != null && mDTransThread.isRunning()) {
 						Debug.d(TAG, "--->printing...");
+						handleError(R.string.str_print_printing, pcMsg);
 						break;
 					}
 					//Debug.d(TAG, "--->initDTThread");
@@ -956,7 +952,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						initDTThread();
 					}
 					if (mDTransThread == null) {
-						ToastUtil.show(mContext, R.string.str_toast_no_message);
+						handleError(R.string.str_toast_no_message, pcMsg);
 						break;
 					}
 					Debug.d(TAG, "--->prepare buffer");
@@ -968,39 +964,30 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mRfidManager.checkUID(heads);
 					break;
 				case RFIDManager.MSG_RFID_CHECK_FAIL:
-					ToastUtil.show(mContext, R.string.toast_rfid_changed);
+					handleError(R.string.toast_rfid_changed, pcMsg);
 					break;
 				case RFIDManager.MSG_RFID_CHECK_SUCCESS:
 				case MESSAGE_PRINT_START:
 
 					Debug.d(TAG, "--->print start");
-					String pcMsg = msg.getData().getString(Constants.PC_CMD);
 					if (mDTransThread != null && mDTransThread.isRunning()) {
-						sendToRemote(Constants.pcErr(pcMsg));
+						handleError(R.string.str_print_printing, pcMsg);
 						break;
 					}
 					if (!checkRfid()) {
-						ToastUtil.show(mContext, R.string.str_toast_no_ink);
-						sendToRemote(Constants.pcErr(pcMsg));
+						handleError(R.string.str_toast_no_ink, pcMsg);
 						return;
 					}
 					Debug.d(TAG, "--->check rfid ok");
-					if (mDTransThread != null && mDTransThread.isRunning()) {
-						ToastUtil.show(mContext, R.string.str_print_printing);
-						sendToRemote(Constants.pcErr(pcMsg));
-						break;
-					}
+
 					if (mObjPath == null || mObjPath.isEmpty()) {
-						ToastUtil.show(mContext, R.string.str_toast_no_message);
-						sendToRemote(Constants.pcErr(pcMsg));
+						handleError(R.string.str_toast_no_message, Constants.pcErr(pcMsg));
 						break;
 					}
 					// reset value of counter object to system config value
 					resetCounterIfNeed();
 					if (!checkQRFile()) {
-						// Toast.makeText(mContext, R.string.str_toast_no_qrfile, Toast.LENGTH_LONG).show();
-						ToastUtil.show(mContext, R.string.str_toast_no_qrfile);
-						sendToRemote(Constants.pcErr(pcMsg));
+						handleError(R.string.str_toast_no_qrfile, Constants.pcErr(pcMsg));
 						mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
 						break;
 					} else {
@@ -1010,7 +997,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					List<DataTask> tasks = mDTransThread.getData();
 					DataTask task = tasks.get(0);
 					if (!task.mTask.isPrintable()) {
-						ToastUtil.show(mContext, task.mTask.unPrintableTips());
+						handleError(task.mTask.unPrintableTips(), pcMsg);
 						break;
 					}
 
@@ -1030,14 +1017,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					Debug.d(TAG, "--->launch thread");
 
 					if (!mDTransThread.launch(mContext)) {
-						ToastUtil.show(mContext, R.string.str_toast_no_bin);
-						sendToRemote(Constants.pcErr(pcMsg));
+						handleError(R.string.str_toast_no_bin, pcMsg);
 						break;
 					}
 					Debug.d(TAG, "--->finish TrheadId=" + Thread.currentThread().getId());
-					// FpgaGpioOperation.init();
-					ToastUtil.show(mContext, R.string.str_print_startok);
-					sendToRemote(Constants.pcOk(pcMsg));
+					handlerSuccess(R.string.str_print_startok, pcMsg);
 					break;
 				case MESSAGE_PRINT_STOP:
 					// do nothing if not in printing state
@@ -1178,6 +1162,34 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			}
 		}
 	};
+
+
+	private void handlerSuccess(int toastRs, String pcMsg) {
+		ToastUtil.show(mContext, toastRs);
+		sendToRemote(Constants.pcOk(pcMsg));
+		dismissProgressDialog();
+	}
+	/**
+	 * handle print error message
+	 * @param toast
+	 * @param pcMsg
+	 */
+	private void handleError(String toast, String pcMsg) {
+		ToastUtil.show(mContext, toast);
+		sendToRemote(Constants.pcErr(pcMsg));
+		dismissProgressDialog();
+	}
+	/**
+	 * handle print error message
+	 * @param toastRs
+	 * @param pcMsg
+	 */
+	private void handleError(int toastRs, String pcMsg) {
+		ToastUtil.show(mContext, toastRs);
+		sendToRemote(Constants.pcErr(pcMsg));
+		dismissProgressDialog();
+	}
+
 	private boolean checkRfid() {
 		boolean ready = true;
 		if (Configs.IGNORE_RFID) {
