@@ -3,7 +3,9 @@
     android:id="@+id/editmultitab"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#436eee" >
+    android:background="#436eee"
+    android:clipChildren="false"
+    >
 
     
     <!--<include layout="@layout/edit_view"
@@ -20,11 +22,14 @@
         android:layout_width="match_parent"
         android:layout_above="@+id/buttons_1"
         android:layout_marginTop="10dp"
+        android:clipChildren="false"
         >
         <RelativeLayout
             android:id="@+id/edit_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            >
 
         </RelativeLayout>
     </HorizontalScrollView>
