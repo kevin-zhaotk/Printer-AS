@@ -429,18 +429,25 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		obj.setSelected(true);
 	}
 
-	
-	public float[] getNextXcor()
+
+	/**
+	 * get coordinate of being inserted object; if isCursor == true, ignore the MessageObject`s coordinate and update it
+	 * @param isCursor
+	 * @return
+	 */
+	private float[] getNextXcor(boolean isCursor)
 	{
 		float[] x = new float[2];
 		ArrayList<BaseObject> objects = mMsgTask.getObjects();
 		MessageObject msgobj = mMsgTask.getMsgObject();
-		// 如果使用了光標，就以光標的座標爲基準
-		if(msgobj.getSelected()) {
-			Debug.d(TAG, "--->!!!!fuck msg selected");
-			x[0] = msgobj.getX();
-			x[1] = msgobj.getY();
-			return x;
+		if (!isCursor) {
+			// 如果使用了光標，就以光標的座標爲基準
+			if (msgobj.getSelected()) {
+				Debug.d(TAG, "--->!!!!fuck msg selected");
+				x[0] = msgobj.getX();
+				x[1] = msgobj.getY();
+				return x;
+			}
 		}
 		for(BaseObject obj : objects)
 		{
@@ -592,7 +599,7 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
             		Debug.d(TAG, "--->mContext: " + mContext);
             		String type = bundle.getString(ObjectInsertDialog.OBJECT_TYPE);
             		String format = bundle.getString(ObjectInsertDialog.OBJECT_FORMAT);
-            		float[] cur = getNextXcor();
+            		float[] cur = getNextXcor(false);
             		if (BaseObject.OBJECT_TYPE_TEXT.equals(type)) {
             			TextObject text = new TextObject(mContext, cur[0]);
             			text.setY(cur[1]);
@@ -1306,6 +1313,11 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		if (!o.getSelected() || o.getX() == 0 || o.getY() == 0) {
 			/* 光标显示在ScrollView中间  */
 			mMsgManager.setSelect(0);
+			float[] cor = getNextXcor(true);
+			Debug.d(TAG, "--->x: " + cor[0] + " , y= " + cor[1]);
+			o.setX(cor[0]);
+			o.setY(cor[1]);
+
 		} else {
 			o.setSelected(false);
 		}
