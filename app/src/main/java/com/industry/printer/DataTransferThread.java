@@ -2,6 +2,9 @@ package com.industry.printer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 import org.apache.http.impl.conn.IdleConnectionHandler;
@@ -69,7 +72,11 @@ public class DataTransferThread {
 	private PrintTask mPrinter;
 	
 	private int testCount = 0;
-	
+
+	//
+	private Lock mPurgeLock;
+	public  boolean isCleaning;
+
 	private InkLevelListener mInkListener = null;
 	
 	public static DataTransferThread getInstance() {
@@ -85,6 +92,7 @@ public class DataTransferThread {
 	}
 	
 	public DataTransferThread() {
+		mPurgeLock = new ReentrantLock();
 	}
 	
 	/**
@@ -168,14 +176,21 @@ public class DataTransferThread {
 
 		FpgaGpioOperation.clean();
 	}
-	
+
+	/**
+	 *
+	 * @param context
+	 */
 	public void clean(final Context context) {
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
 		final int head = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+		// access lock before cleaning begin
+		mPurgeLock.lock();
 		ThreadPoolManager.mThreads.execute(new Runnable() {
 			
 			@Override
 			public void run() {
+				isCleaning = true;
 				DataTask task = new DataTask(context, null);
 				Debug.e(TAG, "--->task: " + task);
 				String purgeFile = "purge/single.bin";
@@ -190,23 +205,36 @@ public class DataTransferThread {
 					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE1);
 					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 					try {
-						Thread.sleep(3000 * 5);
+//						Thread.sleep(3000 * 5);
+						mPurgeLock.tryLock(15, TimeUnit.SECONDS);
+						break;
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						// e.printStackTrace();
+						// mPurgeLock.unlock();
 					}
 					FpgaGpioOperation.clean();
 					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE2);
 					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 					try {
-						Thread.sleep(3000 * 5);
+						mPurgeLock.tryLock(15, TimeUnit.SECONDS);
+						break;
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						// e.printStackTrace();
 					}
 					FpgaGpioOperation.clean();
 				}
+				mPurgeLock.unlock();
+				isCleaning = false;
 			}
 			
 		});
+	}
+
+	/**
+	 * interrupt the cleaning task
+	 */
+	public void interruptClean() {
+		mPurgeLock.unlock();
 	}
 	
 	public boolean isRunning() {

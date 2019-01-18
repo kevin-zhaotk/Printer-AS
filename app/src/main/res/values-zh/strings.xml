@@ -51,17 +51,14 @@
 	<string name="str_mvforward">前移</string>
 	<string name="str_mvbackward">后移</string>
 	<string name="str_preview">预览</string>
-	
 	<string name="str_del">删除</string>
 	<string name="str_multi_select">多选</string>
 	<string name="str_btn_shift">班次</string>
 	<string name="str_btn_second">秒</string>
-	
 	<string name="str_btn_upgrade">升级</string>
 	<string name="str_btn_setDate">日期设置</string>
 	<string name="str_btn_setTime">时间设置</string>
 	<string name="str_btn_image">图形</string>
-	
 	<string name="str_goto">跳转</string>
 	<!-- object info table -->
 	<string name="strWidth">宽</string>
@@ -96,145 +93,12 @@
 	<string name="strCopying">正在拷贝...</string>
 	<string name="strInsertSerial">请插入打印设备</string>
 	<string name="strReinsertSerial">打印出错，请重新插拔打印设备</string>
-	<string-array name="strPrinterArray">
-	    <item>12.7 mm </item>
-	    <item>12.7 mm HP standard</item>
-	    <item>25.4 mm 双头</item>
-	    <item>16.3 mm Xaar128</item>
-	    <item>-- </item>
-	    <item>38.1 mm 三头</item>
-	    <item>50.8 mm 四头</item>
-	    <item>32 点 </item>
-	    <item>16 点 </item>
-	    <item>-- </item>
-	    <item>一寸喷头 </item>
-	    <item>-- </item>
-	    <item>双一寸</item>
-	    <item>9mm</item>
-	    <item>Nova</item>
-	</string-array>
-	
-	<string-array name="strFontArray">
-	    <item>0T+</item>
-	    <item>1+</item>
-	    <item>1B+</item>
-	    <item>1B2</item>
-	    <item>1BS</item>
-	    <item>1T</item>
-	    <item>2+</item>
-	    <item>2B</item>
-	    <item>2i</item>
-	    <item>3+</item>
-	    <item>3B</item>
-	    <item>3i</item>
-	    <item>3T</item>
-	    <item>4</item>
-	    <item>5</item>
-	    <item>6</item>
-	    <item>6B</item>
-	    <item>7</item>
-	    <item>8</item>
-	    <item>9</item>
-	</string-array>
-	
-	<string-array name="strFontTipsArray">
-	    <item>0T+ font</item>
-	    <item>1+ 字体</item>
-	    <item>1B+ 字体</item>
-	    <item>1B2 font</item>
-	    <item>1BS font</item>
-	    <item>1T font</item>
-	    <item>2+ 字体</item>
-	    <item>2B font</item>
-	    <item>2i font</item>
-	    <item>3+ 字体</item>
-	    <item>3B font</item>
-	    <item>3i font</item>
-	    <item>3T font</item>
-	    <item>4 font</item>
-	    <item>5 font</item>
-	    <item>6 font</item>
-	    <item>6B font</item>
-	    <item>7 font</item>
-	    <item>8 font</item>
-	    <item>9 font</item>
-	</string-array>
-	
-	<string-array name="strFontFile">
-	    <item>WelldrawH000</item>
-	</string-array>
-	
-	<string-array name="strDirectArray">
-	    <item>递增</item>
-	    <item>递减</item>
-	</string-array>
 	<string name="strCode">编码类型</string>
-
-	<string-array name="strCodeArray">
-	    <item>EAN8</item>
-	    <item>EAN13</item>
-	    <item>EAN128</item>
-	    <item>CODE_128</item>
-	    <item>CODE_39</item>
-	    <item>UPC_A</item>
-	    <item>ITF_14</item>
-	    <item>QR</item>
-		<item>DM</item>
-	</string-array>
-	
 	<string name="strBarsource">内容来源</string>
-	
-	<string-array name="strLineArray">
-	    <item>Solid Line</item>
-	    <item>Dash Line</item>
-	    <item>Dot Line</item>
-	    <item>Dash Dot Line</item>
-	    <item>Dash Dot Dot Line</item>
-	</string-array>
 	<string name="strLinetype">线型</string>
 	<string name="str_ok">确认</string>
 	<string name="strNativeBtn">取消</string>
-	
 	<string name="strRtFmt">时间格式</string>
-	<string-array name="strTimeFormat">
-	    <item>YY-MM-DD</item>
-	    <item>MM-DD-YY</item>
-	    <item>YY/MM/DD</item>
-	    <item>MM/DD/YY</item>
-	    <item>DD/MM/YY</item>
-	    <item>YY</item>
-	    <item>MM</item>
-	    <item>DD</item>
-	    <item>HH:NN</item>
-	</string-array>
-	
-	<string-array name="strarrayCounter">
-	    <item>3位</item>
-	    <item>4位</item>
-	    <item>5位</item>
-	    <item>6位</item>
-	    <item>7位</item>
-	    <item>8位</item>
-	    <item>9位</item>
-	    <item>10位</item>
-	</string-array>
-	
-	<string-array name="strarrayFontSize">
-	    <item>1 mm</item>
-	    <item>2 mm</item>
-	    <item>3 mm</item>
-	    <item>4 mm</item>
-	    <item>5 mm</item>
-	    <item>6 mm</item>
-	    <item>7 mm</item>
-	    <item>8 mm</item>
-	    <item>9 mm</item>
-	    <item>10 mm</item>
-	    <item>11 mm</item>
-	    <item>12 mm</item>
-	    <item>12.7 mm</item>
-	</string-array>
-	
 	<string name="strOffset">偏移</string>
 	
 	<!-- object list -->
@@ -350,74 +214,11 @@
 	<string name="strResvname62">62.保留</string>
 	<string name="strResvname63">63.保留</string>
 	<string name="strResvname64">64.保留</string>
-	
 	<string name="strBtnSave">确认</string>
-	
-	<string-array name="trigger_mode_name">
-	    <item>开</item>
-	    <item>关</item>
-	</string-array>
-	
-	<string-array name="trigger_mode_value">
-	    <item>0</item>
-	    <item>1</item>
-	</string-array>
-	
-	<string-array name="direction_name">
-	    <item>从左到右</item>
-	    <item>从右到左</item>
-	</string-array>
-	
-	<string-array name="direction_value">
-	    <item>0</item>
-	    <item>1</item>
-	</string-array>
-	
-	<string-array name="encoder_name">
-	    <item>开</item>
-	    <item>关</item>
-	</string-array>
-	
-	<string-array name="encoder_value">
-	    <item>0</item>
-	    <item>1</item>
-	</string-array>
-	
-	<string-array name="horires_name">
-	    <item>300</item>
-	    <item>600</item>
-	</string-array>
-	
-	<string-array name="horires_value">
-	    <item>300</item>
-	    <item>600</item>
-	</string-array>
-	
-	<string-array name="vertres_name">
-	    <item>300</item>
-	    <item>600</item>
-	</string-array>
-	
-	<string-array name="vertres_value">
-	    <item>300</item>
-	    <item>600</item>
-	</string-array>
-	
-	<string-array name="object_list_msg">
-	    <item>信息名称</item>
-	</string-array>
-	
-	
-	<string-array name="storage_dev">
-	    <item>SDCard</item>
-	    <item>USB</item>
-	</string-array>
-	
 	<string name="str_fileicon_des">文件图标</string>
 	<string name="str_file_save"> 确认 </string>
 	<string name="str_file_cancel">取消</string>
 	<string name="str_setting_upgrade">升级</string>
-	
 	<string name="str_month">月</string>
 	<string name="str_year">年</string>
 	<string name="str_date">日</string>
@@ -428,9 +229,7 @@
 	<string name="str_format_12">否</string>
 	<string name="cor_unit">像素</string>
 	<string name="font_unit">mm</string>
-	
 	<string name="str_trans">==></string>
-	
 	<string name="str_column_index">序号</string>
 	<string name="str_column_pic1">图1</string>
 	<string name="str_column_pic2">图2</string>
@@ -452,20 +251,16 @@
 	<string name="str_column_text14">文本14</string>
 	<string name="str_column_text15">文本15</string>
 	<string name="str_column_text16">文本16</string>
-	
 	<string name="str_notlkfile">请先选择一个正确的TLK文件</string>
 	<string name="str_tlk_already_exist">该条信息已经存在，请输入一个未用的信息名</string>
 	<string name="str_createfile_failure">创建信息失败</string>
 	<string name="str_no_print_target">请选择一个打印目标</string>
-	
 	<string name="str_radioLocal">本地</string>
 	<string name="str_radioUsb">USB</string>
 	<string name="str_radioUsb1">USB1</string>
 	<string name="str_radioUsb2">USB2</string>	
 	<string name="str_radioSdcard">SDCard</string>
-	
 	<string name="str_title_infodialog">对象信息编辑</string>
-	
 	<string name="str_fileopt_del">删除</string>
 	<string name="str_fileopt_cancel">取消</string>
 	<string name="str_search">搜索</string>
@@ -561,128 +356,6 @@
 	<string name="str_textview_param63">63.保留</string>
 	<string name="str_textview_param64">64.保留</string>
 	<string name="str_btn_settings_sync">确认</string>
-	
-	<string-array name="array_triger_mode">
-	    <item>1</item>
-	    <item>2</item>
-	    <item>3</item>
-	    <item>4</item>
-	</string-array>
-	
-	<string-array name="str_settings_params">
-	    <item>01. 光电选择</item>
-	    <item>02. 触发模式</item>
-	    <item>03. 光电防抖</item>
-	    <item>04. 光电延时</item>
-	    <item>05. 字宽</item>
-	    <item>06. 定时打印</item>
-	    <item>07. 列间脉冲</item>
-	    <item>08. 定长脉冲</item>
-	    <item>09. 脉冲延时</item>
-	    <item>10. 墨点大小</item>
-	    <item>11. 保留</item>
-	    <item>12. 保留</item>
-	    <item>13. 保留</item>
-	    <item>14. 保留</item>
-	    <item>15. 保留</item>
-	    <item>16. 加重</item>
-	    <item>17. 保留</item>
-	    <item>18. 保留</item>
-	    <item>19. 保留</item>
-	    <item>20. 保留</item>
-	    <item>21. 保留</item>
-	    <item>22. 保留</item>
-	    <item>23. 保留</item>
-	    <item>24. 保留</item>
-	    <item>25. 保留</item>
-	    <item>26. 保留</item>
-	    <item>27. 保留</item>
-	    <item>28. 保留</item>
-	    <item>29. 保留</item>
-	    <item>30. 保留</item>
-	    <item>31. 保留</item>
-	    <item>32. 保留</item>
-	    <item>33. 保留</item>
-	    <item>34. 保留</item>
-	    <item>35. 保留</item>
-	    <item>36. 保留</item>
-	    <item>37. 保留</item>
-	    <item>38. 保留</item>
-	    <item>39. 保留</item>
-	    <item>40. 保留</item>
-	    <item>41. 保留</item>
-	    <item>42. 保留</item>
-	    <item>43. 保留</item>
-	    <item>44. 保留</item>
-	    <item>45. 保留</item>
-	    <item>46. 保留</item>
-	    <item>47. 保留</item>
-	    <item>48. 保留</item>
-	    <item>49. 保留</item>
-	    <item>50. 保留</item>
-	    <item>51. 保留</item>
-	    <item>52. 保留</item>
-	    <item>53. 保留</item>
-	    <item>54. 保留</item>
-	    <item>55. 保留</item>
-	    <item>56. 保留</item>
-	    <item>57. 保留</item>
-	    <item>58. 保留</item>
-	    <item>59. 保留</item>
-	    <item>60. 保留</item>
-	    <item>61. 保留</item>
-	    <item>62. 保留</item>
-	    <item>63. 保留</item>
-	    <item>64. 保留</item>
-	</string-array>
-	
-	<string-array name="encoder_item_entries">
-	    <item>PHO1</item>
-	    <item>PHO2</item>
-	</string-array>
-	
-	<string-array name="direction_item_entries">
-	    <item>左</item>
-	    <item>右</item>
-	</string-array>
-	
-	<string-array name="resolution_item_entries">
-	    <item>150</item>
-	    <item>300</item>
-	    <item>450</item>
-	    <item>600</item>
-	    <item>750</item>
-	</string-array>
-	
-	<string-array name="pens_item_entries">
-	    <item>1</item>
-	    <item>2</item>
-	    <item>3</item>
-	    <item>4</item>
-	    <item>5</item>
-	    <item>6</item>
-	    <item>7</item>
-	    <item>8</item>
-	</string-array>
-	
-	
-	<string-array name="switch_item_entries">
-	    <item>关</item>
-	    <item>开</item>
-	</string-array>
-	
-	<string-array name="photo_item_entries">
-	    <item>关</item>
-	    <item>内部光电</item>
-	    <item>外部光电</item>
-	</string-array>
-	
-	<string-array name="message_dots">
-	    <item>128</item>
-	    <item>152</item>
-	    <item>384</item>
-	</string-array>	
-	
 	<string name="str_time_unit_0_1v">0.1伏</string>
 	<string name="str_length_unit_mm">毫米</string>
 	<string name="str_length_unit_6_1mm">1/6毫米</string>
@@ -707,12 +380,10 @@
 	<string name="str_edit_btn_temp3">测试3</string>
 	<string name="str_edit_btn_temp4">制卡</string>
 	<string name="str_edit_btn_temp5">测试5</string>
-
 	<string name="str_edit_line1">第一行:</string>
 	<string name="str_edit_line2">第二行:</string>
 	<string name="str_edit_line3">第三行:</string>
 	<string name="str_edit_line4">第四行:</string>
-	
 	<string name="str_notice_save">请输入文件名:</string>
 	<string name="str_notice_no_objects">没有可保存的对象</string>
 	<string name="str_file_title">信息：</string>
@@ -726,25 +397,13 @@
 	<string name="cursor">光标</string>
 <!-- 树莓派3  -->
 	<string name="str_dialog_msgnote">请选择信息行数：</string>
-	<string-array name="msglines_item_entries">
-	    <item>1</item>
-	    <item>2</item>
-	    <item>3</item>
-	    <item>4</item>
-	    <item>5</item>
-	    <item>6</item>
-	</string-array>
-	
 	<string name="str_no_upgrade">已经是最新版本</string>
-	
 	<string name="str_cnt_min">起始值</string>
 	<string name="str_cnt_max">結束值</string>
 	<string name="str_loading">正在加载...</string>
-	
 	<string name="str_toast_no_qrfile">沒有找到 QR.txt或QR.csv</string>
 	<string name="str_barcode_end">QR.txt已经打印结束</string>
 	<string name="str_recover_print">recover last print</string>
-	
 	<string name="str_net_devname">设备名称</string>
 	<string name="str_net_ipaddr">IP地址</string>
 	<string name="str_net_stat">在线状态</string>
@@ -759,15 +418,12 @@
 	<string name="str_net_connect">连接</string>
 	<string name="str_net_tips">提示</string>
 	<string name="str_net_textview">文本</string>
-	
 	<string name="str_tip_nothing">~ 没有找到图片!!!</string>
 	<string name="str_no_permission">权限不足</string>
 	<string name="str_flush_tips">将会覆盖原有系统设置信息，确定?</string>
-	
 	<string name="str_message_tips">信息%s已经存在，是否覆盖?</string>
 	<string name="str_prepared">TLK解析完成!!!</string>
 	<string name="str_prepare_fail">TLK parse failed!!!</string>
-	
 	<string name="password_title">请输入密码</string>
 	
 	<!-- Toast -->
@@ -780,12 +436,9 @@
 	<string name="tips_import_resource">正在导入资源文件...</string>
 	<string name="tips_import_sysconf">正在导入系统配置...</string>
 	<string name="tips_import_font">正在导入字库...</string>
-	
 	<string name="tips_export_message">正在导出信息...</string>
 	<string name="tips_export_sysconf">正在导出系统配置...</string>
 	<string name="tips_export_resource">正在导出资源文件...</string>
-
-
 	<string name="message_confirm_printnext">确定切换打印信息?</string>
     <string name="str_time_unit_mm">ms</string>
     <string name="str_ip_add">IP地址</string>
