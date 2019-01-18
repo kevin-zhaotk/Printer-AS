@@ -412,7 +412,11 @@ public static final String TAG="SettingsTabActivity";
 
 			case R.id.btn_setting_clean:
 				DataTransferThread dThread = DataTransferThread.getInstance();
-				dThread.clean(mContext);
+				if (dThread.isCleaning) {
+					dThread.interruptClean();
+				} else {
+					dThread.clean(mContext);
+				}
 				break;
 			default :
 				Debug.d(TAG, "===>unknown view clicked");

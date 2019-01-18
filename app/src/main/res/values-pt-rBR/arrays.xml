@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="strPrinterArray">
+        <item>12.7 </item>
+        <item>12.7X2</item>
+        <item>12.7X3</item>
+        <item>12.7X4</item>
+        <item>25.4</item>
+        <item>25.4X2</item>
+        <item>16 dot</item>
+        <item>32 dot</item>
+        <item>9mm</item>
+        <item>nova</item>
+    </string-array>
+
+    <string-array name="strFontArray">
+        <item>0T+</item>
+        <item>1+</item>
+        <item>1B+</item>
+        <item>1B2</item>
+        <item>1BS</item>
+        <item>1T</item>
+        <item>2+</item>
+        <item>2B</item>
+        <item>2i</item>
+        <item>3+</item>
+        <item>3B</item>
+        <item>3i</item>
+        <item>3T</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>6B</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+
+    <string-array name="strFontTipsArray">
+        <item>0T+ font</item>
+        <item>1+ font</item>
+        <item>1B+ font</item>
+        <item>1B2 font</item>
+        <item>1BS font</item>
+        <item>1T font</item>
+        <item>2+ font</item>
+        <item>2B font</item>
+        <item>2i font</item>
+        <item>3+ font</item>
+        <item>3B font</item>
+        <item>3i font</item>
+        <item>3T font</item>
+        <item>4 font</item>
+        <item>5 font</item>
+        <item>6 font</item>
+        <item>6B font</item>
+        <item>7 font</item>
+        <item>8 font</item>
+        <item>9 font</item>
+    </string-array>
+
+    <string-array name="strCodeArray">
+        <item>EAN8</item>
+        <item>EAN13</item>
+        <item>EAN128</item>
+        <item>CODE_128</item>
+        <item>CODE_39</item>
+        <item>UPC_A</item>
+        <item>ITF_14</item>
+        <item>QR</item>
+        <item>DM</item>
+    </string-array>
+
+    <string-array name="strDirectArray">
+        <item>aumentar</item>
+        <item>diminuir</item>
+    </string-array>
+
+    <string-array name="strLineArray">
+        <item>Linha sólida</item>
+        <item>Linha tracejada</item>
+        <item>Linha pontinhada</item>
+        <item>Linha tracejada e pontinhada</item>
+        <item>Linha pontinhada tracejada pontilhada</item>
+    </string-array>
+
+    <string-array name="strTimeFormat">
+        <item>YY-MM-DD</item>
+        <item>MM-DD-YY</item>
+        <item>YY/MM/DD</item>
+        <item>MM/DD/YY</item>
+        <item>DD/MM/YY</item>
+        <item>YY</item>
+        <item>MM</item>
+        <item>DD</item>
+        <item>HH:NN</item>
+    </string-array>
+
+
+    <string-array name="strarrayFontSize">
+        <item>1 mm</item>
+        <item>1.5 mm</item>
+        <item>2 mm</item>
+        <item>2.5 mm</item>
+        <item>3 mm</item>
+        <item>4 mm</item>
+        <item>5 mm</item>
+        <item>6 mm</item>
+        <item>7 mm</item>
+        <item>8 mm</item>
+        <item>9 mm</item>
+        <item>10 mm</item>
+        <item>11 mm</item>
+        <item>12 mm</item>
+        <item>12.7 mm</item>
+    </string-array>
+
+    <string-array name="trigger_mode_name">
+        <item>On</item>
+        <item>Off</item>
+    </string-array>
+
+    <string-array name="trigger_mode_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="direction_name">
+        <item>Esquerda-Para-Direita</item>
+        <item>Direita-Para-Esquerda</item>
+    </string-array>
+
+    <string-array name="direction_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="encoder_name">
+        <item>On</item>
+        <item>Off</item>
+    </string-array>
+
+    <string-array name="encoder_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="horires_name">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="horires_value">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="vertres_name">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="vertres_value">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="object_list_msg">
+        <item>Nome da Mensagem</item>
+    </string-array>
+
+
+    <string-array name="storage_dev">
+        <item>Cartão SD</item>
+        <item>USB</item>
+    </string-array>
+
+    <string-array name="array_triger_mode">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+
+    <string-array name="encoder_item_entries">
+        <item>PHO1</item>
+        <item>PHO2</item>
+    </string-array>
+
+    <string-array name="direction_item_entries">
+        <item>Esquerda</item>
+        <item>Direita</item>
+    </string-array>
+
+    <string-array name="resolution_item_entries">
+        <item>150</item>
+        <item>300</item>
+        <item>450</item>
+        <item>600</item>
+        <item>750</item>
+    </string-array>
+
+    <string-array name="pens_item_entries">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+
+    <string-array name="switch_item_entries">
+        <item>Off</item>
+        <item>On</item>
+    </string-array>
+
+    <string-array name="photo_item_entries">
+        <item>Off</item>
+        <item>Pen</item>
+        <item>Port</item>
+    </string-array>
+
+    <string-array name="message_dots">
+        <item>128</item>
+        <item>152</item>
+        <item>384</item>
+    </string-array>
+
+    <string-array name="msglines_item_entries">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+</resources>

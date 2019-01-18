@@ -107,7 +107,8 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 				case MSG_FILTER_CHANGED:
 					Bundle bundle = msg.getData();
 					String title = bundle.getString("title");
-					filterAfter(title);
+					//filterAfter(title);
+					filter(title);
 					break;
 				case MSG_LOADED:
 					mMessageList.setAdapter(mFileAdapter);
@@ -561,7 +562,7 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 				HashMap<String, Object> item = (HashMap<String, Object>) mContent.get(i);
 				String title = (String) item.get("title");
 				Debug.d(TAG, "title=" + title);
-				if (!title.startsWith(filter)) {
+				if (!title.contains(filter)) {
 					Debug.d(TAG, "is match: " + title + ", filter: " + filter);
 					mContent.remove(item);
 				} else {

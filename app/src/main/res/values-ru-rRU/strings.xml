@@ -47,17 +47,14 @@
 	<string name="str_mvforward">Вперед</string>
 	<string name="str_mvbackward">Назад</string>
 	<string name="str_preview">Пред.просмотр</string>
-	
 	<string name="str_del">Удалить</string>
 	<string name="str_multi_select">Group</string>
 	<string name="str_btn_shift">Сдвиг</string>
 	<string name="str_btn_second">Второй</string>
-	
 	<string name="str_btn_upgrade">Обновить</string>
 	<string name="str_btn_setDate">Задать дату</string>
 	<string name="str_btn_setTime">Задать время</string>
 	<string name="str_btn_image">Лого</string>
-	
 	<string name="str_goto">Перейти</string>
 	<!-- object info table -->
 	<string name="strWidth">Ширина</string>
@@ -91,145 +88,12 @@
 	<string name="strLoading">загружаю, ждите...</string>
 	<string name="strInsertSerial">Подключите устройство...</string>
 	<string name="strReinsertSerial">Ошибка, переподключите устройство</string>
-	<string-array name="strPrinterArray">
-	    <item>ПГ HP 12,7 мм</item>
-	    <item>--</item>
-	    <item>ПГ HP двойная 25,4мм</item>
-	    <item>ПГ Xaar16,3мм</item>
-	    <item>ПГ Xaar двойная 33 мм</item>
-	    <item>ПГ HP тройная 38,1мм</item>
-	    <item>ПГ HP четверная 50,8мм</item>
-	    <item>7dot</item>
-	    <item>16dot</item>
-	    <item>--</item>
-	    <item>25.4mm fast ONE INCH</item>
-	    <item>--</item>
-	    <item>25.4mm x2 fast</item>
-	    <item>9mm</item>
-	    <item>nova</item>
-	</string-array>
-	
-	<string-array name="strFontArray">
-	    <item>0T+</item>
-	    <item>1+</item>
-	    <item>1B+</item>
-	    <item>1B2</item>
-	    <item>1BS</item>
-	    <item>1T</item>
-	    <item>2+</item>
-	    <item>2B</item>
-	    <item>2i</item>
-	    <item>3+</item>
-	    <item>3B</item>
-	    <item>3i</item>
-	    <item>3T</item>
-	    <item>4</item>
-	    <item>5</item>
-	    <item>6</item>
-	    <item>6B</item>
-	    <item>7</item>
-	    <item>8</item>
-	    <item>9</item>
-	</string-array>
-	
-	<string-array name="strFontTipsArray">
-	    <item>0T+ font</item>
-	    <item>1+ font</item>
-	    <item>1B+ font</item>
-	    <item>1B2 font</item>
-	    <item>1BS font</item>
-	    <item>1T font</item>
-	    <item>2+ font</item>
-	    <item>2B font</item>
-	    <item>2i font</item>
-	    <item>3+ font</item>
-	    <item>3B font</item>
-	    <item>3i font</item>
-	    <item>3T font</item>
-	    <item>4 font</item>
-	    <item>5 font</item>
-	    <item>6 font</item>
-	    <item>6B font</item>
-	    <item>7 font</item>
-	    <item>8 font</item>
-	    <item>9 font</item>
-	</string-array>
-	
-	<string-array name="strFontFile">
-	    <item>WelldrawH000</item>
-	</string-array>
-	
-	<string-array name="strDirectArray">
-	    <item>Увеличить</item>
-	    <item>Уменьшить</item>
-	</string-array>
 	<string name="strCode">Code Type</string>
-	<string-array name="strCodeArray">
-	    <item>EAN8</item>
-	    <item>EAN13</item>
-	    <item>EAN128</item>
-	    <item>CODE_128</item>
-	    <item>CODE_39</item>
-	    <item>UPC_A</item>
-	    <item>ITF_14</item>
-	    <item>QR</item>
-	</string-array>
-	
 	<string name="strBarsource">источник</string>
-	
-	<string-array name="strLineArray">
-	    <item>Сплошная</item>
-	    <item>Пунктирная</item>
-	    <item>Точечная</item>
-	    <item>Пунктирно-точечная</item>
-	    <item>Пунктир-двуточечная</item>
-	</string-array>
 	<string name="strLinetype">Тип линии</string>
 	<string name="str_ok">ОК</string>
 	<string name="strNativeBtn">Отмена</string>
-	
 	<string name="strRtFmt">Формат даты</string>
-	<string-array name="strTimeFormat">
-	    <item>YY-MM-DD</item>
-	    <item>MM-DD-YY</item>
-	    <item>YY/MM/DD</item>
-	    <item>MM/DD/YY</item>
-	    <item>DD/MM/YY</item>
-	    <item>YY</item>
-	    <item>MM</item>
-	    <item>DD</item>
-	    <item>HH:NN</item>
-	</string-array>
-	
-	<string-array name="strarrayCounter">
-	    <item>3 бит</item>
-	    <item>4 бит</item>
-	    <item>5 бит</item>
-	    <item>6 бит</item>
-	    <item>7 бит</item>
-	    <item>8 бит</item>
-	    <item>9 бит</item>
-	    <item>10 бит</item>
-	</string-array>
-	
-	<string-array name="strarrayFontSize">
-	    <item>1 mm</item>
-	    <item>1.5 mm</item>
-	    <item>2 mm</item>
-	    <item>2.5 mm</item>
-	    <item>3 mm</item>
-	    <item>4 mm</item>
-	    <item>5 mm</item>
-	    <item>6 mm</item>
-	    <item>7 mm</item>
-	    <item>8 mm</item>
-	    <item>9 mm</item>
-	    <item>10 mm</item>
-	    <item>11 mm</item>
-	    <item>12 mm</item>
-	    <item>12.7 mm</item>
-	</string-array>
-	
 	<string name="strOffset">Сдвиг</string>
 	
 	<!-- object list -->
@@ -345,73 +209,11 @@
 	<string name="strResvname62">62.Резерв</string>
 	<string name="strResvname63">63.Резерв</string>
 	<string name="strResvname64">64.Резерв</string>
-
 	<string name="strBtnSave">ОК</string>
-	<string-array name="trigger_mode_name">
-	    <item>Вкл</item>
-	    <item>Выкл</item>
-	</string-array>
-	
-	<string-array name="trigger_mode_value">
-	    <item>0</item>
-	    <item>1</item>
-	</string-array>
-	
-	<string-array name="direction_name">
-	    <item>Слева-Направо</item>
-	    <item>Справа-Налево</item>
-	</string-array>
-	
-	<string-array name="direction_value">
-	    <item>0</item>
-	    <item>1</item>
-	</string-array>
-	
-	<string-array name="encoder_name">
-	    <item>Вкл</item>
-	    <item>Выкл</item>
-	</string-array>
-	
-	<string-array name="encoder_value">
-	    <item>0</item>
-	    <item>1</item>
-	</string-array>
-	
-	<string-array name="horires_name">
-	    <item>300</item>
-	    <item>600</item>
-	</string-array>
-	
-	<string-array name="horires_value">
-	    <item>300</item>
-	    <item>600</item>
-	</string-array>
-	
-	<string-array name="vertres_name">
-	    <item>300</item>
-	    <item>600</item>
-	</string-array>
-	
-	<string-array name="vertres_value">
-	    <item>300</item>
-	    <item>600</item>
-	</string-array>
-	
-	<string-array name="object_list_msg">
-	    <item>Имя сообщ.</item>
-	</string-array>
-	
-	
-	<string-array name="storage_dev">
-	    <item>SDCard</item>
-	    <item>USB</item>
-	</string-array>
-	
 	<string name="str_fileicon_des">значок файла</string>
 	<string name="str_file_save"> Ок </string>
 	<string name="str_file_cancel">Отмена</string>
 	<string name="str_setting_upgrade">Обновить</string>
-	
 	<string name="str_month">Месяц</string>
 	<string name="str_year">Год</string>
 	<string name="str_date">День</string>
@@ -422,9 +224,7 @@
 	<string name="str_format_12">Нет</string>
 	<string name="cor_unit">dpi</string>
 	<string name="font_unit">мм</string>
-	
 	<string name="str_trans">Направо</string>
-	
 	<string name="str_column_index">Индекс</string>
 	<string name="str_column_pic1">Рис.1</string>
 	<string name="str_column_pic2">Рис.2</string>
@@ -450,13 +250,11 @@
 	<string name="str_tlk_already_exist">Файл TLK уже существуетt!!!</string>
 	<string name="str_createfile_failure">Ошибка создания</string>
 	<string name="str_no_print_target">Выберите источник</string>
-	
 	<string name="str_radioLocal">Внутр.</string>
 	<string name="str_radioUsb">USB</string>
 	<string name="str_radioUsb1">USB1</string>
 	<string name="str_radioUsb2">USB2</string>
 	<string name="str_radioSdcard">SDCard</string>
-	
 	<string name="str_title_infodialog">Инф. об объекте</string>
 	<string name="str_fileopt_del">DEL</string>
 	<string name="str_fileopt_cancel">Cancel</string>	
@@ -554,128 +352,6 @@
 	<string name="str_textview_param63">63.Резерв</string>
 	<string name="str_textview_param64">64.Резерв</string>
 	<string name="str_btn_settings_sync">ОК</string>
-	
-	<string-array name="array_triger_mode">
-	    <item>1</item>
-	    <item>2</item>
-	    <item>3</item>
-	    <item>4</item>
-	</string-array>
-	
-	<string-array name="str_settings_params">
-	    <item>01. Фотодатчик</item>
-	    <item>02. Вн.датчик</item>
-	    <item>03. Фильтр</item>
-	    <item>04. Задержка</item>
-	    <item>05. Скорость</item>
-	    <item>06. Число повторов</item>
-	    <item>07. Диам.энкодера</item>
-	    <item>08. Пульс повтора</item>
-	    <item>09. Пульс задержки</item>
-	    <item>10. Размер капли</item>
-	    <item>11. Резерв</item>
-	    <item>12. Резерв</item>
-	    <item>13. Резерв</item>
-	    <item>14. Резерв</item>
-	    <item>15. Резерв</item>
-	    <item>16. Жирность</item>
-	    <item>17. Резерв</item>
-	    <item>18. Резерв</item>
-	    <item>19. Резерв</item>
-	    <item>20. Резерв</item>
-	    <item>21. Резерв</item>
-	    <item>22. Резерв</item>
-	    <item>23. Резерв</item>
-	    <item>24. Резерв</item>
-	    <item>25. Резерв</item>
-	    <item>26. Резерв</item>
-	    <item>27. Резерв</item>
-	    <item>28. Резерв</item>
-	    <item>29. Резерв</item>
-	    <item>30. Резерв</item>
-	    <item>31. Резерв</item>
-	    <item>32. Резерв</item>
-	    <item>33. Резерв</item>
-	    <item>34. Резерв</item>
-	    <item>35. Резерв</item>
-	    <item>36. Резерв</item>
-	    <item>37. Резерв</item>
-	    <item>38. Резерв</item>
-	    <item>39. Резерв</item>
-	    <item>40. Резерв</item>
-	    <item>41. Резерв</item>
-	    <item>42. Резерв</item>
-	    <item>43. Резерв</item>
-	    <item>44. Резерв</item>
-	    <item>45. Резерв</item>
-	    <item>46. Резерв</item>
-	    <item>47. Резерв</item>
-	    <item>48. Резерв</item>
-	    <item>49. Резерв</item>
-	    <item>50. Резерв</item>
-	    <item>51. Резерв</item>
-	    <item>52. Резерв</item>
-	    <item>53. Резерв</item>
-	    <item>54. Резерв</item>
-	    <item>55. Резерв</item>
-	    <item>56. Резерв</item>
-	    <item>57. Резерв</item>
-	    <item>58. Резерв</item>
-	    <item>59. Резерв</item>
-	    <item>60. Резерв</item>
-	    <item>61. Резерв</item>
-	    <item>62. Резерв</item>
-	    <item>63. Резерв</item>
-	    <item>64. Резерв</item>
-	</string-array>
-	
-	<string-array name="encoder_item_entries">
-	    <item>PHO1</item>
-	    <item>PHO2</item>
-	</string-array>
-	
-	<string-array name="direction_item_entries">
-	    <item>Налево</item>
-	    <item>Направо</item>
-	</string-array>
-	
-	<string-array name="resolution_item_entries">
-	    <item>150</item>
-	    <item>300</item>
-	    <item>450</item>
-	    <item>600</item>
-	    <item>750</item>
-	</string-array>
-	
-	<string-array name="pens_item_entries">
-	    <item>1</item>
-	    <item>2</item>
-	    <item>3</item>
-	    <item>4</item>
-	    <item>5</item>
-	    <item>6</item>
-	    <item>7</item>
-	    <item>8</item>
-	</string-array>
-	
-	
-	<string-array name="switch_item_entries">
-	    <item>Выкл</item>
-	    <item>Вкл</item>
-	</string-array>
-	
-	<string-array name="photo_item_entries">
-	    <item>Выкл</item>
-	    <item>ПГ</item>
-	    <item>Порт</item>
-	</string-array>
-	
-	<string-array name="message_dots">
-	    <item>128</item>
-	    <item>152</item>
-	    <item>384</item>
-	</string-array>
-	
 	<string name="str_time_unit_0_1v">0.1В</string>
 	<string name="str_length_unit_mm">мм</string>
 	<string name="str_length_unit_6_1mm">1/6mm</string>
@@ -701,12 +377,10 @@
 	<string name="str_edit_btn_temp3">Врем.3</string>
 	<string name="str_edit_btn_temp4">Врем.4</string>
 	<string name="str_edit_btn_temp5">Врем.5</string>
-	
 	<string name="str_edit_line1">Строка 1:</string>
 	<string name="str_edit_line2">Строка 2:</string>
 	<string name="str_edit_line3">Строка 3:</string>
 	<string name="str_edit_line4">Строка 4:</string>
-	
 	<string name="str_notice_save">Введите имя сообщения:</string>
 	<string name="str_notice_no_objects">Пустое сообщение!</string>
 	<string name="str_file_title">Сообщение:</string>
@@ -720,25 +394,13 @@
 	<string name="cursor">Курсор</string>
 <!-- 树莓派3  -->
 	<string name="str_dialog_msgnote">Задайте количество строк</string>
-	<string-array name="msglines_item_entries">
-	    <item>1</item>
-	    <item>2</item>
-	    <item>3</item>
-	    <item>4</item>
-	    <item>5</item>
-	    <item>6</item>
-	</string-array>
-	
 	<string name="str_no_upgrade">Установлена последняя версия ПО</string>
-	
 	<string name="str_cnt_min">Старт</string>
 	<string name="str_cnt_max">End</string>
 	<string name="str_loading">loading...</string>
-	
 	<string name="str_toast_no_qrfile">no QR.txt or QR.csv</string>
 	<string name="str_barcode_end">Barcode file is end</string>
 	<string name="str_recover_print">recover last print</string>
-	
 	<string name="str_net_devname">Device</string>
 	<string name="str_net_ipaddr">IP addr</string>
 	<string name="str_net_stat">State</string>
@@ -751,21 +413,15 @@
 	<string name="str_net_hundred">100</string>
 	<string name="str_net_thousand">1000</string>
 	<string name="str_net_connect">Connect</string>
-	
-	
 	<string name="str_tip_nothing">~ There is no picture !!!</string>
 	<string name="str_no_permission">Permission denied for access the files</string>
-	
 	<string name="str_message_tips">Message %s already exist, overwrite it?</string>
-	
 	<string name="str_flush_tips">Will Overwrite the settings, Confirm?</string>
-	
 	<string name="str_build_tlk_start">start building tlk... </string>
 	<string name="str_prepared">TLK parse success!!!</string>
 	<string name="str_prepare_fail">TLK parse failed!!!</string>
 	<string name="str_build_tlk_ok">build TLK success</string>
 	<string name="str_build_tlk_fail">build TLK failed</string>
-	
 	<string name="str_tlk_opening">Разрешение ТЛК ...</string>
 	<string name="str_print_thread_create_err">Ошибка создания задачи</string>
     <string name="str_F1">F1</string>
