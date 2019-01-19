@@ -73,8 +73,8 @@
     </string-array>
 
     <string-array name="strDirectArray">
-        <item>递增</item>
-        <item>递减</item>
+        <item>遞增</item>
+        <item>遞減</item>
     </string-array>
 
     <string-array name="strLineArray">
@@ -127,8 +127,8 @@
     </string-array>
 
     <string-array name="direction_name">
-        <item>从左到右</item>
-        <item>从右到左</item>
+        <item>從左到右</item>
+        <item>從右到左</item>
     </string-array>
 
     <string-array name="direction_value">
@@ -137,8 +137,8 @@
     </string-array>
 
     <string-array name="encoder_name">
-        <item>开</item>
-        <item>关</item>
+        <item>開</item>
+        <item>關</item>
     </string-array>
 
     <string-array name="encoder_value">
@@ -167,7 +167,7 @@
     </string-array>
 
     <string-array name="object_list_msg">
-        <item>信息名称</item>
+        <item>信息名稱</item>
     </string-array>
 
     <string-array name="array_triger_mode">
@@ -209,14 +209,14 @@
 
 
     <string-array name="switch_item_entries">
-        <item>关</item>
-        <item>开</item>
+        <item>關</item>
+        <item>開</item>
     </string-array>
 
     <string-array name="photo_item_entries">
-        <item>关</item>
-        <item>内部光电</item>
-        <item>外部光电</item>
+        <item>關</item>
+        <item>內部光電</item>
+        <item>外部光電</item>
     </string-array>
 
     <string-array name="message_dots">

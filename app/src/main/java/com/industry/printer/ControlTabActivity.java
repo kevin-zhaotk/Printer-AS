@@ -749,7 +749,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public int testdata=0;
 	public Handler mHandler = new Handler(){
 		public void handleMessage(Message msg) {
-			String pcMsg = msg.getData().getString(Constants.PC_CMD, "");
+			final String pcMsg = msg.getData().getString(Constants.PC_CMD, "");
+			final boolean printAfterLoad = msg.getData().getBoolean("printAfterLoad", false);
+			final boolean printNext = msg.getData().getBoolean("printNext", false);
 			switch(msg.what)
 			{
 				case MESSAGE_OPEN_PREVIEW:
@@ -763,14 +765,21 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					dispPreview(mPreBitmap);
 					mMsgFile.setText(mObjPath);
 					mSysconfig.saveLastMsg(mObjPath);
-					final boolean printAfterLoad = msg.getData().getBoolean("printAfterLoad", false);
+
+					Message message = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
 					if (printAfterLoad) {
-						mHandler.sendEmptyMessage(MESSAGE_OPEN_TLKFILE);
+						message.sendToTarget();
+					}
+					if (printNext) {
+						Bundle bundle = new Bundle();
+						bundle.putBoolean("printNext", printNext);
+						message.setData(bundle);
+						message.sendToTarget();
 					}
 					break;
 
 				case MESSAGE_OPEN_TLKFILE:		//
-					final boolean printNext = msg.getData().getBoolean("printNext", false);
+
 					if (!printNext && !messageNew ) {
 						mHandler.sendEmptyMessage(MESSAGE_OPEN_MSG_SUCCESS);
 						break;
@@ -1741,11 +1750,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			msg = loadNPrevMsg();
 		}
 
-		Message message = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
+		Message message = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
 		Bundle bundle = new Bundle();
 		bundle.putString("file", msg);
-		bundle.putBoolean("printNext", true);
+		if (mDTransThread != null && mDTransThread.isRunning()) {
+			bundle.putBoolean("printNext", true);
+		}
 		message.setData(bundle);
+
 		mHandler.sendMessageDelayed(message, 100);
 	}
 
