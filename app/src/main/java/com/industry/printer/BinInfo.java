@@ -17,7 +17,6 @@ import android.R.menu;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
@@ -245,20 +244,7 @@ public class BinInfo {
 	 * 1.bin is a 600dpi resolution based buffer, each kind of print-header should extract print buffer   
 	 */
 	private synchronized char[] extract() {
-		int hType = mTask == null ? MessageType.MESSAGE_TYPE_12_7_S : mTask.getHeadType();
 		return mBufferChars;
-//		if (hType == MessageType.MESSAGE_TYPE_12_7_S)	{
-//    		char[] rBuffer = new char[mBufferChars.length/4];
-//    		for (int j = 0; j < rBuffer.length; j++) {
-//    			int curRow = j / mCharsPerHFeed;
-//				rBuffer[j] = mBufferChars[4*curRow*mCharsPerHFeed + j%mCharsPerHFeed];
-//			}
-//    		Debug.d(TAG, "--->rBuffer.length: " + rBuffer.length);
-//    		return rBuffer;
-//    	} else {
-//    		return mBufferChars;
-//    	}
-		
 	}
 	public int getCharsPerColumn() {
 		return mCharsPerColumn;

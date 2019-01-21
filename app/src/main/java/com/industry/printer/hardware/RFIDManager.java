@@ -150,7 +150,7 @@ public class RFIDManager implements RfidCallback{
 			TOTAL_RFID_DEVICES = configFile.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS);
 			Debug.d(TAG, "--->heads: " + TOTAL_RFID_DEVICES);
 		} else {
-			TOTAL_RFID_DEVICES = configFile.getHeads();
+			TOTAL_RFID_DEVICES = configFile.getPNozzle().mHeads;
 			Debug.d(TAG, "--->heads: " + TOTAL_RFID_DEVICES);
 		}
 	}

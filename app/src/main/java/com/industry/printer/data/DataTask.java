@@ -21,7 +21,6 @@ import android.text.TextUtils;
 
 import com.industry.printer.BinInfo;
 import com.industry.printer.MessageTask;
-import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.FileFormat.QRReader;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
@@ -115,7 +114,6 @@ public class DataTask {
 	}
 	/**
 	 * prepareBackgroudBuffer
-	 * @param f	the tlk object directory path
 	 * parse the 1.bin, and then read the file content into mBgBuffer, one bit extends to one byte
 	 */
 	public boolean prepareBackgroudBuffer()
@@ -258,17 +256,17 @@ public class DataTask {
 //			div = div/2;
 //		}
 
-		int headType = mTask.getHeadType();
+		PrinterNozzle headType = mTask.getNozzle();
 
-		if (headType == MessageType.MESSAGE_TYPE_1_INCH || headType == MessageType.MESSAGE_TYPE_1_INCH_FAST) {
+		if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
 			div = 1;
 			scaleW = 1;
 			scaleH = 0.5f;
-		} else if (headType == MessageType.MESSAGE_TYPE_1_INCH_DUAL || headType == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST) {
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
 			div = 0.5f;
 			scaleW = 0.5f;
 			scaleH = 0.25f;
-		} else if (headType == MessageType.MESSAGE_TYPE_16_DOT) {
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			div = 152f/16f;
 		}
 		/**if high resolution message, do not divide width by 2 */
@@ -649,12 +647,12 @@ public class DataTask {
 		return null;
 	}
 	
-	public int getHeads() {
-		return mTask.getHeads();
-	}
+//	public int getHeads() {
+//		return mTask.getHeads();
+//	}
 	
-	public int getHeadType() {
-		return mTask.getHeadType();
+	public PrinterNozzle getPNozzle() {
+		return mTask.getNozzle();
 	}
 	
 	public int getBufferHeightFeed() {

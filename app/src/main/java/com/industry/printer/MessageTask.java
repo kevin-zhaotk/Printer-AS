@@ -10,7 +10,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -280,7 +279,7 @@ public class MessageTask {
 		for(BaseObject o:mObjects)
 		{
 			if((o instanceof MessageObject)	) {
-				if (getHeadType() == MessageType.MESSAGE_TYPE_16_DOT || getHeadType() == MessageType.MESSAGE_TYPE_32_DOT) {
+				if (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 					for (int i = 0; i < mDots.length; i++) {
 						mDots[i] = mDots[i] * 200;
 					}
@@ -312,9 +311,9 @@ public class MessageTask {
 			return;
 		}
 		MessageObject msgObj = getMsgObject();
-		float scaleW = getScale(msgObj.getType());
-		float scaleH = getScaleH(msgObj.getType());
-		int h = getHeight(msgObj.getType());
+		float scaleW = msgObj.getPNozzle().getScaleW();
+		float scaleH = msgObj.getPNozzle().getScaleH();
+		int h = msgObj.mPNozzle.getHeight();
 		
 		for (BaseObject object : mObjects) {
 			if((object instanceof CounterObject) || (object instanceof RealtimeObject) ||
@@ -335,11 +334,9 @@ public class MessageTask {
 			} else if (object instanceof BarcodeObject && object.getSource() == true) {
 				int dots[] = ((BarcodeObject) object).getDotcount();
 				MessageObject msg = getMsgObject();
-				if (msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_FAST 
-						|| msg.getType() == MessageType.MESSAGE_TYPE_1_INCH ) {
+				if (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ) {
 					dealDot(dots, 2);
-				} else if (msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_DUAL 
-						|| msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST ) {
+				} else if (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
 					dealDot(dots, 2 * 4);
 				} else {
 					dealDot(dots, 0.5f);
@@ -467,10 +464,8 @@ public class MessageTask {
 		float dots = 152;///SystemConfigFile.getInstance(mContext).getParam(39);
 		/*對於320列高的 1 Inch打印頭，不使用參數40的設置*/
 		MessageObject msg = getMsgObject();
-		if (msg != null && (msg.getType() == MessageType.MESSAGE_TYPE_1_INCH
-				|| msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_FAST
-				|| msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_DUAL
-				|| msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST)) {
+		if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH
+				|| msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL)) {
 			dots = 304;
 		}
 		Debug.d(TAG, "+++dots=" + dots);
@@ -483,14 +478,14 @@ public class MessageTask {
 		Debug.d(TAG, "--->div=" + div + "  h=" + bmp.getHeight() + "  prop = " + prop);
 		Bitmap bitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth()/div * prop), (int) (bmp.getHeight() * getHeads() * prop), true);
 		/*對於320列高的 1 Inch打印頭，不使用參數40的設置*/
-		if (msg != null && (msg.getType() == MessageType.MESSAGE_TYPE_1_INCH || msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_FAST)) {
+		if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH)) {
 			Bitmap b = Bitmap.createBitmap(bitmap.getWidth(), 320, Configs.BITMAP_CONFIG);
 			can.setBitmap(b);
 			can.drawColor(Color.WHITE);
 			can.drawBitmap(bitmap, 0, 0, p);
 			bitmap.recycle();
 			bitmap = b;
-		} else if (msg != null && (msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_DUAL || msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST)) {
+		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL)) {
 			Bitmap b = Bitmap.createBitmap(bitmap.getWidth(), 640, Configs.BITMAP_CONFIG);
 			// can.setBitmap(b);
 			Canvas c = new Canvas(b);
@@ -503,16 +498,6 @@ public class MessageTask {
 			// c.drawBitmap(Bitmap.createBitmap(bitmap, 0, bitmap.getHeight()/2, bitmap.getWidth(), bitmap.getHeight()/2), 0, 320, null);
 			bitmap.recycle();
 			bitmap = b;
-		}else if (msg != null && (msg.getType() == MessageType.MESSAGE_TYPE_16_3  ) )
-		{ //add by lk 170418
-			bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), 128, true);
-			Bitmap b = Bitmap.createBitmap(bitmap.getWidth(), 128, Configs.BITMAP_CONFIG);
-			can.setBitmap(b);
-			can.drawColor(Color.WHITE);
-			can.drawBitmap(bitmap, 0, 0, p);
-			bitmap.recycle();
-			bitmap = b;
-  		//add by lk 170418 end						
 		}
 		// 生成bin文件
 		BinFileMaker maker = new BinFileMaker(mContext);
@@ -537,12 +522,12 @@ public class MessageTask {
 		}
 		/*計算得到的width爲152點陣對應的寬度，要根據噴頭類型轉換成實際寬度 */
 		MessageObject msgObj = getMsgObject();
-		float scaleW = getScale(msgObj.getType());
-		float scaleH = getScaleH(msgObj.getType());
+		float scaleW = msgObj.getPNozzle().getScaleW();
+		float scaleH = msgObj.getPNozzle().getScaleH();
 		Debug.d(TAG, "drawAllBmp scaleW = " + scaleW + ", scaleH = " + scaleH);
 		//實際寬度
 		int bWidth = (int) (width * scaleW);
-		int bHeight = getHeight(msgObj.getType());
+		int bHeight = msgObj.getPNozzle().getHeight();
 		Bitmap bmp = Bitmap.createBitmap(bWidth , bHeight, Configs.BITMAP_CONFIG);
 		Debug.d(TAG, "drawAllBmp width=" + bWidth + ", height=" + bHeight);
 		Canvas can = new Canvas(bmp);
@@ -605,7 +590,7 @@ public class MessageTask {
 		// 生成bin文件
 		BinFileMaker maker = new BinFileMaker(mContext);
 		/** if high resolution, keep original width */
-		if (msgObj.getResolution() || (getHeadType() == MessageType.MESSAGE_TYPE_16_DOT) || (getHeadType() == MessageType.MESSAGE_TYPE_32_DOT)) {
+		if (msgObj.getResolution() || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT) || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT)) {
 			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth, bHeight, true), msgObj.getPNozzle().mHeads);
 		} else {
 			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, true), msgObj.getPNozzle().mHeads);
@@ -947,14 +932,7 @@ public class MessageTask {
 		}
 		return obj.getPNozzle().mHeads;
 	}
-	
-	public int getHeadType() {
-		MessageObject obj = getMsgObject();
-		if (obj == null) {
-			return MessageType.MESSAGE_TYPE_12_7;
-		}
-		return obj.getPNozzle().mType;
-	}
+
 
 	public PrinterNozzle getNozzle() {
 		MessageObject obj = getMsgObject();
@@ -993,155 +971,7 @@ public class MessageTask {
 		return 4f/getHeads();
 	}
 
-	public static float getScale(int type) {
-		float scale = 1f;
-		switch (type) {
-		case MessageType.MESSAGE_TYPE_12_7:
-			scale = 1f;
-			break;
-		case MessageType.MESSAGE_TYPE_12_7_S:
-			scale = 4f;
-			break;
-		case MessageType.MESSAGE_TYPE_25_4:
-			scale = 2f;
-			break;
-		case MessageType.MESSAGE_TYPE_16_3:
-			scale = 128f/152f;
-			break;
-		case MessageType.MESSAGE_TYPE_33:
-			scale = 128f/152f * 2;
-			break;
-		case MessageType.MESSAGE_TYPE_38_1:
-			scale = 3f;
-			break;
-		case MessageType.MESSAGE_TYPE_50_8:
-			scale = 4f;
-			break;
-		case MessageType.MESSAGE_TYPE_1_INCH:
-		case MessageType.MESSAGE_TYPE_1_INCH_FAST:
-			scale = 2f;
-			break;
-		case MessageType.MESSAGE_TYPE_1_INCH_DUAL:
-		case MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST:
-			scale = 4f;
-			break;
-		case MessageType.MESSAGE_TYPE_16_DOT:
-			scale = 16f/152;
-			break;
-		case MessageType.MESSAGE_TYPE_32_DOT:
-			scale = 32f/152;
-			break;
-		default:
-			break;
-		}
-		return scale;
-	}
-	
 
-	public static float getScaleH(int type) {
-		float scale = 1f;
-		switch (type) {
-		case MessageType.MESSAGE_TYPE_12_7:
-		case MessageType.MESSAGE_TYPE_12_7_S:
-			scale = 1f;
-			break;
-		case MessageType.MESSAGE_TYPE_25_4:
-			scale = 2f;
-			break;
-		case MessageType.MESSAGE_TYPE_16_3:
-			scale = 128f/152f;
-			break;
-		case MessageType.MESSAGE_TYPE_33:
-			scale = 128f/152f * 2;
-			break;
-		case MessageType.MESSAGE_TYPE_38_1:
-			scale = 3f;
-			break;
-		case MessageType.MESSAGE_TYPE_50_8:
-			scale = 4f;
-			break;
-		case MessageType.MESSAGE_TYPE_1_INCH:
-		case MessageType.MESSAGE_TYPE_1_INCH_FAST:
-			scale = 2f;
-			break;
-		case MessageType.MESSAGE_TYPE_1_INCH_DUAL:
-		case MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST:
-			scale = 4f;
-			break;
-		case MessageType.MESSAGE_TYPE_16_DOT:
-			scale = 16f/152;
-			break;
-		case MessageType.MESSAGE_TYPE_32_DOT:
-			scale = 32f/152;
-			break;
-		default:
-			break;
-		}
-		return scale;
-	}
-	
-	public static int getHeight(int type) {
-		int scale = 152;
-		Debug.d(TAG, "--->getHeight type = " + type);
-		switch (type) {
-		case MessageType.MESSAGE_TYPE_12_7:
-		case MessageType.MESSAGE_TYPE_12_7_S:
-			scale = 152;
-			break;
-		case MessageType.MESSAGE_TYPE_25_4:
-			scale = 152 * 2;
-			break;
-		case MessageType.MESSAGE_TYPE_16_3:
-			scale = 128;
-			break;
-		case MessageType.MESSAGE_TYPE_33:
-			scale = 128 * 2;
-			break;
-		case MessageType.MESSAGE_TYPE_38_1:
-			scale = 152 * 3;
-			break;
-		case MessageType.MESSAGE_TYPE_50_8:
-			scale = 152 * 4;
-			break;
-		case MessageType.MESSAGE_TYPE_1_INCH:
-		case MessageType.MESSAGE_TYPE_1_INCH_FAST:
-			scale = 320;
-			break;
-		case MessageType.MESSAGE_TYPE_1_INCH_DUAL:
-		case MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST:
-			scale = 640;
-			break;
-		case MessageType.MESSAGE_TYPE_16_DOT:
-			scale = 32;
-			break;
-		case MessageType.MESSAGE_TYPE_32_DOT:
-			scale = 32;
-			break;
-		default:
-			break;
-		}
-		return scale;
-	}
-	
-	public static class MessageType {
-		public static final int MESSAGE_TYPE_12_7 	= 0;
-		public static final int MESSAGE_TYPE_12_7_S = 1;
-		public static final int MESSAGE_TYPE_25_4 	= 2;
-		public static final int MESSAGE_TYPE_16_3 	= 3;
-		public static final int MESSAGE_TYPE_33	   	= 4;
-		public static final int MESSAGE_TYPE_38_1  	= 5;
-		public static final int MESSAGE_TYPE_50_8  	= 6;
-		public static final int MESSAGE_TYPE_16_DOT  = 8;
-		public static final int MESSAGE_TYPE_32_DOT  = 7;				
-		public static final int MESSAGE_TYPE_1_INCH = 9; //320點每列的噴頭
-		public static final int MESSAGE_TYPE_1_INCH_FAST = 10; //320點每列的噴頭
-		public static final int MESSAGE_TYPE_1_INCH_DUAL = 11; //320點每列的噴頭,雙頭
-		public static final int MESSAGE_TYPE_1_INCH_DUAL_FAST = 12; //320點每列的噴頭,雙頭
-		public static final int MESSAGE_TYPE_9MM = 13; //9mm head, copy6 times for print
-		public static final int MESSAGE_TYPE_NOVA = 14;
-	}
-	
-	
 	public class SaveTask extends AsyncTask<Void, Void, Void>{
 
 		private String message;

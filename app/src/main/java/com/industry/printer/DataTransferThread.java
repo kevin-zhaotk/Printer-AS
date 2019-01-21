@@ -19,8 +19,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 
-import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Rfid.RfidScheduler;
 import com.industry.printer.Rfid.RfidTask;
 import com.industry.printer.Utils.ConfigPath;
@@ -120,8 +120,9 @@ public class DataTransferThread {
 	
 	public void purge(final Context context) {
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
-		final int head = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
-		final boolean dotHd = (head == MessageType.MESSAGE_TYPE_16_DOT || head == MessageType.MESSAGE_TYPE_32_DOT);
+		final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+		PrinterNozzle head = PrinterNozzle.getInstance(headIndex);
+		final boolean dotHd = (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT);
 		
 		if (isRunning()) {
 			FpgaGpioOperation.uninit();
@@ -183,7 +184,8 @@ public class DataTransferThread {
 	 */
 	public void clean(final Context context) {
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
-		final int head = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+		final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+		final PrinterNozzle head = PrinterNozzle.getInstance(headIndex);
 		// access lock before cleaning begin
 		mPurgeLock.lock();
 		ThreadPoolManager.mThreads.execute(new Runnable() {
@@ -194,7 +196,7 @@ public class DataTransferThread {
 				DataTask task = new DataTask(context, null);
 				Debug.e(TAG, "--->task: " + task);
 				String purgeFile = "purge/single.bin";
-				if (head == MessageType.MESSAGE_TYPE_16_DOT || head == MessageType.MESSAGE_TYPE_32_DOT) {
+				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 					purgeFile = "purge/bigdot.bin";
 				}
 				char[] buffer = task.preparePurgeBuffer(purgeFile);
@@ -324,7 +326,8 @@ public class DataTransferThread {
 
 		SystemConfigFile configFile = SystemConfigFile.getInstance(context);
 		mScheduler.init();
-		int heads = configFile.getHeads();
+		int headIndex = configFile.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+		int heads = PrinterNozzle.getInstance(headIndex).mHeads;
 		/**如果是4合2的打印头，需要修改为4头*/
 		heads = configFile.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0 ? configFile.getParam(42) : heads;
 		for (int i = 0; i < heads; i++) {
@@ -431,7 +434,7 @@ public class DataTransferThread {
 	public int getHeads() {
 
 		if (mDataTask != null && mDataTask.size() > 0) {
-			return mDataTask.get(0).getHeads();
+			return mDataTask.get(0).getPNozzle().mHeads;
 		}
 		return 1;
 	}
@@ -531,14 +534,14 @@ public class DataTransferThread {
 			int index = index();
 			buffer = mDataTask.get(index).getPrintBuffer();
 			Debug.d(TAG, "--->print buffer ready");
-			int type = mDataTask.get(index).getHeadType();
+//			int type = mDataTask.get(index).getHeadType();
 
 			FileUtil.deleteFolder("/mnt/sdcard/print.bin");
 			
 			ExtendInterceptor interceptor = new ExtendInterceptor(mContext);
 			ExtendStat extend = interceptor.getExtend();
 			// save print.bin to /mnt/sdcard/ folder
-			int cH = mDataTask.get(mIndex).getInfo().mBytesPerHFeed*8*mDataTask.get(mIndex).getHeads();
+			int cH = mDataTask.get(mIndex).getInfo().mBytesPerHFeed*8*mDataTask.get(mIndex).getPNozzle().mHeads;
 			Debug.d(TAG, "--->cH: " + cH);
 			BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, cH);
 			int n=0;

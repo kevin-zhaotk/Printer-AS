@@ -511,7 +511,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if (mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0) {
 			heads = mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS);
 		} else {
-			heads = mSysconfig.getHeads();
+			heads = mSysconfig.getPNozzle().mHeads;
 		}
 		Debug.d(TAG, "--->onConfigChanged: " + heads + "   -- " + RFIDManager.TOTAL_RFID_DEVICES);
 		if (heads > RFIDManager.TOTAL_RFID_DEVICES) {
@@ -571,7 +571,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	}
 	private void switchRfid() {
 		mRfid += 1;
-		int heads = mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0 ? mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) : mSysconfig.getHeads();
+		int heads = mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0 ? mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) : mSysconfig.getPNozzle().mHeads;
 		if (mRfid >= RFIDManager.TOTAL_RFID_DEVICES || mRfid >= heads) {
 			mRfid = 0;
 		}
@@ -968,7 +968,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					List<DataTask> dt = mDTransThread.getData();
 					int heads = 1;
 					if (dt != null && dt.size() > 0) {
-						heads = dt.get(0).getHeads();
+						heads = dt.get(0).getPNozzle().mHeads;
 					}
 					mRfidManager.checkUID(heads);
 					break;
@@ -1097,7 +1097,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				case RFIDManager.MSG_RFID_READ_SUCCESS:
 					boolean ready = true;
 					Bundle bd = (Bundle) msg.getData();
-					for (int i=0; i < mSysconfig.getHeads(); i++) {
+					for (int i=0; i < mSysconfig.getPNozzle().mHeads; i++) {
 						RFIDDevice dev = mRfidManager.getDevice(i);
 						if (dev == null) {
 							break;
@@ -1208,7 +1208,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			return true;
 		}
 		//DataTask task = mDTransThread.getData();
-		int heads = SystemConfigFile.getInstance(mContext).getHeads();// task.getHeads();
+		int heads = SystemConfigFile.getInstance(mContext).getPNozzle().mHeads;// task.getHeads();
 		for (int i = 0; i < heads; i++) {
 			float ink = mRfidManager.getLocalInk(i);
 			if (ink <= 0) {
