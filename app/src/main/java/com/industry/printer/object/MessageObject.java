@@ -2,7 +2,6 @@ package com.industry.printer.object;
 
 import android.content.Context;
 
-import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.R;
 import com.industry.printer.Utils.Debug;
@@ -74,11 +73,6 @@ public class MessageObject extends BaseObject {
 	public PrinterNozzle getPNozzle() {
 		return mPNozzle;
 	}
-
-	public int getType() {
-		return mPNozzle.mType;
-	}
-	
 
 	
 	public void setHighResolution(boolean resolution) {
@@ -163,7 +157,7 @@ public class MessageObject extends BaseObject {
 		}
 		else
 		{
-			int ratio = (mPNozzle.mType == MessageType.MESSAGE_TYPE_16_DOT || mPNozzle.mType == MessageType.MESSAGE_TYPE_32_DOT) ? 1 : 2 ;
+			int ratio = (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) ? 1 : 2 ;
 //			str += mId+"^";
 //			str += "00000^00000^00000^00000^0^000^";
 //			str += BaseObject.intToFormatString(mPNozzle.mType,3) + "^000^000^000^000^";
@@ -204,44 +198,32 @@ public class MessageObject extends BaseObject {
 	public String[] getDisplayFSList() {
 		String[] size = new String[mBaseList.length];
 		Debug.d(TAG, "--->getDisplayFSList mPNozzle.mType = " + mPNozzle.mType);
-		if (mPNozzle.mType == MessageType.MESSAGE_TYPE_12_7 || mPNozzle.mType == MessageType.MESSAGE_TYPE_12_7_S) { //single
+		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) { //single
 			for (int i = 0; i < size.length; i++) {
 				size[i] = String.valueOf(mBaseList[i]); 
 			}
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_25_4 || mPNozzle.mType == MessageType.MESSAGE_TYPE_33
-				|| mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH
-				|| mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH_FAST) { //dual
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_25_4
+				|| mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH) { //dual
 			for (int i = 0; i < size.length; i++) {
 				size[i] = String.valueOf(mBaseList[i] * 2); 
 			}
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_38_1) {// triple
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_38_1) {// triple
 			for (int i = 0; i < size.length; i++) {
 				size[i] = String.valueOf(mBaseList[i] * 3);
 			}
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_50_8  || mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH_DUAL || mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST) { // four
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_50_8  || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) { // four
 			for (int i = 0; i < size.length; i++) {
 				size[i] = String.valueOf(mBaseList[i] * 4);
 			}
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_16_3) { // four
-			size = new String[mBaseList_16.length];
-			for (int i = 0; i < size.length; i++) {
-				size[i] = String.valueOf(mBaseList_16[i]);
-			}
-
-		} else  if ( mPNozzle.mType == MessageType.MESSAGE_TYPE_16_DOT) {
+		} else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			size = new String[mDotSizes.length];
 			for (int i = 0; i < size.length; i++) {
 				size[i] = mDotSizes[i];
 			}
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_32_DOT) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 			size = new String[mDot_32_Size.length];
 			for (int i = 0; i < size.length; i++) {
 				size[i] = mDot_32_Size[i];
-			}
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_NOVA) {
-			// size = new String[mBaseList_16.length];
-			for (int i = 0; i < size.length; i++) {
-				size[i] = String.valueOf(mBaseList[i]);
 			}
 		}
 		return size;
@@ -265,18 +247,15 @@ public class MessageObject extends BaseObject {
 			Debug.d(TAG, "--->exception: " + e.getMessage());
 		}
 		Debug.d(TAG, "--->h: " + h + ", type=" + mPNozzle.mType);
-		if (mPNozzle.mType == MessageType.MESSAGE_TYPE_12_7 || mPNozzle.mType == MessageType.MESSAGE_TYPE_12_7_S) {
+		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) {
 			return h;
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_25_4 || mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH || mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH_FAST) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_25_4 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
 			return h/2;
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_38_1) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_38_1) {
 			return h/3;
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_50_8 || mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH_DUAL || mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_50_8 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
 			return h/4;
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_16_3) {
-			return h*12.7f/16.3f;
-		}
-		else if ( mPNozzle.mType == MessageType.MESSAGE_TYPE_16_DOT )//addbylk 喷头类型
+		} else if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT )//addbylk 喷头类型
 		{
 			if (size.equalsIgnoreCase("7x6")) {
 				h = 6.4f;
@@ -284,7 +263,7 @@ public class MessageObject extends BaseObject {
 				h = 12.7f;
 			}  
 			
-		} else  if ( mPNozzle.mType == MessageType.MESSAGE_TYPE_32_DOT ) { //addbylk
+		} else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT ) { //addbylk
 			if (size.equalsIgnoreCase("7x6")) {
 				h = 3.2f;
 			} else if (size.equalsIgnoreCase("16x12")) {
@@ -292,8 +271,6 @@ public class MessageObject extends BaseObject {
 			} else {
 				h = 12.7f;
 			}
-			return h;
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_NOVA) {
 			return h;
 		}
 		return h;
@@ -310,35 +287,28 @@ public class MessageObject extends BaseObject {
 		int type = 1;
 		Debug.d(TAG, "--->getDisplayFs: " + size);
 		float[] sizelist;
-		if (mPNozzle.mType == MessageType.MESSAGE_TYPE_16_3) {
-			sizelist= mBaseList_16;
-		} else {
-			sizelist= mBaseList;
-		}
-		if (mPNozzle.mType == MessageType.MESSAGE_TYPE_12_7 || mPNozzle.mType == MessageType.MESSAGE_TYPE_12_7_S) {
+
+		sizelist= mBaseList;
+
+		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) {
 			h = size/PIXELS_PER_MM;
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_25_4 || mPNozzle.mType == MessageType.MESSAGE_TYPE_33 || mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH || mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH_FAST ) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_25_4 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
 			h = 2 * (size/PIXELS_PER_MM);
 			type = 2;
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_38_1) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_38_1) {
 			h = 3 * (size/PIXELS_PER_MM);
 			type = 3;
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_50_8 || mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH_DUAL || mPNozzle.mType == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_50_8 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
 			h = 4 * (size/PIXELS_PER_MM);
 			type = 4;
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_16_3) {
-			h = size/PIXELS_PER_MM * 1.3f;
-			
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_NOVA) {
-			h = size/PIXELS_PER_MM;
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_16_DOT) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			if (size <= 152/2) {
 				return mDotSizes[0]; 
 			} else {
 				return mDotSizes[1];
 			}
 			
-		} else if (mPNozzle.mType == MessageType.MESSAGE_TYPE_32_DOT) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 
 			if (size == 38) {
 				return mDot_32_Size[0];

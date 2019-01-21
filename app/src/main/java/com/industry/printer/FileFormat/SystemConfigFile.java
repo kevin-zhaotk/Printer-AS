@@ -19,7 +19,7 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Xml;
 
-import com.industry.printer.MessageTask.MessageType;
+import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
@@ -1026,6 +1026,7 @@ public class SystemConfigFile{
 	public int[] getParams() {
 		return mParam;
 	}
+
 	public int getParam(int index) {
 		if (index >= mParam.length) {
 			return 0;
@@ -1040,43 +1041,50 @@ public class SystemConfigFile{
 		}
 		mParam[index] = value;
 	}
-	
-	public int getHeads() {
-		int heads = 1;
-		Debug.d(TAG, "--->:getHeads: " + mParam[INDEX_HEAD_TYPE]);
-		switch (mParam[INDEX_HEAD_TYPE]) {
-		case MessageType.MESSAGE_TYPE_12_7:
-		case MessageType.MESSAGE_TYPE_12_7_S:
-		case MessageType.MESSAGE_TYPE_16_3:
-		case MessageType.MESSAGE_TYPE_1_INCH:
-		case MessageType.MESSAGE_TYPE_1_INCH_FAST:
-			heads = 1;
-			break;
-		case MessageType.MESSAGE_TYPE_1_INCH_DUAL:
-		case MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST:
-		case MessageType.MESSAGE_TYPE_25_4:
-		case MessageType.MESSAGE_TYPE_33:
-			heads = 2;
-			break;
-		case MessageType.MESSAGE_TYPE_38_1:
-			heads = 3;
-			break;
-		case MessageType.MESSAGE_TYPE_50_8:
-			heads = 4;
-			break;
-		case MessageType.MESSAGE_TYPE_16_DOT:
-			heads = 1;
-			break;
-		case MessageType.MESSAGE_TYPE_32_DOT:
-			heads = 1;
-			break;
-		case MessageType.MESSAGE_TYPE_NOVA:
-			heads = 6;
-			break;
-		default:
-			break;
+
+	public PrinterNozzle getPNozzle() {
+		int index = mParam[INDEX_HEAD_TYPE];
+		if (index > PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL) {
+			return PrinterNozzle.MESSAGE_TYPE_12_7;
 		}
-		return heads;
+		return PrinterNozzle.getInstance(index);
 	}
+//	public int getHeads() {
+//		int heads = 1;
+//		Debug.d(TAG, "--->:getHeads: " + mParam[INDEX_HEAD_TYPE]);
+//		switch (mParam[INDEX_HEAD_TYPE]) {
+//		case MessageType.MESSAGE_TYPE_12_7:
+//		case MessageType.MESSAGE_TYPE_12_7_S:
+//		case MessageType.MESSAGE_TYPE_16_3:
+//		case MessageType.MESSAGE_TYPE_1_INCH:
+//		case MessageType.MESSAGE_TYPE_1_INCH_FAST:
+//			heads = 1;
+//			break;
+//		case MessageType.MESSAGE_TYPE_1_INCH_DUAL:
+//		case MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST:
+//		case MessageType.MESSAGE_TYPE_25_4:
+//		case MessageType.MESSAGE_TYPE_33:
+//			heads = 2;
+//			break;
+//		case MessageType.MESSAGE_TYPE_38_1:
+//			heads = 3;
+//			break;
+//		case MessageType.MESSAGE_TYPE_50_8:
+//			heads = 4;
+//			break;
+//		case MessageType.MESSAGE_TYPE_16_DOT:
+//			heads = 1;
+//			break;
+//		case MessageType.MESSAGE_TYPE_32_DOT:
+//			heads = 1;
+//			break;
+//		case MessageType.MESSAGE_TYPE_NOVA:
+//			heads = 6;
+//			break;
+//		default:
+//			break;
+//		}
+//		return heads;
+//	}
 	
 }

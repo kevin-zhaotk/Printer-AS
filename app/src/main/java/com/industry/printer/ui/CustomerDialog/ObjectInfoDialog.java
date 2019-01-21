@@ -7,7 +7,6 @@ import com.google.zxing.ChecksumException;
 import com.google.zxing.common.StringUtils;
 import com.google.zxing.maxicode.MaxiCodeReader;
 import com.industry.printer.R;
-import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.R.array;
 import com.industry.printer.R.id;
 import com.industry.printer.R.layout;

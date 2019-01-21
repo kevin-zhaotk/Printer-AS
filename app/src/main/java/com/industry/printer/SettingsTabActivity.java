@@ -461,7 +461,7 @@ public static final String TAG="SettingsTabActivity";
 		{				Debug.i(TAG, "111===>onclick");
 		   PlatformInfo.SetDotMatrixType(1);
 		   
-		}else if(mSysconfig.getHeads()==8)
+		}else if(mSysconfig.getPNozzle().mHeads==8)
 		{				Debug.i(TAG, "222===>onclick");
 		   PlatformInfo.SetDotMatrixType(2);
 		} 

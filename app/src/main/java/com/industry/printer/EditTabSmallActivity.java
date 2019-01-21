@@ -338,30 +338,25 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 			BaseObject obj = (BaseObject) msg.obj;
 			// replace background with correct one if mesageobject`s head type changed
 			if (obj instanceof MessageObject) {
-				Debug.d(TAG, "====== type: " + ((MessageObject) obj).getType());
-				switch (((MessageObject) obj).getType()) {
-					case MessageTask.MessageType.MESSAGE_TYPE_12_7:
-					case MessageTask.MessageType.MESSAGE_TYPE_12_7_S:
-					case MessageTask.MessageType.MESSAGE_TYPE_1_INCH:
-					case MessageTask.MessageType.MESSAGE_TYPE_1_INCH_FAST:
+				Debug.d(TAG, "====== type: " + ((MessageObject) obj).getPNozzle());
+				switch (((MessageObject) obj).getPNozzle()) {
+					case MESSAGE_TYPE_12_7:
+					case MESSAGE_TYPE_1_INCH:
 						mEditLayout.setBackgroundResource(R.drawable.background);
 						Debug.d(TAG, "====== w: " + mEditLayout.getMeasuredWidth() +  "   h:" + mEditLayout.getMeasuredHeight());
 						break;
-					case MessageTask.MessageType.MESSAGE_TYPE_25_4:
-					case MessageTask.MessageType.MESSAGE_TYPE_33:
-					case MessageTask.MessageType.MESSAGE_TYPE_1_INCH_DUAL:
-					case MessageTask.MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST:
+					case MESSAGE_TYPE_25_4:
+					case MESSAGE_TYPE_1_INCH_DUAL:
 						mEditLayout.setBackgroundResource(R.drawable.background_2);
 						break;
-					case MessageTask.MessageType.MESSAGE_TYPE_38_1:
+					case MESSAGE_TYPE_38_1:
 						mEditLayout.setBackgroundResource(R.drawable.background_3);
 						break;
-					case MessageTask.MessageType.MESSAGE_TYPE_50_8:
+					case MESSAGE_TYPE_50_8:
 						mEditLayout.setBackgroundResource(R.drawable.background_4);
 						break;
-					case MessageTask.MessageType.MESSAGE_TYPE_16_3:
-					case MessageTask.MessageType.MESSAGE_TYPE_16_DOT:
-					case MessageTask.MessageType.MESSAGE_TYPE_32_DOT:
+					case MESSAGE_TYPE_16_DOT:
+					case MESSAGE_TYPE_32_DOT:
 						mEditLayout.setBackgroundResource(R.drawable.background);
 						break;
 					default:

@@ -1,31 +1,28 @@
 package com.industry.printer.PHeader;
 
-import com.industry.printer.MessageTask;
 
 public enum PrinterNozzle {
 
 
-    MESSAGE_TYPE_12_7(0, 1, 1),         //12.7 单头，one segment
-    MESSAGE_TYPE_12_7_S(1, 1, 1),       //12.7 单头，one segment
-    MESSAGE_TYPE_25_4(2, 2, 2),         //25.4 double Nozzle,  double RFID，double segment
-    MESSAGE_TYPE_16_3(3, 1, 1),         //16.3 single Nozzle, single RFID，double segment
-    MESSAGE_TYPE_33(4, 2, 2),           //33   double RFID，double segment
-    MESSAGE_TYPE_38_1(5, 3, 3),         //38.1 triple RFID，triple segment
-    MESSAGE_TYPE_50_8(6, 4, 4),         //50.8 fourfold RFID，fourfold segment
-    MESSAGE_TYPE_32_DOT(7, 1, 1),       //big data; single Nozzle, single RFID, 4 segments
-    MESSAGE_TYPE_16_DOT(8, 1, 1),       // big data; single Nozzle, single RFID, 4 segments
-    MESSAGE_TYPE_1_INCH(9, 1, 1),       // 1寸，单头，one segment
-    MESSAGE_TYPE_1_INCH_FAST(10, 1, 1), // 1寸，单头，one segment
+    MESSAGE_TYPE_12_7(MessageType.NOZZLE_INDEX_12_7, 0, 1, 1),         //12.7 单头（12.7），one segment，
+    MESSAGE_TYPE_25_4(MessageType.NOZZLE_INDEX_25_4, 2, 2, 2),         //25.4 double Nozzle（12.7X2）,  double RFID，double segment
+    MESSAGE_TYPE_38_1(MessageType.NOZZLE_INDEX_38_1, 5, 3, 3),         //38.1 triple RFID（12.7X3），triple segment
+    MESSAGE_TYPE_50_8(MessageType.NOZZLE_INDEX_50_8, 6, 4, 4),         //50.8 fourfold RFID（12.7X4），fourfold segment
+    MESSAGE_TYPE_32_DOT(MessageType.NOZZLE_INDEX_16_DOT, 7, 1, 1),       //big data; single Nozzle, single RFID, 4 segments
+    MESSAGE_TYPE_16_DOT(MessageType.NOZZLE_INDEX_32_DOT, 8, 1, 1),       // big data; single Nozzle, single RFID, 4 segments
+    MESSAGE_TYPE_1_INCH(MessageType.NOZZLE_INDEX_1_INCH, 9, 1, 1),       // 1寸（25.4），单头，one segment
+    MESSAGE_TYPE_1_INCH_DUAL(MessageType.NOZZLE_INDEX_1_INCH_DUAL, 11, 2, 2);// 1寸双头（25.4X2）； 2 RFID，2 segments
 
-    MESSAGE_TYPE_1_INCH_DUAL(11, 2, 2), // 1寸双头； 2 RFID，2 segments
-    MESSAGE_TYPE_1_INCH_DUAL_FAST(12, 2, 2),// 1寸双头； 2 RFID，2 segments
-    MESSAGE_TYPE_9MM(13, 1, 1),         // 9MM； 1 RFID，1 segments
-    MESSAGE_TYPE_NOVA(14, 6, 6);        // Nova; 6 RFID，6 segments
-
+    public final int mIndex;
     public final int mType;
     public final int mHeads;
     public final int mSegments;
     public final boolean editZoomable; // 编辑状态下是否支持缩放
+
+    private int mHeight;
+    private float scaleW;
+    private float scaleH;
+
 
     public final boolean shiftEnable;   //是否支持位移
     public final boolean mirrorEnable;  // 是否支持镜像
@@ -38,8 +35,9 @@ public enum PrinterNozzle {
      * @param heads     喷头数
      * @param segment   打印分段
      */
-    private PrinterNozzle(int type, int heads, int segment) {
+    private PrinterNozzle(int index, int type, int heads, int segment) {
 
+        this.mIndex = index;
         this.mType = type;
         this.mHeads = heads;
         this.mSegments = segment;
@@ -83,43 +81,143 @@ public enum PrinterNozzle {
 
     }
 
+    private void initHeight() {
+
+        switch (mIndex) {
+            case MessageType.NOZZLE_INDEX_12_7:
+                mHeight = 152;
+                break;
+            case MessageType.NOZZLE_INDEX_25_4:
+                mHeight = 152 * 2;
+                break;
+            case MessageType.NOZZLE_INDEX_38_1:
+                mHeight = 152 * 3;
+                break;
+            case MessageType.NOZZLE_INDEX_50_8:
+                mHeight = 152 * 4;
+                break;
+            case MessageType.NOZZLE_INDEX_16_DOT:
+            case MessageType.NOZZLE_INDEX_32_DOT:
+                mHeight = 32;
+                break;
+            case MessageType.NOZZLE_INDEX_1_INCH:
+                mHeight = 320;
+                break;
+            case MessageType.NOZZLE_INDEX_1_INCH_DUAL:
+                mHeight = 640;
+                break;
+        }
+    }
+
+    public int getHeight() {
+        return mHeight;
+    }
+
+    private void initScale() {
+        switch (mIndex) {
+            case MessageType.NOZZLE_INDEX_12_7:
+                scaleW = 1f;
+                scaleH = 1f;
+                break;
+            case MessageType.NOZZLE_INDEX_25_4:
+                scaleW = 2f;
+                scaleH = 2f;
+                break;
+            case MessageType.NOZZLE_INDEX_38_1:
+                scaleW = 3f;
+                scaleH = 3f;
+                break;
+            case MessageType.NOZZLE_INDEX_50_8:
+                scaleW = 4f;
+                scaleH = 4f;
+                break;
+            case MessageType.NOZZLE_INDEX_1_INCH:
+                scaleW = 2f;
+                scaleH = 2f;
+                break;
+            case MessageType.NOZZLE_INDEX_1_INCH_DUAL:
+                scaleW = 4f;
+                scaleH = 4f;
+                break;
+            case MessageType.NOZZLE_INDEX_16_DOT:
+                scaleW = 16f/152;
+                scaleH = 16f/152;
+                break;
+            case MessageType.NOZZLE_INDEX_32_DOT:
+                scaleW = 32f/152;
+                scaleH = 32f/152;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public  float getScaleW() {
+        return scaleW;
+    }
+
+    public  float getScaleH() {
+        return scaleH;
+    }
 
     public static PrinterNozzle getInstance(int type) {
         switch (type) {
+            case MessageType.NOZZLE_INDEX_12_7:
+                return MESSAGE_TYPE_12_7;
+            case MessageType.NOZZLE_INDEX_25_4:
+                return MESSAGE_TYPE_25_4;
+            case MessageType.NOZZLE_INDEX_38_1:
+                return MESSAGE_TYPE_38_1;
+            case MessageType.NOZZLE_INDEX_50_8:
+                return MESSAGE_TYPE_50_8;
+            case MessageType.NOZZLE_INDEX_16_DOT:
+                return MESSAGE_TYPE_32_DOT;
+            case MessageType.NOZZLE_INDEX_32_DOT:
+                return MESSAGE_TYPE_16_DOT;
+            case MessageType.NOZZLE_INDEX_1_INCH:
+                return MESSAGE_TYPE_1_INCH;
+            case MessageType.NOZZLE_INDEX_1_INCH_DUAL:
+                return MESSAGE_TYPE_1_INCH_DUAL;
+            default:
+                return MESSAGE_TYPE_12_7;
+
+        }
+    }
+
+    public static PrinterNozzle getByType(int type) {
+        switch (type) {
             case 0:
                 return MESSAGE_TYPE_12_7;
-            case 1:
-                return MESSAGE_TYPE_12_7_S;
             case 2:
                 return MESSAGE_TYPE_25_4;
-            case 3:
-                return MESSAGE_TYPE_16_3;
-            case 4:
-                return MESSAGE_TYPE_33;
             case 5:
                 return MESSAGE_TYPE_38_1;
             case 6:
                 return MESSAGE_TYPE_50_8;
             case 7:
-                return MESSAGE_TYPE_32_DOT;
-            case 8:
                 return MESSAGE_TYPE_16_DOT;
+            case 8:
+                return MESSAGE_TYPE_32_DOT;
             case 9:
                 return MESSAGE_TYPE_1_INCH;
-            case 10:
-                return MESSAGE_TYPE_1_INCH_FAST;
             case 11:
                 return MESSAGE_TYPE_1_INCH_DUAL;
-            case 12:
-                return MESSAGE_TYPE_1_INCH_DUAL_FAST;
-            case 13:
-                return MESSAGE_TYPE_9MM;
-            case 14:
-                return MESSAGE_TYPE_NOVA;
             default:
-
                 return MESSAGE_TYPE_12_7;
-
         }
+    }
+
+    /**
+     * Nozzle index
+     */
+    public static class MessageType {
+        public static final int NOZZLE_INDEX_12_7 	= 0;    // 12.7
+        public static final int NOZZLE_INDEX_25_4 	= 1;    // 12.7X2
+        public static final int NOZZLE_INDEX_38_1  	= 2;    // 12.7x3
+        public static final int NOZZLE_INDEX_50_8  	= 3;    // 12.7x4
+        public static final int NOZZLE_INDEX_16_DOT  = 4;   // 16dot
+        public static final int NOZZLE_INDEX_32_DOT  = 5;   // 32 dot
+        public static final int NOZZLE_INDEX_1_INCH = 6;    // 1 inch
+        public static final int NOZZLE_INDEX_1_INCH_DUAL = 7; // 1inch X2
     }
 }

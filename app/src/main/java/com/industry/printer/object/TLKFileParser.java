@@ -14,9 +14,9 @@ import java.util.Vector;
 
 import com.industry.printer.EditTabActivity;
 import com.industry.printer.MessageTask;
-import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.FileFormat.TlkFile;
+import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
@@ -232,7 +232,8 @@ public class TLKFileParser  extends TlkFile{
 				mDots[7] = Integer.parseInt(attr[18]);
 				adjustDotCount(Integer.parseInt(attr[13]));
 				((MessageObject) obj).setDotCountPer(mDots);
-				setDotsPerClm(type);
+				PrinterNozzle nozzle = PrinterNozzle.getByType(type);
+				setDotsPerClm(nozzle);
 			} else if (BaseObject.OBJECT_TYPE_BARCODE.equals(attr[1])
 					|| BaseObject.OBJECT_TYPE_QR.equals(attr[1]))    //barcode
 			{
@@ -433,45 +434,34 @@ public class TLKFileParser  extends TlkFile{
 		return mDots;
 	}
 	
-	private float setDotsPerClm(int type) {
+	private float setDotsPerClm(PrinterNozzle type) {
 		float dots = 0;
 		Debug.d(TAG, "--->setDotsPerClm type = " + type);
 		switch (type) {
-			case MessageType.MESSAGE_TYPE_12_7:
-			case MessageType.MESSAGE_TYPE_12_7_S:
-			case MessageType.MESSAGE_TYPE_25_4:
-			case MessageType.MESSAGE_TYPE_33:
-			case MessageType.MESSAGE_TYPE_38_1:
-			case MessageType.MESSAGE_TYPE_50_8:
+			case MESSAGE_TYPE_12_7:
+			case MESSAGE_TYPE_25_4:
+			case MESSAGE_TYPE_38_1:
+			case MESSAGE_TYPE_50_8:
 				dots = 152f;
+				mProportion = dots/Configs.gDots;
 				break;
-			case MessageType.MESSAGE_TYPE_16_3:
-				dots = 128f;
-				break;
-			case MessageType.MESSAGE_TYPE_1_INCH:
-			case MessageType.MESSAGE_TYPE_1_INCH_FAST:
+			case MESSAGE_TYPE_1_INCH:
 				dots = 320f;
+				mProportion = 1f;
 				break;
-			case MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST:
-			case MessageType.MESSAGE_TYPE_1_INCH_DUAL:
+			case MESSAGE_TYPE_1_INCH_DUAL:
 				dots = 640f;
+				mProportion = 1.0f;
 				break;
-			case MessageType.MESSAGE_TYPE_32_DOT:
+			case MESSAGE_TYPE_16_DOT:
+			case MESSAGE_TYPE_32_DOT:
 				dots = 152f;
+				mProportion = dots/Configs.gDots;
 				break;
 			default:
 				dots = 152f;
+				mProportion = dots/Configs.gDots;
 				break;
-		}
-		Debug.d(TAG, "--->setDotsPerClm dots = " + dots);
-		mProportion = dots/Configs.gDots;
-		if (type == MessageType.MESSAGE_TYPE_1_INCH || type == MessageType.MESSAGE_TYPE_1_INCH_FAST ) {
-			mProportion = 1f;
-		} else if (type == MessageType.MESSAGE_TYPE_1_INCH_DUAL || type == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST) {
-			mProportion = 1.0f;
-		} else if ( type == MessageType.MESSAGE_TYPE_16_3)
-		{
-			mProportion = 1.0f;			
 		}
 		return mProportion;
 	}

@@ -19,7 +19,6 @@ import android.util.Log;
 
 import com.industry.printer.BinInfo;
 import com.industry.printer.MessageTask;
-import com.industry.printer.MessageTask.MessageType;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.PrinterApplication;
 import com.industry.printer.R;
@@ -306,8 +305,8 @@ public class BaseObject{
 		int width = (int)mPaint.measureText(getContent());
 	
 		Debug.e(TAG, "--->content: " + getContent() + "  width=" + width);
-		int type = mTask != null? mTask.getHeadType() : MessageType.MESSAGE_TYPE_12_7;
-		if (mWidth == 0 || type == MessageType.MESSAGE_TYPE_16_DOT || type == MessageType.MESSAGE_TYPE_32_DOT) {
+		PrinterNozzle type = mTask != null? mTask.getNozzle() : PrinterNozzle.MESSAGE_TYPE_12_7;
+		if (mWidth == 0 || type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 			setWidth(width);
 		}
 		bitmap = Bitmap.createBitmap(width , (int)mHeight, Configs.BITMAP_CONFIG);
@@ -329,8 +328,8 @@ public class BaseObject{
 	 * @param ctx context
 	 * @param content content
 	 * @param ctH	real height of content
-	 * @param w		total width
-	 * @param h		total height
+	 * @param ctW		total width
+	 * @param font
 	 * @return
 	 */
 	public Bitmap makeBinBitmap(Context ctx, String content, int ctW, int ctH, String font) {
@@ -371,9 +370,9 @@ public class BaseObject{
 //			adjust = 4;
 //		}
 		canvas.drawText(content, 0, ctH-adjust, paint);
-		int head = mTask.getHeadType();
+		PrinterNozzle head = mTask.getNozzle();
 		Debug.d(TAG, "--->content: " + content + "  descent=" + fm.descent + "  ascent= " + fm.ascent + " botom= " + fm.bottom + " top = " + fm.top + " leading = " + fm.leading);
-		if (head == MessageType.MESSAGE_TYPE_16_DOT) {
+		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			return bitmap;
 		}
 
@@ -415,9 +414,9 @@ public class BaseObject{
 
 	/**
 	 * 根據content生成變量的bin
-	 * @param content 內容
-	 * @param ctW	單個字符的實際寬度
-	 * @param ctH	字符實際高度
+	 * @param ctx 內容
+	 * @param scaleW	單個字符的實際寬度
+	 * @param scaleH	字符實際高度
 	 * @param dstH  背景圖高度
 	 * @return
 	 */
@@ -494,9 +493,9 @@ public class BaseObject{
 		float wDiv = (float) (2.0/heads);
 		MessageObject msg = mTask.getMsgObject();
 		/*對320高的buffer進行單獨處理*/
-		if (msg != null && (msg.getType() == MessageType.MESSAGE_TYPE_1_INCH || msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_FAST)) {
+		if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH)) {
 			wDiv = 1;
-		} else if (msg != null && (msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_DUAL || msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST)) {
+		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL)) {
 			wDiv = 0.5f;
 		}
 		/*draw Bitmap of single digit*/
@@ -522,7 +521,7 @@ public class BaseObject{
 		}
 		BinFromBitmap.recyleBitmap(bmp);
 		/*對320高的buffer進行單獨處理*/
-		if (msg != null && (msg.getType() == MessageType.MESSAGE_TYPE_1_INCH || msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_FAST)) {
+		if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH)) {
 			gBmp = Bitmap.createScaledBitmap(gBmp, gBmp.getWidth(), 308, true);
 			Bitmap b = Bitmap.createBitmap(gBmp.getWidth(), 320, Configs.BITMAP_CONFIG);
 			can.setBitmap(b);
@@ -530,7 +529,7 @@ public class BaseObject{
 			can.drawBitmap(gBmp, 0, 0, mPaint);
 			gBmp.recycle();
 			gBmp = b;
-		} else if (msg != null && (msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_DUAL || msg.getType() == MessageType.MESSAGE_TYPE_1_INCH_DUAL_FAST)) {
+		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL)) {
 			gBmp = Bitmap.createScaledBitmap(gBmp, gBmp.getWidth(), 308*2, true);
 			Bitmap b = Bitmap.createBitmap(gBmp.getWidth(), 320*2, Configs.BITMAP_CONFIG);
 			can.setBitmap(b);
@@ -545,16 +544,6 @@ public class BaseObject{
 			gBmp.recycle();
 			gBmp = b;
 		}
-		else if (msg != null && (msg.getType() == MessageType.MESSAGE_TYPE_16_3)) { //add by lk 170418
-			gBmp = Bitmap.createScaledBitmap(gBmp, gBmp.getWidth(), 128, true);
-			Bitmap b = Bitmap.createBitmap(gBmp.getWidth(), 128, Configs.BITMAP_CONFIG);
-			can.setBitmap(b);
-			can.drawColor(Color.WHITE);
-			can.drawBitmap(gBmp, 0, 0, mPaint);
-			gBmp.recycle();
-			gBmp = b;
-		}		//addbylk 170418 end
-		
 		BinFileMaker maker = new BinFileMaker(mContext);
 		dots = maker.extract(gBmp, 1);
 		Debug.d(TAG, "***************id: " + mId + " index:  " + mIndex);
@@ -646,30 +635,26 @@ public class BaseObject{
 		if (mTask == null) {
 			return;
 		}
-		int type = mTask.getHeadType();
+		PrinterNozzle type = mTask.getNozzle();
 		String dspH = getDisplayHeight();
-		switch (type) {
-			case MessageType.MESSAGE_TYPE_16_DOT:
-				Debug.d(TAG, "--->display H = " + dspH + "   mHeight: " + mHeight);
-				if (MessageObject.mDotSizes[0].equalsIgnoreCase(dspH)) {
-					mHeight = 152/2;
-				} else {
-					mHeight = 152;
-				}
-				break;
-			case MessageType.MESSAGE_TYPE_32_DOT:
-				Debug.d(TAG, "--->display H = " + dspH + "   mHeight: " + mHeight);
-				if (MessageObject.mDotSizes[0].equalsIgnoreCase(dspH)) {
-					mHeight = 152/4;
-				} else if (MessageObject.mDotSizes[1].equalsIgnoreCase(dspH)) {
-					mHeight = 152/2;
-				} else {
-					mHeight = 152;
-				}
-				break;
-			default:
-				break;
+		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
+			Debug.d(TAG, "--->display H = " + dspH + "   mHeight: " + mHeight);
+			if (MessageObject.mDotSizes[0].equalsIgnoreCase(dspH)) {
+				mHeight = 152/2;
+			} else {
+				mHeight = 152;
+			}
+		} else if (type == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+			Debug.d(TAG, "--->display H = " + dspH + "   mHeight: " + mHeight);
+			if (MessageObject.mDotSizes[0].equalsIgnoreCase(dspH)) {
+				mHeight = 152/4;
+			} else if (MessageObject.mDotSizes[1].equalsIgnoreCase(dspH)) {
+				mHeight = 152/2;
+			} else {
+				mHeight = 152;
+			}
 		}
+
 	}
 	
 	public void resizeByHeight() {
@@ -956,16 +941,14 @@ public class BaseObject{
 		if (task == null || mTask == task) {
 			return ;
 		}
-		int type = mTask.getHeadType();
-		switch (type) {
-			case MessageType.MESSAGE_TYPE_16_DOT:
-				setHeight(152/2);
-				mFont = MessageObject.mDotSizes[0];
-				break;
-			default:
-				setHeight(Configs.gDots);
-				break;
+		PrinterNozzle type = mTask.getNozzle();
+		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
+			setHeight(152/2);
+			mFont = MessageObject.mDotSizes[0];
+		} else {
+			setHeight(Configs.gDots);
 		}
+
 	}
 	
 	/**
@@ -1014,20 +997,16 @@ public class BaseObject{
 	 */
 	private String verifyFont() {
 		Debug.d(TAG, "--->verifyFont: " + mFont);
-		int type = mTask.getHeadType();
+		PrinterNozzle type = mTask.getNozzle();
 		String font = "";
-		switch (type) {
-			case MessageType.MESSAGE_TYPE_16_DOT:
-				if (getHeight() <= 76) {
-					font = "4";
-				} else {
-					font = "7";
-				}
-				break;
-
-			default:
-				font = mFont;
-				break;
+		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
+			if (getHeight() <= 76) {
+				font = "4";
+			} else {
+				font = "7";
+			}
+		} else {
+			font = mFont;
 		}
 		Debug.d(TAG, "--->verifyFont: " + mFont);
 		return font;
@@ -1038,16 +1017,10 @@ public class BaseObject{
 	 * @return
 	 */
 	public boolean fixedFont() {
-		int type = mTask.getHeadType();
+		PrinterNozzle type = mTask.getNozzle();
 		boolean isFixed = false;
-		switch (type) {
-			// case MessageType.MESSAGE_TYPE_32_DOT:
-			case MessageType.MESSAGE_TYPE_16_DOT:
-				isFixed = true;
-				break;
-			default:
-				isFixed = false;
-				break;
+		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
+			isFixed = true;
 		}
 
 		if (isFixed) {
@@ -1070,8 +1043,8 @@ public class BaseObject{
 			return false;
 		}
 		
-		int type = msg.getType();
-		if (type == MessageType.MESSAGE_TYPE_16_DOT || type == MessageType.MESSAGE_TYPE_32_DOT) {
+		PrinterNozzle type = msg.getPNozzle();
+		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 			return false;
 		} else {
 			return true;
