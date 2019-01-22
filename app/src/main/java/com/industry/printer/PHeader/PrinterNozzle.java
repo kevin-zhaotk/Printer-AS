@@ -11,7 +11,9 @@ public enum PrinterNozzle {
     MESSAGE_TYPE_32_DOT(MessageType.NOZZLE_INDEX_16_DOT, 7, 1, 1),       //big data; single Nozzle, single RFID, 4 segments
     MESSAGE_TYPE_16_DOT(MessageType.NOZZLE_INDEX_32_DOT, 8, 1, 1),       // big data; single Nozzle, single RFID, 4 segments
     MESSAGE_TYPE_1_INCH(MessageType.NOZZLE_INDEX_1_INCH, 9, 1, 1),       // 1寸（25.4），单头，one segment
-    MESSAGE_TYPE_1_INCH_DUAL(MessageType.NOZZLE_INDEX_1_INCH_DUAL, 11, 2, 2);// 1寸双头（25.4X2）； 2 RFID，2 segments
+    MESSAGE_TYPE_1_INCH_DUAL(MessageType.NOZZLE_INDEX_1_INCH_DUAL, 11, 2, 2),// 1寸双头（25.4X2）； 2 RFID，2 segments
+    MESSAGE_TYPE_1_INCH_TRIPLE(MessageType.NOZZLE_INDEX_1_INCH_TRIPLE, 15, 3, 3),         //25.4 double Nozzle（12.7X2）,  double RFID，double segment
+    MESSAGE_TYPE_1_INCH_FOUR(MessageType.NOZZLE_INDEX_1_INCH_FOUR, 16, 4, 4);
 
     public final int mIndex;
     public final int mType;
@@ -105,6 +107,10 @@ public enum PrinterNozzle {
                 break;
             case MessageType.NOZZLE_INDEX_1_INCH_DUAL:
                 mHeight = 640;
+            case MessageType.NOZZLE_INDEX_1_INCH_TRIPLE:
+                mHeight = 320 * 3;
+            case MessageType.NOZZLE_INDEX_1_INCH_FOUR:
+                mHeight = 320 * 4;
                 break;
         }
     }
@@ -139,6 +145,14 @@ public enum PrinterNozzle {
                 scaleW = 4f;
                 scaleH = 4f;
                 break;
+            case MessageType.NOZZLE_INDEX_1_INCH_TRIPLE:
+                scaleW = 6f;
+                scaleH = 6f;
+                break;
+            case MessageType.NOZZLE_INDEX_1_INCH_FOUR:
+                scaleW = 8f;
+                scaleH = 8f;
+                break;
             case MessageType.NOZZLE_INDEX_16_DOT:
                 scaleW = 16f/152;
                 scaleH = 16f/152;
@@ -148,6 +162,8 @@ public enum PrinterNozzle {
                 scaleH = 32f/152;
                 break;
             default:
+                scaleW = 1f;
+                scaleH = 1f;
                 break;
         }
     }
@@ -178,6 +194,10 @@ public enum PrinterNozzle {
                 return MESSAGE_TYPE_1_INCH;
             case MessageType.NOZZLE_INDEX_1_INCH_DUAL:
                 return MESSAGE_TYPE_1_INCH_DUAL;
+            case MessageType.NOZZLE_INDEX_1_INCH_TRIPLE:
+                return MESSAGE_TYPE_1_INCH_TRIPLE;
+            case MessageType.NOZZLE_INDEX_1_INCH_FOUR:
+                return MESSAGE_TYPE_1_INCH_FOUR;
             default:
                 return MESSAGE_TYPE_12_7;
 
@@ -202,22 +222,28 @@ public enum PrinterNozzle {
                 return MESSAGE_TYPE_1_INCH;
             case 11:
                 return MESSAGE_TYPE_1_INCH_DUAL;
+            case 15:
+                return MESSAGE_TYPE_1_INCH_TRIPLE;
+            case 16:
+                return MESSAGE_TYPE_1_INCH_FOUR;
             default:
                 return MESSAGE_TYPE_12_7;
         }
     }
 
     /**
-     * Nozzle index
+     * Nozzle index; this index must match with definition in array resource <string-array name="strPrinterArray"></string-array>
      */
     public static class MessageType {
         public static final int NOZZLE_INDEX_12_7 	= 0;    // 12.7
         public static final int NOZZLE_INDEX_25_4 	= 1;    // 12.7X2
         public static final int NOZZLE_INDEX_38_1  	= 2;    // 12.7x3
         public static final int NOZZLE_INDEX_50_8  	= 3;    // 12.7x4
-        public static final int NOZZLE_INDEX_16_DOT  = 4;   // 16dot
-        public static final int NOZZLE_INDEX_32_DOT  = 5;   // 32 dot
-        public static final int NOZZLE_INDEX_1_INCH = 6;    // 1 inch
-        public static final int NOZZLE_INDEX_1_INCH_DUAL = 7; // 1inch X2
+        public static final int NOZZLE_INDEX_1_INCH = 4;    // 1 inch
+        public static final int NOZZLE_INDEX_1_INCH_DUAL = 5; // 1inch X2
+        public static final int NOZZLE_INDEX_1_INCH_TRIPLE = 6; // 1inch X2
+        public static final int NOZZLE_INDEX_1_INCH_FOUR = 7; // 1inch X2
+        public static final int NOZZLE_INDEX_16_DOT  = 8;   // 16dot
+        public static final int NOZZLE_INDEX_32_DOT  = 9;   // 32 dot
     }
 }
