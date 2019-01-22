@@ -8,10 +8,10 @@
         <item>12.7X4</item>
         <item>25.4</item>
         <item>25.4X2</item>
+        <item>25.4X3</item>
+        <item>25.4X4</item>
         <item>16 dot</item>
         <item>32 dot</item>
-        <item>9mm</item>
-        <item>nova</item>
     </string-array>
 
     <string-array name="strFontArray">
