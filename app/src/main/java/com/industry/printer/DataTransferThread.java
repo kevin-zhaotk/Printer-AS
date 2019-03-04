@@ -186,6 +186,9 @@ public class DataTransferThread {
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
 		final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
 		final PrinterNozzle head = PrinterNozzle.getInstance(headIndex);
+		if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT && head != PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+			return;
+		}
 		// access lock before cleaning begin
 		mPurgeLock.lock();
 		ThreadPoolManager.mThreads.execute(new Runnable() {
