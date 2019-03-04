@@ -92,7 +92,7 @@ public class MessageObject extends BaseObject {
 		if (printer == null || printer.length == 0) {
 			return "";
 		}
-		return mPNozzle.mType >= printer.length ? printer[0] : printer[mPNozzle.mType];
+		return mPNozzle.mIndex >= printer.length ? printer[0] : printer[mPNozzle.mIndex];
 	}
 	
 	public void setDotCount(int count) {
