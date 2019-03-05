@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsoluteLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -132,6 +133,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
     }
 
     public void update(BaseObject object) {
+        Debug.i(TAG, "--->update: " + object.mIsSelected);
         if (object instanceof MessageObject) {
             if (object.mIsSelected) {
                 showCursor((int) object.getX(), (int) object.getY());
@@ -165,7 +167,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mCursor = inflater.inflate(R.layout.layout_cross_cursor, null);
 
-        mCursor.setVisibility(View.GONE);
+        mCursor.setVisibility(View.VISIBLE);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.leftMargin = 0;
         lp.topMargin = 0;
@@ -179,9 +181,11 @@ public class MessageDisplayManager implements View.OnTouchListener {
      * @param y
      */
     private void showCursor(int x, int y) {
+        Debug.d(TAG, "--->showCursor: " + x + " ," + y);
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mCursor.getLayoutParams();
-        lp.topMargin = y - 15;
-        lp.leftMargin = x - 15;
+
+        lp.topMargin = y - 15 > 0 ? y - 15 : 0;
+        lp.leftMargin = x - 15 > 0 ? x - 15 : 0;
         mCursor.setLayoutParams(lp);
         mCursor.setVisibility(View.VISIBLE);
     }

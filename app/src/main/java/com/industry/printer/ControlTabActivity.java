@@ -462,6 +462,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		 * if crash happened when load the last message, don`t load it again
 		 * avoid endless loop of crash
 		 */
+		Debug.d(TAG, "--->loading: " + loading);
 		if (!loading) {
 			loadMessage();
 		}
@@ -539,7 +540,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	
 	public void loadMessage() {
 		String f = mSysconfig.getLastMsg();
-		Debug.d(TAG, "===>load message: " + f );
+		Debug.d(TAG, "--->load message: " + f );
 		if (f == null || f.isEmpty() || !new File(ConfigPath.getTlkDir(f)).exists()) {
 			return;
 		}
@@ -760,6 +761,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					if (mPreBitmap != null) {
 						BinFromBitmap.recyleBitmap(mPreBitmap);
 					}
+					Debug.d(TAG, "--->mObjPath: " + mObjPath);
 					mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
 
 					dispPreview(mPreBitmap);
@@ -1650,6 +1652,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		mProgressShowing=false;
 		SharedPreferences p = mContext.getSharedPreferences(SettingsTabActivity.PREFERENCE_NAME, Context.MODE_PRIVATE);
 		p.edit().putBoolean(PreferenceConstants.LOADING_BEFORE_CRASH, false).commit();
+		Debug.d(TAG, "===>dismissProgressDialog");
 	}
 	
 	public int currentRfid = 0;

@@ -81,6 +81,8 @@ public enum PrinterNozzle {
                 break;
         }
 
+        initScale();
+        initHeight();
     }
 
     private void initHeight() {
