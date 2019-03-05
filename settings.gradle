@@ -1,1 +1,1 @@
-include ':app', ':systemapi', ':corelib', ':hardware', ':zxingcore'
+include ':app', ':systemapi', ':corelib', ':hardware', ':zxingcore' /*, ':smartcard'*/
