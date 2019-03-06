@@ -109,8 +109,10 @@ public enum PrinterNozzle {
                 break;
             case MessageType.NOZZLE_INDEX_1_INCH_DUAL:
                 mHeight = 640;
+                break;
             case MessageType.NOZZLE_INDEX_1_INCH_TRIPLE:
                 mHeight = 320 * 3;
+                break;
             case MessageType.NOZZLE_INDEX_1_INCH_FOUR:
                 mHeight = 320 * 4;
                 break;
