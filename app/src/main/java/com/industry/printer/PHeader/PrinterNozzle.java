@@ -10,10 +10,10 @@ public enum PrinterNozzle {
     MESSAGE_TYPE_50_8(MessageType.NOZZLE_INDEX_50_8, 6, 4, 4),         //50.8 fourfold RFID（12.7X4），fourfold segment
     MESSAGE_TYPE_32_DOT(MessageType.NOZZLE_INDEX_16_DOT, 7, 1, 1),       //big data; single Nozzle, single RFID, 4 segments
     MESSAGE_TYPE_16_DOT(MessageType.NOZZLE_INDEX_32_DOT, 8, 1, 1),       // big data; single Nozzle, single RFID, 4 segments
-    MESSAGE_TYPE_1_INCH(MessageType.NOZZLE_INDEX_1_INCH, 9, 1, 1),       // 1寸（25.4），单头，one segment
-    MESSAGE_TYPE_1_INCH_DUAL(MessageType.NOZZLE_INDEX_1_INCH_DUAL, 11, 2, 2),// 1寸双头（25.4X2）； 2 RFID，2 segments
-    MESSAGE_TYPE_1_INCH_TRIPLE(MessageType.NOZZLE_INDEX_1_INCH_TRIPLE, 15, 3, 3),         //25.4 double Nozzle（12.7X2）,  double RFID，double segment
-    MESSAGE_TYPE_1_INCH_FOUR(MessageType.NOZZLE_INDEX_1_INCH_FOUR, 16, 4, 4);
+    MESSAGE_TYPE_1_INCH(MessageType.NOZZLE_INDEX_1_INCH, 10, 1, 1),       // 1寸（25.4），单头，one segment
+    MESSAGE_TYPE_1_INCH_DUAL(MessageType.NOZZLE_INDEX_1_INCH_DUAL, 12, 2, 2),// 1寸双头（25.4X2）； 2 RFID，2 segments
+    MESSAGE_TYPE_1_INCH_TRIPLE(MessageType.NOZZLE_INDEX_1_INCH_TRIPLE, 18, 3, 3),         //25.4 double Nozzle（12.7X2）,  double RFID，double segment
+    MESSAGE_TYPE_1_INCH_FOUR(MessageType.NOZZLE_INDEX_1_INCH_FOUR, 19, 4, 4);
 
     public final int mIndex;
     public final int mType;
