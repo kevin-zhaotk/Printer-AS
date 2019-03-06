@@ -290,18 +290,19 @@ public class MessageObject extends BaseObject {
 
 		sizelist= mBaseList;
 
-		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) {
-			h = size/PIXELS_PER_MM;
-		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_25_4 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
-			h = 2 * (size/PIXELS_PER_MM);
-			type = 2;
-		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_38_1) {
-			h = 3 * (size/PIXELS_PER_MM);
-			type = 3;
-		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_50_8 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
-			h = 4 * (size/PIXELS_PER_MM);
-			type = 4;
-		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
+//		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) {
+//			h = size/PIXELS_PER_MM;
+//		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_25_4 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
+//			h = 2 * (size/PIXELS_PER_MM);
+//			type = 2;
+//		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_38_1) {
+//			h = 3 * (size/PIXELS_PER_MM);
+//			type = 3;
+//		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_50_8 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
+//			h = 4 * (size/PIXELS_PER_MM);
+//			type = 4;
+//		} else
+		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			if (size <= 152/2) {
 				return mDotSizes[0]; 
 			} else {
@@ -319,7 +320,7 @@ public class MessageObject extends BaseObject {
 			}
 
 		} else {
-			h = size/PIXELS_PER_MM;
+			h = mPNozzle.getScaleH() * size/PIXELS_PER_MM;
 		}
 		for (int i = 0; i < sizelist.length; i++) {
 			if ((h > type * sizelist[i] - 0.3) && (h < type * sizelist[i] + 0.3)) {
