@@ -689,11 +689,11 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 							src.put("dest", Configs.CONFIG_PATH_FLASH + Configs.SYSTEM_CONFIG_DIR + Configs.QR_DIR);
 							src.put("tips", MainActivity.this.getString(R.string.tips_import_sysconf));
 						}
-//						else if (Configs.FONT_DIR.equals(arg0)) {
-//							src.put("source",usbs.get(0) + Configs.FONT_DIR_USB);
-//							src.put("dest", Configs.FONT_DIR);
-//							src.put("tips", MainActivity.this.getString(R.string.tips_import_font));
-//						}
+						else if (Configs.FONT_DIR.equals(arg0)) {
+							src.put("source",usbs.get(0) + Configs.FONT_DIR_USB);
+							src.put("dest", Configs.FONT_DIR);
+							src.put("tips", MainActivity.this.getString(R.string.tips_import_font));
+						}
 						Debug.d(TAG, "--->flatMap");
 						return Observable.just(src);
 					}
@@ -793,11 +793,11 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 					src.put("dest", Configs.CONFIG_PATH_FLASH + Configs.SYSTEM_CONFIG_DIR);
 					src.put("tips", MainActivity.this.getString(R.string.tips_import_sysconf));
 				}
-//				else if (Configs.FONT_DIR.equals(arg0)) {
-//					src.put("source",usbs.get(0) + Configs.FONT_DIR_USB);
-//					src.put("dest", Configs.FONT_DIR);
-//					src.put("tips", MainActivity.this.getString(R.string.tips_import_font));
-//				}
+				else if (Configs.FONT_DIR.equals(arg0)) {
+					src.put("source",usbs.get(0) + Configs.FONT_DIR_USB);
+					src.put("dest", Configs.FONT_DIR);
+					src.put("tips", MainActivity.this.getString(R.string.tips_import_font));
+				}
 				Debug.d(TAG, "--->flatMap");
 				return Observable.just(src);
 			}

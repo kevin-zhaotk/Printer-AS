@@ -24,7 +24,7 @@ import com.printer.corelib.Debug;
 public class FontCache {
 
     // font library stay at asset if true, sdcard else.
-    private static final boolean ASSETS = true;
+    private static final boolean ASSETS = false;
 
     public static final HashMap FONT_CACHE = new HashMap<String, Typeface>();
 

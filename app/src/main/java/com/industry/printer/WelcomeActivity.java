@@ -31,7 +31,7 @@ public class WelcomeActivity extends Activity {
 		Configs.initConfigs(mContext);
 		
 		if (!upgrade()) {
-			// asyncInit();
+//			asyncInit();
 			Intent intent = new Intent();
 			intent.setClass(this, MainActivity.class);
 			startActivity(intent);
@@ -58,18 +58,5 @@ public class WelcomeActivity extends Activity {
 		}
 		return false;
 	}
-	
-	private void asyncInit() {
-		// copy font to /mnt/sdcard directory
-		File font = new File(Configs.FONT_DIR);
-		if (!font.exists()) {
-			font.mkdirs();
-		}
-		
-		File[] subFiles = font.listFiles();
-		Debug.d(TAG, "--->asyncInit  font.length= " + subFiles.length);
-		if (subFiles.length <= 0) {
-			FileUtil.releaseAssets(this, "fonts", Configs.CONFIG_PATH_FLASH);
-		}
-	}
+
 }

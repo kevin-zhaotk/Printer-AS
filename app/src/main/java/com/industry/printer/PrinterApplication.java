@@ -2,12 +2,18 @@ package com.industry.printer;
 
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.CrashCatcher;
+import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.Utils.KZFileObserver;
+import com.industry.printer.Utils.PreferenceConstants;
 import com.industry.printer.Utils.ToastUtil;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +35,7 @@ public class PrinterApplication extends Application {
 		catcher.init(getApplicationContext());
 		registerFileListener();
 		sInstance = this;
+		asyncInit();
 	}
 
 	private void registerFileListener() {
@@ -63,5 +70,26 @@ public class PrinterApplication extends Application {
 //		sysObserver.registerCallback(Configs.QR_DATA,callback);
 	}
 
+	private void asyncInit() {
+		long version = PreferenceConstants.getLong(this, PreferenceConstants.LAST_VERSION_CODE);
+		if (BuildConfig.VERSION_CODE == version) {
+			return;
+		}
+		new Thread() {
+			@Override
+			public void run() {
+				File font = new File(Configs.FONT_DIR);
+				if (!font.exists()) {
+					font.mkdirs();
+				}
 
+				File[] subFiles = font.listFiles();
+				Debug.d("", "--->asyncInit  font.length= " + subFiles.length);
+				if (subFiles.length <= 0) {
+					FileUtil.releaseAssets(sInstance, "fonts", Configs.CONFIG_PATH_FLASH);
+				}
+				PreferenceConstants.putLong(sInstance, PreferenceConstants.LAST_VERSION_CODE, BuildConfig.VERSION_CODE);
+			}
+		}.start();
+	}
 }
