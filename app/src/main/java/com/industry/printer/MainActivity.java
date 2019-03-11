@@ -669,7 +669,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mProgressDialog = LoadingDialog.show(this, R.string.strCopying);
 		
 		FileUtil.deleteFolder(Configs.QR_LAST);
-		Observable.just(Configs.SYSTEM_CONFIG_MSG_PATH, Configs.PICTURE_SUB_PATH, Configs.QR_DIR/*, Configs.FONT_DIR*/)
+		Observable.just(Configs.SYSTEM_CONFIG_MSG_PATH, Configs.PICTURE_SUB_PATH, Configs.QR_DIR, Configs.FONT_DIR)
 				.flatMap(new Func1<String, Observable<Map<String, String>>>() {
 
 					@Override
@@ -690,8 +690,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 							src.put("tips", MainActivity.this.getString(R.string.tips_import_sysconf));
 						}
 						else if (Configs.FONT_DIR.equals(arg0)) {
-							src.put("source",usbs.get(0) + Configs.FONT_DIR_USB);
-							src.put("dest", Configs.FONT_DIR);
+							src.put("source",usbs.get(0) + Configs.FONT_DIR_USB + File.separator + Configs.FONT_ZIP_FILE);
+							src.put("dest", Configs.FONT_DIR + File.separator + Configs.FONT_ZIP_FILE);
 							src.put("tips", MainActivity.this.getString(R.string.tips_import_font));
 						}
 						Debug.d(TAG, "--->flatMap");
@@ -705,11 +705,11 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 						try {
 							//mProgressDialog.setMessage(arg0.get("tips"));
 							FileUtil.copyDirectiory(arg0.get("source"), arg0.get("dest"));
-//							String dest = arg0.get("dest");
-//							if (dest.endsWith(Configs.FONT_ZIP_FILE)) {
-//								mProgressDialog.setMessage("Unzipp...");
-//								ZipUtil.UnZipFolder(Configs.CONFIG_PATH_FLASH + File.separator + Configs.FONT_ZIP_FILE, Configs.CONFIG_PATH_FLASH);
-//							}
+							String dest = arg0.get("dest");
+							if (dest.endsWith(Configs.FONT_ZIP_FILE)) {
+								mProgressDialog.setMessage("Unzipp...");
+								ZipUtil.UnZipFolder(Configs.CONFIG_PATH_FLASH + File.separator + Configs.FONT_ZIP_FILE, Configs.CONFIG_PATH_FLASH);
+							}
 						} catch (Exception e) {
 							// TODO: handle exception
 						}
@@ -773,7 +773,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mProgressDialog = LoadingDialog.show(this, R.string.strCopying);
 		
 		
-		Observable.just(Configs.SYSTEM_CONFIG_MSG_PATH, Configs.PICTURE_SUB_PATH, Configs.SYSTEM_CONFIG_DIR /*, Configs.FONT_DIR*/)
+		Observable.just(Configs.SYSTEM_CONFIG_MSG_PATH, Configs.PICTURE_SUB_PATH, Configs.SYSTEM_CONFIG_DIR , Configs.FONT_DIR)
 		.flatMap(new Func1<String, Observable<Map<String, String>>>() {
 
 			@Override
@@ -794,8 +794,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 					src.put("tips", MainActivity.this.getString(R.string.tips_import_sysconf));
 				}
 				else if (Configs.FONT_DIR.equals(arg0)) {
-					src.put("source",usbs.get(0) + Configs.FONT_DIR_USB);
-					src.put("dest", Configs.FONT_DIR);
+					src.put("source",usbs.get(0) + Configs.FONT_DIR_USB + File.separator + Configs.FONT_ZIP_FILE);
+					src.put("dest", Configs.FONT_DIR + File.separator + Configs.FONT_ZIP_FILE);
 					src.put("tips", MainActivity.this.getString(R.string.tips_import_font));
 				}
 				Debug.d(TAG, "--->flatMap");
@@ -809,10 +809,10 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				try {
 					//mProgressDialog.setMessage(arg0.get("tips"));
 					FileUtil.copyClean(arg0.get("source"), arg0.get("dest"));
-//				String dest = arg0.get("dest");
-//				if (dest.endsWith(Configs.FONT_ZIP_FILE)) {
-//					ZipUtil.UnZipFolder(Configs.CONFIG_PATH_FLASH + File.separator + Configs.FONT_ZIP_FILE, Configs.CONFIG_PATH_FLASH);
-//				}
+					String dest = arg0.get("dest");
+					if (dest.endsWith(Configs.FONT_ZIP_FILE)) {
+						ZipUtil.UnZipFolder(Configs.CONFIG_PATH_FLASH + File.separator + Configs.FONT_ZIP_FILE, Configs.CONFIG_PATH_FLASH);
+					}
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
