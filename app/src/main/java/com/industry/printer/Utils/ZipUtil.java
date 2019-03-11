@@ -32,6 +32,8 @@ public class ZipUtil {
      * @throws Exception
      */
     public static void UnZipFolder(String zipFileString, String outPathString) throws Exception {
+        Debug.d(TAG, "--->zipFile:" + zipFileString);
+        Debug.d(TAG, "--->dest:" + outPathString);
         ZipInputStream inZip = new ZipInputStream(new FileInputStream(zipFileString));
         ZipEntry zipEntry;
         String  szName = "";

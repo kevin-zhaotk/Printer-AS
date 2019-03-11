@@ -79,15 +79,12 @@ public class PrinterApplication extends Application {
 			@Override
 			public void run() {
 				File font = new File(Configs.FONT_DIR);
-				if (!font.exists()) {
-					font.mkdirs();
-				}
 
-				File[] subFiles = font.listFiles();
-				Debug.d("", "--->asyncInit  font.length= " + subFiles.length);
-				if (subFiles.length <= 0) {
-					FileUtil.releaseAssets(sInstance, "fonts", Configs.CONFIG_PATH_FLASH);
+				if (font.exists()) {
+					FileUtil.deleteFolder(Configs.FONT_DIR);
 				}
+				font.mkdirs();
+				FileUtil.releaseAssets(sInstance, "fonts", Configs.CONFIG_PATH_FLASH);
 				PreferenceConstants.putLong(sInstance, PreferenceConstants.LAST_VERSION_CODE, BuildConfig.VERSION_CODE);
 			}
 		}.start();
