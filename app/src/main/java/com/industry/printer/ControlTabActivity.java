@@ -1385,8 +1385,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				mTvOpen.setTextColor(Color.DKGRAY);
 				mTVPrinting.setVisibility(View.VISIBLE);
 				mTVStopped.setVisibility(View.GONE);
-				//mBtnClean.setEnabled(false);
-				// mTvClean.setTextColor(Color.DKGRAY);
+				mBtnClean.setEnabled(false);
+				mTvClean.setTextColor(Color.DKGRAY);
 
 				// mMsgNext.setClickable(false);
 				// mMsgPrev.setClickable(false);
