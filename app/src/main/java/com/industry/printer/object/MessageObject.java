@@ -321,6 +321,7 @@ public class MessageObject extends BaseObject {
 
 		} else {
 			h = mPNozzle.getScaleH() * size/PIXELS_PER_MM;
+			type = mPNozzle.factor();
 		}
 		for (int i = 0; i < sizelist.length; i++) {
 			if ((h > type * sizelist[i] - 0.3) && (h < type * sizelist[i] + 0.3)) {

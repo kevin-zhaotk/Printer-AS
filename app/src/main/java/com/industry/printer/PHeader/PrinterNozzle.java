@@ -180,6 +180,13 @@ public enum PrinterNozzle {
         return scaleH;
     }
 
+    /**
+     * Nozzle height multiple of 152
+     */
+    public int factor() {
+        return mHeight/152;
+    }
+
     public static PrinterNozzle getInstance(int index) {
         switch (index) {
             case MessageType.NOZZLE_INDEX_12_7:
@@ -191,9 +198,9 @@ public enum PrinterNozzle {
             case MessageType.NOZZLE_INDEX_50_8:
                 return MESSAGE_TYPE_50_8;
             case MessageType.NOZZLE_INDEX_16_DOT:
-                return MESSAGE_TYPE_32_DOT;
-            case MessageType.NOZZLE_INDEX_32_DOT:
                 return MESSAGE_TYPE_16_DOT;
+            case MessageType.NOZZLE_INDEX_32_DOT:
+                return MESSAGE_TYPE_32_DOT;
             case MessageType.NOZZLE_INDEX_1_INCH:
                 return MESSAGE_TYPE_1_INCH;
             case MessageType.NOZZLE_INDEX_1_INCH_DUAL:
