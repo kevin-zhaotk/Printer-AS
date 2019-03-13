@@ -250,18 +250,4 @@ public enum PrinterNozzle {
         public static final int NOZZLE_INDEX_16_DOT  = 8;   // 16dot
         public static final int NOZZLE_INDEX_32_DOT  = 9;   // 32 dot
     }
-
-    public static class NozzleType {
-        public static final int NOZZLE_TYPE_12_7 = 0;
-        public static final int NOZZLE_TYPE_25_4 = 2;
-        public static final int NOZZLE_TYPE_38_1 = 5;
-        public static final int NOZZLE_TYPE_50_8 = 6;
-        public static final int NOZZLE_TYPE_32_DOT = 7;
-        public static final int NOZZLE_TYPE_16_DOT = 8;
-        public static final int NOZZLE_TYPE_1_INCH = 10;
-        public static final int NOZZLE_TYPE_1_INCH_DUAL = 12;
-        public static final int NOZZLE_TYPE_1_INCH_TRIPLE = 18;
-        public static final int NOZZLE_TYPE_1_INCH_FOUR = 19;
-
-    }
 }
