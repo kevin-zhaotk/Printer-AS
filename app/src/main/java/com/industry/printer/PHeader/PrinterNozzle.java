@@ -8,8 +8,8 @@ public enum PrinterNozzle {
     MESSAGE_TYPE_25_4(MessageType.NOZZLE_INDEX_25_4, NozzleType.NOZZLE_TYPE_25_4, 2, 2),         //25.4 double Nozzle（12.7X2）,  double RFID，double segment
     MESSAGE_TYPE_38_1(MessageType.NOZZLE_INDEX_38_1, NozzleType.NOZZLE_TYPE_38_1, 3, 3),         //38.1 triple RFID（12.7X3），triple segment
     MESSAGE_TYPE_50_8(MessageType.NOZZLE_INDEX_50_8, NozzleType.NOZZLE_TYPE_50_8, 4, 4),         //50.8 fourfold RFID（12.7X4），fourfold segment
-    MESSAGE_TYPE_32_DOT(MessageType.NOZZLE_INDEX_16_DOT, NozzleType.NOZZLE_TYPE_16_DOT, 1, 1),       //big data; single Nozzle, single RFID, 4 segments
-    MESSAGE_TYPE_16_DOT(MessageType.NOZZLE_INDEX_32_DOT, NozzleType.NOZZLE_TYPE_32_DOT, 1, 1),       // big data; single Nozzle, single RFID, 4 segments
+    MESSAGE_TYPE_16_DOT(MessageType.NOZZLE_INDEX_16_DOT, NozzleType.NOZZLE_TYPE_16_DOT, 1, 1),       //big data; single Nozzle, single RFID, 4 segments
+    MESSAGE_TYPE_32_DOT(MessageType.NOZZLE_INDEX_32_DOT, NozzleType.NOZZLE_TYPE_32_DOT, 1, 1),       // big data; single Nozzle, single RFID, 4 segments
     MESSAGE_TYPE_1_INCH(MessageType.NOZZLE_INDEX_1_INCH, NozzleType.NOZZLE_TYPE_1_INCH, 1, 1),       // 1寸（25.4），单头，one segment
     MESSAGE_TYPE_1_INCH_DUAL(MessageType.NOZZLE_INDEX_1_INCH_DUAL, NozzleType.NOZZLE_TYPE_1_INCH_DUAL, 2, 2),// 1寸双头（25.4X2）； 2 RFID，2 segments
     MESSAGE_TYPE_1_INCH_TRIPLE(MessageType.NOZZLE_INDEX_1_INCH_TRIPLE, NozzleType.NOZZLE_TYPE_1_INCH_TRIPLE, 3, 3),         //25.4 double Nozzle（12.7X2）,  double RFID，double segment
@@ -263,8 +263,8 @@ public enum PrinterNozzle {
         public static final int NOZZLE_TYPE_25_4 = 2;
         public static final int NOZZLE_TYPE_38_1 = 5;
         public static final int NOZZLE_TYPE_50_8 = 6;
-        public static final int NOZZLE_TYPE_32_DOT = 7;
-        public static final int NOZZLE_TYPE_16_DOT = 8;
+        public static final int NOZZLE_TYPE_32_DOT = 8;
+        public static final int NOZZLE_TYPE_16_DOT = 7;
         public static final int NOZZLE_TYPE_1_INCH = 10;
         public static final int NOZZLE_TYPE_1_INCH_DUAL = 12;
         public static final int NOZZLE_TYPE_1_INCH_TRIPLE = 18;

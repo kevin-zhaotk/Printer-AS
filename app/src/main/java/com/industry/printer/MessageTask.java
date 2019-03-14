@@ -522,8 +522,8 @@ public class MessageTask {
 		}
 		/*計算得到的width爲152點陣對應的寬度，要根據噴頭類型轉換成實際寬度 */
 		MessageObject msgObj = getMsgObject();
-		float scaleW = msgObj.getPNozzle().getScaleW();
-		float scaleH = msgObj.getPNozzle().getScaleH();
+		float scaleW = getNozzle().getScaleW();
+		float scaleH = getNozzle().getScaleH();
 		Debug.d(TAG, "drawAllBmp scaleW = " + scaleW + ", scaleH = " + scaleH);
 		//實際寬度
 		int bWidth = (int) (width * scaleW);
@@ -591,7 +591,7 @@ public class MessageTask {
 		BinFileMaker maker = new BinFileMaker(mContext);
 		/** if high resolution, keep original width */
 		if (msgObj.getResolution() || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT) || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT)) {
-			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth, bHeight, true), msgObj.getPNozzle().mHeads);
+			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth, bHeight, true), getNozzle().mHeads);
 		} else {
 			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, true), msgObj.getPNozzle().mHeads);
 		}
