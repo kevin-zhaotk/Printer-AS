@@ -24,7 +24,8 @@ public enum PrinterNozzle {
     private int mHeight;
     private float scaleW;
     private float scaleH;
-
+    // 生成变量buffer bin时，宽度缩放因子, 只有16点和32点不需要缩放，其他喷头减半
+    private int factorScale;
 
     public final boolean shiftEnable;   //是否支持位移
     public final boolean mirrorEnable;  // 是否支持镜像
@@ -74,8 +75,10 @@ public enum PrinterNozzle {
             case 8:
                 editZoomable = false;
                 buffer8Enable = true;
+                factorScale = 1;
                 break;
             default:
+                factorScale = 2;
                 editZoomable = true;
                 buffer8Enable = false;
                 break;
@@ -180,6 +183,13 @@ public enum PrinterNozzle {
         return scaleH;
     }
 
+    public int getFactorScale() {
+        if (factorScale != 0) {
+            return factorScale;
+        } else {
+            return 2;
+        }
+    }
     /**
      * Nozzle height multiple of 152
      */

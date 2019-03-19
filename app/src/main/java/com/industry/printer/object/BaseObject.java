@@ -446,8 +446,8 @@ public class BaseObject{
 		singleW = (int)(mWidth * scaleW/mContent.length());
 		/** if message isn`t high resolution, divid by 2 because the buffer bitmap is halfed, so the variable buffer should be half too*/
 		MessageObject msgObj = mTask.getMsgObject();
-		if (!msgObj.getResolution() && msgObj.getPNozzle() != PrinterNozzle.MESSAGE_TYPE_16_DOT) {
-			singleW = singleW / 2;
+		if (!msgObj.getResolution() ) {
+			singleW = singleW / msgObj.getPNozzle().getFactorScale();
 		}
 		
 		Debug.d(TAG, "--->singleW=" + singleW);
