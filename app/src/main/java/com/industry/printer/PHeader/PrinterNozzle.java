@@ -46,7 +46,8 @@ public enum PrinterNozzle {
         this.mSegments = segment;
 
         switch (mType) {
-            case 8: //大字机
+            case NozzleType.NOZZLE_TYPE_16_DOT:
+            case NozzleType.NOZZLE_TYPE_32_DOT://大字机
                 reverseEnable = true;
                 shiftEnable = true;
                 mirrorEnable = true;
@@ -71,8 +72,8 @@ public enum PrinterNozzle {
 
         // some features during editing
         switch (mType) {
-            case 7:
-            case 8:
+            case NozzleType.NOZZLE_TYPE_16_DOT:
+            case NozzleType.NOZZLE_TYPE_32_DOT:
                 editZoomable = false;
                 buffer8Enable = true;
                 factorScale = 1;
@@ -273,8 +274,8 @@ public enum PrinterNozzle {
         public static final int NOZZLE_TYPE_25_4 = 2;
         public static final int NOZZLE_TYPE_38_1 = 5;
         public static final int NOZZLE_TYPE_50_8 = 6;
-        public static final int NOZZLE_TYPE_32_DOT = 8;
-        public static final int NOZZLE_TYPE_16_DOT = 7;
+        public static final int NOZZLE_TYPE_32_DOT = 7;
+        public static final int NOZZLE_TYPE_16_DOT = 8;
         public static final int NOZZLE_TYPE_1_INCH = 10;
         public static final int NOZZLE_TYPE_1_INCH_DUAL = 12;
         public static final int NOZZLE_TYPE_1_INCH_TRIPLE = 18;

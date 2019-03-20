@@ -268,6 +268,8 @@ public class DataTask {
 			scaleH = 0.25f;
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			div = 152f/16f;
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+			div = 152f/32f;
 		}
 		/**if high resolution message, do not divide width by 2 */
 		if (msg.getResolution()) {
