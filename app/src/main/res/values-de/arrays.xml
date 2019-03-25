@@ -88,14 +88,15 @@
 
 
     <string-array name="strTimeFormat">
-        <item>YYYY-MM-DD</item>
-        <item>MM-DD-YYYY</item>
         <item>YY-MM-DD</item>
         <item>MM-DD-YY</item>
-        <item>YYYY/MM/DD</item>
-        <item>MM/DD/YYYY</item>
         <item>YY/MM/DD</item>
         <item>MM/DD/YY</item>
+        <item>DD/MM/YY</item>
+        <item>YY</item>
+        <item>MM</item>
+        <item>DD</item>
+        <item>HH:NN</item>
     </string-array>
 
 

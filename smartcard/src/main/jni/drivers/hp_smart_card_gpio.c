@@ -16,7 +16,7 @@
 //*****************************************************************************
 #include <stdio.h>
 
-#include "hp_smart_card_gpio_ifc.h"
+#include "internal_ifc/hp_smart_card_gpio_ifc.h"
 
 #include "hp_smart_card.h"
 #include "hp_debug_log_internal.h"

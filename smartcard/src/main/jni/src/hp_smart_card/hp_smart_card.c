@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2015 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -40,6 +40,8 @@
 #include "hp_smart_card_config.h"
 #include "hp_host_smart_card_ifc.h"
 #include "hp_host_smart_card.h"
+#include "../hp_host_smart_card/hp_host_smart_card.h"
+#include "../hp_host_smart_card/hp_host_smart_card_ifc.h"
 
 #include <stdio.h>
 

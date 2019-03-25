@@ -15,7 +15,7 @@ android {
 
         ndk {
             moduleName "smartcard"
-            abiFilters "armeabi-v7a", "x86" //"armeabi",
+            abiFilters "armeabi-v7a"//"armeabi",
         }
     }
 

@@ -21,6 +21,7 @@ LOCAL_SRC_FILES := com_smartcard.c \
                     src/crypto/crypto_aes.c \
                     src/crypto/crypto_cmac.c \
                     src/hp_host_smart_card/hp_host_smart_card_chip.c \
+                    src/hp_host_smart_card/hp_host_smart_card.c \
                     src/hp_host_smart_card/hp_host_smart_card_xpt_i2c.c \
                     src/hp_smart_card/hp_smart_card.c \
                     src/hp_smart_card/hw_smart_card.c \

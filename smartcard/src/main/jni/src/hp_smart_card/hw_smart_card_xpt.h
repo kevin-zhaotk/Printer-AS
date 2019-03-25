@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2015 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -12,7 +12,7 @@
 #define _HW_SMART_CARD_XPT_H_
 
 #include "hp_types.h"
-#include "hp_smart_card_i2c_ifc.h"
+#include "../../drivers/internal_ifc/hp_smart_card_i2c_ifc.h"
 
 typedef struct hw_smart_card_xpt_st
 {
