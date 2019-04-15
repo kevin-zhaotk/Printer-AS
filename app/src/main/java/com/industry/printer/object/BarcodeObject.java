@@ -826,7 +826,7 @@ public class BarcodeObject extends BaseObject {
 	
 	public String toString()
 	{
-		int dots = SystemConfigFile.getInstance(mContext).getParam(39);
+		int dots = 152;//SystemConfigFile.getInstance(mContext).getParam(39);
 		float prop = dots/Configs.gDots;
 		
 		StringBuilder builder = new StringBuilder(mId);

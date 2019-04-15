@@ -192,7 +192,7 @@ public class Paramter {
 	    mFPGAParam[20] = param[36];
 	    mFPGAParam[21] = param[33];
 	    mFPGAParam[22] = param[32];
-	    mFPGAParam[23] = param[35];
+	    mFPGAParam[23] = param[39] == 0 ? (mFPGAParam[23] & 0xFFFE) : (mFPGAParam[23] | 0x0001);
 	}
 	
 	public int getFPGAParam(int index) {

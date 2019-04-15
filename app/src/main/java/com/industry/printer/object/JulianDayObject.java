@@ -22,10 +22,7 @@ public class JulianDayObject extends BaseObject {
 	
 	public void setContent()
 	{
-		int day = Time.getJulianDay(System.currentTimeMillis(), 0);
-		Time t = new Time();
-		 t.set(System.currentTimeMillis());
-		 day = t.yearDay+1;
+		int day = adjust();
 		setContent(BaseObject.intToFormatString(day, 3));
 		System.out.println("day ="+day+", mContent="+mContent);
 	}
@@ -70,12 +67,18 @@ public class JulianDayObject extends BaseObject {
 	@Override
 	public String getContent()
 	{
-		int day = Time.getJulianDay(System.currentTimeMillis(), 0);
-		Time t = new Time();
-		 t.set(System.currentTimeMillis());
-		 day = t.yearDay+1;
+		int day = adjust();
 		setContent(BaseObject.intToFormatString(day, 3));
 		return mContent;
+	}
+
+	private int adjust() {
+		Time t = new Time();
+		t.set(System.currentTimeMillis());
+		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
+		int range = config.getParam(16);
+		int th = t.hour * 100 + t.minute;
+		return t.yearDay + (th > range ? 1 : 0);
 	}
 //////addbylk 
 	@Override	 

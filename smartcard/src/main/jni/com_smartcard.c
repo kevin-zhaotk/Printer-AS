@@ -13,11 +13,60 @@
 #include <string.h>
 #include <jni.h>
 
+#include "hp_smart_card.h"
+#include "hp_debug_log_internal.h"
+#include "hp_assert.h"
+#include "hp_generic_macros.h"
 
-JNIEXPORT jint JNICALL Java_com_Smartcard_open
-        (JNIEnv *env, jclass arg, jstring dev)
+#include "hp_host_smart_card_ifc.h"
+#include "hp_host_smart_card.h"
+#include "drivers/internal_ifc/hp_smart_card_gpio_ifc.h"
+#include "drivers/internal_ifc/hp_smart_card_i2c_ifc.h"
+
+
+void print_returns(HP_SMART_CARD_result_t result)
+{
+    HW_SMART_CARD_status_t status = LIB_HP_SMART_CARD_last_status();
+    printf("Result = %s (%d)  Status = %s (%d)\n",
+           LIB_HP_SMART_CARD_result_string(result), result,
+           LIB_HP_SMART_CARD_status_string(status), status);
+}
+
+void assert_handler(const char *error_str)
+{
+    printf("=========================================\n");
+    printf("Test Main: HP_ASSERT Failed\n");
+    printf("%s\n", error_str);
+    printf("=========================================\n");
+}
+
+void cache_monitor_failure_handler(HP_SMART_CARD_device_id_t dev_id,
+                                   HP_SMART_CARD_result_t result)
+{
+    printf("=========================================\n");
+    printf("Test Main: Cache monitor failure\n");
+    printf("Device Id = %d, ", dev_id);
+    print_returns(result);
+    printf("=========================================\n");
+}
+
+JNIEXPORT jint JNICALL Java_com_Smartcard_init
+        (JNIEnv *env, jclass arg)
 {
     int ret=0;
+    HP_SMART_CARD_gpio_init();
+    HP_SMART_CARD_i2c_init();
+
+    printf("Initializing smart card library....\n");
+
+    // Register for assert callback
+    LIB_HP_SMART_CARD_register_assert_callback(assert_handler);
+
+    // Register for cache monitor callack
+    LIB_HP_SMART_CARD_register_cache_monitor_callback(cache_monitor_failure_handler);
+
+    // Initialise the library
+    LIB_HP_SMART_CARD_init();
     return ret;
 }
 
@@ -31,7 +80,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_close
  * RTC操作jni接口
  */
 static JNINativeMethod gMethods[] = {
-        {"open",					"(Ljava/lang/String;)I",	(void *)Java_com_Smartcard_open},
+        {"open",					"(Ljava/lang/String;)I",	(void *)Java_com_Smartcard_init},
         {"close",					"(I)I",						(void *)Java_com_Smartcard_close},
 };
 
