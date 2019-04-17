@@ -1005,6 +1005,14 @@ public class BaseObject{
 			} else {
 				font = "7";
 			}
+		} else if (type == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+			if (getHeight() <= 38) {
+				font = "4";
+			} else if (getHeight() <= 76) {
+				font = "7";
+			} else {
+				font = mFont;
+			}
 		} else {
 			font = mFont;
 		}
