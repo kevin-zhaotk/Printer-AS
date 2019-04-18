@@ -372,7 +372,7 @@ public class BaseObject{
 		canvas.drawText(content, 0, ctH-adjust, paint);
 		PrinterNozzle head = mTask.getNozzle();
 		Debug.d(TAG, "--->content: " + content + "  descent=" + fm.descent + "  ascent= " + fm.ascent + " botom= " + fm.bottom + " top = " + fm.top + " leading = " + fm.leading);
-		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
+		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 			return bitmap;
 		}
 
