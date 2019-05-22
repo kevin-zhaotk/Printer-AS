@@ -225,6 +225,14 @@ public class MessageObject extends BaseObject {
 			for (int i = 0; i < size.length; i++) {
 				size[i] = mDot_32_Size[i];
 			}
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE) {
+			for (int i = 0; i < size.length; i++) {
+				size[i] = String.valueOf(mBaseList[i] * 6);
+			}
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR) {
+			for (int i = 0; i < size.length; i++) {
+				size[i] = String.valueOf(mBaseList[i] * 8);
+			}
 		}
 		return size;
 	}

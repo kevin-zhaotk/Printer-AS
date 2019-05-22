@@ -59,7 +59,7 @@ public class BaseObject{
 	public static final String OBJECT_TYPE_RT_SECOND="036";
 	public static final String OBJECT_TYPE_LETTERHOUR ="037";
 	
-	public static final String OBJECT_TYPE_WEEKOFYEAR = "41";
+	public static final String OBJECT_TYPE_WEEKOFYEAR = "041";
 	
 	
 	public Context mContext;

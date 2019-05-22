@@ -100,6 +100,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
         	if (mTask.getMsgObject() != null) {
         		return;
         	}
+        	initCursor();
         }
         if (mImageMap.containsKey(object)) {
             return;
@@ -296,6 +297,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
     }
 
     public void setSelect(BaseObject object) {
+
 
         ArrayList<BaseObject> objects = mTask.getObjects();
 
