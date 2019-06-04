@@ -296,7 +296,8 @@ public class MessageTask {
 	public boolean createTaskFolderIfNeed() {
 		File dir = new File(ConfigPath.getTlkDir(mName));
 		if (dir.exists()) {
-			FileUtil.deleteFolder(dir.getAbsolutePath());
+			//FileUtil.deleteFolder(dir.getAbsolutePath());
+			return false;
 		}
 		if(!dir.mkdirs())
 		{

@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -65,6 +66,7 @@ import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
 import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog.OnPositiveBtnListener;
 import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog.onDeleteListener;
 import com.industry.printer.ui.CustomerDialog.ObjectInsertDialog;
+import com.industry.printer.ui.CustomerDialog.ObjectListDialog;
 import com.industry.printer.ui.MessageDisplayManager;
 import com.industry.printer.widget.PopWindowSpiner;
 
@@ -270,7 +272,7 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		mObjName = null;
 		/*initialize the object list spinner*/
 
-		initAdapter();
+//		initAdapter();
 		
 		
 	}
@@ -1292,12 +1294,21 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 	}
 	
 	private void onListPressed() {
-		ArrayList<BaseObject> list = mMsgTask.getObjects();
-		mNameAdapter.removeAll();
-		for (BaseObject object : list) {
-			mNameAdapter.addItem(object.getTitle());
-		}
-		mObjSpiner.showAsDropUp(mBtnList);
+//		ArrayList<BaseObject> list = mMsgTask.getObjects();
+//		mNameAdapter.removeAll();
+//		for (BaseObject object : list) {
+//			mNameAdapter.addItem(object.getTitle());
+//		}
+//		mObjSpiner.showAsDropUp(mBtnList);
+		final ObjectListDialog olDialog = new ObjectListDialog(mContext, mMsgTask);
+		olDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				int index = olDialog.getSelection();
+				mMsgManager.setSelect(index);
+			}
+		});
+		olDialog.show();
 	}
 	
 	private void onCursorPressed() {
