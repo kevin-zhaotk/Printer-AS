@@ -106,6 +106,15 @@ public class SystemConfigFile{
 	public static final int INDEX_HEAD_TYPE = 30;
 	public static final int INDEX_SLANT = 35;
 
+	/**
+	 * 参数39接收网络bin并直接打印
+	 * 1 像以前一样载入信息
+	 * 2 读参数。 网络打印/LAN print, 默认0， 若是1，  打印就是直接用网络收到的bin， 去掉文件头16byte，  代替生成bin下发。   不在生成bin。
+	 * 3每次下发完， 发个消息给上位机。  消息类似查询结果。
+	 * 4上位机收到消息，发下一个bin
+	 */
+	public static final int INDEX_LAN_PRINT = 38;
+
 
 	
 	public static final int INDEX_SPECIFY_HEADS = 42;

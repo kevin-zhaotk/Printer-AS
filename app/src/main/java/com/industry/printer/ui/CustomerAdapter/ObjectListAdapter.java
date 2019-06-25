@@ -64,7 +64,7 @@ public class ObjectListAdapter extends BaseAdapter {
         }
 
         BaseObject object = mTask.getObjects().get(position);
-        holder.mText.setText( object.mIndex + ". " + object.mName);
+        holder.mText.setText( (position + 1) + ". " + object.mName);
 
         if (position == currentSelect) {
             holder.mText.setSelected(true);

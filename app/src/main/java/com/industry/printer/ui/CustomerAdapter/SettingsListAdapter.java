@@ -71,6 +71,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	private PopWindowAdapter mCntReset;
 //	private PopWindowAdapter mQRsource;
 	private PopWindowAdapter mBeep;
+	private PopWindowAdapter mLan;
 	
 	private ItemViewHolder mEncoderHolder;
 	private HashMap<Integer, ItemViewHolder> mHoldMap;
@@ -239,6 +240,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mCntReset = new PopWindowAdapter(mContext, null);
 		// mQRsource = new PopWindowAdapter(mContext, null);
 		mBeep = new PopWindowAdapter(mContext, null);
+		mLan = new PopWindowAdapter(mContext, null);
 		initAdapters();
 	}
 	
@@ -376,7 +378,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[35] = new ItemOneLine(36, R.string.str_textview_param36, R.string.str_time_unit_us);
 		mSettingItems[36] = new ItemOneLine(37, R.string.str_textview_param37, R.string.str_time_unit_us);
 		mSettingItems[37] = new ItemOneLine(38, R.string.str_textview_param38, 0);
-		mSettingItems[38] = new ItemOneLine(39, R.string.str_textview_param39, 0);
+		mSettingItems[38] = new ItemOneLine(39, R.string.str_textview_param39, R.array.switch_item_entries,	0,	ItemType.TYPE_SWITCH);
 		mSettingItems[39] = new ItemOneLine(40, R.string.str_textview_param40, R.array.switch_item_entries,	0,	ItemType.TYPE_SWITCH);
 		mSettingItems[40] = new ItemOneLine(41, R.string.str_textview_param41, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
 		mSettingItems[41] = new ItemOneLine(42, R.string.str_textview_param42, 0);
@@ -489,7 +491,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		for (int i = 0; i < items.length; i++) {
 			mBeep.addItem(items[i]);
 		}
-		
+
+		for (int i = 0; i < items.length; i++) {
+			mLan.addItem(items[i]);
+		}
 		
 		items = mContext.getResources().getStringArray(R.array.pens_item_entries);
 		for (int i = 0; i < items.length; i++) {
@@ -584,9 +589,11 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			return;
 		} else if (position == 31) {
 			mSpiner.setAdapter(mCntReset);
+		} else if (position == 38) {
+			mSpiner.setAdapter(mLan);
 		} else if (position == 39) { //參數40
 			mSpiner.setAdapter(mBeep);
-		}  else if (position == 40) { //鍙冩暩40
+		} else if (position == 40) { //鍙冩暩40
 			mSpiner.setAdapter(mHandle);
 		}
 		mSpiner.setWidth(view.getWidth());

@@ -94,6 +94,7 @@
         <item>MM/DD/YYYY</item>
         <item>YY/MM/DD</item>
         <item>MM/DD/YY</item>
+        <item>YYYY</item>
     </string-array>
 
 

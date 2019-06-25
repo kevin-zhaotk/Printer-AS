@@ -68,6 +68,10 @@ public class RealtimeObject extends BaseObject {
 		for(;str != null && str.length()>0;)
 		{
 			if(	!str.startsWith("YY", i) &&
+					!str.startsWith("YYYY", i) &&
+					!str.startsWith("AAAA", i) &&
+					!str.startsWith("RRRR", i) &&
+					!str.startsWith("RR", i) &&
 					!str.startsWith("AA", i) &&
 					!str.startsWith("MM", i) &&
 					!str.startsWith("DD", i) &&
@@ -94,15 +98,17 @@ public class RealtimeObject extends BaseObject {
 					x = o.getXEnd();
 				}
 			}
-			
-			if(str.startsWith("YY", i) || str.startsWith("AA", i))
+
+			if(str.startsWith("YYYY", i) || str.startsWith("AAAA", i))
 			{
+				o = new RealtimeYear(mContext, this, x,true);
+				mSubObjs.add(o);
+				i += 4;
+			} else if(str.startsWith("YY", i) || str.startsWith("AA", i)) {
 				o = new RealtimeYear(mContext, this, x,false);
 				mSubObjs.add(o);
 				i += 2;
-			}
-			else if(str.startsWith("MM", i))
-			{
+			} else if(str.startsWith("MM", i)) {
 				o = new RealtimeMonth(mContext, this, x);
 				mSubObjs.add(o);
 				i += 2;

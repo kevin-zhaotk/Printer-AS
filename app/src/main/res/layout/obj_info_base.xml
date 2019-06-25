@@ -120,6 +120,7 @@
 	    android:layout_height="match_parent"
 	    android:layout_weight="1"
 		android:layout_marginTop="15dp"
+		android:visibility="gone"
 	    >
 	    <CheckBox
 		    android:id="@+id/reverse_cb"
@@ -130,6 +131,7 @@
 			android:paddingLeft="20dp"
 			android:paddingRight="20dp"
 		    android:checked="false"
+
 		    />
 		
 	    <TextView
@@ -151,6 +153,7 @@
 	    android:layout_height="match_parent"
 		android:layout_marginTop="15dp"
 	    android:layout_weight="1"
+        android:visibility="gone"
 	    >
 	    <CheckBox
 		    android:id="@+id/height_type"

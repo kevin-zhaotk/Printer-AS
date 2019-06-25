@@ -94,6 +94,7 @@
         <item>MM/DD/RRRR</item>
         <item>RR/MM/DD</item>
         <item>MM/DD/RR</item>
+        <item>RRRR</item>
     </string-array>
 
     <string-array name="strarrayFontSize">

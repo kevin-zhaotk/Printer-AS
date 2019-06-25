@@ -95,6 +95,7 @@
         <item>MM</item>
         <item>DD</item>
         <item>HH:NN</item>
+        <item>YYYY</item>
     </string-array>
 
     <string-array name="strarrayFontSize">

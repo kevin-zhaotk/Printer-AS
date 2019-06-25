@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 
 import com.industry.printer.ImageConverter;
 import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.FileUtil;
@@ -45,9 +46,10 @@ public class GraphicObject  extends BaseObject{
 		mBitmap = BitmapFactory.decodeFile(file);
 		// mBitmap = ImageConverter.convertGreyImg(b);
 		// BinFromBitmap.recyleBitmap(b);
+		PrinterNozzle type = mTask.getNozzle();
 		if (mBitmap != null) {
-			mWidth = mBitmap.getWidth();
-			mHeight = mBitmap.getHeight();
+			mWidth = mBitmap.getWidth()/type.getScaleW();
+			mHeight = mBitmap.getHeight()/type.getScaleH();
 		}
 		Debug.d(TAG, "setImage w= " + mWidth + " h= " + mHeight);
 	}

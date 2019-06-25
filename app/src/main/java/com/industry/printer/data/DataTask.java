@@ -532,10 +532,10 @@ public class DataTask {
 				if (sysconf.getParam(15) > 0) {
 					revert |= 0x02;
 				}
-				if (sysconf.getParam(20) > 0) {
+				if (sysconf.getParam(22) > 0) {
 					revert |= 0x04;
 				}
-				if (sysconf.getParam(21) > 0) {
+				if (sysconf.getParam(23) > 0) {
 					revert |= 0x08;
 				}
 			}

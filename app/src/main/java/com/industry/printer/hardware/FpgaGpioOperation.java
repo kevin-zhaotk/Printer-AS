@@ -245,8 +245,10 @@ public class FpgaGpioOperation {
 			data[15] = 1;
 		}
 		if (type == SETTING_TYPE_PURGE1) {
+			data[4] = (char)(data[4] * 2);
 			data[17] = (char) (data[17] | 0x010);
 		} else if (type == SETTING_TYPE_PURGE2) {
+			data[4] = (char)(data[4] * 2);
 			data[17] = (char) (data[17] & 0xffef);
 		}
 		/* else {

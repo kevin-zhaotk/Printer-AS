@@ -59,7 +59,7 @@ public class RealtimeYear extends BaseObject {
 			mFormat="YYYY";
 			setContent(BaseObject.intToFormatString(t.year, 4));
 		}
-		System.out.println("<<<RealtimeYear");
+		Debug.d(TAG, ">>getContent, "+mFormat);
 	}
 	
 	public RealtimeYear(Context context, RealtimeObject parent, float x, boolean f) {
@@ -89,7 +89,6 @@ public class RealtimeYear extends BaseObject {
 	{
 		float prop = getProportion();
 		StringBuilder builder = new StringBuilder(mId);
-		
 		builder.append("^")
 				.append(BaseObject.floatToFormatString(getX() * prop, 5))
 				.append("^")

@@ -255,8 +255,9 @@ public class BaseObject{
 	}
 	
 	public void setReverse(boolean reverse) {
-		Debug.d(TAG, "--->setReverse: " + reverse);
-		mReverse = reverse;
+		Debug.e(TAG, "--->setReverse: " + reverse + "  fail because we close this function at 20190619");
+		return;
+//		mReverse = reverse;
 	}
 	
 	public boolean getReverse() {
@@ -414,6 +415,8 @@ public class BaseObject{
 
 	/**
 	 * 根據content生成變量的bin
+	 * 1、32点信息的bin统一不支持缩放
+	 * 2、7点和16点锁定字库
 	 * @param ctx 內容
 	 * @param scaleW	單個字符的實際寬度
 	 * @param scaleH	字符實際高度
@@ -434,16 +437,23 @@ public class BaseObject{
 		} catch (Exception e) {
 			
 		}
-		
+
 		int width = (int)paint.measureText("8");
 		FontMetrics fm = paint.getFontMetrics();
 		
 		/*draw Bitmap of single digit*/
 		Bitmap bmp = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
 		Canvas can = new Canvas(bmp);
-		
+
+		PrinterNozzle head = mTask.getNozzle();
+		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+			singleW = width;
+		} else {
+			singleW = (int)(mWidth * scaleW/mContent.length());
+		}
+
 		/*draw 0-9 totally 10 digits Bitmap*/
-		singleW = (int)(mWidth * scaleW/mContent.length());
+
 		/** if message isn`t high resolution, divid by 2 because the buffer bitmap is halfed, so the variable buffer should be half too*/
 		MessageObject msgObj = mTask.getMsgObject();
 		if (!msgObj.getResolution() ) {
@@ -466,6 +476,7 @@ public class BaseObject{
 		BinFromBitmap.recyleBitmap(bmp);
 		
 		BinFileMaker maker = new BinFileMaker(mContext);
+
 		dots = maker.extract(Bitmap.createScaledBitmap(gBmp, gBmp.getWidth(), dstH, false), 1);
 		Debug.d(TAG, "--->id: " + mId + " index:  " + mIndex);
 		maker.save(ConfigPath.getVBinAbsolute(mTask.getName(), mIndex));

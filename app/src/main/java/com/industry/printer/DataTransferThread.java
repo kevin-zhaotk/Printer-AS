@@ -1,6 +1,8 @@
 package com.industry.printer;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -77,6 +79,9 @@ public class DataTransferThread {
 	private Lock mPurgeLock;
 	public  boolean isCleaning;
 
+	private static char[] mLanBuffer;
+
+
 	private InkLevelListener mInkListener = null;
 	
 	public static DataTransferThread getInstance() {
@@ -111,7 +116,20 @@ public class DataTransferThread {
 			mIndex = 0;
 		}
 	}
-	
+
+	private boolean isLandPrint() {
+		int lan = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_LAN_PRINT);
+		return lan == 1;
+	}
+
+	public static synchronized void setLanBuffer(char[] buffer) {
+		mLanBuffer = Arrays.copyOf(buffer, buffer.length);
+	}
+
+	public static synchronized char[] getLanBuffer() {
+		return mLanBuffer;
+	}
+
 	public synchronized int index() {
 		return mIndex;
 	}
@@ -170,7 +188,7 @@ public class DataTransferThread {
 		FpgaGpioOperation.updateSettings(context, task, purgeType);
 		FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -477,6 +495,8 @@ public class DataTransferThread {
 		 * 一個任務打印完成
 		 */
 		public void onComplete();
+
+		void onPrinted();
 	}
 	
 	public static final int CODE_BARFILE_END = 1;
@@ -532,23 +552,35 @@ public class DataTransferThread {
 
 			char[] buffer = null;
 			long last = 0;
+
 			/*逻辑要求，必须先发数据*/
 			Debug.d(TAG, "--->print run");
+
 			int index = index();
-			buffer = mDataTask.get(index).getPrintBuffer();
-			Debug.d(TAG, "--->print buffer ready");
+
+			if (isLandPrint()) {
+
+				while ((buffer = getLanBuffer()) == null) {
+					try {
+						Thread.sleep(2000);
+					} catch (Exception e) {}
+					buffer = getLanBuffer();
+				}
+			} else {
+				buffer = mDataTask.get(index).getPrintBuffer();
+				Debug.d(TAG, "--->print buffer ready");
 //			int type = mDataTask.get(index).getHeadType();
 
-			FileUtil.deleteFolder("/mnt/sdcard/print.bin");
-			
-			ExtendInterceptor interceptor = new ExtendInterceptor(mContext);
-			ExtendStat extend = interceptor.getExtend();
-			// save print.bin to /mnt/sdcard/ folder
-			int cH = mDataTask.get(mIndex).getInfo().mBytesPerHFeed*8*mDataTask.get(mIndex).getPNozzle().mHeads;
-			Debug.d(TAG, "--->cH: " + cH);
-			BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, cH);
-			int n=0;
+				FileUtil.deleteFolder("/mnt/sdcard/print.bin");
 
+				ExtendInterceptor interceptor = new ExtendInterceptor(mContext);
+				ExtendStat extend = interceptor.getExtend();
+				// save print.bin to /mnt/sdcard/ folder
+				int cH = mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads;
+				Debug.d(TAG, "--->cH: " + cH);
+				BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, cH);
+				int n = 0;
+			}
 			Debug.e(TAG, "--->write data");
 			FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
 			last = SystemClock.currentThreadTimeMillis();
@@ -557,40 +589,34 @@ public class DataTransferThread {
 			
 			boolean isFirst = true;
 			while(mRunning == true) {
-				
-//				Debug.e(TAG, "--->start print");
-				//FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
+
 				int writable = FpgaGpioOperation.pollState();
-				// writable = 1;
-//				Debug.e(TAG, "--->writable: " + writable);
+
 				if (writable == 0) { //timeout
-//					Debug.d(TAG, "--->timeout");
 				} else if (writable == -1) {
-//					Debug.d(TAG, "--->pollstate " + writable);
 				} else {
-//					
 					Debug.d(TAG, "--->FPGA buffer is empty");
+					if (mCallback != null) {
+						mCallback.onPrinted();
+					}
 					mInterval = SystemClock.currentThreadTimeMillis() - last;
 					mHandler.removeMessages(MESSAGE_DATA_UPDATE);
 					mNeedUpdate = false;
 
 					synchronized (DataTransferThread.class) {
-						if (!mDataTask.get(index()).isReady) {
-							mRunning = false;
-							if (mCallback != null) {
-								mCallback.OnFinished(CODE_BARFILE_END);
+						if (isLandPrint()) {
+							buffer = getLanBuffer();
+						} else {
+							if (!mDataTask.get(index()).isReady) {
+								mRunning = false;
+								if (mCallback != null) {
+									mCallback.OnFinished(CODE_BARFILE_END);
+								}
+								break;
 							}
-							break;
+							next();
+							buffer = mDataTask.get(index()).getPrintBuffer();
 						}
-//						if (isFirst) {
-//							next();
-//							Debug.d(TAG, "===>buffer getPrintbuffer");
-//							buffer = mDataTask.get(index()).getPrintBuffer();
-//							Debug.d(TAG, "===>buffer getPrintbuffer finish");
-//							isFirst = false;
-//						}
-						next();
-						buffer = mDataTask.get(index()).getPrintBuffer();
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
 						last = SystemClock.currentThreadTimeMillis();
 						countDown();

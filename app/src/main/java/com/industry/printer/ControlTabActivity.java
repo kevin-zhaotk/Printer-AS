@@ -1186,7 +1186,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	 * @param pcMsg
 	 */
 	private void handleError(String toast, String pcMsg) {
-		ToastUtil.show(mContext, toast);
+
+		ToastUtil.show(mContext, toast == null ? "failed" : toast);
 		sendToRemote(Constants.pcErr(pcMsg));
 		dismissProgressDialog();
 	}
@@ -1196,6 +1197,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	 * @param pcMsg
 	 */
 	private void handleError(int toastRs, String pcMsg) {
+		if (toastRs == 0) {
+			toastRs = R.string.str_toast_no_bin;
+		}
 		ToastUtil.show(mContext, toastRs);
 		sendToRemote(Constants.pcErr(pcMsg));
 		dismissProgressDialog();
@@ -2047,8 +2051,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		        }  
 		    public void run() {  
 		              
-		                try {  
-		                	server = new ServerSocket(PORT);  
+		                try {
+		                	server = new ServerSocket(PORT);
 		                } catch (IOException e1) {  
 		                    // TODO Auto-generated catch block  
 		                    System.out.println("S2: Error");  
@@ -2156,7 +2160,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                             //100是打印  
 		                          //	msg= toStringHex(msg); 
 		                        	Debug.d(TAG, "--->fromPc: " + msg);
-		                            if(msg.indexOf("100")>=0) {
+		                        	if (msg.indexOf("1000") >= 0) {  // LAN Printing
+
+										cacheBin(Gsocket, msg);
+									} else if(msg.indexOf("100")>=0) {
 										String[] Apath = msg.split("\\|");
 										if (Apath == null || Apath.length < 4) {
 											continue;
@@ -2290,8 +2297,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	} else {
 		                            		this.sendmsg(Constants.pcErr(msg));
 		                            	}
-		                            }
-		                            else {  
+		                            } else {
 		                                 Message msgLocal = new Message();  
 		                                 msgLocal.what = 0x1234;  
 		                                 msgLocal.obj =msg+"" ;  
@@ -2300,15 +2306,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                                 myHandler.sendMessage(msgLocal);  
 		                               
 		                                 this.sendmsg(Constants.pcErr(msg));
-		                                    }  
+		                            }
 		                                          
 								}
 		                 } catch (SocketTimeoutException e) {
 
 						 }catch (IOException e) {
-		                        System.out.println("close");  
+		                        Debug.i(TAG, "--->socketE: " + e.getMessage());
 		                        kk=false;  
-		                        e.printStackTrace();
 		                        this.sendmsg(Constants.pcErr(msg));
 		                        return;
 		                    }  
@@ -2320,7 +2325,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		         //向客户端发信息
 		         public void sendmsg(String msg) {  
 		            //System.out.println(msg);
-		        
+					 Debug.i(TAG, "--->send: " + msg);
 		             PrintWriter pout = null;  
 		             try {  
 		                 pout = new PrintWriter(new BufferedWriter(  
@@ -2332,7 +2337,41 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		      }  
 		       
 
-		}  
+		}
+
+		// cache bin
+		private void cacheBin(Socket socket, String message) {
+			Debug.i(TAG, "--->cacheBin: " + message);
+			try {
+				byte[] header = new byte[16];
+
+				InputStream stream = socket.getInputStream();
+				while (true) {
+					int length = stream.available();
+					if (length == 0) {
+						Thread.sleep(1000);
+						continue;
+					}
+					Debug.i(TAG, "--->stream.length:" + length);
+					byte[] body = new byte[length - 16];
+					stream.read(header);
+					stream.read(body);
+					sRemoteBin = new char[body.length/2];
+					for (int i = 0; i < body.length/2; i++) {
+						sRemoteBin[i] = (char)(body[2*i] << 8 + body[2*i+1]);
+					}
+					break;
+
+				}
+
+
+				this.sendMsg(Constants.pcOk(message));
+			} catch (Exception e) {
+				Debug.e(TAG, "--->stream read e: " + e.getMessage());
+
+			}
+
+		}
 		//获取设备信息
 		    private HashMap<String, String> obtainSimpleInfo(Context context){
 				//HashMap<String, String> map = new HashMap<String, String>();
@@ -2594,7 +2633,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	    public void onComplete() {
 			String msg=mCounter+" \r\nink"+mRfidManager.getLocalInk(0)+"\r\n"+mObjPath+"\r\n";
 			Debug.d(TAG, "--->onComplete: msg = " + msg);
-			PrintWriter pout = null;  
+			PrintWriter pout = null;
+			this.sendMsg("1000|1");
 //	        try {
 //	            pout = new PrintWriter(new BufferedWriter(  
 //	                   new OutputStreamWriter(Gsocket.getOutputStream())),true);  
@@ -2603,6 +2643,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //	             e.printStackTrace();  
 //	         }  
 		}
+		public void onPrinted() {
+	    	this.sendMsg("1000|2");
+		}
+
+	static char[] sRemoteBin;
 	//Socket________________________________________________________________________________________________________________________________
 	
 }
