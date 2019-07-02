@@ -3,7 +3,9 @@ package com.industry.printer;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -79,7 +81,7 @@ public class DataTransferThread {
 	private Lock mPurgeLock;
 	public  boolean isCleaning;
 
-	private static char[] mLanBuffer;
+	private static Map<String,char[]> mLanBuffer;
 
 
 	private InkLevelListener mInkListener = null;
@@ -112,8 +114,14 @@ public class DataTransferThread {
 
 	private synchronized void next() {
 		mIndex++;
-		if (mIndex >= mDataTask.size()) {
-			mIndex = 0;
+		if (isLandPrint()) {
+			if (!mLanBuffer.containsKey(String.valueOf(mIndex))){
+				mIndex = 0;
+			}
+		} else {
+			if (mIndex >= mDataTask.size()) {
+				mIndex = 0;
+			}
 		}
 	}
 
@@ -122,14 +130,23 @@ public class DataTransferThread {
 		return lan == 1;
 	}
 
-	public static synchronized void setLanBuffer(char[] buffer) {
-		mLanBuffer = Arrays.copyOf(buffer, buffer.length);
+	public static synchronized void setLanBuffer(int index, char[] buffer) {
+		if (mLanBuffer == null) {
+			mLanBuffer = new HashMap<String, char[]>();
+		}
+		mLanBuffer.put(String.valueOf(index), Arrays.copyOf(buffer, buffer.length));
 	}
 
-	public static synchronized char[] getLanBuffer() {
-		return mLanBuffer;
+	public static synchronized char[] getLanBuffer(int index) {
+
+		return mLanBuffer.get(String.valueOf(index));
 	}
 
+	public static synchronized void deleteLanBuffer(int index) {
+		if (mLanBuffer != null) {
+			mLanBuffer.remove(String.valueOf(index));
+		}
+	}
 	public synchronized int index() {
 		return mIndex;
 	}
@@ -560,11 +577,10 @@ public class DataTransferThread {
 
 			if (isLandPrint()) {
 
-				while ((buffer = getLanBuffer()) == null) {
+				while ((buffer = getLanBuffer(index)) == null) {
 					try {
 						Thread.sleep(2000);
 					} catch (Exception e) {}
-					buffer = getLanBuffer();
 				}
 			} else {
 				buffer = mDataTask.get(index).getPrintBuffer();
@@ -605,7 +621,8 @@ public class DataTransferThread {
 
 					synchronized (DataTransferThread.class) {
 						if (isLandPrint()) {
-							buffer = getLanBuffer();
+							buffer = getLanBuffer(index());
+							next();
 						} else {
 							if (!mDataTask.get(index()).isReady) {
 								mRunning = false;

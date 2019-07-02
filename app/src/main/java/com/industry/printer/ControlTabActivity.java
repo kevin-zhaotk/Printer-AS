@@ -37,6 +37,7 @@ import com.industry.printer.FileFormat.DotMatrixFont;
 import com.industry.printer.FileFormat.QRReader;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Socket_Server.Network;
+import com.industry.printer.Socket_Server.PCCommand;
 import com.industry.printer.Socket_Server.Paths_Create;
 import com.industry.printer.Socket_Server.Printer_Database;
 import com.industry.printer.Utils.ConfigPath;
@@ -2163,6 +2164,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                        	if (msg.indexOf("1000") >= 0) {  // LAN Printing
 
 										cacheBin(Gsocket, msg);
+									} else if (msg.indexOf("1100") >= 0) {
+
+		                        	    PCCommand cmd = PCCommand.fromString(msg);
+		                        	    DataTransferThread.deleteLanBuffer(Integer.valueOf(cmd.content));
 									} else if(msg.indexOf("100")>=0) {
 										String[] Apath = msg.split("\\|");
 										if (Apath == null || Apath.length < 4) {
@@ -2301,8 +2306,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                                 Message msgLocal = new Message();  
 		                                 msgLocal.what = 0x1234;  
 		                                 msgLocal.obj =msg+"" ;  
-		                                 System.out.println(msgLocal.obj.toString());  
-		                                 System.out.println(msg);  
+		                                 Debug.i(TAG, "--->" + msgLocal.obj.toString());
+                                        Debug.i(TAG, "--->" + msg);
 		                                 myHandler.sendMessage(msgLocal);  
 		                               
 		                                 this.sendmsg(Constants.pcErr(msg));
@@ -2342,34 +2347,80 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		// cache bin
 		private void cacheBin(Socket socket, String message) {
 			Debug.i(TAG, "--->cacheBin: " + message);
+			PCCommand cmd = PCCommand.fromString(message);
+			int length = Integer.valueOf(cmd.size);
+			byte[] buffer = new byte[length];
+			int total = 0;
+			int timeout = 5;
+			char[] remoteBin = new char[(length - 16) / 2];
 			try {
-				byte[] header = new byte[16];
-
 				InputStream stream = socket.getInputStream();
 				while (true) {
-					int length = stream.available();
-					if (length == 0) {
-						Thread.sleep(1000);
-						continue;
-					}
-					Debug.i(TAG, "--->stream.length:" + length);
-					byte[] body = new byte[length - 16];
-					stream.read(header);
-					stream.read(body);
-					sRemoteBin = new char[body.length/2];
-					for (int i = 0; i < body.length/2; i++) {
-						sRemoteBin[i] = (char)(body[2*i] << 8 + body[2*i+1]);
-					}
-					break;
+					try {
 
+						Thread.sleep(2000);
+						int r = stream.read(buffer);
+
+						break;
+					} catch (Exception ex) {
+//						this.sendMsg(Constants.pcErr(message));
+						Debug.e(TAG, "--->e: " + ex.getMessage());
+						timeout--;
+						if (timeout ==0 ) break;
+					}
 				}
-
-
-				this.sendMsg(Constants.pcOk(message));
 			} catch (Exception e) {
-				Debug.e(TAG, "--->stream read e: " + e.getMessage());
-
+				this.sendMsg(Constants.pcErr(message));
 			}
+			if (timeout == 0) {
+				this.sendMsg(Constants.pcErr(message));
+			} else {
+				for (int i = 0; i < remoteBin.length; i++) {
+					remoteBin[i] = (char) (buffer[2 * i + 16] << 8 + buffer[2 * i + 16 + 1]);
+				}
+				DataTransferThread.setLanBuffer(Integer.valueOf(cmd.content), remoteBin);
+
+                this.sendMsg(Constants.pcOk(message));
+            }
+
+//			try {
+//				InputStream stream = socket.getInputStream();
+//
+//				char[] remoteBin = new char[length / 2];
+//				int total = 0;
+//				int timeout = 3;
+//				Debug.i(TAG, "--->stream.length:" + length);
+//
+//				while (true) {
+//
+//					try {
+//						int read = 0;
+//						read = stream.read(buffer);
+//
+//						int start = total == 0 ? 16 / 2 : 0;
+//						for (int i = start; i < read / 2; i++) {
+//							remoteBin[i] = (char) (buffer[2 * i] << 8 + buffer[2 * i + 1]);
+//						}
+//						total += read;
+//					} catch (Exception e) {
+//						timeout--;
+//						if (timeout <= 0) {
+//							break;
+//						}
+//						Debug.e(TAG, "--->stream read e: " + e.getMessage());
+////					this.sendMsg(Constants.pcErr(message));
+//						try {
+//							Thread.sleep(2000);
+//						} catch (Exception exception) { }
+//
+//					}
+//				}
+//				DataTransferThread.setLanBuffer(Integer.valueOf(cmd.content), remoteBin);
+//
+//				this.sendMsg(Constants.pcOk(message));
+//
+//			} catch (Exception ex ) {}
+
 
 		}
 		//获取设备信息
