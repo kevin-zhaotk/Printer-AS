@@ -123,6 +123,7 @@ public class DataTransferThread {
 				mIndex = 0;
 			}
 		}
+		Debug.i(TAG, "--->next: " + mIndex);
 	}
 
 	private boolean isLandPrint() {
@@ -134,12 +135,15 @@ public class DataTransferThread {
 		if (mLanBuffer == null) {
 			mLanBuffer = new HashMap<String, char[]>();
 		}
+		Debug.i(TAG, "--->setlanBuffer: [" + index + "," + buffer.length + "]");
 		mLanBuffer.put(String.valueOf(index), Arrays.copyOf(buffer, buffer.length));
 	}
 
 	public static synchronized char[] getLanBuffer(int index) {
-
-		return mLanBuffer.get(String.valueOf(index));
+		if (mLanBuffer != null) {
+			return mLanBuffer.get(String.valueOf(index));
+		}
+		return new char[2];
 	}
 
 	public static synchronized void deleteLanBuffer(int index) {
@@ -147,6 +151,13 @@ public class DataTransferThread {
 			mLanBuffer.remove(String.valueOf(index));
 		}
 	}
+
+	public static synchronized void cleanLanBuffer() {
+		if (mLanBuffer != null) {
+			mLanBuffer.clear();
+		}
+	}
+
 	public synchronized int index() {
 		return mIndex;
 	}
@@ -386,6 +397,7 @@ public class DataTransferThread {
 	}
 
 	public void setDotCount(List<MessageTask> messages) {
+		if (isLandPrint()) return;
 		for (int i = 0; i < mDataTask.size(); i++) {
 			DataTask t = mDataTask.get(i);
 			if (messages.size() <= i) {
@@ -441,7 +453,9 @@ public class DataTransferThread {
 	}
 	
 	public int getCount() {
-		
+		if (mcountdown == null) {
+			initCount();
+		}
 		return mcountdown[0];
 	}
 	
@@ -451,8 +465,9 @@ public class DataTransferThread {
 	 * @return
 	 */
 	public int getInkThreshold(int head) {
+		//if (isLandPrint()) return 1;
 		int bold = 1;
-		int index = index();
+		int index = isLandPrint() ? 0 : index();
 		int dotCount = getDotCount(mDataTask.get(index), head);
 		// Debug.d(TAG, "--->getInkThreshold  head: " + head + "   index = " + index + " dataTask: " + mDataTask.size());
 		Debug.d(TAG, "--->dotCount: " + dotCount + "  bold=" + bold);
@@ -575,28 +590,21 @@ public class DataTransferThread {
 
 			int index = index();
 
-			if (isLandPrint()) {
 
-				while ((buffer = getLanBuffer(index)) == null) {
-					try {
-						Thread.sleep(2000);
-					} catch (Exception e) {}
-				}
-			} else {
-				buffer = mDataTask.get(index).getPrintBuffer();
-				Debug.d(TAG, "--->print buffer ready");
+			buffer = mDataTask.get(index).getPrintBuffer();
+			if (isLandPrint()) {
+				setLanBuffer(index, buffer);
+			}
+			Debug.d(TAG, "--->print buffer ready");
 //			int type = mDataTask.get(index).getHeadType();
 
-				FileUtil.deleteFolder("/mnt/sdcard/print.bin");
+			FileUtil.deleteFolder("/mnt/sdcard/print.bin");
+			ExtendInterceptor interceptor = new ExtendInterceptor(mContext);
+			ExtendStat extend = interceptor.getExtend();// save print.bin to /mnt/sdcard/ folder
+			int cH = mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads;
+			Debug.d(TAG, "--->cH: " + cH);
+			BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, cH);int n = 0;
 
-				ExtendInterceptor interceptor = new ExtendInterceptor(mContext);
-				ExtendStat extend = interceptor.getExtend();
-				// save print.bin to /mnt/sdcard/ folder
-				int cH = mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads;
-				Debug.d(TAG, "--->cH: " + cH);
-				BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, cH);
-				int n = 0;
-			}
 			Debug.e(TAG, "--->write data");
 			FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
 			last = SystemClock.currentThreadTimeMillis();
@@ -609,6 +617,7 @@ public class DataTransferThread {
 				int writable = FpgaGpioOperation.pollState();
 
 				if (writable == 0) { //timeout
+
 				} else if (writable == -1) {
 				} else {
 					Debug.d(TAG, "--->FPGA buffer is empty");
@@ -622,6 +631,7 @@ public class DataTransferThread {
 					synchronized (DataTransferThread.class) {
 						if (isLandPrint()) {
 							buffer = getLanBuffer(index());
+							Debug.i(TAG, "--->buffer.length: " + buffer.length);
 							next();
 						} else {
 							if (!mDataTask.get(index()).isReady) {

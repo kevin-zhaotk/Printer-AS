@@ -637,7 +637,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		float count = 0;
 		// String cFormat = getResources().getString(R.string.str_print_count);
 		// ((MainActivity)getActivity()).mCtrlTitle.setText(String.format(cFormat, mCounter));
-		
+
 		RFIDDevice device = mRfidManager.getDevice(mRfid);
 		if (device != null && mDTransThread != null) {
 			count = device.getLocalInk() - 1;
@@ -1336,6 +1336,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	}
 	private void updateCntIfNeed() {
 		int index = mDTransThread.index();
+		if (index >= mMsgTask.size()) return;
 		MessageTask task = mMsgTask.get(index);
 
 		for (BaseObject object : task.getObjects()) {
@@ -2168,6 +2169,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 		                        	    PCCommand cmd = PCCommand.fromString(msg);
 		                        	    DataTransferThread.deleteLanBuffer(Integer.valueOf(cmd.content));
+									} else if (msg.indexOf("1200") >= 0) {
+
+										PCCommand cmd = PCCommand.fromString(msg);
+										DataTransferThread.cleanLanBuffer();
 									} else if(msg.indexOf("100")>=0) {
 										String[] Apath = msg.split("\\|");
 										if (Apath == null || Apath.length < 4) {
@@ -2352,6 +2357,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			byte[] buffer = new byte[length];
 			int total = 0;
 			int timeout = 5;
+			if (length <= 16) {
+			    this.sendMsg(Constants.pcErr(message));
+			    return;
+            }
 			char[] remoteBin = new char[(length - 16) / 2];
 			try {
 				InputStream stream = socket.getInputStream();
