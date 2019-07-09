@@ -303,7 +303,7 @@
 	<string name="str_textview_param14">14.ПГ2 зеркально</string>
 	<string name="str_textview_param15">15.ПГ1 инверт.</string>
 	<string name="str_textview_param16">16.ПГ2 инверт.</string>
-	<string name="str_textview_param17">17.ПГ</string>
+	<string name="str_textview_param17">17.задержка даты </string>
 	<string name="str_textview_param18">18.Счетчик</string>
 	<string name="str_textview_param19">19.ПГ3 сдвиг</string>
 	<string name="str_textview_param20">20.ПГ4 сдвиг</string>

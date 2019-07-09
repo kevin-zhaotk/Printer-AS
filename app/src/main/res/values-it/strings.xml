@@ -300,7 +300,7 @@
     <string name="str_textview_param14">14.Pen2 Mirrored</string>
     <string name="str_textview_param15">15.Inverti Pen1</string>
     <string name="str_textview_param16">16.Inverti Pen2</string>
-    <string name="str_textview_param17">17.Riservato</string>
+    <string name="str_textview_param17">17.Data di ritardo</string>
     <string name="str_textview_param18">18.Counter</string>
     <string name="str_textview_param19">19.Ritardo Pen3</string>
     <string name="str_textview_param20">20.Ritardo Pen4</string>

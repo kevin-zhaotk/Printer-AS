@@ -2172,7 +2172,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 									} else if (msg.indexOf("1200") >= 0) {
 
 										PCCommand cmd = PCCommand.fromString(msg);
-										DataTransferThread.cleanLanBuffer();
+										DataTransferThread.getInstance().resetIndex();
 									} else if(msg.indexOf("100")>=0) {
 										String[] Apath = msg.split("\\|");
 										if (Apath == null || Apath.length < 4) {

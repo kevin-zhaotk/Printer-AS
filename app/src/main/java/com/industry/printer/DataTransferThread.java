@@ -115,7 +115,7 @@ public class DataTransferThread {
 	private synchronized void next() {
 		mIndex++;
 		if (isLandPrint()) {
-			if (!mLanBuffer.containsKey(String.valueOf(mIndex))){
+			if (!mLanBuffer.containsKey(String.valueOf(mIndex+1))){
 				mIndex = 0;
 			}
 		} else {
@@ -141,7 +141,7 @@ public class DataTransferThread {
 
 	public static synchronized char[] getLanBuffer(int index) {
 		if (mLanBuffer != null) {
-			return mLanBuffer.get(String.valueOf(index));
+			return mLanBuffer.get(String.valueOf(index+1));
 		}
 		return new char[2];
 	}
@@ -160,6 +160,10 @@ public class DataTransferThread {
 
 	public synchronized int index() {
 		return mIndex;
+	}
+
+	public synchronized void resetIndex() {
+		mIndex = 0;
 	}
 	
 	boolean needRestore = false;

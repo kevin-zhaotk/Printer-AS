@@ -76,7 +76,7 @@ public class JulianDayObject extends BaseObject {
 		Time t = new Time();
 		t.set(System.currentTimeMillis());
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
-		int range = config.getParam(16);
+		int range = config.getParam(SystemConfigFile.INDEX_DAY_START);
 		int th = t.hour * 100 + t.minute;
 		return t.yearDay + (th > range ? 1 : 0);
 	}

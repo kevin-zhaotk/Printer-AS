@@ -303,7 +303,7 @@
 	<string name="str_textview_param14">14.Pen2 Mirrored</string>
 	<string name="str_textview_param15">15.Pen1 Invert</string>
 	<string name="str_textview_param16">16.Pen2 Invert</string>
-	<string name="str_textview_param17">17.Pens</string>
+	<string name="str_textview_param17">17.Datum Verzögerung</string>
 	<string name="str_textview_param18">18.Counter</string>
 	<string name="str_textview_param19">19.Pen3 offset</string>
 	<string name="str_textview_param20">20.Pen4 offset</string>
