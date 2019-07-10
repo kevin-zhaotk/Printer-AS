@@ -115,7 +115,7 @@ public class DataTransferThread {
 	private synchronized void next() {
 		mIndex++;
 		if (isLandPrint()) {
-			if (!mLanBuffer.containsKey(String.valueOf(mIndex+1))){
+			if (!mLanBuffer.containsKey(String.valueOf(mIndex))){
 				mIndex = 0;
 			}
 		} else {
@@ -141,7 +141,7 @@ public class DataTransferThread {
 
 	public static synchronized char[] getLanBuffer(int index) {
 		if (mLanBuffer != null) {
-			return mLanBuffer.get(String.valueOf(index+1));
+			return mLanBuffer.get(String.valueOf(index));
 		}
 		return new char[2];
 	}
@@ -530,9 +530,9 @@ public class DataTransferThread {
 		/**
 		 * 一個任務打印完成
 		 */
-		public void onComplete();
+		public void onComplete(int index);
 
-		void onPrinted();
+		void onPrinted(int index);
 	}
 	
 	public static final int CODE_BARFILE_END = 1;
@@ -626,7 +626,7 @@ public class DataTransferThread {
 				} else {
 					Debug.d(TAG, "--->FPGA buffer is empty");
 					if (mCallback != null) {
-						mCallback.onPrinted();
+						mCallback.onPrinted(mIndex);
 					}
 					mInterval = SystemClock.currentThreadTimeMillis() - last;
 					mHandler.removeMessages(MESSAGE_DATA_UPDATE);
@@ -654,7 +654,7 @@ public class DataTransferThread {
 						mInkListener.onCountChanged();
 						mScheduler.schedule();
 						if (mCallback != null) {
-							mCallback.onComplete();
+							mCallback.onComplete(mIndex);
 						}
 					}
 				}

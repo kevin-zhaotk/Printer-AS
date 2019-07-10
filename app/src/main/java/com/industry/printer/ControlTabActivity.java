@@ -2173,6 +2173,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 										PCCommand cmd = PCCommand.fromString(msg);
 										DataTransferThread.getInstance().resetIndex();
+										this.sendmsg(Constants.pcOk(msg));
 									} else if(msg.indexOf("100")>=0) {
 										String[] Apath = msg.split("\\|");
 										if (Apath == null || Apath.length < 4) {
@@ -2690,11 +2691,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			return sdcard_path;
 		}
 
-	    public void onComplete() {
+	    public void onComplete(int index) {
 			String msg=mCounter+" \r\nink"+mRfidManager.getLocalInk(0)+"\r\n"+mObjPath+"\r\n";
 			Debug.d(TAG, "--->onComplete: msg = " + msg);
 			PrintWriter pout = null;
-			this.sendMsg("1000|1");
+			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|0000|0D0A");
 //	        try {
 //	            pout = new PrintWriter(new BufferedWriter(  
 //	                   new OutputStreamWriter(Gsocket.getOutputStream())),true);  
@@ -2703,8 +2704,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //	             e.printStackTrace();  
 //	         }  
 		}
-		public void onPrinted() {
-	    	this.sendMsg("1000|2");
+		public void onPrinted(int index) {
+	    	this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|0000|0D0A");
 		}
 
 	static char[] sRemoteBin;
