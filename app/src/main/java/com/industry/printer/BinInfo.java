@@ -426,7 +426,53 @@ public class BinInfo {
 //   		expendColumn(8);
     	return extract();
     }
-    
+
+    public synchronized char[] getVarBufferByAscii(String text) {
+		int n;
+		byte[] feed = {0};
+
+		ByteArrayBuffer ba = new ByteArrayBuffer(0);
+		for(int i=0; i<text.length(); i++)
+		{
+//			String v = text.substring(i, i+1);
+			int ascii = text.charAt(i);
+			n = ascii - 0x20;
+			if (mBuffer == null || mBuffer.length < (n+1) * mColPerElement * mBytesPerColumn) {
+				continue;
+			}
+			Debug.d(TAG, "===>mColPerElement:" + mColPerElement + ", mBytesPerH=" + mBytesPerH + ", type=" + mType);
+			/* 如果每列的字节数为单数，则需要在每列尾部补齐一个字节 */
+			for (int k = 0; k < mColPerElement; k++) {
+				for (int j = 0; j < mType; j++) {
+					ba.append(mBuffer, n*mColPerElement * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
+					if (mNeedFeed) {
+						ba.append(feed, 0, 1);
+					}
+					// Debug.d(TAG, "===>offset:" + (n*mColPerElement * mBytesPerColumn + 16 + k * mBytesFeed + j * mBytesPerH) + " ,mBytesPerH=" + mBytesPerH);
+				}
+			}
+		}
+		mBufferBytes = ba.toByteArray();
+
+		//把byte[]存为char[]
+		if (mBufferChars == null) {
+			mBufferChars = new char[mBufferBytes.length/2];
+		}
+		if (mExtend != null && mExtend.getScale() > 1) {
+			mBufferChars = new char[mBufferBytes.length/2];
+		}
+		Debug.d(TAG, "--->char len = " + mBufferChars.length + "   bytes: " + mBufferBytes.length);
+		for(int i = 0; i < mBufferChars.length; i++) {
+			mBufferChars[i] = (char) ((char)((mBufferBytes[2*i+1] << 8) & 0x0ff00) | (mBufferBytes[2*i] & 0x0ff));
+		}
+
+		// row extension
+		expend();
+
+		// column extension
+//    	expendColumn(8);
+		return extract();
+	}
     
     public static void overlap(byte[] dst, byte[] src, int x, int high)
     {

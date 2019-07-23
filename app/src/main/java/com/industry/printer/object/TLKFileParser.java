@@ -322,6 +322,8 @@ public class TLKFileParser  extends TlkFile{
 				obj = new WeekOfYearObject(mContext);
 			} else if (BaseObject.OBJECT_TYPE_WEEKDAY.equalsIgnoreCase(attr[1])) {
 				obj = new WeekDayObject(mContext);
+			} else if (BaseObject.OBJECT_TYPE_DYN_TEXT.equalsIgnoreCase(attr[1])) {
+				obj = DynamicText.fromTlk(mContext, str);
 			} else {
 				Debug.d(TAG, "Unknown object type: " + attr[1]);
 				return null;

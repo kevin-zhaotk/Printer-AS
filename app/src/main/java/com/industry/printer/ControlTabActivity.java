@@ -1984,11 +1984,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			myHandler =new Handler(){	
 			public void handleMessage(Message msg)
 				{ 
-					if(msg.what==0x1234)
-					{
-						 String ss=msg.obj.toString();
-						// RecInfo(msg.obj.toString());
-					} else if (msg.what == EditMultiTabActivity.HANDLER_MESSAGE_SAVE_SUCCESS) {
+					if (msg.what == EditMultiTabActivity.HANDLER_MESSAGE_SAVE_SUCCESS) {
 						String cmd = msg.getData().getString(Constants.PC_CMD);
 						sendMsg(Constants.pcOk(cmd));
 					} //else if (msg.what)
@@ -2309,14 +2305,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            		this.sendmsg(Constants.pcErr(msg));
 		                            	}
 		                            } else {
-		                                 Message msgLocal = new Message();  
-		                                 msgLocal.what = 0x1234;  
-		                                 msgLocal.obj =msg+"" ;  
-		                                 Debug.i(TAG, "--->" + msgLocal.obj.toString());
-                                        Debug.i(TAG, "--->" + msg);
-		                                 myHandler.sendMessage(msgLocal);  
-		                               
-		                                 this.sendmsg(Constants.pcErr(msg));
+		                            	this.sendmsg(Constants.pcErr(msg));
 		                            }
 		                                          
 								}
@@ -2357,7 +2346,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			int length = Integer.valueOf(cmd.size);
 			byte[] buffer = new byte[length];
 			int total = 0;
-			int timeout = 5;
+			int timeout = 20;
+			Debug.i(TAG, "--->cacheBin length: " + length);
 			if (length <= 16) {
 			    this.sendMsg(Constants.pcErr(message));
 			    return;
@@ -2367,26 +2357,28 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				InputStream stream = socket.getInputStream();
 				while (true) {
 					try {
-
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 						int r = stream.read(buffer);
-
 						break;
 					} catch (Exception ex) {
 //						this.sendMsg(Constants.pcErr(message));
 						Debug.e(TAG, "--->e: " + ex.getMessage());
+
 						timeout--;
-						if (timeout ==0 ) break;
+						if (timeout == 0 ) break;
 					}
 				}
 			} catch (Exception e) {
+				Debug.e(TAG, "--->e: " + e.getMessage());
 				this.sendMsg(Constants.pcErr(message));
 			}
 			if (timeout == 0) {
+				Debug.e(TAG, "--->timeout !!!");
 				this.sendMsg(Constants.pcErr(message));
 			} else {
 				for (int i = 0; i < remoteBin.length; i++) {
-					remoteBin[i] = (char) (buffer[2 * i + 16] << 8 + buffer[2 * i + 16 + 1]);
+					remoteBin[i] = (char) ((char)(buffer[2 * i + 16 + 1] << 8) + (char)(buffer[2 * i + 16] & 0x0ff));
+					remoteBin[i] = (char)(remoteBin[i] & 0x0ffff);
 				}
 				DataTransferThread.setLanBuffer(Integer.valueOf(cmd.content), remoteBin);
 

@@ -58,6 +58,7 @@ public class BaseObject{
 	public static final String OBJECT_TYPE_WEEKS	="035";
 	public static final String OBJECT_TYPE_RT_SECOND="036";
 	public static final String OBJECT_TYPE_LETTERHOUR ="037";
+	public static final String OBJECT_TYPE_DYN_TEXT ="040";
 	
 	public static final String OBJECT_TYPE_WEEKOFYEAR = "041";
 	

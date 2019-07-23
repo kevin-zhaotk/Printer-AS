@@ -56,7 +56,7 @@ public class DataTransferThread {
 	private static final int MESSAGE_EXCEED_TIMEOUT = 60 * 1000;
 	
 	public static boolean mRunning;
-	
+	public boolean pcReset;
 	public static volatile DataTransferThread mInstance;
 	
 	private Context mContext;
@@ -135,8 +135,11 @@ public class DataTransferThread {
 		if (mLanBuffer == null) {
 			mLanBuffer = new HashMap<String, char[]>();
 		}
-		Debug.i(TAG, "--->setlanBuffer: [" + index + "," + buffer.length + "]");
+//		Debug.i(TAG, "--->setlanBuffer: [" + index + "," + buffer.length + "]");
 		mLanBuffer.put(String.valueOf(index), Arrays.copyOf(buffer, buffer.length));
+		if (index == DataTransferThread.getInstance().index()) {
+			FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
+		}
 	}
 
 	public static synchronized char[] getLanBuffer(int index) {
@@ -164,6 +167,9 @@ public class DataTransferThread {
 
 	public synchronized void resetIndex() {
 		mIndex = 0;
+		//pcReset = true;
+		char[] buffer = getLanBuffer(index());
+		FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
 	}
 	
 	boolean needRestore = false;
@@ -592,27 +598,26 @@ public class DataTransferThread {
 			/*逻辑要求，必须先发数据*/
 			Debug.d(TAG, "--->print run");
 
-			int index = index();
-
-
-			buffer = mDataTask.get(index).getPrintBuffer();
+			buffer = mDataTask.get(index()).getPrintBuffer();
 			if (isLandPrint()) {
-				setLanBuffer(index, buffer);
-			}
-			Debug.d(TAG, "--->print buffer ready");
+				setLanBuffer(index(), buffer);
+			} else {
+				Debug.d(TAG, "--->print buffer ready");
 //			int type = mDataTask.get(index).getHeadType();
 
-			FileUtil.deleteFolder("/mnt/sdcard/print.bin");
-			ExtendInterceptor interceptor = new ExtendInterceptor(mContext);
-			ExtendStat extend = interceptor.getExtend();// save print.bin to /mnt/sdcard/ folder
-			int cH = mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads;
-			Debug.d(TAG, "--->cH: " + cH);
-			BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, cH);int n = 0;
+				FileUtil.deleteFolder("/mnt/sdcard/print.bin");
+				ExtendInterceptor interceptor = new ExtendInterceptor(mContext);
+				ExtendStat extend = interceptor.getExtend();// save print.bin to /mnt/sdcard/ folder
+				int cH = mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads;
+				Debug.d(TAG, "--->cH: " + cH);
+				BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, cH);
+				int n = 0;
 
-			Debug.e(TAG, "--->write data");
-			FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
+				Debug.e(TAG, "--->write data");
+				FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
+
+			}
 			last = SystemClock.currentThreadTimeMillis();
-
 			FpgaGpioOperation.init();
 			
 			boolean isFirst = true;
@@ -622,6 +627,11 @@ public class DataTransferThread {
 
 				if (writable == 0) { //timeout
 
+//					if (isLandPrint() && pcReset == true) {
+//						buffer = getLanBuffer(index());
+//						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
+//						pcReset = false;
+//					}
 				} else if (writable == -1) {
 				} else {
 					Debug.d(TAG, "--->FPGA buffer is empty");
@@ -633,10 +643,11 @@ public class DataTransferThread {
 					mNeedUpdate = false;
 
 					synchronized (DataTransferThread.class) {
+						next();
 						if (isLandPrint()) {
 							buffer = getLanBuffer(index());
 							Debug.i(TAG, "--->buffer.length: " + buffer.length);
-							next();
+
 						} else {
 							if (!mDataTask.get(index()).isReady) {
 								mRunning = false;
@@ -645,7 +656,6 @@ public class DataTransferThread {
 								}
 								break;
 							}
-							next();
 							buffer = mDataTask.get(index()).getPrintBuffer();
 						}
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
