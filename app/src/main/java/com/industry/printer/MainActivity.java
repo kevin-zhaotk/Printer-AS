@@ -506,8 +506,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				mHander.sendEmptyMessageDelayed(REFRESH_TIME_DISPLAY, 1000);
 				break;
 			case UPDATE_COUNTER:
-				mSettingsTab.setParam(17, msg.arg1);
-				mSettingsTab.mSysconfig.saveConfig();
+//				mSettingsTab.setParam(17, msg.arg1);
+//				mSettingsTab.mSysconfig.saveConfig();
 				break;
 				
 			case NET_CONNECTED:

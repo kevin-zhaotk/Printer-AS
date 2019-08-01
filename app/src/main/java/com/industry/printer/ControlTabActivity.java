@@ -1259,7 +1259,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			List<BaseObject> objects = task.getObjList();
 			for (BaseObject object : objects) {
 				if (object instanceof CounterObject) {
-					((CounterObject) object).setValue(config.getParam(SystemConfigFile.INDEX_COUNTER));
+					int index = ((CounterObject) object).mCounterIndex;
+					((CounterObject) object).setValue(config.getParam(SystemConfigFile.INDEX_COUNT_1 + index));
 				}
 			}
 		}

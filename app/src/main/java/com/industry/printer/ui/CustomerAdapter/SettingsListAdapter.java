@@ -9,6 +9,7 @@ import com.industry.printer.R;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.hardware.RTCDevice;
 import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
 import com.industry.printer.ui.CustomerDialog.HeaderSelectDialog;
 import com.industry.printer.ui.CustomerDialog.NewMessageDialog;
@@ -211,6 +212,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSysconfig = SystemConfigFile.getInstance(mContext);
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		// mTitles = mContext.getResources().getStringArray(R.array.str_settings_params);
+
 		loadSettings();
 		mHoldMap = new HashMap<Integer, ItemViewHolder>();
 		
@@ -339,7 +341,12 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	
 	public void loadSettings() {
 		Debug.d(TAG, "--->loadSettings");
-		
+        long[] counters = RTCDevice.getInstance(mContext).readAll();
+        if (counters != null && counters.length > 0) {
+        	for (int i = 0; i < counters.length; i++) {
+        		SystemConfigFile.getInstance(mContext).setParam(SystemConfigFile.INDEX_COUNT_1 + i, (int) counters[i]);
+			}
+		}
 		mSettingItems[0] = new ItemOneLine(1, R.string.str_textview_param1, R.string.str_time_unit_mm_s);
 		mSettingItems[1] = new ItemOneLine(2, R.string.str_textview_param2, R.array.direction_item_entries, 0, ItemType.TYPE_DIRECTION);
 		mSettingItems[2] = new ItemOneLine(3, R.string.str_textview_param3, R.array.resolution_item_entries, R.string.strResunit, ItemType.TYPE_VALUE);

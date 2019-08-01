@@ -264,7 +264,12 @@ public class TLKFileParser  extends TlkFile{
 				((CounterObject) obj).setBits(Integer.parseInt(attr[8]));
 				((CounterObject) obj).setRange(Integer.parseInt(attr[14]), Integer.parseInt(attr[13]));
 				SystemConfigFile conf = SystemConfigFile.getInstance(mContext);
-				((CounterObject) obj).setValue(conf.getParam(SystemConfigFile.INDEX_COUNTER));
+				int index = Integer.parseInt(attr[16]);
+				if (index < 0 || index >= 10) {
+					index = 0;
+				}
+				((CounterObject) obj).mCounterIndex = index;
+				((CounterObject) obj).setValue(conf.getParam(SystemConfigFile.INDEX_COUNT_1 + index));
 			} else if (BaseObject.OBJECT_TYPE_ELLIPSE.equals(attr[1]))    //ellipse
 			{
 				obj = new EllipseObject(mContext, 0);

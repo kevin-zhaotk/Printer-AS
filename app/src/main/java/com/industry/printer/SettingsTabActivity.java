@@ -8,17 +8,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.industry.printer.FileFormat.SystemConfigFile;
-import com.industry.printer.Utils.ConfigPath;
-import com.industry.printer.Utils.Configs;
-import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.KZFileObserver;
-import com.industry.printer.Utils.PackageInstaller;
-import com.industry.printer.Utils.PlatformInfo;
-import com.industry.printer.Utils.ReflectCaller;
-import com.industry.printer.Utils.StringUtil;
-import com.industry.printer.Utils.ToastUtil;
+import com.industry.printer.Utils.*;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
+import com.industry.printer.hardware.RTCDevice;
 import com.industry.printer.ui.ExtendMessageTitleFragment;
 import com.industry.printer.ui.CustomerAdapter.SettingsListAdapter;
 import com.industry.printer.ui.CustomerDialog.CalendarDialog;
@@ -253,7 +246,8 @@ public static final String TAG="SettingsTabActivity";
 	private TextView tv_btnSetting; 
 	
 	public void onConfigureChanged() {
-		mAdapter.loadSettings();
+//		mAdapter.loadSettings();
+		loadSettings();
 		mAdapter.notifyDataSetChanged();
 		tv_btnOk = (TextView) getView().findViewById(R.id.btn_ok_tv);
 		tv_btnOk.setText(R.string.str_btn_settings_sync);
@@ -290,7 +284,10 @@ public static final String TAG="SettingsTabActivity";
 //	}
 	
 	private void loadSettings() {
-		
+//		int[] counters = RTCDevice.getInstance(mContext).readAll();
+//		for (int i = SystemConfigFile.INDEX_COUNT_1; i <= SystemConfigFile.INDEX_COUNT_10; i++) {
+//			SystemConfigFile.getInstance(mContext).setParam(i, counters[i - SystemConfigFile.INDEX_COUNT_1]);
+//		}
 		mAdapter.loadSettings();
 		mAdapter.notifyDataSetChanged();
 	}

@@ -16,6 +16,7 @@ import android.graphics.Typeface;
 import android.graphics.Paint.FontMetrics;
 import android.renderscript.Sampler.Value;
 import android.util.Log;
+import com.industry.printer.hardware.RTCDevice;
 
 public class CounterObject extends BaseObject {
 
@@ -27,6 +28,8 @@ public class CounterObject extends BaseObject {
 	public int mMin;
 	public int mValue;
 	public int mStepLen;
+	// 计数器初始值对应设置里10个计数器值的编号
+	public int mCounterIndex;
 	//public int mCurVal;
 	
 	public CounterObject(Context context, float x) {
@@ -169,6 +172,7 @@ public class CounterObject extends BaseObject {
 	public String getNext()
 	{
 		Debug.d(TAG, "--->getNext mContent="+mContent+", mValue="+mValue+", mSteplen=" + mStepLen + " direction=" + mDirection);
+		RTCDevice.getInstance(mContext).write(mValue, mCounterIndex);
 		if(mDirection)	//increase
 		{
 			if(mValue+mStepLen > mMax || mValue < mMin)
@@ -183,6 +187,7 @@ public class CounterObject extends BaseObject {
 			else
 				mValue -= mStepLen;
 		}
+
 		String value =mContent;
 		setContent( BaseObject.intToFormatString(mValue, mBits));
 		Debug.d(TAG, "getNext mContent="+mContent+", mValue="+mValue+", mMax="+mMax);

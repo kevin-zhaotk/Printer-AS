@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.industry.printer.hardware.RTCDevice;
 import org.xml.sax.InputSource;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -122,6 +123,22 @@ public class SystemConfigFile{
 	// lightness during screen save mode
 	public static final int INDEX_LIGHTNESS = 43;
 
+
+	/**
+	 * 计数器值设置索引号
+	 */
+	public static final int INDEX_COUNT_1 = 44;
+	public static final int INDEX_COUNT_2 = 45;
+	public static final int INDEX_COUNT_3 = 46;
+	public static final int INDEX_COUNT_4 = 47;
+	public static final int INDEX_COUNT_5 = 48;
+	public static final int INDEX_COUNT_6 = 49;
+	public static final int INDEX_COUNT_7 = 50;
+	public static final int INDEX_COUNT_8 = 51;
+	public static final int INDEX_COUNT_9 = 52;
+	public static final int INDEX_COUNT_10 = 53;
+
+
 	/*
 	 * 目前參數使用情況：
 	 * 1、參數1~24：分配給FPGA
@@ -129,7 +146,7 @@ public class SystemConfigFile{
 	 * 3、參數31：是否双列
 	 * 4、參數32：双列偏移量
 	 */
-	public int mParam[] = new int[64]; 
+	public int mParam[] = new int[64];
 	public int mFPGAParam[] = new int[24];
 	
 	public Context mContext;
@@ -605,6 +622,12 @@ public class SystemConfigFile{
 		XmlOutputStream stream = new XmlOutputStream(Configs.CONFIG_PATH_FLASH + Configs.SYSTEM_CONFIG_XML);
 		stream.write(list);
 		stream.close();
+
+		long[] counters = new long[10];
+		for (int i = INDEX_COUNT_1; i <= INDEX_COUNT_10; i++) {
+			counters[i - INDEX_COUNT_1] = mParam[i];
+		}
+		RTCDevice.getInstance(mContext).writeAll(counters);
 	}
 	
 	/*
@@ -1033,14 +1056,14 @@ public class SystemConfigFile{
 	
 	
 	public int[] getParams() {
-		return mParam;
+		return (int[])mParam;
 	}
 
 	public int getParam(int index) {
 		if (index >= mParam.length) {
 			return 0;
 		}
-		return mParam[index];
+		return (int) mParam[index];
 	}
 	
 	public void setParam(int index, int value) {
@@ -1052,11 +1075,51 @@ public class SystemConfigFile{
 	}
 
 	public PrinterNozzle getPNozzle() {
-		int index = mParam[INDEX_HEAD_TYPE];
+		int index = (int) mParam[INDEX_HEAD_TYPE];
 		if (index > PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL) {
 			return PrinterNozzle.MESSAGE_TYPE_12_7;
 		}
 		return PrinterNozzle.getInstance(index);
+	}
+
+
+	public void setCounters(int[] counters) {
+		if (counters.length > 0) {
+			mParam[INDEX_COUNT_1] = counters[0];
+		}
+		if (counters.length > 1) {
+			mParam[INDEX_COUNT_2] = counters[1];
+		}
+		if (counters.length > 2) {
+			mParam[INDEX_COUNT_3] = counters[2];
+		}
+
+		if (counters.length > 3) {
+			mParam[INDEX_COUNT_4] = counters[3];
+		}
+		if (counters.length > 4) {
+			mParam[INDEX_COUNT_5] = counters[4];
+		}
+
+		if (counters.length > 5) {
+			mParam[INDEX_COUNT_6] = counters[5];
+		}
+
+		if (counters.length > 6) {
+			mParam[INDEX_COUNT_7] = counters[6];
+		}
+
+		if (counters.length > 7) {
+			mParam[INDEX_COUNT_8] = counters[7];
+		}
+
+		if (counters.length > 8) {
+			mParam[INDEX_COUNT_9] = counters[8];
+		}
+
+		if (counters.length > 9) {
+			mParam[INDEX_COUNT_10] = counters[9];
+		}
 	}
 //	public int getHeads() {
 //		int heads = 1;

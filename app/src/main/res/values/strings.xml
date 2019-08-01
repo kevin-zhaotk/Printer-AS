@@ -340,7 +340,7 @@
 	<string name="str_textview_param15">15.Pen1 Invert</string>
 	<string name="str_textview_param16">16.Pen2 Invert</string>
 	<string name="str_textview_param17">17.Date delay</string>
-	<string name="str_textview_param18">18.Counter</string>
+	<string name="str_textview_param18">18.Reserved</string>
 	<string name="str_textview_param19">19.Pen3 offset</string>
 	<string name="str_textview_param20">20.Pen4 offset</string>
 	<string name="str_textview_param21">21.Pen3 Mirrored</string>
@@ -367,16 +367,16 @@
 	<string name="str_textview_param42">42.Reserved</string>
 	<string name="str_textview_param43">43.Pens</string>
 	<string name="str_textview_param44">"44.Brightness "</string>
-	<string name="str_textview_param45">45.Reserved</string>
-	<string name="str_textview_param46">46.Reserved</string>
-	<string name="str_textview_param47">47.Reserved</string>
-	<string name="str_textview_param48">48.Reserved</string>
-	<string name="str_textview_param49">49.Reserved</string>
-	<string name="str_textview_param50">50.Reserved</string>
-	<string name="str_textview_param51">51.Reserved</string>
-	<string name="str_textview_param52">52.Reserved</string>
-	<string name="str_textview_param53">53.Reserved</string>
-	<string name="str_textview_param54">54.Reserved</string>
+	<string name="str_textview_param45">45.Counter1</string>
+	<string name="str_textview_param46">46.Counter2</string>
+	<string name="str_textview_param47">47.Counter3</string>
+	<string name="str_textview_param48">48.Counter4</string>
+	<string name="str_textview_param49">49.Counter5</string>
+	<string name="str_textview_param50">50.Counter6</string>
+	<string name="str_textview_param51">51.Counter7</string>
+	<string name="str_textview_param52">52.Counter8</string>
+	<string name="str_textview_param53">53.Counter9</string>
+	<string name="str_textview_param54">54.Counter10</string>
 	<string name="str_textview_param55">55.Reserved</string>
 	<string name="str_textview_param56">56.Reserved</string>
 	<string name="str_textview_param57">57.Reserved</string>
@@ -442,6 +442,7 @@
 	
 	<string name="str_cnt_min">Start</string>
 	<string name="str_cnt_max">End</string>
+	<string name="str_cnt_index">CID</string>
 	<string name="str_loading">loading...</string>
 	
 	<string name="str_toast_no_qrfile">no QR.txt or QR.csv</string>
