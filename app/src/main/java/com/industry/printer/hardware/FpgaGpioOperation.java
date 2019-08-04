@@ -279,9 +279,10 @@ public class FpgaGpioOperation {
 		data[22] = (char) SystemConfigFile.mResv23;
 		data[23] = (char) SystemConfigFile.mResv24;
 		*/
-		BinInfo info = task.getInfo();
-		data[24] = (char) info.getBytesFeed();
-
+		if (task != null) {
+			BinInfo info = task.getInfo();
+			data[24] = (char) info.getBytesFeed();
+		}
 		//是否雙列打印
 		data[25] = (char)config.getParam(31-1);
 		//雙列偏移量

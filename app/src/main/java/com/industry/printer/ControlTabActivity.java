@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
@@ -467,8 +468,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if (!loading) {
 			loadMessage();
 		}
-		
-		
+
+		FpgaGpioOperation.updateSettings(mContext, null, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 		/****鍒濆鍖朢FID****/
 		mRfidManager = RFIDManager.getInstance(mContext);
 		mHandler.sendEmptyMessageDelayed(RFIDManager.MSG_RFID_INIT, 1000);
@@ -2159,25 +2160,20 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                             //100是打印  
 		                          //	msg= toStringHex(msg); 
 		                        	Debug.d(TAG, "--->fromPc: " + msg);
-		                        	if (msg.indexOf("1000") >= 0) {  // LAN Printing
+									PCCommand cmd = PCCommand.fromString(msg);
+		                        	if (PCCommand.CMD_SEND_BIN.equalsIgnoreCase(cmd.command)) {  // LAN Printing
 
 										cacheBin(Gsocket, msg);
-									} else if (msg.indexOf("1100") >= 0) {
+									} else if (PCCommand.CMD_DEL_LAN_BIN.equalsIgnoreCase(cmd.command)) {
 
-		                        	    PCCommand cmd = PCCommand.fromString(msg);
 		                        	    DataTransferThread.deleteLanBuffer(Integer.valueOf(cmd.content));
-									} else if (msg.indexOf("1200") >= 0) {
+									} else if (PCCommand.CMD_RESET_INDEX.equalsIgnoreCase(cmd.command)) {
 
-										PCCommand cmd = PCCommand.fromString(msg);
 										DataTransferThread.getInstance().resetIndex();
 										this.sendmsg(Constants.pcOk(msg));
-									} else if(msg.indexOf("100")>=0) {
-										String[] Apath = msg.split("\\|");
-										if (Apath == null || Apath.length < 4) {
-											continue;
-										}
+									} else if(PCCommand.CMD_PRINT.equalsIgnoreCase(cmd.command)) {
 
-										File msgfile = new File(Apath[3]);
+										File msgfile = new File(cmd.content);
 										if (!isTlkReady(msgfile)) {
 											sendmsg(Constants.pcErr(msg));
 											return;
@@ -2198,26 +2194,17 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 											bundle.putString(Constants.PC_CMD, msg);
 		         							message.setData(bundle);
 		         							mHandler.sendMessage(message);
-		         							// msg = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
 
-		                                 	//}
-		                                 //	else
-		                                 	//{
-		                                 		//this.sendmsg(msg+"recv success!");
-		                                 	//}
 		                            	}
 		                            } 
-		                            else if(msg.indexOf("200")>=0)
-		                            {
+		                            else if(PCCommand.CMD_CLEAN.equalsIgnoreCase(cmd.command)) {
 		                            	//200是清洗
-//		                            	this.sendmsg("");
-		                            		CleanFlag=1;
+										CleanFlag=1;
 		                            	DataTransferThread thread = DataTransferThread.getInstance();
 		                				thread.purge(mContext);
 		                				this.sendmsg(Constants.pcOk(msg));
 		                            }
-		                            else if(msg.indexOf("300")>=0)
-		                            {
+		                            else if(PCCommand.CMD_SEND_FILE.equalsIgnoreCase(cmd.command)) {
 		                            	//300发文件
 		                            	AddPaths="";
 		                            	if(SendFileFlag==0)//发文件等赵工写好了，再测试
@@ -2227,17 +2214,16 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	}
 		                           
 		                            }
-		                            else if(msg.indexOf("400")>=0)
-		                            {
+		                            else if(PCCommand.CMD_READ_COUNTER.equalsIgnoreCase(cmd.command)) {
 		                            	//400取计数器
 		                            	for(int i=0;i<7;i++)
 		                            	{
-		                            	sendmsg(mCounter+" |\r\nink|"+mRfidManager.getLocalInk(i));//+"|\r\n"+mMsgTask.getName()+"|\r\n");//获取INK无显示问题，赵工这地方改好，前面注示去掉就OK了
+		                            	sendmsg("counter:" + mCounter+" |ink:" + mRfidManager.getLocalInk(i) + "|state:" + DataTransferThread.getInstance().isRunning());
+		                            	//获取INK无显示问题，赵工这地方改好，前面注示去掉就OK了
 		                            	this.sendmsg(Constants.pcOk(msg));
 		                            	}
 		                            }
-		                            else if(msg.indexOf("500")>=0)
-		                            {
+		                            else if(PCCommand.CMD_STOP_PRINT.equalsIgnoreCase(cmd.command)) {
 		                            	//500停止打印
 		                            	if(StopFlag==1)
 		                            	{
@@ -2252,20 +2238,16 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	
 		                            	}
 		                            }
-		                            else if(msg.indexOf("600")>=0)
-		                            {
+		                            else if(PCCommand.CMD_SET_COUNTER.equalsIgnoreCase(cmd.command)) {
 		                           //600字符串长成所需文件
 		                            	
-		                    			String[] strArray = msg.split("\\|");
-		                    			
-		                    			StrInfo_Stack.push(strArray[3]);//用堆栈存储收的信息，先进称出;
-
+		                    			StrInfo_Stack.push(cmd.content);//用堆栈存储收的信息，先进称出;
 		                    			try {
-											int count = Integer.parseInt(strArray[3]);
+											int count = Integer.parseInt(cmd.content);
 											for (MessageTask task : mMsgTask) {
 												for (BaseObject object : task.getObjects()) {
 													if (object instanceof CounterObject) {
-														object.setContent(strArray[3]);
+														object.setContent(cmd.content);
 													}
 												}
 											}
@@ -2275,8 +2257,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 										}
 										this.sendmsg(Constants.pcOk(msg));
 		                            }
-		                            else if(msg.indexOf("700")>=0)
-		                            {
+		                            else if(PCCommand.CMD_MAKE_TLK.equalsIgnoreCase(cmd.command)) {
 		                           		//700
 		                    			this.sendmsg(getString(R.string.str_build_tlk_start));
 		                            	String[] parts = msg.split("\\|");
@@ -2288,8 +2269,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            		MakeTlk(parts[3]);
 										}
 		                            }
-		                            else if(msg.indexOf("800")>=0)
-		                            {
+		                            else if(PCCommand.CMD_DEL_FILE.equalsIgnoreCase(cmd.command)) {
 		                           		//600字符串长成所需文件
 		                    			if (deleteFile(msg)) {
 		                            		this.sendmsg(Constants.pcOk(msg));
@@ -2297,8 +2277,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                    			this.sendmsg(Constants.pcErr(msg));
 		                            	}
 		                            }
-		                            else if(msg.indexOf("900")>=0)
-		                            {
+		                            else if(PCCommand.CMD_DEL_DIR.equalsIgnoreCase(cmd.command)) {
 		                           		//600字符串长成所需文件
 		                    			if (deleteDirectory(msg)) {
 		                            		this.sendmsg(Constants.pcOk(msg));
@@ -2345,86 +2324,41 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			Debug.i(TAG, "--->cacheBin: " + message);
 			PCCommand cmd = PCCommand.fromString(message);
 			int length = Integer.valueOf(cmd.size);
+			int position = 0;
 			byte[] buffer = new byte[length];
-			int total = 0;
-			int timeout = 20;
+			byte[] readBuf = new byte[1024];
 			Debug.i(TAG, "--->cacheBin length: " + length);
 			if (length <= 16) {
 			    this.sendMsg(Constants.pcErr(message));
 			    return;
             }
 			char[] remoteBin = new char[(length - 16) / 2];
-			try {
-				InputStream stream = socket.getInputStream();
-				while (true) {
-					try {
-						Thread.sleep(1000);
-						int r = stream.read(buffer);
+			while (true) {
+				try {
+					InputStream stream = socket.getInputStream();
+					int readLen = stream.read(readBuf);
+					if (readLen == -1) { // EOF
 						break;
-					} catch (Exception ex) {
-//						this.sendMsg(Constants.pcErr(message));
-						Debug.e(TAG, "--->e: " + ex.getMessage());
-
-						timeout--;
-						if (timeout == 0 ) break;
 					}
+					if (position + readLen > buffer.length) {
+						readLen = buffer.length - position;
+					}
+					System.arraycopy(readBuf, 0, buffer, position, readLen);
+					position += readLen;
+					if (position >= buffer.length) {
+						break;
+					}
+				} catch (IOException ex) {
+
 				}
-			} catch (Exception e) {
-				Debug.e(TAG, "--->e: " + e.getMessage());
-				this.sendMsg(Constants.pcErr(message));
 			}
-			if (timeout == 0) {
-				Debug.e(TAG, "--->timeout !!!");
-				this.sendMsg(Constants.pcErr(message));
-			} else {
-				for (int i = 0; i < remoteBin.length; i++) {
-					remoteBin[i] = (char) ((char)(buffer[2 * i + 16 + 1] << 8) + (char)(buffer[2 * i + 16] & 0x0ff));
-					remoteBin[i] = (char)(remoteBin[i] & 0x0ffff);
-				}
-				DataTransferThread.setLanBuffer(Integer.valueOf(cmd.content), remoteBin);
+			for (int i = 0; i < remoteBin.length; i++) {
+				remoteBin[i] = (char) ((char)(buffer[2 * i + 16 + 1] << 8) + (char)(buffer[2 * i + 16] & 0x0ff));
+				remoteBin[i] = (char)(remoteBin[i] & 0x0ffff);
+			}
+			DataTransferThread.setLanBuffer(Integer.valueOf(cmd.content), remoteBin);
 
-                this.sendMsg(Constants.pcOk(message));
-            }
-
-//			try {
-//				InputStream stream = socket.getInputStream();
-//
-//				char[] remoteBin = new char[length / 2];
-//				int total = 0;
-//				int timeout = 3;
-//				Debug.i(TAG, "--->stream.length:" + length);
-//
-//				while (true) {
-//
-//					try {
-//						int read = 0;
-//						read = stream.read(buffer);
-//
-//						int start = total == 0 ? 16 / 2 : 0;
-//						for (int i = start; i < read / 2; i++) {
-//							remoteBin[i] = (char) (buffer[2 * i] << 8 + buffer[2 * i + 1]);
-//						}
-//						total += read;
-//					} catch (Exception e) {
-//						timeout--;
-//						if (timeout <= 0) {
-//							break;
-//						}
-//						Debug.e(TAG, "--->stream read e: " + e.getMessage());
-////					this.sendMsg(Constants.pcErr(message));
-//						try {
-//							Thread.sleep(2000);
-//						} catch (Exception exception) { }
-//
-//					}
-//				}
-//				DataTransferThread.setLanBuffer(Integer.valueOf(cmd.content), remoteBin);
-//
-//				this.sendMsg(Constants.pcOk(message));
-//
-//			} catch (Exception ex ) {}
-
-
+			this.sendMsg(Constants.pcOk(message));
 		}
 		//获取设备信息
 		    private HashMap<String, String> obtainSimpleInfo(Context context){

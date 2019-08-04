@@ -246,7 +246,9 @@ public class CounterObject extends BaseObject {
 				.append("^")
 				.append(BaseObject.intToFormatString( v, 8))
 				.append("^")
-				.append("00000000^0000^0000^")
+				.append(mCounterIndex)
+				.append("^")
+				.append("0000^0000^")
 				.append(mFont)
 				.append("^000^000");
 				

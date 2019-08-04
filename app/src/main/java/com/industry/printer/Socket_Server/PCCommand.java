@@ -4,6 +4,42 @@ import android.text.TextUtils;
 
 public class PCCommand {
 
+
+    /** 打印 */
+    public static final String CMD_PRINT = "100";
+
+    /** 清洗 */
+    public static final String CMD_CLEAN = "200";
+
+    /** 发送文件 */
+    public static final String CMD_SEND_FILE = "300";
+
+    /** 取计数器 */
+    public static final String CMD_READ_COUNTER = "400";
+
+    /** 停止打印 */
+    public static final String CMD_STOP_PRINT = "500";
+
+    /** 设置计数器 */
+    public static final String CMD_SET_COUNTER = "600";
+
+    /** 生成tlk */
+    public static final String CMD_MAKE_TLK = "700";
+
+    /** 删除文件 */
+    public static final String CMD_DEL_FILE = "800";
+
+    /** 删除文件 */
+    public static final String CMD_DEL_DIR = "900";
+
+    /** PC 发送bin文件 */
+    public static final String CMD_SEND_BIN = "1000";
+
+    /** 删除指定index的bin */
+    public static final String CMD_DEL_LAN_BIN = "1100";
+
+    /** 打印归零 */
+    public static final String CMD_RESET_INDEX = "1200";
     /** 包头 */
     public String header;
 
