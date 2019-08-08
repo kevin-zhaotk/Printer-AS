@@ -3,6 +3,7 @@ package com.industry.printer.data;
 import java.io.CharArrayReader;
 import java.io.CharArrayWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import android.R.integer;
 import android.content.Context;
 import android.database.CharArrayBuffer;
 import android.graphics.Bitmap;
+import android.os.Environment;
 import android.os.Message;
 import android.text.TextUtils;
 
@@ -150,9 +152,12 @@ public class DataTask {
 		}
 		Debug.d(TAG, "--->getPrintBuffer  111" );
 		CharArrayReader cReader = new CharArrayReader(mBgBuffer);
+
+		// H.M.Wang 将1.bin写入打印缓冲区，然后将v*.bin写入缓冲区
 		try {
 			cReader.read(mPrintBuffer);
 			if (isNeedRefresh()) {
+				// 将v*.bin写入缓冲区
 				refreshVariables(isPreview);
 			}
 		} catch (IOException e) {
@@ -161,6 +166,17 @@ public class DataTask {
 		if (isPreview) {
 			return mPrintBuffer;
 		}
+
+		// H.M.Wang 追加下列8行
+//		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT && Configs.getMessageShift(3) == 1) {
+		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+			mPrintBuffer = evenBitShiftFor64Dot();
+			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+			Debug.d(TAG, mTask.getPath() + "/print.bin");
+			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
+		}
+
 		Debug.d(TAG, "--->BytesPerColumn: " + mBinInfo.mBytesPerColumn);
 //		if (mBinInfo.mBytesPerColumn == 4)  {
 //			evenBitShift();
@@ -266,10 +282,26 @@ public class DataTask {
 			div = 0.5f;
 			scaleW = 0.5f;
 			scaleH = 0.25f;
+
+		// H.M.Wang 追加下列8行
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE) {
+			div = 0.3333333333f;
+			scaleW = 0.3333333333f;
+			scaleH = 0.1666666667f;
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR) {
+			div = 0.25f;
+			scaleW = 0.25f;
+			scaleH = 0.125f;
+
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			div = 152f/16f;
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 			div = 152f/32f;
+
+		// H.M.Wang 追加下列两行
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			div = 152f/64f;
+
 		}
 		/**if high resolution message, do not divide width by 2 */
 		if (msg.getResolution()) {
@@ -620,7 +652,27 @@ public class DataTask {
 			
 		}
 	}
-	
+
+	/* H.M.Wang
+		64DOT喷头双列的时候，每个Byte的1，3，5，7Bit向后位移4个字节
+	 */
+	public char[] evenBitShiftFor64Dot() {
+		char[] buffer = new char[mPrintBuffer.length + 4 * 4];	// 每行增加4个字节，共增加32个字节
+		char even = 0x5555;
+		char odd = 0xaaaa;
+
+		Debug.d(TAG, "evenBitShiftFor64Dot" );
+		Debug.d(TAG, "mBinInfo.mColumn = " + mBinInfo.mColumn);
+		Debug.d(TAG, "mBinInfo.mBytesPerColumn = " + mBinInfo.mBytesPerColumn);
+		for (int i = 0; i < mBinInfo.mColumn; i++) {
+			for (int j = 0; j < 4; j++) {
+				buffer[i * 4 + j] |= (char)(mPrintBuffer[i * 4 + j] & odd);
+				buffer[(i + 4) * 4 + j] |= (char)(mPrintBuffer[i * 4 + j] & even);
+			}
+		}
+		return buffer;
+	}
+
 	public BinInfo getInfo() {
 		return mBinInfo;
 	}

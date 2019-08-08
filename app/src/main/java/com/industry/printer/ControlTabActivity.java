@@ -894,6 +894,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mSysconfig.saveLastMsg(mObjPath);
 //					dismissProgressDialog();
 
+///////////////////////////
 					if (Configs.IGNORE_RFID) {
 						mHandler.sendEmptyMessage(MESSAGE_PRINT_START);
 					} else {
@@ -987,10 +988,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						handleError(R.string.str_print_printing, pcMsg);
 						break;
 					}
+///////////////////////////
 					if (!checkRfid()) {
 						handleError(R.string.str_toast_no_ink, pcMsg);
 						return;
 					}
+
 					Debug.d(TAG, "--->check rfid ok");
 
 					if (mObjPath == null || mObjPath.isEmpty()) {
@@ -1218,6 +1221,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		//DataTask task = mDTransThread.getData();
 		int heads = SystemConfigFile.getInstance(mContext).getPNozzle().mHeads;// task.getHeads();
 		for (int i = 0; i < heads; i++) {
+			Debug.d(TAG, "Checking Rfid of Head = " + i);
 			float ink = mRfidManager.getLocalInk(i);
 			if (ink <= 0) {
 				ready = false;
