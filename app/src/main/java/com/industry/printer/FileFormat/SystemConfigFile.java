@@ -1072,6 +1072,10 @@ public class SystemConfigFile{
 			return ;
 		}
 		mParam[index] = value;
+
+		if (index >= INDEX_COUNT_1 && index < INDEX_COUNT_10) {
+			RTCDevice.getInstance(mContext).write(value, index - INDEX_COUNT_1);
+		}
 	}
 
 	public PrinterNozzle getPNozzle() {

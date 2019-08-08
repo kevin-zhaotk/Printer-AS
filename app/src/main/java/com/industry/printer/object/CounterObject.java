@@ -172,7 +172,7 @@ public class CounterObject extends BaseObject {
 	public String getNext()
 	{
 		Debug.d(TAG, "--->getNext mContent="+mContent+", mValue="+mValue+", mSteplen=" + mStepLen + " direction=" + mDirection);
-		RTCDevice.getInstance(mContext).write(mValue, mCounterIndex);
+
 		if(mDirection)	//increase
 		{
 			if(mValue+mStepLen > mMax || mValue < mMin)
@@ -191,6 +191,7 @@ public class CounterObject extends BaseObject {
 		String value =mContent;
 		setContent( BaseObject.intToFormatString(mValue, mBits));
 		Debug.d(TAG, "getNext mContent="+mContent+", mValue="+mValue+", mMax="+mMax);
+		SystemConfigFile.getInstance(mContext).setParam(mCounterIndex + SystemConfigFile.INDEX_COUNT_1, Integer.valueOf(value));
 		return value;
 	}
 	
