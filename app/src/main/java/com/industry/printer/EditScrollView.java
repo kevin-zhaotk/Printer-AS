@@ -84,20 +84,32 @@ public class EditScrollView extends View {
 				case MESSAGE_TYPE_1_INCH:
 				case MESSAGE_TYPE_16_DOT:
 				case MESSAGE_TYPE_32_DOT:
+
+				// H.M.Wang 追加下列一行
+				case MESSAGE_TYPE_64_DOT:
+
 					break;
 				case MESSAGE_TYPE_25_4:
 				case MESSAGE_TYPE_1_INCH_DUAL:
 					canvas.drawLine(0, 76, 5000, 76, p);
 					break;
 				case MESSAGE_TYPE_38_1:
+
+				// H.M.Wang 追加下列一行
+				case MESSAGE_TYPE_1_INCH_TRIPLE:
+
 					canvas.drawLine(0, 50, 5000, 50, p);
 					canvas.drawLine(0, 101, 5000, 101, p);
-				break;
+					break;
 				case MESSAGE_TYPE_50_8:
+
+				// H.M.Wang 追加下列一行
+				case MESSAGE_TYPE_1_INCH_FOUR:
+
 					canvas.drawLine(0, 38, 5000, 38, p);
 					canvas.drawLine(0, 76, 5000, 76, p);
 					canvas.drawLine(0, 114, 5000, 114, p);
-				break;
+					break;
 			default:
 				break;
 			}

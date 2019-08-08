@@ -12,6 +12,10 @@
         <item>25.4X4</item>
         <item>16 dot</item>
         <item>32 dot</item>
+
+        <!--  H.M.Wang 追加下列一行 -->
+        <item>64 dot</item>
+
     </string-array>
 
     <string-array name="strFontArray">

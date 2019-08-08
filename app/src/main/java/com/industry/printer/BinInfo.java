@@ -175,7 +175,7 @@ public class BinInfo {
     	mBuffer = buffer.buffer();
     	resolve();
 	}
-	
+
 	private synchronized void resolve() {
 		byte[] head = new byte[BinCreater.RESERVED_FOR_HEADER];
 		/*把bin文件内容读入内存*/

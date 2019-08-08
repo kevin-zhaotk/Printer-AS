@@ -31,7 +31,12 @@ public class MessageObject extends BaseObject {
 	public static final String[] mDot_32_Size = {
 			"7x6" , "16x12", "32 Dots"
 	};
-	
+
+    // H.M.Wang 追加下列3行
+    public static final String[] mDot_64_Size = {
+            "7x6" , "16x12", "64 Dots"
+    };
+
 	public MessageObject(Context context,  float x) {
 		super(context, BaseObject.OBJECT_TYPE_MsgName, x);
 		//mIndex = index;
@@ -157,7 +162,10 @@ public class MessageObject extends BaseObject {
 		}
 		else
 		{
-			int ratio = (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) ? 1 : 2 ;
+            // H.M.Wang 修改下列两行
+//            int ratio = (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) ? 1 : 2 ;
+            int ratio = (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) ? 1 : 2 ;
+
 //			str += mId+"^";
 //			str += "00000^00000^00000^00000^0^000^";
 //			str += BaseObject.intToFormatString(mPNozzle.mType,3) + "^000^000^000^000^";
@@ -225,6 +233,15 @@ public class MessageObject extends BaseObject {
 			for (int i = 0; i < size.length; i++) {
 				size[i] = mDot_32_Size[i];
 			}
+
+        // H.M.Wang 追加下列5行
+        } else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+            size = new String[mDot_64_Size.length];
+            for (int i = 0; i < size.length; i++) {
+                size[i] = mDot_64_Size[i];
+            }
+
+		// H.M.Wang 追加下列8行
 		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE) {
 			for (int i = 0; i < size.length; i++) {
 				size[i] = String.valueOf(mBaseList[i] * 6);
@@ -263,6 +280,13 @@ public class MessageObject extends BaseObject {
 			return h/3;
 		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_50_8 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
 			return h/4;
+
+		// H.M.Wang 追加下列4行
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE) {
+			return h/6;
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR) {
+			return h/8;
+
 		} else if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT )//addbylk 喷头类型
 		{
 			if (size.equalsIgnoreCase("7x6")) {
@@ -280,6 +304,17 @@ public class MessageObject extends BaseObject {
 				h = 12.7f;
 			}
 			return h;
+
+        // H.M.Wang 追加下列9行
+        } else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT ) {
+            if (size.equalsIgnoreCase("7x6")) {
+                h = 1.6f;
+            } else if (size.equalsIgnoreCase("16x12")) {
+                h = 3.2f;
+            } else {
+                h = 12.7f;
+            }
+            return h;
 		}
 		return h;
 	}
@@ -327,7 +362,18 @@ public class MessageObject extends BaseObject {
 				return mDot_32_Size[2];
 			}
 
-		} else {
+        // H.M.Wang 追加下列10行
+        } else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+
+            if (size == 19) {
+                return mDot_64_Size[0];
+            } else if (size == 38) {
+                return mDot_64_Size[1];
+            } else {
+                return mDot_64_Size[2];
+            }
+
+        } else {
 			h = mPNozzle.getScaleH() * size/PIXELS_PER_MM;
 			type = mPNozzle.factor();
 		}

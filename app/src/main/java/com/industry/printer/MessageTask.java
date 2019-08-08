@@ -279,7 +279,11 @@ public class MessageTask {
 		for(BaseObject o:mObjects)
 		{
 			if((o instanceof MessageObject)	) {
-				if (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+
+				// H.M.Wang 修改下列两行
+//				if (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+				if (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT || getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+
 					for (int i = 0; i < mDots.length; i++) {
 						mDots[i] = mDots[i] * 200;
 					}
@@ -339,6 +343,13 @@ public class MessageTask {
 					dealDot(dots, 2);
 				} else if (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
 					dealDot(dots, 2 * 4);
+
+				// H.M.Wang 追加下列41行
+				} else if (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE) {
+					dealDot(dots, 2 * 6);
+				} else if (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR) {
+					dealDot(dots, 2 * 8);
+
 				} else {
 					dealDot(dots, 0.5f);
 				}
@@ -465,8 +476,14 @@ public class MessageTask {
 		float dots = 152;///SystemConfigFile.getInstance(mContext).getParam(39);
 		/*對於320列高的 1 Inch打印頭，不使用參數40的設置*/
 		MessageObject msg = getMsgObject();
-		if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH
-				|| msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL)) {
+		if (msg != null &&
+			(msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+ 			 msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+
+			// H.M.Wang 追加下列2行
+			 msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+			 msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR)) {
+
 			dots = 304;
 		}
 		Debug.d(TAG, "+++dots=" + dots);
@@ -497,6 +514,33 @@ public class MessageTask {
 			c.drawBitmap(bitmap, new Rect(0, h, bitmap.getWidth(), h*2), new Rect(0, 320, b.getWidth(), 320 + 308), p);
 			// c.drawBitmap(Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight()/2), new Matrix(), null);
 			// c.drawBitmap(Bitmap.createBitmap(bitmap, 0, bitmap.getHeight()/2, bitmap.getWidth(), bitmap.getHeight()/2), 0, 320, null);
+			bitmap.recycle();
+			bitmap = b;
+
+		// H.M.Wang 追加下列11行
+		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE)) {
+			Bitmap b = Bitmap.createBitmap(bitmap.getWidth(), 960, Configs.BITMAP_CONFIG);
+			// can.setBitmap(b);
+			Canvas c = new Canvas(b);
+			c.drawColor(Color.WHITE);
+			int h = bitmap.getHeight()/3;
+			c.drawBitmap(bitmap, new Rect(0, 0, bitmap.getWidth(), h), new Rect(0, 0, b.getWidth(), 308), p);
+			c.drawBitmap(bitmap, new Rect(0, h, bitmap.getWidth(), h*2), new Rect(0, 320, b.getWidth(), 320 + 308), p);
+			c.drawBitmap(bitmap, new Rect(0, h*2, bitmap.getWidth(), h*3), new Rect(0, 640, b.getWidth(), 640 + 308), p);
+			bitmap.recycle();
+			bitmap = b;
+
+			// H.M.Wang 追加下列12行
+		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR)) {
+			Bitmap b = Bitmap.createBitmap(bitmap.getWidth(), 1280, Configs.BITMAP_CONFIG);
+			// can.setBitmap(b);
+			Canvas c = new Canvas(b);
+			c.drawColor(Color.WHITE);
+			int h = bitmap.getHeight()/4;
+			c.drawBitmap(bitmap, new Rect(0, 0, bitmap.getWidth(), h), new Rect(0, 0, b.getWidth(), 308), p);
+			c.drawBitmap(bitmap, new Rect(0, h, bitmap.getWidth(), h*2), new Rect(0, 320, b.getWidth(), 320 + 308), p);
+			c.drawBitmap(bitmap, new Rect(0, h*2, bitmap.getWidth(), h*3), new Rect(0, 640, b.getWidth(), 640 + 308), p);
+			c.drawBitmap(bitmap, new Rect(0, h*3, bitmap.getWidth(), h*4), new Rect(0, 960, b.getWidth(), 960 + 308), p);
 			bitmap.recycle();
 			bitmap = b;
 		}
@@ -591,7 +635,14 @@ public class MessageTask {
 		// 生成bin文件
 		BinFileMaker maker = new BinFileMaker(mContext);
 		/** if high resolution, keep original width */
-		if (msgObj.getResolution() || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT) || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT)) {
+
+		// H.M.Wang 修改下列两行
+//		if (msgObj.getResolution() || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT) || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT)) {
+		if (msgObj.getResolution() ||
+			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT) ||
+			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT) ||
+			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT)) {
+
 			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth, bHeight, true), getNozzle().mHeads);
 		} else {
 			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, true), msgObj.getPNozzle().mHeads);
