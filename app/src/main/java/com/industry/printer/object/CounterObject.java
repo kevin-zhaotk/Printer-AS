@@ -24,8 +24,8 @@ public class CounterObject extends BaseObject {
 	
 	public int mBits;
 	public boolean mDirection;
-	public int mMax;
-	public int mMin;
+	public int mStart;
+	public int mEnd;
 	public int mValue;
 	public int mStepLen;
 	// 计数器初始值对应设置里10个计数器值的编号
@@ -34,7 +34,7 @@ public class CounterObject extends BaseObject {
 	
 	public CounterObject(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_CNT, x);
-		mMin=0;
+		mStart=0;
 		mStepLen=1;
 		mDirection = true;
 		setBits(5);
@@ -45,7 +45,7 @@ public class CounterObject extends BaseObject {
 		mBits = n;
 		mValue = 1;
 		setContent( BaseObject.intToFormatString(mValue, mBits));
-		mMax = (int) Math.pow(10, mBits) -1;
+		mEnd = (int) Math.pow(10, mBits) -1;
 	}
 	
 //	@Override
@@ -59,44 +59,39 @@ public class CounterObject extends BaseObject {
 		return mBits;
 	}
 	
-	public void setMax(int max)
+	public void setStart(int begin)
 	{
-		mMax = max;
+		mStart = begin;
 	}
 	
-	public int getMax()
+	public int getStart()
 	{
-		return mMax;
+		return mStart;
 	}
 	
-	public void setMin(int min)
+	public void setEnd(int end)
 	{
-		mMin = min;
+		mEnd = end;
 	}
 	
-	public int getMin()
+	public int getEnd()
 	{
-		return mMin;
+		return mEnd;
 	}
 	
 	public void setRange(int start, int end) {
+
+		mStart = start;
+		mEnd = end;
 		if (start <= end) {
 			mDirection = true;
-			mMin = start;
-			mMax = end;
 		} else {
 			mDirection = false;
-			mMin = end;
-			mMax = start;
+
 		}
-		Debug.d(TAG, "setRange mMax="+mMax + ",  mMin=" + mMin);
+		Debug.i(TAG, "--->setRange: " + start + ", " + end + ", d: " + mDirection);
 	}
-	
-	public void setDirection(boolean dir)
-	{
-		mDirection = dir;
-	}
-	
+
 	public String getDirection()
 	{
 		String[] directions = mContext.getResources().getStringArray(R.array.strDirectArray);
@@ -122,16 +117,16 @@ public class CounterObject extends BaseObject {
 		
 	public void setValue(int value)
 	{
-		if( mMin < mMax) {
-			if(value < mMin || value> mMax) {
-				mValue = mMin;
+		if( mStart < mEnd) {
+			if(value < mStart || value> mEnd) {
+				mValue = mStart;
 			}
 			else {
 				mValue = value;
 			}
 		} else {
-			if (value > mMin || value < mMax) {
-				mValue = mMin;
+			if (value > mStart || value < mEnd) {
+				mValue = mStart;
 			} else {
 				mValue = value;
 			}
@@ -145,27 +140,13 @@ public class CounterObject extends BaseObject {
 			Debug.d(TAG, "--->setContent content="+content);
 			int value = Integer.parseInt(content);
 			Debug.d(TAG, "setContent value="+value);
-			if( mMin < mMax) {
-				if(value < mMin || value> mMax) {
-					mValue = mMin;
-				}
-				else {
-					mValue = value;
-				}
-			} else {
-				if (value > mMin || value < mMax) {
-					mValue = mMin;
-				} else {
-					mValue = value;
-				}
-			}
-			
+			setValue(value);
 		} catch (Exception e) {
-			mValue = mMin;
+			mValue = mStart;
 			Debug.d(TAG, "--->setContent exception: " + e.getMessage());
 		}
 		mContent = BaseObject.intToFormatString(mValue, mBits);
-		Debug.d(TAG, "setContent content="+content+", value="+mValue+", mMax="+mMax);
+//		Debug.d(TAG, "setContent content="+content+", value="+mValue+", mMax="+mMax);
 	}
 	
 	
@@ -175,22 +156,22 @@ public class CounterObject extends BaseObject {
 
 		if(mDirection)	//increase
 		{
-			if(mValue+mStepLen > mMax || mValue < mMin)
-				mValue=mMin;
+			if(mValue+mStepLen > mEnd || mValue < mStart)
+				mValue=mStart;
 			else
 				mValue += mStepLen;
 		}
 		else	//decrease
 		{
-			if(mValue-mStepLen < mMin)
-				mValue=mMax;
+			if(mValue-mStepLen < mEnd)
+				mValue=mStart;
 			else
 				mValue -= mStepLen;
 		}
 
 		String value =mContent;
 		setContent( BaseObject.intToFormatString(mValue, mBits));
-		Debug.d(TAG, "getNext mContent="+mContent+", mValue="+mValue+", mMax="+mMax);
+		Debug.d(TAG, "getNext mContent="+mContent+", mValue="+mValue);
 		SystemConfigFile.getInstance(mContext).setParam(mCounterIndex + SystemConfigFile.INDEX_COUNT_1, Integer.valueOf(value));
 		return value;
 	}
@@ -199,15 +180,15 @@ public class CounterObject extends BaseObject {
 		Debug.d(TAG, "--->rollback value: " + mValue);
 		if(!mDirection)	//increase
 		{
-			if(mValue+mStepLen > mMax || mValue < mMin)
-				mValue=mMin;
+			if(mValue+mStepLen > mStart || mValue < mEnd)
+				mValue=mStart;
 			else
 				mValue += mStepLen;
 		}
 		else	//decrease
 		{
-			if(mValue-mStepLen < mMin)
-				mValue=mMax;
+			if(mValue-mStepLen < mStart)
+				mValue=mStart;
 			else
 				mValue -= mStepLen;
 		}
@@ -241,11 +222,11 @@ public class CounterObject extends BaseObject {
 				.append(BaseObject.intToFormatString(mBits, 3))
 				.append("^")
 				.append("000^000^000^000^")
-				.append(BaseObject.intToFormatString(mMax, 8))
+				.append(BaseObject.intToFormatString(mStart, 8))
 				.append("^")
-				.append(BaseObject.intToFormatString(mMin, 8))
+				.append(BaseObject.intToFormatString(mEnd, 8))
 				.append("^")
-				.append(BaseObject.intToFormatString( v, 8))
+				.append(BaseObject.intToFormatString( mStepLen, 8))
 				.append("^")
 				.append(mCounterIndex)
 				.append("^")
