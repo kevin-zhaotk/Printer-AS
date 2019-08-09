@@ -197,7 +197,8 @@ public class TLKFileParser  extends TlkFile{
 			Debug.d(TAG, "--->x = " + (StringUtil.parseInt(attr[2]) / mProportion));
 			object.setX(StringUtil.parseInt(attr[2]) / mProportion);
 			object.setWidth(StringUtil.parseInt(attr[4])/mProportion-StringUtil.parseInt(attr[2])/mProportion);
-			Debug.d(TAG, "--->xEnd = " + object.getXEnd());
+			Debug.d(TAG, "--->xEnd =" +
+					"" + object.getXEnd());
 		}
 		
 	}
@@ -262,7 +263,7 @@ public class TLKFileParser  extends TlkFile{
 			{
 				obj = new CounterObject(mContext, 0);
 				((CounterObject) obj).setBits(Integer.parseInt(attr[8]));
-				((CounterObject) obj).setRange(Integer.parseInt(attr[14]), Integer.parseInt(attr[13]));
+				((CounterObject) obj).setRange(Integer.parseInt(attr[13]), Integer.parseInt(attr[14]));
 				SystemConfigFile conf = SystemConfigFile.getInstance(mContext);
 				int index = Integer.parseInt(attr[16]);
 				if (index < 0 || index >= 10) {
@@ -270,6 +271,8 @@ public class TLKFileParser  extends TlkFile{
 				}
 				((CounterObject) obj).mCounterIndex = index;
 				((CounterObject) obj).setValue(conf.getParam(SystemConfigFile.INDEX_COUNT_1 + index));
+				((CounterObject) obj).setSteplen(Integer.parseInt(attr[15]));
+
 			} else if (BaseObject.OBJECT_TYPE_ELLIPSE.equals(attr[1]))    //ellipse
 			{
 				obj = new EllipseObject(mContext, 0);
@@ -462,8 +465,23 @@ public class TLKFileParser  extends TlkFile{
 				dots = 640f;
 				mProportion = 1.0f;
 				break;
+
+            // H.M.Wang 追加下列8行
+            case MESSAGE_TYPE_1_INCH_TRIPLE:
+                dots = 960f;
+                mProportion = 1.0f;
+                break;
+            case MESSAGE_TYPE_1_INCH_FOUR:
+                dots = 1280f;
+                mProportion = 1.0f;
+                break;
+
 			case MESSAGE_TYPE_16_DOT:
 			case MESSAGE_TYPE_32_DOT:
+
+			// H.M.Wang 追加下列一行
+			case MESSAGE_TYPE_64_DOT:
+
 				dots = 152f;
 				mProportion = dots/Configs.gDots;
 				break;

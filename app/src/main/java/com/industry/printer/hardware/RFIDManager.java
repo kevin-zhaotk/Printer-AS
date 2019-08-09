@@ -67,6 +67,8 @@ public class RFIDManager implements RfidCallback{
 				mDevice = mRfidDevices.get(mCurrent);
 				mDevice.addLisetener(RFIDManager.this);
 
+				Debug.d(TAG, "MSG_RFID_SWITCH_DEVICE");
+
 				if (mDevice.getLocalInk() > 0) {
 					mHandler.sendEmptyMessageDelayed(MSG_RFID_SWITCH_DEVICE, 200);
 					break;
@@ -75,6 +77,8 @@ public class RFIDManager implements RfidCallback{
 				mHandler.sendEmptyMessageDelayed(MSG_RFID_INIT_NEXT, 200);	
 				break;
 			case MSG_RFID_INIT_NEXT:
+				Debug.d(TAG, "MSG_RFID_INIT_NEXT");
+
 				if (mDevice.getLocalInk() > 0) {
 					mHandler.sendEmptyMessage(MSG_RFID_SWITCH_DEVICE);
 					break;
@@ -399,6 +403,9 @@ public class RFIDManager implements RfidCallback{
 			if (dev == null) {
 				continue;
 			}
+
+			Debug.d(TAG, "defaultInkForIgnoreRfid");
+
 			if (dev.getLocalInk() <= 0) {
 				dev.setLocalInk(185);
 			}

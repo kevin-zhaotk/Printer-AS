@@ -541,8 +541,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				{
 					mDigits.setText(String.valueOf( ((CounterObject) mObject).getBits()));
 					// mDir.setText( ((CounterObject) mObject).getDirection());
-					mMin.setText(String.valueOf(((CounterObject) mObject).getMin()));
-					mMax.setText(String.valueOf(((CounterObject) mObject).getMax()));
+					mMin.setText(String.valueOf(((CounterObject) mObject).getStart()));
+					mMax.setText(String.valueOf(((CounterObject) mObject).getEnd()));
 					mCntIndex.setText(String.valueOf(((CounterObject)mObject).mCounterIndex));
 				}
 				else if(mObject instanceof BarcodeObject)
