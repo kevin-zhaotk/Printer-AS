@@ -308,7 +308,10 @@ public class BaseObject{
 	
 		Debug.e(TAG, "--->content: " + getContent() + "  width=" + width);
 		PrinterNozzle type = mTask != null? mTask.getNozzle() : PrinterNozzle.MESSAGE_TYPE_12_7;
-		if (mWidth == 0 || type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+
+		// H.M.Wang 修改下列两行
+//		if (mWidth == 0 || type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+		if (mWidth == 0 || type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT || type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 			setWidth(width);
 		}
 		bitmap = Bitmap.createBitmap(width , (int)mHeight, Configs.BITMAP_CONFIG);
@@ -374,7 +377,11 @@ public class BaseObject{
 		canvas.drawText(content, 0, ctH-adjust, paint);
 		PrinterNozzle head = mTask.getNozzle();
 		Debug.d(TAG, "--->content: " + content + "  descent=" + fm.descent + "  ascent= " + fm.ascent + " botom= " + fm.bottom + " top = " + fm.top + " leading = " + fm.leading);
-		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+
+		// H.M.Wang 修改下列两行
+//		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+
 			return bitmap;
 		}
 
@@ -447,7 +454,11 @@ public class BaseObject{
 		Canvas can = new Canvas(bmp);
 
 		PrinterNozzle head = mTask.getNozzle();
-		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+
+		// H.M.Wang 修改下列两行
+//		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+
 			singleW = width;
 		} else {
 			singleW = (int)(mWidth * scaleW/mContent.length());
@@ -509,6 +520,13 @@ public class BaseObject{
 			wDiv = 1;
 		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL)) {
 			wDiv = 0.5f;
+
+		// H.M.Wang 追加下列4行
+		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE)) {
+			wDiv = 0.333333333333f;
+		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR)) {
+			wDiv = 0.25f;
+
 		}
 		/*draw Bitmap of single digit*/
 		Bitmap bmp = Bitmap.createBitmap(width, (int)mHeight, Configs.BITMAP_CONFIG);
@@ -553,6 +571,49 @@ public class BaseObject{
 			/*先把gBmp的下半部分308~615高貼到620高的下半部分（320~619）*/
 			// can.drawBitmap(Bitmap.createBitmap(gBmp, 0, 308, gBmp.getWidth(), 308), 0, 320, mPaint);
 			can.drawBitmap(gBmp, new Rect(0, h, gBmp.getWidth(), h*2), new Rect(0, 320, b.getWidth(), 320 + h), null);
+			gBmp.recycle();
+			gBmp = b;
+
+		// H.M.Wang 追加下列18行
+		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE)) {
+			gBmp = Bitmap.createScaledBitmap(gBmp, gBmp.getWidth(), 308*3, true);
+			Bitmap b = Bitmap.createBitmap(gBmp.getWidth(), 320*3, Configs.BITMAP_CONFIG);
+			can.setBitmap(b);
+			can.drawColor(Color.WHITE);
+			int h = gBmp.getHeight()/3;
+
+			/*先把gBmp的上三分之一部分0~307高貼到960高的上三分之一部分（0~319）*/
+			can.drawBitmap(gBmp, new Rect(0, 0, gBmp.getWidth(), h), new Rect(0, 0, b.getWidth(), h), null);
+
+			/*先把gBmp的中间三分之一部分308~615高貼到960高的中间三分之一部分（320~639）*/
+			can.drawBitmap(gBmp, new Rect(0, h, gBmp.getWidth(), h*2), new Rect(0, 320, b.getWidth(), 320 + h), null);
+
+			/*先把gBmp的下三分之一部分616~923高貼到960高的下三分之一部分（640~959）*/
+			can.drawBitmap(gBmp, new Rect(0, h*2, gBmp.getWidth(), h*3), new Rect(0, 640, b.getWidth(), 640 + h), null);
+
+			gBmp.recycle();
+			gBmp = b;
+
+		// H.M.Wang 追加下列21行
+		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR)) {
+			gBmp = Bitmap.createScaledBitmap(gBmp, gBmp.getWidth(), 308*4, true);
+			Bitmap b = Bitmap.createBitmap(gBmp.getWidth(), 320*4, Configs.BITMAP_CONFIG);
+			can.setBitmap(b);
+			can.drawColor(Color.WHITE);
+			int h = gBmp.getHeight()/4;
+
+			/*先把gBmp的上四分之一部分0~307高貼到1280高的上四分之一部分（0~319）*/
+			can.drawBitmap(gBmp, new Rect(0, 0, gBmp.getWidth(), h), new Rect(0, 0, b.getWidth(), h), null);
+
+			/*先把gBmp的中间四分之二部分308~615高貼到1280高的中间四分之二部分（320~639）*/
+			can.drawBitmap(gBmp, new Rect(0, h, gBmp.getWidth(), h*2), new Rect(0, 320, b.getWidth(), 320 + h), null);
+
+			/*先把gBmp的中间四分之三部分616~923高貼到1280高的中间四分之三部分（640~959）*/
+			can.drawBitmap(gBmp, new Rect(0, h*2, gBmp.getWidth(), h*3), new Rect(0, 640, b.getWidth(), 640 + h), null);
+
+			/*先把gBmp的下四分之一部分924~1231高貼到1280高的下四分之一部分（960~1279）*/
+			can.drawBitmap(gBmp, new Rect(0, h*3, gBmp.getWidth(), h*4), new Rect(0, 960, b.getWidth(), 960 + h), null);
+
 			gBmp.recycle();
 			gBmp = b;
 		}
@@ -661,6 +722,19 @@ public class BaseObject{
 			if (MessageObject.mDotSizes[0].equalsIgnoreCase(dspH)) {
 				mHeight = 152/4;
 			} else if (MessageObject.mDotSizes[1].equalsIgnoreCase(dspH)) {
+				mHeight = 152/2;
+			} else {
+				mHeight = 152;
+			}
+
+		// H.M.Wang 追加下列11行
+		} else if (type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			Debug.d(TAG, "--->display H = " + dspH + "   mHeight: " + mHeight);
+			if (MessageObject.mDotSizes[0].equalsIgnoreCase(dspH)) {
+				mHeight = 152/8;
+			} else if (MessageObject.mDotSizes[1].equalsIgnoreCase(dspH)) {
+				mHeight = 152/4;
+			} else if (MessageObject.mDotSizes[2].equalsIgnoreCase(dspH)) {
 				mHeight = 152/2;
 			} else {
 				mHeight = 152;
@@ -1025,6 +1099,17 @@ public class BaseObject{
 			} else {
 				font = mFont;
 			}
+
+		// H.M.Wang 追加下列8行
+		} else if (type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			if (getHeight() <= 19) {
+				font = "4";
+			} else if (getHeight() <= 38) {
+				font = "7";
+			} else {
+				font = mFont;
+			}
+
 		} else {
 			font = mFont;
 		}
@@ -1064,7 +1149,11 @@ public class BaseObject{
 		}
 		
 		PrinterNozzle type = msg.getPNozzle();
-		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+
+		// H.M.Wang 修改下列2行
+//		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT || type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+
 			return false;
 		} else {
 			return true;

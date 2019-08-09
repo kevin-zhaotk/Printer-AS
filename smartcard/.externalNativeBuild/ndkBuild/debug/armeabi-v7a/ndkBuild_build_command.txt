@@ -1,0 +1,16 @@
+Executable : D:\Android\Sdk\ndk-bundle\ndk-build.cmd
+arguments : 
+NDK_PROJECT_PATH=null
+APP_BUILD_SCRIPT=C:\Users\hmwan\Documents\Projects\Printer-AS-Git\smartcard\src\main\jni\Android.mk
+APP_ABI=armeabi-v7a
+NDK_ALL_ABIS=armeabi-v7a
+NDK_DEBUG=1
+APP_PLATFORM=android-17
+NDK_OUT=C:/Users/hmwan/Documents/Projects/Printer-AS-Git/smartcard/build/intermediates/ndkBuild/debug/obj
+NDK_LIBS_OUT=C:\Users\hmwan\Documents\Projects\Printer-AS-Git\smartcard\build\intermediates\ndkBuild\debug\lib
+APP_SHORT_COMMANDS=false
+LOCAL_SHORT_COMMANDS=false
+-B
+-n
+jvmArgs : 
+

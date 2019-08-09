@@ -178,8 +178,11 @@ public class DataTransferThread {
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
 		final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
 		PrinterNozzle head = PrinterNozzle.getInstance(headIndex);
-		final boolean dotHd = (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT);
-		
+
+		// H.M.Wang 修改下列两行
+//		final boolean dotHd = (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT);
+		final boolean dotHd = (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT);
+
 		if (isRunning()) {
 			FpgaGpioOperation.uninit();
 			finish();
@@ -242,9 +245,13 @@ public class DataTransferThread {
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
 		final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
 		final PrinterNozzle head = PrinterNozzle.getInstance(headIndex);
-		if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT && head != PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+
+		// H.M.Wang 修改下列两行
+//		if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT && head != PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+		if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT && head != PrinterNozzle.MESSAGE_TYPE_32_DOT && head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 			return;
 		}
+
 		// access lock before cleaning begin
 		mPurgeLock.lock();
 		ThreadPoolManager.mThreads.execute(new Runnable() {
@@ -255,7 +262,10 @@ public class DataTransferThread {
 				DataTask task = new DataTask(context, null);
 				Debug.e(TAG, "--->task: " + task);
 				String purgeFile = "purge/single.bin";
-				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+
+				// H.M.Wang 修改下列两行
+//				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 					purgeFile = "purge/bigdot.bin";
 				}
 				char[] buffer = task.preparePurgeBuffer(purgeFile);

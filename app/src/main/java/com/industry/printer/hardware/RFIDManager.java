@@ -66,6 +66,7 @@ public class RFIDManager implements RfidCallback{
 				}
 				mDevice = mRfidDevices.get(mCurrent);
 				mDevice.addLisetener(RFIDManager.this);
+
 				if (mDevice.getLocalInk() > 0) {
 					mHandler.sendEmptyMessageDelayed(MSG_RFID_SWITCH_DEVICE, 200);
 					break;

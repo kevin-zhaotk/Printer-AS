@@ -1080,10 +1080,50 @@ public class SystemConfigFile{
 
 	public PrinterNozzle getPNozzle() {
 		int index = (int) mParam[INDEX_HEAD_TYPE];
-		if (index > PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL) {
-			return PrinterNozzle.MESSAGE_TYPE_12_7;
+
+		// H.M.Wang 做一下修改
+//        if (index > PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL) {
+//			return PrinterNozzle.MESSAGE_TYPE_12_7;
+//		}
+//		return PrinterNozzle.getInstance(index);
+
+		PrinterNozzle nozzle = PrinterNozzle.MESSAGE_TYPE_12_7;
+
+		switch(index) {
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_25_4:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_25_4;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_38_1:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_38_1;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_50_8:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_50_8;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_1_INCH;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_TRIPLE:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_16_DOT;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_32_DOT;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_64_DOT;
+				break;
 		}
-		return PrinterNozzle.getInstance(index);
+
+		return nozzle;
+		// H.M.Wang 修改完
 	}
 
 

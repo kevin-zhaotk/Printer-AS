@@ -10,15 +10,20 @@ public enum PrinterNozzle {
     MESSAGE_TYPE_50_8(MessageType.NOZZLE_INDEX_50_8, NozzleType.NOZZLE_TYPE_50_8, 4, 4),         //50.8 fourfold RFID（12.7X4），fourfold segment
     MESSAGE_TYPE_16_DOT(MessageType.NOZZLE_INDEX_16_DOT, NozzleType.NOZZLE_TYPE_16_DOT, 1, 1),       //big data; single Nozzle, single RFID, 4 segments
     MESSAGE_TYPE_32_DOT(MessageType.NOZZLE_INDEX_32_DOT, NozzleType.NOZZLE_TYPE_32_DOT, 1, 1),       // big data; single Nozzle, single RFID, 4 segments
+
+    // H.M.Wang 追加下列一行
+    MESSAGE_TYPE_64_DOT(MessageType.NOZZLE_INDEX_64_DOT, NozzleType.NOZZLE_TYPE_64_DOT, 1, 1),       // big data; single Nozzle, single RFID, 4 segments
+
     MESSAGE_TYPE_1_INCH(MessageType.NOZZLE_INDEX_1_INCH, NozzleType.NOZZLE_TYPE_1_INCH, 1, 1),       // 1寸（25.4），单头，one segment
     MESSAGE_TYPE_1_INCH_DUAL(MessageType.NOZZLE_INDEX_1_INCH_DUAL, NozzleType.NOZZLE_TYPE_1_INCH_DUAL, 2, 2),// 1寸双头（25.4X2）； 2 RFID，2 segments
     MESSAGE_TYPE_1_INCH_TRIPLE(MessageType.NOZZLE_INDEX_1_INCH_TRIPLE, NozzleType.NOZZLE_TYPE_1_INCH_TRIPLE, 3, 3),         //25.4 double Nozzle（12.7X2）,  double RFID，double segment
     MESSAGE_TYPE_1_INCH_FOUR(MessageType.NOZZLE_INDEX_1_INCH_FOUR, NozzleType.NOZZLE_TYPE_1_INCH_FOUR, 4, 4);
 
+
     public final int mIndex;
     public final int mType;
     public final int mHeads;
-    public final int mSegments;
+    public final int mSegments;         // 好像没有被用到 - H.M Wang
     public final boolean editZoomable; // 编辑状态下是否支持缩放
 
     private int mHeight;
@@ -48,6 +53,10 @@ public enum PrinterNozzle {
         switch (mType) {
             case NozzleType.NOZZLE_TYPE_16_DOT:
             case NozzleType.NOZZLE_TYPE_32_DOT://大字机
+
+            // H.M.Wang 追加下列一行
+            case NozzleType.NOZZLE_TYPE_64_DOT:
+
                 reverseEnable = true;
                 shiftEnable = true;
                 mirrorEnable = true;
@@ -74,6 +83,10 @@ public enum PrinterNozzle {
         switch (mType) {
             case NozzleType.NOZZLE_TYPE_16_DOT:
             case NozzleType.NOZZLE_TYPE_32_DOT:
+
+                // H.M.Wang 追加下列一行
+            case NozzleType.NOZZLE_TYPE_64_DOT:
+
                 editZoomable = false;
                 buffer8Enable = true;
                 factorScale = 1;
@@ -108,6 +121,12 @@ public enum PrinterNozzle {
             case NozzleType.NOZZLE_TYPE_32_DOT:
                 mHeight = 32;
                 break;
+
+            // H.M.Wang 追加下列三行
+            case NozzleType.NOZZLE_TYPE_64_DOT:
+                mHeight = 64;
+                break;
+
             case NozzleType.NOZZLE_TYPE_1_INCH:
                 mHeight = 320;
                 break;
@@ -169,6 +188,13 @@ public enum PrinterNozzle {
                 scaleW = 32f/152;
                 scaleH = 32f/152;
                 break;
+
+            // H.M.Wang 追加下列四行行
+            case NozzleType.NOZZLE_TYPE_64_DOT:
+                scaleW = 64f/152;
+                scaleH = 64f/152;
+                break;
+
             default:
                 scaleW = 1f;
                 scaleH = 1f;
@@ -212,6 +238,11 @@ public enum PrinterNozzle {
                 return MESSAGE_TYPE_16_DOT;
             case MessageType.NOZZLE_INDEX_32_DOT:
                 return MESSAGE_TYPE_32_DOT;
+
+            // H.M.Wang 追加下列两行
+            case MessageType.NOZZLE_INDEX_64_DOT:
+                return MESSAGE_TYPE_64_DOT;
+
             case MessageType.NOZZLE_INDEX_1_INCH:
                 return MESSAGE_TYPE_1_INCH;
             case MessageType.NOZZLE_INDEX_1_INCH_DUAL:
@@ -240,6 +271,11 @@ public enum PrinterNozzle {
                 return MESSAGE_TYPE_16_DOT;
             case NozzleType.NOZZLE_TYPE_32_DOT:
                 return MESSAGE_TYPE_32_DOT;
+
+            // H.M.Wang 追加下列两行
+            case NozzleType.NOZZLE_TYPE_64_DOT:
+                return MESSAGE_TYPE_64_DOT;
+
             case NozzleType.NOZZLE_TYPE_1_INCH:
                 return MESSAGE_TYPE_1_INCH;
             case NozzleType.NOZZLE_TYPE_1_INCH_DUAL:
@@ -267,6 +303,9 @@ public enum PrinterNozzle {
         public static final int NOZZLE_INDEX_1_INCH_FOUR = 7; // 1inch X2
         public static final int NOZZLE_INDEX_16_DOT  = 8;   // 16dot
         public static final int NOZZLE_INDEX_32_DOT  = 9;   // 32 dot
+
+        // H.M.Wang 追加下列一行
+        public static final int NOZZLE_INDEX_64_DOT  = 10;   // 64 dot
     }
 
     public static class NozzleType {
@@ -281,5 +320,7 @@ public enum PrinterNozzle {
         public static final int NOZZLE_TYPE_1_INCH_TRIPLE = 18;
         public static final int NOZZLE_TYPE_1_INCH_FOUR = 19;
 
+        // H.M.Wang 追加下列一行
+        public static final int NOZZLE_TYPE_64_DOT = 20;
     }
 }

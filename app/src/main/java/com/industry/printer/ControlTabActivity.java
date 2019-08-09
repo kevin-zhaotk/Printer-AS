@@ -109,6 +109,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ControlTabActivity extends Fragment implements OnClickListener, InkLevelListener, OnTouchListener, DataTransferThread.Callback {
 	public static final String TAG="ControlTabActivity";
@@ -574,7 +575,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	}
 	private void switchRfid() {
 		mRfid += 1;
+
 		int heads = mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0 ? mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) : mSysconfig.getPNozzle().mHeads;
+
 		if (mRfid >= RFIDManager.TOTAL_RFID_DEVICES || mRfid >= heads) {
 			mRfid = 0;
 		}
@@ -894,6 +897,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mSysconfig.saveLastMsg(mObjPath);
 //					dismissProgressDialog();
 
+///////////////////////////
 					if (Configs.IGNORE_RFID) {
 						mHandler.sendEmptyMessage(MESSAGE_PRINT_START);
 					} else {
@@ -987,10 +991,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						handleError(R.string.str_print_printing, pcMsg);
 						break;
 					}
+///////////////////////////
 					if (!checkRfid()) {
 						handleError(R.string.str_toast_no_ink, pcMsg);
 						return;
 					}
+
 					Debug.d(TAG, "--->check rfid ok");
 
 					if (mObjPath == null || mObjPath.isEmpty()) {
@@ -1218,6 +1224,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		//DataTask task = mDTransThread.getData();
 		int heads = SystemConfigFile.getInstance(mContext).getPNozzle().mHeads;// task.getHeads();
 		for (int i = 0; i < heads; i++) {
+			Debug.d(TAG, "Checking Rfid of Head = " + i);
 			float ink = mRfidManager.getLocalInk(i);
 			if (ink <= 0) {
 				ready = false;

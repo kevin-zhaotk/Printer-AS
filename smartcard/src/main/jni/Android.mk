@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libsmartcard
 LOCAL_MODULE_TAGS := optional
 LOCAL_LDLIBS += -L$(SYSROOT)/usr/lib -llog
-LOCAL_SHARED_LIBRARIES := libcutil
+# LOCAL_SHARED_LIBRARIES := libcutil
 
 
 
