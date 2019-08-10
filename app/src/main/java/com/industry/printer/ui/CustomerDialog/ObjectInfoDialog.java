@@ -125,6 +125,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	private EditText mMin;
 	private EditText mMax;
 	private EditText mCntIndex;
+	private EditText mCntSteplen;
 	public Button	mBtnOk;
 	private Button  mPageup;
 	private Button  mPagedown;
@@ -311,8 +312,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			    // mDir.setOnClickListener(this);
 			    mMin = (EditText) findViewById(R.id.et_start);
 			    mMax = (EditText) findViewById(R.id.et_end);
-			    mCntIndex = (EditText) findViewById(id.et_cnt_index);
-			    
+			    mCntIndex = (EditText) findViewById(R.id.et_cnt_index);
+			    mCntSteplen = (EditText) findViewById(id.et_cnt_step);
 			}
 		    if (mObject instanceof BarcodeObject) {
 			    mCode = (TextView) findViewById(R.id.spinCode);
@@ -400,6 +401,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 									StringUtil.parseInt(mMax.getText().toString()));
 							((CounterObject) mObject).setContent(mContent.getText().toString());
 							((CounterObject) mObject).mCounterIndex = Integer.valueOf(mCntIndex.getText().toString());
+							((CounterObject) mObject).mStepLen = Integer.valueOf(mCntSteplen.getText().toString());
 							// ((CounterObject) mObject).setMin(StringUtil.parseInt(mMin.getText().toString()));
 							// ((CounterObject) mObject).setMax(StringUtil.parseInt(mMax.getText().toString()));
 						}
@@ -544,6 +546,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 					mMin.setText(String.valueOf(((CounterObject) mObject).getStart()));
 					mMax.setText(String.valueOf(((CounterObject) mObject).getEnd()));
 					mCntIndex.setText(String.valueOf(((CounterObject)mObject).mCounterIndex));
+					mCntSteplen.setText(String.valueOf(((CounterObject)mObject).getSteplen()));
 				}
 				else if(mObject instanceof BarcodeObject)
 				{

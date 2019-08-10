@@ -400,7 +400,8 @@
 	<string name="str_no_upgrade">已經是最新版本</string>
 	<string name="str_cnt_min">起始值</string>
 	<string name="str_cnt_max">結束值</string>
-	<string name="str_cnt_index">编号</string>
+	<string name="str_cnt_index">編號</string>
+	<string name="str_cnt_steplen">步長</string>
 	<string name="str_loading">正在加載..</string>
 	<string name="str_toast_no_qrfile">沒有找到 QR.txt或QR.csv</string>
 	<string name="str_barcode_end">QR.txt已經打印結束</string>

@@ -400,4 +400,6 @@
 	
 	<string name="str_cnt_min">開始</string>
 	<string name="str_cnt_max">終了</string>
+	<string name="str_cnt_index">番号付け</string>
+	<string name="str_cnt_steplen">歩幅</string>
 </resources>

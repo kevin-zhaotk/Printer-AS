@@ -383,6 +383,8 @@
 	<string name="str_no_upgrade">Já está atualizado</string>
 	<string name="str_cnt_min">Começar</string>
 	<string name="str_cnt_max">Finalizar</string>
+	<string name="str_cnt_index">Número</string>
+	<string name="str_cnt_steplen">Passo</string>`
     <string name="str_F1">F1</string>
 	<string name="str_net_ipdefault">192.168.1.101</string>
 	<string name="tips_import_font">Importando fontes ...</string>

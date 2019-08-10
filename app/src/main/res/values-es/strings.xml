@@ -393,6 +393,8 @@
 	<string name="str_no_upgrade">Aún la ultima versión</string>
 	<string name="str_cnt_min">Inicio</string>
 	<string name="str_cnt_max">FIN</string>
+	<string name="str_cnt_index">CID</string>
+	<string name="str_cnt_steplen">Step-Len</string>
 	<string name="str_loading">loading...</string>
 	<string name="str_toast_no_qrfile">no QR.txt or QR.csv</string>
 	<string name="str_barcode_end">Barcode file is end</string>

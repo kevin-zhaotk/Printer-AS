@@ -397,6 +397,8 @@
 	<string name="str_no_upgrade">Установлена последняя версия ПО</string>
 	<string name="str_cnt_min">Старт</string>
 	<string name="str_cnt_max">End</string>
+	<string name="str_cnt_index">Número</string>
+	<string name="str_cnt_steplen">Passo</string>
 	<string name="str_loading">loading...</string>
 	<string name="str_toast_no_qrfile">no QR.txt or QR.csv</string>
 	<string name="str_barcode_end">Barcode file is end</string>
