@@ -11,6 +11,12 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.ReflectCaller;
 import com.industry.printer.Utils.SystemFs;
 
+/**
+ * RTC地址分配说明
+ * 0x08 ~ 0x0C   打印计数及校验和 共5Bytes
+ * 0x0f 		 用于RTC的I2C地址校验
+ * 0x10 ~ 0x37   保存0-9计数器值
+ */
 public class RTCDevice {
 
 	public static native int open(String dev);
@@ -26,6 +32,8 @@ public class RTCDevice {
 	private final String I2C_WRITE = "/sys/class/device_of_i2c/write";
 	private final String I2C_DEVICE = "/sys/class/device_of_i2c/device";
 
+	private static int I2C_ADDRESS = 1;
+	private static int I2C_CHECK_VALUE = 0x55;
 	private final String[] ADDRESS = {"0x10", "0x14", "0x18", "0x1C", "0x20", "0x24", "0x28", "0x2C", "0x30", "0x34"};
 	
 	public static RTCDevice mInstance = null;
@@ -40,8 +48,34 @@ public class RTCDevice {
 	public RTCDevice(Context context) {
 		
 		SystemFs.writeSysfs(I2C_DEVICE, "1,0x68");
-		String cmd = "5,0x08";
-		SystemFs.writeSysfs(I2C_READ, cmd);
+		// 自动探测RTC的I2C地址
+		String cmdWR = "0x0f,0x55";
+		SystemFs.writeSysfs(I2C_WRITE, cmdWR);
+		String cmdRD = "1,0x0f";
+		SystemFs.writeSysfs(I2C_READ, cmdRD);
+		String out = SystemFs.readSysfs(I2C_READ);
+		if (out==null) {
+			return ;
+		}
+		Debug.d(TAG, "--->NVRAM init out = " + out);
+
+		String[] bytes = out.split("/r/n");
+		if (bytes == null || bytes.length < 4) {
+			return ;
+		}
+		int pos = bytes[3].lastIndexOf("0x");
+
+		byte check = (byte) Integer.parseInt(bytes[3].substring(pos+2), 16);
+
+		Debug.d(TAG, "--->NVRAM init out = " + String.valueOf(check));
+
+		if (check == I2C_CHECK_VALUE) {
+
+			I2C_ADDRESS = 1;
+		} else {
+			I2C_ADDRESS = 2;
+		}
+		Debug.d(TAG, "--->NVRAM init out = " + I2C_ADDRESS);
 	}
 	
 	public void initSystemTime(Context context) {
@@ -82,9 +116,9 @@ public class RTCDevice {
 	 * 总计数为8位10进制数字，保存在DS1338的NVRAM中的08H～0CH 4个字节中
 	 */
 	public int readCounter(Context context) {
-		SystemFs.writeSysfs(I2C_DEVICE, "1,0x68");
+		SystemFs.writeSysfs(I2C_DEVICE, getAddress());
 
-//		SystemFs.writeSysfs(I2C_READ, "4, 0x08");
+		SystemFs.writeSysfs(I2C_READ, "5,0x08");
 		int index=0;
 		String out = SystemFs.readSysfs(I2C_READ);
 		if (out==null) {
@@ -153,7 +187,7 @@ public class RTCDevice {
 	 * @param count
 	 */
 	public void writeAll(long[] count) {
-		SystemFs.writeSysfs(I2C_DEVICE, "1,0x68");
+		SystemFs.writeSysfs(I2C_DEVICE, getAddress());
 		for (int i = 0; i < count.length; i++) {
 			StringBuilder cmd = new StringBuilder(ADDRESS[i]);
 			byte byte0 = (byte) (count[i] & 0x0ff);
@@ -180,7 +214,7 @@ public class RTCDevice {
 	public long read(int index) {
 
 	    String cmd = "4," + ADDRESS[index];
-		SystemFs.writeSysfs(I2C_DEVICE, "1,0x68");
+		SystemFs.writeSysfs(I2C_DEVICE, getAddress());
 		SystemFs.writeSysfs(I2C_READ, cmd);
 		String out = SystemFs.readSysfs(I2C_READ);
 		if (out==null) {
@@ -210,6 +244,10 @@ public class RTCDevice {
 			Debug.d(TAG, "--->readAllcounts[  " + i + "]= " + counts[i]);
 		}
 		return counts;
+	}
+
+	private String getAddress() {
+		return I2C_ADDRESS + ",0x68";
 	}
 
 //	public int[] readAll() {
