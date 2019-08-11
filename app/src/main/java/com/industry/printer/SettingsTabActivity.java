@@ -239,8 +239,17 @@ public static final String TAG="SettingsTabActivity";
 		super.onDestroy();
 		Debug.d(TAG, "--->onDestroy");
 	}
-	
-	private TextView tv_btnOk; 
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		Debug.d(TAG, "--->onHiddenChanged: " + hidden);
+		if (!hidden) {
+			mAdapter.notifyDataSetChanged();
+		}
+	}
+
+	private TextView tv_btnOk;
 	private TextView tv_btnCancel;
 	private TextView tv_btnTime;
 	private TextView tv_btnSetting; 
