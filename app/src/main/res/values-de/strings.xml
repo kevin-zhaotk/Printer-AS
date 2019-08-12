@@ -399,6 +399,9 @@
 	<string name="str_no_upgrade">Already the last Version right now</string>
 	<string name="str_cnt_min">Start</string>
 	<string name="str_cnt_max">End</string>
+	<string name="str_cnt_index">CID</string>
+	<string name="str_cnt_steplen">Step-Len</string>
+
 	<string name="password_title">Bitte geben Sie Ihr Passwort ein</string>
     <string name="str_F1">F1</string>
 	<string name="str_net_ipdefault">192.168.1.101</string>

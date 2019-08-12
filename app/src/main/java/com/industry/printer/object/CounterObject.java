@@ -100,8 +100,11 @@ public class CounterObject extends BaseObject {
 	
 	public void setSteplen(int step)
 	{
-		if(step >= 0)
-		mStepLen = step;
+		if(step < 1) {
+			mStepLen = 1;
+		} else {
+			mStepLen = step;
+		}
 	}
 	
 	public int getSteplen()

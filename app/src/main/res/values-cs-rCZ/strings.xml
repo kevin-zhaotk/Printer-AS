@@ -410,6 +410,8 @@
 	
 	<string name="str_cnt_min">Start</string>
 	<string name="str_cnt_max">Konec</string>
+	<string name="str_cnt_index">CID</string>
+	<string name="str_cnt_steplen">Step-Len</string>
 	<string name="str_btn_saveprint">Uložit-Tiskněte</string>
 	<string name="str_remain_ink">Inkoust</string>
 	<string name="str_remain_ptimes">Celkový</string>

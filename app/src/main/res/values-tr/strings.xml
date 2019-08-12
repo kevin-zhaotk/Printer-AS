@@ -397,6 +397,8 @@
     <string name="str_no_upgrade">Son versiyon kullanılıyor</string>
     <string name="str_cnt_min">Başlama</string>
     <string name="str_cnt_max">Son</string>
+    <string name="str_cnt_index">Número</string>
+    <string name="str_cnt_steplen">Passo</string>
     <string name="str_toast_no_qrfile">no QR.txt or QR.csv</string>
     <string name="str_recover_print">recover last print</string>
 	<string name="str_net_devname">Device</string>

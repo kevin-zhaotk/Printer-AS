@@ -404,6 +404,7 @@
 	<string name="str_no_upgrade">已经是最新版本</string>
 	<string name="str_cnt_min">起始值</string>
 	<string name="str_cnt_max">结束值</string>
+	<string name="str_cnt_steplen">步长</string>
 	<string name="str_cnt_index">编号</string>
 	<string name="str_loading">正在加载...</string>
 	<string name="str_toast_no_qrfile">沒有找到 QR.txt或QR.csv</string>

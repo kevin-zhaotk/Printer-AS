@@ -394,6 +394,8 @@
     <string name="str_no_upgrade">Ultima versione già in uso</string>
     <string name="str_cnt_min">Inizio</string>
     <string name="str_cnt_max">Fine</string>
+    <string name="str_cnt_index">CID</string>
+    <string name="str_cnt_steplen">Step-Len</string>`
     <string name="str_loading">loading...</string>
     <string name="str_toast_no_qrfile">no QR.txt or QR.csv</string>
     <string name="str_recover_print">recover last print</string>

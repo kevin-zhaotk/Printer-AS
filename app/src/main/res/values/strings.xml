@@ -447,6 +447,7 @@
 	<string name="str_cnt_min">Start</string>
 	<string name="str_cnt_max">End</string>
 	<string name="str_cnt_index">CID</string>
+	<string name="str_cnt_steplen">Step-Len</string>
 	<string name="str_loading">loading...</string>
 	
 	<string name="str_toast_no_qrfile">no QR.txt or QR.csv</string>
