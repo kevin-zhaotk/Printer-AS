@@ -17,6 +17,7 @@ import android.R.menu;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
@@ -330,14 +331,37 @@ public class BinInfo {
     public synchronized char[] getVarBuffer(String var)
     {
     	int n;
-    	byte[] feed = {0};
+		byte[] feed = {0};
 
-    	ByteArrayBuffer ba = new ByteArrayBuffer(0);
+		// H.M.Wang 追加下列11行。为计数器清楚前置0
+		byte[] blank = new byte[mBytesPerH];
+		for(int i=0; i<mBytesPerH; i++) {
+			blank[i] = 0;
+		}
+		boolean bFillBlank = false;
+		boolean bSkipThisZero = false;
+		boolean bClearZero = false;
+		SystemConfigFile mConfigFile = SystemConfigFile.getInstance();
+		if(null != mConfigFile && mConfigFile.getParam(SystemConfigFile.INDEX_CLEAR_ZERO) == 1) {
+			bClearZero = true;
+		}
+
+
+		ByteArrayBuffer ba = new ByteArrayBuffer(0);
    		for(int i=0; i<var.length(); i++)
    		{
    			String v = var.substring(i, i+1);
    			try {
    				n = Integer.parseInt(v);
+
+				// H.M.Wang 追加下列6行。为计数器清楚前置0
+				if(bClearZero && n == 0 && !bSkipThisZero && i<var.length()-1) {
+					bFillBlank = true;
+				} else {
+					bFillBlank = false;
+					bSkipThisZero = true;
+				}
+
 			} catch (Exception e) {
 				n = (int)v.charAt(0) - (int)"A".charAt(0);
 			}
@@ -348,7 +372,16 @@ public class BinInfo {
    			/* 如果每列的字节数为单数，则需要在每列尾部补齐一个字节 */
    			for (int k = 0; k < mColPerElement; k++) {
    				for (int j = 0; j < mType; j++) {
-   	   				ba.append(mBuffer, n*mColPerElement * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
+					// H.M.Wang 注释掉1行
+//					ba.append(mBuffer, n*mColPerElement * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
+
+					// H.M.Wang 追加下列5行。为计数器清楚前置0
+					if(bFillBlank) {
+						ba.append(blank, 0, mBytesPerH);
+					} else {
+						ba.append(mBuffer, n*mColPerElement * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
+					}
+
    	   	   			if (mNeedFeed) {
    	   					ba.append(feed, 0, 1);
    	   				}

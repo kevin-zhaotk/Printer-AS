@@ -100,7 +100,9 @@ public class SystemConfigFile{
 	public static final String LAST_MESSAGE = "message";
 
 	// 设置里的计数器
-	public static final int INDEX_COUNTER = 17;
+	// H.M.Wang 修改下列2行。为计数器清楚前置0
+//	public static final int INDEX_COUNTER = 17;
+	public static final int INDEX_CLEAR_ZERO = 17;
 
 	public static final int INDEX_DAY_START = 16;
 	
@@ -153,14 +155,19 @@ public class SystemConfigFile{
 	public static SystemConfigFile mInstance;
 	
 	public static HashMap<Integer, HashMap<String,Integer>> mParamRange = new HashMap<Integer, HashMap<String,Integer>>();
-	
+
 	public static SystemConfigFile getInstance(Context context) {
 		if (mInstance == null) {
 			mInstance = new SystemConfigFile(context);
 		}
 		return mInstance;
 	}
-	
+
+	// H.M.Wang 下列函数。为计数器清楚前置0
+	public static SystemConfigFile getInstance() {
+		return mInstance;
+	}
+
 	public SystemConfigFile(Context context) {
 		mContext = context;
 		init();

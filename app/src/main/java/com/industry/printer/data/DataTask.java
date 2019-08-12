@@ -170,11 +170,11 @@ public class DataTask {
 		// H.M.Wang 追加下列8行
 //		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT && Configs.getMessageShift(3) == 1) {
 		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
-			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+//			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
 			mPrintBuffer = evenBitShiftFor64Dot();
-			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
-			Debug.d(TAG, mTask.getPath() + "/print.bin");
-			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
+//			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+//			Debug.d(TAG, mTask.getPath() + "/print.bin");
+//			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
 		}
 
 		Debug.d(TAG, "--->BytesPerColumn: " + mBinInfo.mBytesPerColumn);
@@ -347,9 +347,11 @@ public class DataTask {
 					info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
 					mVarBinList.put(o, info);
 				}
+
 				var = info.getVarBuffer(str);
 				// BinCreater.saveBin("/mnt/usbhost1/" + o.getIndex() + ".bin", var, info.getCharsPerHFeed()*16);
 				// Debug.d(TAG, "--->object x=" + o.getX()/div);
+
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
 			}
 			else if(o instanceof RealtimeObject)
@@ -661,9 +663,9 @@ public class DataTask {
 		char even = 0x5555;
 		char odd = 0xaaaa;
 
-		Debug.d(TAG, "evenBitShiftFor64Dot" );
-		Debug.d(TAG, "mBinInfo.mColumn = " + mBinInfo.mColumn);
-		Debug.d(TAG, "mBinInfo.mBytesPerColumn = " + mBinInfo.mBytesPerColumn);
+//		Debug.d(TAG, "evenBitShiftFor64Dot" );
+//		Debug.d(TAG, "mBinInfo.mColumn = " + mBinInfo.mColumn);
+//		Debug.d(TAG, "mBinInfo.mBytesPerColumn = " + mBinInfo.mBytesPerColumn);
 		for (int i = 0; i < mBinInfo.mColumn; i++) {
 			for (int j = 0; j < 4; j++) {
 				buffer[i * 4 + j] |= (char)(mPrintBuffer[i * 4 + j] & odd);

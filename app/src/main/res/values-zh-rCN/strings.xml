@@ -308,7 +308,11 @@
 	<string name="str_textview_param15">15.1 头倒置</string>
 	<string name="str_textview_param16">16.2 头倒置</string>
 	<string name="str_textview_param17">17.日期延迟</string>
-	<string name="str_textview_param18">18.计数器</string>
+
+	// H.M.Wang 修改1行。为计数器清楚前置0
+<!--	<string name="str_textview_param18">18.计数器</string>-->
+	<string name="str_textview_param18">18.计数消零</string>
+
 	<string name="str_textview_param19">19.3 头偏移</string>
 	<string name="str_textview_param20">20.4 头偏移</string>
 	<string name="str_textview_param21">21.3 头镜像</string>

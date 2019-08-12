@@ -414,6 +414,7 @@ public class MessageTask {
 	/**
 	 * 使用系统字库，生成bitmap，然后通过灰度化和二值化之后提取点阵生成buffer
 	 */
+
 	private void saveObjectBin()
 	{
 		int width=0;
@@ -428,7 +429,7 @@ public class MessageTask {
 			width = (int)(width > o.getXEnd() ? width : o.getXEnd());
 		}
 		float div = (float) (2.0/(getHeads() == 0 ? 1 : getHeads()));
-		
+
 		Bitmap bmp = Bitmap.createBitmap(width , Configs.gDots, Configs.BITMAP_CONFIG);
 		Debug.d(TAG, "drawAllBmp width="+width+", height="+Configs.gDots);
 		Canvas can = new Canvas(bmp);
@@ -437,7 +438,7 @@ public class MessageTask {
 		{
 			if((o instanceof MessageObject)	)
 				continue;
-			
+
 			if(o instanceof CounterObject)
 			{
 				// o.drawVarBitmap();
@@ -450,11 +451,11 @@ public class MessageTask {
 			} else if(o instanceof JulianDayObject) {
 				// o.drawVarBitmap();
 			} else if (o instanceof BarcodeObject && o.getSource()) {
-				
+
 			} else if(o instanceof ShiftObject)	{
 				// o.drawVarBitmap();
 			} else if (o instanceof LetterHourObject) {
-				
+
 			} else if (o instanceof BarcodeObject) {
 				Bitmap t = ((BarcodeObject) o).getScaledBitmap(mContext);
 				can.drawBitmap(t, o.getX(), o.getY(), p);
@@ -549,10 +550,10 @@ public class MessageTask {
 		mDots = maker.extract(bitmap, msg.getPNozzle().mHeads);
 		// 保存bin文件
 		maker.save(ConfigPath.getBinAbsolute(mName));
-		
+
 		return ;
 	}
-	
+
 	private void saveBinNoScale() {
 		int width=0;
 		Paint p=new Paint();

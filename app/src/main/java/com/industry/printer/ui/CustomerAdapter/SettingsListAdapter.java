@@ -63,7 +63,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	private PopWindowAdapter mPen2Invert;
 	private PopWindowAdapter mPen3Invert;
 	private PopWindowAdapter mPen4Invert;
-	
+
+	// H.M.Wang 增加1行。为计数器清楚前置0
+	private PopWindowAdapter mClearZero;
+
 	private PopWindowAdapter mPens;
 	private PopWindowAdapter mAutoVol;
 	private PopWindowAdapter mAutoPulse;
@@ -232,7 +235,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mPen2Invert = new PopWindowAdapter(mContext, null);
 		mPen3Invert = new PopWindowAdapter(mContext, null);
 		mPen4Invert = new PopWindowAdapter(mContext, null);
-		
+
+		// H.M.Wang 增加1行。为计数器清楚前置0
+		mClearZero = new PopWindowAdapter(mContext, null);
+
 		mPens = new PopWindowAdapter(mContext, null);
 		mHandle = new PopWindowAdapter(mContext, null);
 		
@@ -364,7 +370,11 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[14] = new ItemOneLine(15, R.string.str_textview_param15, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
 		mSettingItems[15] = new ItemOneLine(16, R.string.str_textview_param16, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
 		mSettingItems[16] = new ItemOneLine(17, R.string.str_textview_param17, 0);
-		mSettingItems[17] = new ItemOneLine(18, R.string.str_textview_param18, 0);
+
+		// H.M.Wang 修改2行。为计数器清楚前置0
+//		mSettingItems[17] = new ItemOneLine(18, R.string.str_textview_param18, 0);
+		mSettingItems[17] = new ItemOneLine(18, R.string.str_textview_param18, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
+
 		mSettingItems[18] = new ItemOneLine(19, R.string.str_textview_param19, R.string.str_length_unit_6_1mm);
 		mSettingItems[19] = new ItemOneLine(20, R.string.str_textview_param20, R.string.str_length_unit_6_1mm);
 		mSettingItems[20] = new ItemOneLine(21, R.string.str_textview_param21, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
@@ -480,6 +490,12 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		for (int i = 0; i < items.length; i++) {
 			mPen4Invert.addItem(items[i]);
 		}
+
+		// H.M.Wang 增加3行。为计数器清楚前置0
+		for (int i = 0; i < items.length; i++) {
+			mClearZero.addItem(items[i]);
+		}
+
 		for (int i = 0; i < items.length; i++) {
 			mAutoVol.addItem(items[i]);
 		}
@@ -580,6 +596,11 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mSpiner.setAdapter(mQRsource);
 		}*/ else if (position == 20) { //參數21
 			mSpiner.setAdapter(mPen3Mirror);
+
+		// H.M.Wang 增加2行。为计数器清楚前置0
+		} else if (position == 18) { //參數18
+				mSpiner.setAdapter(mClearZero);
+
 		} else if (position == 21) { //參數22
 			mSpiner.setAdapter(mPen4Mirror);
 		} else if (position == 22) { //參數23
