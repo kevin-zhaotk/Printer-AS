@@ -151,8 +151,7 @@ public class CounterObject extends BaseObject {
 		mContent = BaseObject.intToFormatString(mValue, mBits);
 //		Debug.d(TAG, "setContent content="+content+", value="+mValue+", mMax="+mMax);
 	}
-	
-	
+
 	public String getNext()
 	{
 		Debug.d(TAG, "--->getNext mContent="+mContent+", mValue="+mValue+", mSteplen=" + mStepLen + " direction=" + mDirection);
@@ -178,7 +177,7 @@ public class CounterObject extends BaseObject {
 		SystemConfigFile.getInstance(mContext).setParam(mCounterIndex + SystemConfigFile.INDEX_COUNT_1, Integer.valueOf(value));
 		return value;
 	}
-	
+
 	public void rollback() {
 		Debug.d(TAG, "--->rollback value: " + mValue);
 		if(!mDirection)	//increase

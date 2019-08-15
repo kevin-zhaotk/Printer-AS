@@ -18,6 +18,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
@@ -198,7 +199,9 @@ public class BinInfo {
 		/*如果mBytesPerColumn不是type的整数倍，说明这个bin文件不是一个合法的bin文件
 		 *那么我们不会保证打印结果是否正确，所以这里不需要容错
 		 */
+
 		mBytesPerH = mBytesPerColumn/mType;
+
 		Debug.d(TAG, "--->mBytesPerH =" + mBytesPerH + ", type=" + mType);
 		mCharsPerH = mBytesPerH/2;
 		/* 如果每列的字节数为奇数则 +1 变为偶数， 以便于FPGA处理*/
@@ -218,6 +221,15 @@ public class BinInfo {
 		}
 		mCharsPerHFeed = mBytesPerHFeed/2;
 		mCharsFeed = mBytesFeed/2;
+
+		// H.M.Wang 追加下列6行。为了25.4xn喷头调整实际的喷头字节数
+		if( mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+			mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+			mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+			mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR ) {
+			mBytesPerH -= 2;
+		}
+
 		//通过文件后缀是否带有v判断是否为变量的bin文件
 		if (mFile != null && mFile.getName().contains("v")) {
 			if (mVarCount <= 0) {
@@ -299,8 +311,50 @@ public class BinInfo {
 			// int bytesPer = mBytesPerColumn + (mNeedFeed==true? mType : 0);
 			/** 从当前位置读取mBytesPerH个字节到背景buffer中，由于需要处理多头情况，所以要注意在每个头的列尾要注意补偿问题（双字节对齐）*/
 			for(int i=0; i < mColumn; i++) {
+				byte tempByte = 0x00, bufferBypte = 0x00;
+				int skipBytes = 0;
 				for (int j = 0; j < mType; j++) {
-					mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, mBytesPerH);
+//					mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, mBytesPerH);
+					/*
+						每个25.4的头打印像素位308点，需要38.5个字节，为了处理最后的半个字节，设置缺省一次读取38个字节，304位，但鉴于这种请开给你
+						需要对第一和第三头多取一个字节，将最后一个字节的前4位留用，后4位用在第二和第四头使用，放置在其数据的前部，因此第二和第四头
+						的每个字节均需要进行4位的移位处理。因此，对于每一列后部需要跳过的空白区，第一和第三头仅需要跳过1个字节，第二和第四头需要跳
+						过两个字节，整体根据头的数量，跳过上述字节的合计数量字节数
+					 */
+					// H.M.Wang 追加下列26行。为了25.4xn喷头调整实际的喷头字节数
+					if( mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+							mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+							mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+							mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR ) {
+						if(j%2 == 0) {
+							mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, mBytesPerH + 1);
+							tempByte = mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + mBytesPerH];
+							mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + mBytesPerH] &= 0x0f;
+							tempByte >>= 4;
+							tempByte &= 0x0f;
+							Debug.d(TAG, "tempByte = " + tempByte);
+							skipBytes += 1;
+						} else {
+							mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, mBytesPerH);
+							for(int k=0; k<mBytesPerH; k++) {
+								bufferBypte = mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + k];
+								tempByte |= (byte)((bufferBypte << 4) & 0xf0);
+								mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + k] = tempByte;
+								tempByte = (byte)((bufferBypte >> 4) & 0x0f);
+							}
+							mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + mBytesPerH] = tempByte;
+							skipBytes += 2;
+						}
+					} else {
+						mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, mBytesPerH);
+					}
+				}
+				// H.M.Wang 追加下列6行。为了25.4xn喷头调整实际的喷头字节数
+				if( mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR ) {
+					mCacheStream.skip(skipBytes);
 				}
 			}
 	    	//mFStream.close();

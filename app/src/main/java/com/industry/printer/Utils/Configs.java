@@ -22,7 +22,7 @@ import com.industry.printer.object.data.SegmentBuffer;
 
 public class Configs {
 	
-	public static final boolean DEBUG=true;
+//	public static final boolean DEBUG=true;
 
 	/**
 	 * 该版本打印是否需要忽略rfid
@@ -30,7 +30,7 @@ public class Configs {
 	 * set Rfid value to 370/2 if Rfid is missing;
 	 * skip UID checking after 'print' command triggered before data transfer;
 	 */
-	public static final boolean IGNORE_RFID = true;
+//	public static final boolean IGNORE_RFID = true;
 
 	
 	/**

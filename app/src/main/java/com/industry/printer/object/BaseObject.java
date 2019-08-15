@@ -838,7 +838,7 @@ public class BaseObject{
 	{
 		return mIsSelected;
 	}
-	
+
 	public void setContent(String content)
 	{
 		if(mContent!=null && mContent.equals(content))
@@ -852,7 +852,7 @@ public class BaseObject{
 //		mWidth = 0;
 		isNeedRedraw = true;
 	}
-	
+
 	public String getContent()
 	{
 		return mContent;

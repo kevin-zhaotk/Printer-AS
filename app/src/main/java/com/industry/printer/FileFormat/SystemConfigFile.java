@@ -18,6 +18,7 @@ import android.R.integer;
 import android.R.xml;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Xml;
 
 import com.industry.printer.PHeader.PrinterNozzle;
@@ -26,6 +27,7 @@ import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.hardware.RFIDDevice;
 import com.industry.printer.hardware.RFIDManager;
+import com.industry.printer.ui.CustomerAdapter.SettingsListAdapter;
 
 
 public class SystemConfigFile{
@@ -375,6 +377,12 @@ public class SystemConfigFile{
 			}
 		}
 		inStream.close();
+
+		for (int i = INDEX_COUNT_1; i <= INDEX_COUNT_10; i++) {
+			mParam[i] = (int)(RTCDevice.getInstance(mContext).read(i - INDEX_COUNT_1));
+			Debug.d(TAG, "mParam[" + i + "] = " + mParam[i]);
+		}
+
 		return true;
 		/*
 		try {
@@ -1061,7 +1069,7 @@ public class SystemConfigFile{
 		return value;
 	}
 	
-	
+
 	public int[] getParams() {
 		return (int[])mParam;
 	}
@@ -1070,9 +1078,10 @@ public class SystemConfigFile{
 		if (index >= mParam.length) {
 			return 0;
 		}
+		Debug.d(TAG, "getParam ==> mParam[" + index + "]" + mParam[index]);
 		return (int) mParam[index];
 	}
-	
+
 	public void setParam(int index, int value) {
 		Debug.d(TAG, "--->index=" + index + ", value=" + value);
 		if (index >= mParam.length) {
@@ -1080,8 +1089,16 @@ public class SystemConfigFile{
 		}
 		mParam[index] = value;
 
-		if (index >= INDEX_COUNT_1 && index < INDEX_COUNT_10) {
+		// H.M.Wang 修改一行，增加5行。发出计数器参数变化广播
+//		if (index >= INDEX_COUNT_1 && index < INDEX_COUNT_10) {
+		if (index >= INDEX_COUNT_1 && index <= INDEX_COUNT_10) {
 			RTCDevice.getInstance(mContext).write(value, index - INDEX_COUNT_1);
+
+			Intent broadcastIntent = new Intent();
+			broadcastIntent.setAction(SettingsListAdapter.ACTION_COUNTER_CHANGED);
+			broadcastIntent.putExtra(SettingsListAdapter.TAG_INDEX, index);
+			broadcastIntent.putExtra(SettingsListAdapter.TAG_COUNT, String.valueOf(value));
+			mContext.sendBroadcast(broadcastIntent);
 		}
 	}
 

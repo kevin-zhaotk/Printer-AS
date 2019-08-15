@@ -19,8 +19,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.text.TextUtils;
 
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.FileFormat.TlkFileWriter;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.ConfigPath;
@@ -574,12 +576,15 @@ public class MessageTask {
 		//實際寬度
 		int bWidth = (int) (width * scaleW);
 		int bHeight = msgObj.getPNozzle().getHeight();
+		Debug.d(TAG, "SaveTime: - Start CreateBitmap : " + System.currentTimeMillis());
 		Bitmap bmp = Bitmap.createBitmap(bWidth , bHeight, Configs.BITMAP_CONFIG);
 		Debug.d(TAG, "drawAllBmp width=" + bWidth + ", height=" + bHeight);
 		Canvas can = new Canvas(bmp);
 		can.drawColor(Color.WHITE);
 		for(BaseObject o:mObjects)
 		{
+			System.gc();
+			Debug.d(TAG, "SaveTime: - Start DrawObject(" + o.mName + ") : " + System.currentTimeMillis());
 			if((o instanceof MessageObject)	)
 				continue;
 			
@@ -596,7 +601,8 @@ public class MessageTask {
 			else if(o instanceof RealtimeObject) {
 				Bitmap t = ((RealtimeObject)o).getBgBitmap(mContext, scaleW, scaleH);
 				can.drawBitmap(t, (int)(o.getX() * scaleW), o.getY() * scaleH, p);
-				BinFromBitmap.recyleBitmap(t);
+				t.recycle();
+//				BinFromBitmap.recyleBitmap(t);
 			} else if (o instanceof BarcodeObject) {
 				// Bitmap t = ((BarcodeObject) o).getScaledBitmap(mContext);
 				Debug.d(TAG, "--->save height=" + o.getHeight() + " scaleH = " + scaleH);
@@ -610,6 +616,7 @@ public class MessageTask {
 				}
 				// BinFromBitmap.saveBitmap(bmp, "barcode.png");
 				can.drawBitmap(t, o.getX() * scaleW, o.getY() * scaleH, p);
+                t.recycle();
 				// BinFromBitmap.saveBitmap(bmp, "barcode_1.png");
 			} else if (o instanceof GraphicObject) {
 				int h = (int)(o.getHeight() * scaleH);
@@ -619,11 +626,16 @@ public class MessageTask {
 					Debug.d(TAG, "---> w= " + t.getWidth() + " h= " + t.getHeight());
 					Debug.d(TAG, "---> x= " + o.getX() * scaleW + " y= " + o.getY() * scaleH);
 					can.drawBitmap(t, o.getX() * scaleW, o.getY() * scaleH, p);
+					t.recycle();
 				}
 			} else {
+				Debug.d(TAG, "SaveTime: - Start MakeBinBitmap() : " + System.currentTimeMillis());
 				Bitmap t = o.makeBinBitmap(mContext, o.getContent(), (int)(o.getWidth() * scaleW), (int)(o.getHeight() * scaleH), o.getFont());
 				if (t != null) {
+					Debug.d(TAG, "1.bin drawBitmap = [" + (int)(o.getX() * scaleW) + ", " + (int)(o.getY() * scaleH) + "]");
+					Debug.d(TAG, "SaveTime: - Start drawBitmap() : " + System.currentTimeMillis());
 					can.drawBitmap(t, (int)(o.getX() * scaleW), (int)(o.getY() * scaleH), p);
+					t.recycle();
 				} else {
 					Debug.d(TAG, "--->bitmap null");
 				}
@@ -1037,25 +1049,42 @@ public class MessageTask {
 			//保存1.TLK文件
 			// saveTlk(mContext);
 			//保存1.bin文件
+			Debug.d(TAG, "SaveTime: - Start saveBin() : " + System.currentTimeMillis());
 			saveBin();
-			
+
+			Debug.d(TAG, "SaveTime: - Start saveExtras() : " + System.currentTimeMillis());
 			//保存其他必要的文件
 			saveExtras();
-			
+
+			Debug.d(TAG, "SaveTime: - Start saveVarBin() : " + System.currentTimeMillis());
 			//保存vx.bin文件
 			saveVarBin();
-			
+
+			Debug.d(TAG, "SaveTime: - Start saveTlk() : " + System.currentTimeMillis());
 			//保存1.TLK文件
 			saveTlk(mContext);
-					
+
+			Debug.d(TAG, "SaveTime: - Start savePreview() : " + System.currentTimeMillis());
 			//保存1.bmp文件
 			savePreview();
-			
+			Debug.d(TAG, "SaveTime: - Finished : " + System.currentTimeMillis());
+
 			//
 			return null;
 		}
 		@Override
         protected void onPostExecute(Void result) {
+
+			// H.M.Wang 增加6行。将计数器当前值设置到SystemConfigFile参数当中
+/*
+			for(BaseObject o : mObjects) {
+				if(o instanceof CounterObject) {
+					SystemConfigFile systemConfigFile = SystemConfigFile.getInstance();
+					systemConfigFile.setParam(((CounterObject) o).mCounterIndex + SystemConfigFile.INDEX_COUNT_1, ((CounterObject) o).getValue());
+				}
+			}
+*/
+
 			Message msg = new Message();
 			msg.what = EditTabSmallActivity.HANDLER_MESSAGE_SAVE_SUCCESS;
 

@@ -158,6 +158,7 @@ public class RTCDevice {
 	 * @param count
 	 * @param index
 	 */
+
 	public void write(long count, int index) {
 
 		if (index < 0 || index >= 10) {
@@ -165,6 +166,7 @@ public class RTCDevice {
 			return;
 		}
 
+		Debug.d(TAG, "--->NVRAM written count[" + index + "] : " + count);
         StringBuilder cmd = new StringBuilder(ADDRESS[index]);
 		byte byte0 = (byte) (count & 0x0ff);
 		byte byte1 = (byte) ((count >> 8) & 0x0ff);
@@ -189,6 +191,7 @@ public class RTCDevice {
 	public void writeAll(long[] count) {
 		SystemFs.writeSysfs(I2C_DEVICE, getAddress());
 		for (int i = 0; i < count.length; i++) {
+			Debug.d(TAG, "--->NVRAM written count[" + i + " : " + count[i]);
 			StringBuilder cmd = new StringBuilder(ADDRESS[i]);
 			byte byte0 = (byte) (count[i] & 0x0ff);
 			byte byte1 = (byte) ((count[i] >> 8) & 0x0ff);
@@ -233,6 +236,7 @@ public class RTCDevice {
 		byte byte4 = (byte) Integer.parseInt(bytes[6].substring(pos+2), 16);
 
 		long count = (byte1 & 0x0ff) + (byte2 & 0x0ff) * 256 + (byte3 & 0x0ff) * 256 * 256 + (byte4 & 0x0ff) * 256 * 256 * 256;
+		Debug.d(TAG, "--->NVRAM read count = " + count);
 		return count;
 	}
 

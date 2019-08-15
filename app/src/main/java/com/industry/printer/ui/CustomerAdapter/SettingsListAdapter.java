@@ -16,7 +16,10 @@ import com.industry.printer.ui.CustomerDialog.NewMessageDialog;
 import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
 import com.industry.printer.widget.PopWindowSpiner;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
@@ -81,6 +84,27 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	private HashMap<Integer, ItemViewHolder> mHoldMap;
 	
 	private ItemOneLine[] mSettingItems = new ItemOneLine[64];
+
+	// H.M.Wang 增加16行。接收计数器更新值，设置到编辑区内
+	public static final String ACTION_COUNTER_CHANGED = "com.industry.printer.COUNTER_CHANGED";
+	public static final String TAG_INDEX = "TagIndex";
+	public static final String TAG_COUNT = "TagCount";
+
+	BroadcastReceiver mReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(ACTION_COUNTER_CHANGED.equals(intent.getAction())) {
+				int index = intent.getIntExtra(TAG_INDEX, -1);
+				String count = intent.getStringExtra(SettingsListAdapter.TAG_COUNT);
+
+				if( index >= SystemConfigFile.INDEX_COUNT_1 && index <= SystemConfigFile.INDEX_COUNT_10) {
+					if(null != mSettingItems[index]) {
+						mSettingItems[index].setValue(count);
+					}
+				}
+			}
+		}
+	};
 	
 	/**
 	 * A customerized view holder for widgets 
@@ -200,7 +224,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			return mSysconfig.getParam(mParamId - 1);
 		}
 	}
-	
+
 	public void setParam(int param, int value) {
 		if (mSettingItems == null ||param >= mSettingItems.length) {
 			return;
@@ -209,7 +233,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSysconfig.setParam(param, value);
 		notifyDataSetChanged();
 	}
-	
+
 	public SettingsListAdapter(Context context) {
 		mContext = context;
 		mSysconfig = SystemConfigFile.getInstance(mContext);
@@ -250,6 +274,16 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mBeep = new PopWindowAdapter(mContext, null);
 		mLan = new PopWindowAdapter(mContext, null);
 		initAdapters();
+
+		// H.M.Wang 增加3行。注册广播接收器，接收计数器更新值，设置到编辑区内
+		IntentFilter iFilter = new IntentFilter();
+		iFilter.addAction(ACTION_COUNTER_CHANGED);
+		context.registerReceiver(mReceiver, iFilter);
+
+		/////////////////////////////////////////////////////////////
+		// 注意：mReceiver正常情况下应该在析构函数中unregister掉，由于Adapter
+		//      实例仅在系统启动时生成一次，并不会被析构，因此暂时无碍
+		/////////////////////////////////////////////////////////////
 	}
 	
 	@Override
@@ -344,13 +378,14 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		
 		return convertView;
 	}
-	
+
 	public void loadSettings() {
 		Debug.d(TAG, "--->loadSettings");
         long[] counters = RTCDevice.getInstance(mContext).readAll();
         if (counters != null && counters.length > 0) {
         	for (int i = 0; i < counters.length; i++) {
         		SystemConfigFile.getInstance(mContext).setParam(SystemConfigFile.INDEX_COUNT_1 + i, (int) counters[i]);
+				Debug.d(TAG, "Counter[" + i + "] ---> " + (int) counters[i]);
 			}
 		}
 		mSettingItems[0] = new ItemOneLine(1, R.string.str_textview_param1, R.string.str_time_unit_mm_s);
@@ -423,7 +458,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[63] = new ItemOneLine(64, R.string.str_textview_param64, 0);
 		Debug.d(TAG, "--->loadSettings");
 	}
-	
+
 	private void initAdapters() {
 		
 		mSpiner = new PopWindowSpiner(mContext);

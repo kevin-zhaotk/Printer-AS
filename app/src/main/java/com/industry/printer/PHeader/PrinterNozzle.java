@@ -164,21 +164,22 @@ public enum PrinterNozzle {
                 scaleW = 4f;
                 scaleH = 4f;
                 break;
+            // H.M.Wang 修改下列16行。调整25.4xn头的放大比例
             case NozzleType.NOZZLE_TYPE_1_INCH:
-                scaleW = 2f;
-                scaleH = 2f;
+                scaleW = 1.0f * 308 / 152;
+                scaleH = 1.0f * 308 / 152;
                 break;
             case NozzleType.NOZZLE_TYPE_1_INCH_DUAL:
-                scaleW = 4f;
-                scaleH = 4f;
+                scaleW = 2.0f * 308 / 152;
+                scaleH = 2.0f * 308 / 152;
                 break;
             case NozzleType.NOZZLE_TYPE_1_INCH_TRIPLE:
-                scaleW = 6f;
-                scaleH = 6f;
+                scaleW = 3.0f * 308 / 152;
+                scaleH = 3.0f * 308 / 152;
                 break;
             case NozzleType.NOZZLE_TYPE_1_INCH_FOUR:
-                scaleW = 8f;
-                scaleH = 8f;
+                scaleW = 4.0f * 308 / 152;
+                scaleH = 4.0f * 308 / 152;
                 break;
             case NozzleType.NOZZLE_TYPE_16_DOT:
                 scaleW = 16f/152;
@@ -189,7 +190,7 @@ public enum PrinterNozzle {
                 scaleH = 32f/152;
                 break;
 
-            // H.M.Wang 追加下列四行行
+            // H.M.Wang 追加下列四行
             case NozzleType.NOZZLE_TYPE_64_DOT:
                 scaleW = 64f/152;
                 scaleH = 64f/152;

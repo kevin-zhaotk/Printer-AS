@@ -32,6 +32,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+@Deprecated
 public class PHSettingFragment extends Fragment implements OnItemSelectedListener, OnClickListener, IOnItemClickListener {
 	
 	private static final String TAG= PHSettingFragment.class.getSimpleName();
@@ -326,7 +327,7 @@ public class PHSettingFragment extends Fragment implements OnItemSelectedListene
 		mResv45 = (EditText) getView().findViewById(R.id.ph_set_resolved_value45);
 		mResv45.addTextChangedListener(new SelfTextWatcher(mResv45));
 		mResv45.setText(String.valueOf(mSysconfig.getParam(44)));
-		
+
 		mResv46 = (EditText) getView().findViewById(R.id.ph_set_resolved_value46);
 		mResv46.addTextChangedListener(new SelfTextWatcher(mResv46));
 		mResv46.setText(String.valueOf(mSysconfig.getParam(45)));

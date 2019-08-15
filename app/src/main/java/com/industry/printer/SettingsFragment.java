@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+@Deprecated
 public class SettingsFragment extends Fragment {
 	
 	private static String TAG = SettingsFragment.class.getSimpleName();

@@ -325,7 +325,7 @@ public static final String TAG="SettingsTabActivity";
 	public void setParam(int param, int value) {
 		mAdapter.setParam(param, value);
 	}
-	
+
 	public Handler mTimeRefreshHandler = new Handler(){
 		public void handleMessage(Message msg) { 
 			switch(msg.what)
