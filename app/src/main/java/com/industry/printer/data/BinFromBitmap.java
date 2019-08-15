@@ -22,7 +22,11 @@ import android.graphics.Bitmap.Config;
 public class BinFromBitmap extends BinCreater {
 	
 	public int mDots[]= new int[8];
-	
+
+	// H.M.Wang 增加3行
+	static {
+		System.loadLibrary("NativeGraphicJni");
+	}
 
 	public BinFromBitmap() {
 		super();
@@ -44,6 +48,11 @@ public class BinFromBitmap extends BinCreater {
     	mWidth = bmp.getWidth();         
         mHeight = bmp.getHeight(); 
         mHeighEachHead = mHeight / head;
+
+		int[] pixels = new int[mWidth * mHeight];
+		bmp.getPixels(pixels, 0, mWidth, 0, 0, mWidth, mHeight);
+		NativeGraphicJni.Binarization(pixels, mWidth, mHeight, 220);
+
 //        int []pixels = new int[mWidth * mHeight]; 
         // 计算每列占的字节数
         int colEach = mHeight%8==0?mHeight/8:mHeight/8+1;
@@ -53,7 +62,8 @@ public class BinFromBitmap extends BinCreater {
         // 将bitmap的每个像素读取到pixels数组中，数组的每个元素对应一个像素值
 //        bmp.getPixels(pixels, 0, mWidth, 0, 0, mWidth, mHeight); 
         //int alpha = 0x00 << 24;  
-        
+
+		Debug.d(TAG, "SaveTime: - Start 二值化 : " + System.currentTimeMillis());
         // 逐列进行灰度化和二值化处理
         for(int i = 0; i < mHeight; i++)  { 
         	
@@ -79,10 +89,15 @@ public class BinFromBitmap extends BinCreater {
             }
             // System.out.println();
         }
+		Debug.d(TAG, "SaveTime: - End 二值化 : " + System.currentTimeMillis());
 
 //        for (int i = 0; i < mDots.length; i++) {
 //        	Debug.d(TAG, "--->mDots[" + i + "] = " + mDots[i]);
 //		}
+
+		// H.M.Wang 增加1行
+		bmp.recycle();
+
         return mDots; 
     }
 	

@@ -583,6 +583,7 @@ public class MessageTask {
 		can.drawColor(Color.WHITE);
 		for(BaseObject o:mObjects)
 		{
+			// H.M.Wang 增加1行
 			System.gc();
 			Debug.d(TAG, "SaveTime: - Start DrawObject(" + o.mName + ") : " + System.currentTimeMillis());
 			if((o instanceof MessageObject)	)
@@ -600,7 +601,12 @@ public class MessageTask {
 			}
 			else if(o instanceof RealtimeObject) {
 				Bitmap t = ((RealtimeObject)o).getBgBitmap(mContext, scaleW, scaleH);
-				can.drawBitmap(t, (int)(o.getX() * scaleW), o.getY() * scaleH, p);
+
+				// H.M.Wang 修改1行
+//				can.drawBitmap(t, (int)(o.getX() * scaleW), o.getY() * scaleH, p);
+				can.drawBitmap(t, Math.round((o.getX() * scaleW)), Math.round(o.getY() * scaleH), p);
+
+				// H.M.Wang 增加1行。注释掉1行
 				t.recycle();
 //				BinFromBitmap.recyleBitmap(t);
 			} else if (o instanceof BarcodeObject) {
@@ -615,7 +621,12 @@ public class MessageTask {
 					continue;
 				}
 				// BinFromBitmap.saveBitmap(bmp, "barcode.png");
-				can.drawBitmap(t, o.getX() * scaleW, o.getY() * scaleH, p);
+
+				// H.M.Wang 修改1行
+//				can.drawBitmap(t, o.getX() * scaleW, o.getY() * scaleH, p);
+				can.drawBitmap(t, Math.round(o.getX() * scaleW), Math.round(o.getY() * scaleH), p);
+
+				// H.M.Wang 增加1行
                 t.recycle();
 				// BinFromBitmap.saveBitmap(bmp, "barcode_1.png");
 			} else if (o instanceof GraphicObject) {
@@ -625,16 +636,25 @@ public class MessageTask {
 				if (t != null) {
 					Debug.d(TAG, "---> w= " + t.getWidth() + " h= " + t.getHeight());
 					Debug.d(TAG, "---> x= " + o.getX() * scaleW + " y= " + o.getY() * scaleH);
-					can.drawBitmap(t, o.getX() * scaleW, o.getY() * scaleH, p);
+
+					// H.M.Wang 修改1行
+//					can.drawBitmap(t, o.getX() * scaleW, o.getY() * scaleH, p);
+					can.drawBitmap(t, Math.round(o.getX() * scaleW), Math.round(o.getY() * scaleH), p);
+
+					// H.M.Wang 增加1行
 					t.recycle();
 				}
 			} else {
 				Debug.d(TAG, "SaveTime: - Start MakeBinBitmap() : " + System.currentTimeMillis());
 				Bitmap t = o.makeBinBitmap(mContext, o.getContent(), (int)(o.getWidth() * scaleW), (int)(o.getHeight() * scaleH), o.getFont());
 				if (t != null) {
-					Debug.d(TAG, "1.bin drawBitmap = [" + (int)(o.getX() * scaleW) + ", " + (int)(o.getY() * scaleH) + "]");
+					Debug.d(TAG, "1.bin drawBitmap = [" + Math.round(o.getX() * scaleW) + ", " + Math.round(o.getY() * scaleH) + "]");
 					Debug.d(TAG, "SaveTime: - Start drawBitmap() : " + System.currentTimeMillis());
-					can.drawBitmap(t, (int)(o.getX() * scaleW), (int)(o.getY() * scaleH), p);
+					// H.M.Wang 修改1行
+//					can.drawBitmap(t, (int)(o.getX() * scaleW), (int)(o.getY() * scaleH), p);
+					can.drawBitmap(t, Math.round(o.getX() * scaleW), Math.round(o.getY() * scaleH), p);
+
+					// H.M.Wang 增加1行
 					t.recycle();
 				} else {
 					Debug.d(TAG, "--->bitmap null");
@@ -649,6 +669,7 @@ public class MessageTask {
 		BinFileMaker maker = new BinFileMaker(mContext);
 		/** if high resolution, keep original width */
 
+		Debug.d(TAG, "SaveTime: - Start maker.extract : " + System.currentTimeMillis());
 		// H.M.Wang 修改下列两行
 //		if (msgObj.getResolution() || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT) || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT)) {
 		if (msgObj.getResolution() ||
@@ -660,6 +681,11 @@ public class MessageTask {
 		} else {
 			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, true), msgObj.getPNozzle().mHeads);
 		}
+		Debug.d(TAG, "SaveTime: - End maker.extract : " + System.currentTimeMillis());
+
+		// H.M.Wang 增加1行
+		bmp.recycle();
+
 		// 保存bin文件
 		maker.save(ConfigPath.getBinAbsolute(mName));
 	}

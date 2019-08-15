@@ -21,8 +21,8 @@ import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.data.SegmentBuffer;
 
 public class Configs {
-	
-//	public static final boolean DEBUG=true;
+
+	public static final boolean DEBUG=true;
 
 	/**
 	 * 该版本打印是否需要忽略rfid
@@ -31,6 +31,7 @@ public class Configs {
 	 * skip UID checking after 'print' command triggered before data transfer;
 	 */
 //	public static final boolean IGNORE_RFID = true;
+	public static final boolean IGNORE_RFID = false;
 
 	
 	/**
