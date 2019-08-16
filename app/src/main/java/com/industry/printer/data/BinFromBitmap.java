@@ -23,11 +23,6 @@ public class BinFromBitmap extends BinCreater {
 	
 	public int mDots[]= new int[8];
 
-	// H.M.Wang 增加3行
-	static {
-		System.loadLibrary("NativeGraphicJni");
-	}
-
 	public BinFromBitmap() {
 		super();
 		init();
@@ -49,11 +44,6 @@ public class BinFromBitmap extends BinCreater {
         mHeight = bmp.getHeight(); 
         mHeighEachHead = mHeight / head;
 
-		int[] pixels = new int[mWidth * mHeight];
-		bmp.getPixels(pixels, 0, mWidth, 0, 0, mWidth, mHeight);
-		NativeGraphicJni.Binarization(pixels, mWidth, mHeight, 220);
-
-//        int []pixels = new int[mWidth * mHeight]; 
         // 计算每列占的字节数
         int colEach = mHeight%8==0?mHeight/8:mHeight/8+1;
         //Debug.d(TAG, "=====width="+mWidth+", height="+mHeight+", colEach="+colEach);

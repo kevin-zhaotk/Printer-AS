@@ -222,14 +222,6 @@ public class BinInfo {
 		mCharsPerHFeed = mBytesPerHFeed/2;
 		mCharsFeed = mBytesFeed/2;
 
-		// H.M.Wang 追加下列6行。为了25.4xn喷头调整实际的喷头字节数
-		if( mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
-			mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
-			mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
-			mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR ) {
-			mBytesPerH -= 2;
-		}
-
 		//通过文件后缀是否带有v判断是否为变量的bin文件
 		if (mFile != null && mFile.getName().contains("v")) {
 			if (mVarCount <= 0) {
@@ -307,7 +299,18 @@ public class BinInfo {
 				Debug.e(TAG, "--->null");
 				return null;
 			}
-				
+
+			// H.M.Wang 追加下列9行。为了25.4xn喷头调整实际的喷头字节数
+			int bytesPerH = mBytesPerH;
+
+			if( null != mTask &&
+			   (mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR) ) {
+				bytesPerH -= 2;
+			}
+
 			// int bytesPer = mBytesPerColumn + (mNeedFeed==true? mType : 0);
 			/** 从当前位置读取mBytesPerH个字节到背景buffer中，由于需要处理多头情况，所以要注意在每个头的列尾要注意补偿问题（双字节对齐）*/
 			for(int i=0; i < mColumn; i++) {
@@ -321,39 +324,41 @@ public class BinInfo {
 						的每个字节均需要进行4位的移位处理。因此，对于每一列后部需要跳过的空白区，第一和第三头仅需要跳过1个字节，第二和第四头需要跳
 						过两个字节，整体根据头的数量，跳过上述字节的合计数量字节数
 					 */
-					// H.M.Wang 追加下列26行。为了25.4xn喷头调整实际的喷头字节数
-					if( mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
-							mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
-							mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
-							mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR ) {
+					// H.M.Wang 追加下列27行。为了25.4xn喷头调整实际的喷头字节数
+					if( null != mTask &&
+					   (mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR) ) {
 						if(j%2 == 0) {
-							mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, mBytesPerH + 1);
-							tempByte = mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + mBytesPerH];
-							mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + mBytesPerH] &= 0x0f;
+							mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, bytesPerH + 1);
+							tempByte = mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + bytesPerH];
+							mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + bytesPerH] &= 0x0f;
 							tempByte >>= 4;
 							tempByte &= 0x0f;
 							Debug.d(TAG, "tempByte = " + tempByte);
 							skipBytes += 1;
 						} else {
-							mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, mBytesPerH);
-							for(int k=0; k<mBytesPerH; k++) {
+							mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, bytesPerH);
+							for(int k=0; k<bytesPerH; k++) {
 								bufferBypte = mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + k];
 								tempByte |= (byte)((bufferBypte << 4) & 0xf0);
 								mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + k] = tempByte;
 								tempByte = (byte)((bufferBypte >> 4) & 0x0f);
 							}
-							mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + mBytesPerH] = tempByte;
+							mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + bytesPerH] = tempByte;
 							skipBytes += 2;
 						}
 					} else {
-						mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, mBytesPerH);
+						mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, bytesPerH);
 					}
 				}
-				// H.M.Wang 追加下列6行。为了25.4xn喷头调整实际的喷头字节数
-				if( mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
-						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
-						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
-						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR ) {
+				// H.M.Wang 追加下列7行。为了25.4xn喷头调整实际的喷头字节数
+				if( null != mTask &&
+				   (mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+					mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+					mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+					mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR) ) {
 					mCacheStream.skip(skipBytes);
 				}
 			}
@@ -382,7 +387,7 @@ public class BinInfo {
     	return extract(); // bmp.createScaledBitmap(bmp, columns, 150, true);
     }
     
-    public synchronized char[] getVarBuffer(String var)
+    public synchronized char[] getVarBuffer(String var, boolean flagClearZero)
     {
     	int n;
 		byte[] feed = {0};
@@ -409,7 +414,7 @@ public class BinInfo {
    				n = Integer.parseInt(v);
 
 				// H.M.Wang 追加下列6行。为计数器清楚前置0
-				if(bClearZero && n == 0 && !bSkipThisZero && i<var.length()-1) {
+				if(bClearZero && n == 0 && !bSkipThisZero && i<var.length()-1 && flagClearZero) {
 					bFillBlank = true;
 				} else {
 					bFillBlank = false;

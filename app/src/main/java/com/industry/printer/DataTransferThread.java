@@ -203,6 +203,7 @@ public class DataTransferThread {
 				}
 				
 				char[] buffer = task.preparePurgeBuffer(purgeFile);
+
 				if (dotHd) {
 					purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
 					return;
@@ -229,7 +230,7 @@ public class DataTransferThread {
 		FpgaGpioOperation.updateSettings(context, task, purgeType);
 		FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

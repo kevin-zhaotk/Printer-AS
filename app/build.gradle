@@ -8,15 +8,14 @@ android {
         applicationId "com.industry.printer"
         minSdkVersion 17
         targetSdkVersion 17
-        versionCode 30054
-        versionName "1908120815"
+        versionCode 30067
+        versionName "1908120816"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        // H.M.Wang 增加JNI，处理二值化
-        ndk {
-            moduleName "GraphicJni"
-            abiFilters "armeabi-v7a", "x86" //"armeabi",
-        }
+//        ndk {
+//            moduleName "Hardware_jni"
+//            abiFilters "armeabi-v7a", "x86" //"armeabi",
+//        }
     }
 
     lintOptions {
@@ -31,17 +30,17 @@ android {
         }
     }
 
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
-        }
-    }
+//    sourceSets {
+//        main {
+//            jniLibs.srcDirs = ['libs']
+//        }
+//    }
 
-    externalNativeBuild {
-        ndkBuild {
-            path file("src/main/jni/Android.mk")
-        }
-    }
+//    externalNativeBuild {
+//        ndkBuild {
+//            path file("src/main/jni/Android.mk")
+//        }
+//    }
 }
 
 dependencies {

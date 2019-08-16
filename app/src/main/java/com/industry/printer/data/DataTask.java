@@ -348,7 +348,7 @@ public class DataTask {
 					mVarBinList.put(o, info);
 				}
 
-				var = info.getVarBuffer(str);
+				var = info.getVarBuffer(str, true);
 				// BinCreater.saveBin("/mnt/usbhost1/" + o.getIndex() + ".bin", var, info.getCharsPerHFeed()*16);
 				// Debug.d(TAG, "--->object x=" + o.getX()/div);
 
@@ -390,7 +390,7 @@ public class DataTask {
 						info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), rtSub.getIndex()), mTask, mExtendStat);
 						mVarBinList.put(rtSub, info);
 					}
-					var = info.getVarBuffer(substr);
+					var = info.getVarBuffer(substr, false);
 					//BinCreater.saveBin("/mnt/usbhost1/v" + o.getIndex() + ".bin", var, info.mBytesPerHFeed*8);
 					BinInfo.overlap(mPrintBuffer, var, (int)(rtSub.getX()/div), info.getCharsFeed());
 					Debug.d(TAG, "--->real x=" + rtSub.getX()/div );
@@ -406,7 +406,7 @@ public class DataTask {
 					mVarBinList.put(o, varbin);
 				}
 				Debug.d(TAG, "--->real x=" + o.getX()+ ", div-x=" + o.getX()/div );
-				var = varbin.getVarBuffer(vString);
+				var = varbin.getVarBuffer(vString, false);
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), varbin.getCharsFeed());
 				
 			} else if (o instanceof ShiftObject) {
@@ -429,7 +429,7 @@ public class DataTask {
 					mVarBinList.put(o, varbin);
 				}
 				String t = ((LetterHourObject) o).getContent();
-				var = varbin.getVarBuffer(t);
+				var = varbin.getVarBuffer(t, false);
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), varbin.getCharsFeed());
 			} else if (o instanceof WeekOfYearObject) {
 				BinInfo varbin= mVarBinList.get(o);
@@ -438,7 +438,7 @@ public class DataTask {
 					mVarBinList.put(o, varbin);
 				}
 				String t = ((WeekOfYearObject) o).getContent();
-				var = varbin.getVarBuffer(t);
+				var = varbin.getVarBuffer(t, false);
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), varbin.getCharsFeed());
 			}  else if (o instanceof WeekDayObject) {
 				BinInfo varbin= mVarBinList.get(o);
@@ -447,7 +447,7 @@ public class DataTask {
 					mVarBinList.put(o, varbin);
 				}
 				String t = ((WeekDayObject) o).getContent();
-				var = varbin.getVarBuffer(t);
+				var = varbin.getVarBuffer(t, false);
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), varbin.getCharsFeed());
 			} else
 			{

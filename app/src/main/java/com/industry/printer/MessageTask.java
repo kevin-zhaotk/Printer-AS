@@ -346,7 +346,7 @@ public class MessageTask {
 				} else if (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
 					dealDot(dots, 2 * 4);
 
-				// H.M.Wang 追加下列41行
+				// H.M.Wang 追加下列4行
 				} else if (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE) {
 					dealDot(dots, 2 * 6);
 				} else if (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR) {
@@ -583,6 +583,7 @@ public class MessageTask {
 		can.drawColor(Color.WHITE);
 		for(BaseObject o:mObjects)
 		{
+			Debug.d(TAG, "SaveTime: - Start System.gc()" + System.currentTimeMillis());
 			// H.M.Wang 增加1行
 			System.gc();
 			Debug.d(TAG, "SaveTime: - Start DrawObject(" + o.mName + ") : " + System.currentTimeMillis());
@@ -666,6 +667,7 @@ public class MessageTask {
 		}
 //		BinFromBitmap.saveBitmap(bmp, getName()+".png");
 		// 生成bin文件
+		Debug.d(TAG, "SaveTime: - Start BinFileMaker : " + System.currentTimeMillis());
 		BinFileMaker maker = new BinFileMaker(mContext);
 		/** if high resolution, keep original width */
 
