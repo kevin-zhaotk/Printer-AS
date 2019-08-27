@@ -7,17 +7,22 @@ import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.Utils.KZFileObserver;
 import com.industry.printer.Utils.PreferenceConstants;
 import com.industry.printer.Utils.ToastUtil;
+import com.industry.printer.data.NativeGraphicJni;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.text.TextUtils;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PrinterApplication extends Application {
+	public static final String TAG="PrinterApplication";
 
 	private KZFileObserver sysObserver;
 	private KZFileObserver qrObserver;
@@ -31,11 +36,48 @@ public class PrinterApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
 		CrashCatcher catcher = CrashCatcher.getInstance();
 		catcher.init(getApplicationContext());
 		registerFileListener();
 		sInstance = this;
 		asyncInit();
+
+		// H.M.Wang 增加一个线程，用来将so文件拷贝到/system/lib目录下
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					AssetManager assetManager = sInstance.getAssets();
+					InputStream is = assetManager.open(Configs.UPGRADE_NGJNI_FILE);
+
+					Debug.d(TAG, "su -> start");
+					Process process = Runtime.getRuntime().exec("su");
+					DataOutputStream os = new DataOutputStream(process.getOutputStream());
+					sleep(100);
+
+					Debug.d(TAG, "chmod 777 /system/lib");
+					os.writeBytes("chmod 777 /system/lib\n");
+					sleep(100);
+
+					Debug.d(TAG, "chmod 777 /system/lib" + Configs.UPGRADE_NGJNI_FILE);
+					os.writeBytes("chmod 777 /system/lib\n" + Configs.UPGRADE_NGJNI_FILE);
+					sleep(100);
+
+					FileUtil.writeFile("/system/lib/" + Configs.UPGRADE_NGJNI_FILE, is);
+
+					Debug.d(TAG, "chmod 777 /system/lib" + Configs.UPGRADE_NGJNI_FILE);
+					os.writeBytes("chmod 777 /system/lib\n" + Configs.UPGRADE_NGJNI_FILE);
+					os.writeBytes("exit\n");
+
+					NativeGraphicJni.init();
+
+                } catch (Exception e) {
+					Debug.e(TAG, "--->e: " + e.getMessage());
+				}
+			}
+		}.start();
+
 	}
 
 	private void registerFileListener() {

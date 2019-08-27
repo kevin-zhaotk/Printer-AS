@@ -299,6 +299,20 @@ public class RealtimeObject extends BaseObject {
 	
 	public void wide() {
 		float x = getX();
+		float ratio = (getWidth() + 5) / getWidth();
+
+		for(BaseObject o : mSubObjs) {
+			o.setX(x);
+			o.setWidth(o.getWidth() * ratio);
+			x = o.getXEnd();
+		}
+		setWidth(x - getX());
+		isNeedRedraw = true;
+	}
+
+/*
+	public void wide() {
+		float x = getX();
 		for(BaseObject o : mSubObjs) {
 			o.setX(x);
 			o.setWidth(o.getWidth() + 1);
@@ -307,7 +321,20 @@ public class RealtimeObject extends BaseObject {
 		setWidth(x - getX());
 		isNeedRedraw = true;
 	}
-	
+*/
+	public void narrow() {
+		float x = getX();
+		float ratio = (getWidth() - 5) / getWidth();
+
+		for(BaseObject o : mSubObjs) {
+			o.setX(x);
+			o.setWidth(o.getWidth() * ratio);
+			x = o.getXEnd();
+		}
+		setWidth(x - getX());
+		isNeedRedraw = true;
+	}
+/*
 	public void narrow() {
 		float x = getX();
 		for(BaseObject o : mSubObjs) {
@@ -318,7 +345,7 @@ public class RealtimeObject extends BaseObject {
 		setWidth(x - getX());
 		isNeedRedraw = true;
 	}
-	
+*/
 	@Override
 	public void setX(float x)
 	{
@@ -380,8 +407,7 @@ public class RealtimeObject extends BaseObject {
 		}
 		return mContent;
 	}
-	
-	
+
 	@Override
 	public void generateVarbinFromMatrix(String f) {
 		for (BaseObject object : getSubObjs()) {

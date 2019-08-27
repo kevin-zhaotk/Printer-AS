@@ -203,7 +203,7 @@ public class FileUtil {
         }  
     }  
     
-    private static boolean writeFile(String fileName, InputStream in) throws IOException  
+    public static boolean writeFile(String fileName, InputStream in) throws IOException
     {  
     	Debug.d(TAG, "--->writeFile: " + fileName);
         boolean bRet = true;  

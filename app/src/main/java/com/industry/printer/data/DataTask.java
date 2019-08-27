@@ -275,21 +275,29 @@ public class DataTask {
 		PrinterNozzle headType = mTask.getNozzle();
 
 		if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
-			div = 1;
+// H.M.Wang 修改
+//			div = 1;
+			div = 1.0f * 304/308;
 			scaleW = 1;
 			scaleH = 0.5f;
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
-			div = 0.5f;
+// H.M.Wang 修改
+//			div = 0.5f;
+			div = 1.0f * 304/308/2;
 			scaleW = 0.5f;
 			scaleH = 0.25f;
 
 		// H.M.Wang 追加下列8行
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE) {
-			div = 0.3333333333f;
+// H.M.Wang 修改
+//			div = 0.3333333333f;
+			div = 1.0f * 304/308/3;
 			scaleW = 0.3333333333f;
 			scaleH = 0.1666666667f;
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR) {
-			div = 0.25f;
+// H.M.Wang 修改
+//			div = 0.25f;
+			div = 1.0f * 304/308/4;
 			scaleW = 0.25f;
 			scaleH = 0.125f;
 

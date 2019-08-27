@@ -15,13 +15,12 @@ public class ReflectCaller {
 	 */
 	public static void PowerManagerUpgrade(Context context) {
 		Class<PowerManager> managerClass = PowerManager.class;
-		
+
 		try{
 			Method upgrade = managerClass.getDeclaredMethod("upgrade", (Class[])null);
 			upgrade.setAccessible(true);
 			PowerManager pwManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 			upgrade.invoke(pwManager, (Object[])null);
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

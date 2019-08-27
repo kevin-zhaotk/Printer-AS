@@ -1162,7 +1162,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					ExtGpio.writeGpio('h', 7, 1);
 					if (mRfiAlarmTimes++ < 3) {
 						ExtGpio.playClick();
-						mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_ALARM, 150);						
+						mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_ALARM, 150);
 					} else {
 						mRfiAlarmTimes = 0;
 					}

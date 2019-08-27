@@ -1,6 +1,9 @@
 package com.industry.printer.Utils;
 
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import com.industry.printer.R;
 import com.industry.printer.ui.CustomerDialog.LoadingDialog;
@@ -82,6 +85,7 @@ public class PackageInstaller {
 			ToastUtil.show(mContext, R.string.str_no_upgrade);
 			return false;
 		}
+
 		LoadingDialog dialog = LoadingDialog.show(mContext, R.string.str_upgrade_progress);
 		new Thread() {
 			public void run() {

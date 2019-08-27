@@ -50,7 +50,12 @@ public class RealtimeMonth extends BaseObject {
 		Log.d(TAG, ">>getContent, "+mContent);
 		return mContent;
 	}
-	
+
+	@Override
+	public String getMeatureString() {
+		return "00";
+	}
+
 	public String toString()
 	{
 		float prop = getProportion();

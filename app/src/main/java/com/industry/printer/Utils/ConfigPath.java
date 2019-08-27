@@ -173,7 +173,7 @@ public class ConfigPath {
 		}
 		return paths.get(0) + Configs.UPGRADE_APK_FILE;
 	}
-	
+
 	public static String getPictureDir() {
 //		ArrayList<String> paths = getMountedUsb();
 //		if (paths == null || paths.size() <= 0) {

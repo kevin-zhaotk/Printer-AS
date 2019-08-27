@@ -41,8 +41,9 @@ public class BinCreater {
 		mHeight = 0;
 		mWidth = 0;
 	}
-	
-	public int[] extract(Bitmap bitmap, int head) {
+
+	// H.M.Wang 追加一个是否移位的参数
+	public int[] extract(Bitmap bitmap, int head, boolean needShift) {
 		Debug.e(TAG, "--->please Override this Method in Child class");
 		return null;
 	}

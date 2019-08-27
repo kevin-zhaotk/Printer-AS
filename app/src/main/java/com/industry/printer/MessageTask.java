@@ -549,7 +549,14 @@ public class MessageTask {
 		}
 		// 生成bin文件
 		BinFileMaker maker = new BinFileMaker(mContext);
-		mDots = maker.extract(bitmap, msg.getPNozzle().mHeads);
+
+		// H.M.Wang 追加一个是否移位的参数
+		mDots = maker.extract(bitmap, msg.getPNozzle().mHeads,
+					( null != msg &&
+					(msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+					 msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+					 msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+					 msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR)));
 		// 保存bin文件
 		maker.save(ConfigPath.getBinAbsolute(mName));
 
@@ -576,17 +583,17 @@ public class MessageTask {
 		//實際寬度
 		int bWidth = (int) (width * scaleW);
 		int bHeight = msgObj.getPNozzle().getHeight();
-		Debug.d(TAG, "SaveTime: - Start CreateBitmap : " + System.currentTimeMillis());
+//		Debug.d(TAG, "SaveTime: - Start CreateBitmap : " + System.currentTimeMillis());
 		Bitmap bmp = Bitmap.createBitmap(bWidth , bHeight, Configs.BITMAP_CONFIG);
 		Debug.d(TAG, "drawAllBmp width=" + bWidth + ", height=" + bHeight);
 		Canvas can = new Canvas(bmp);
 		can.drawColor(Color.WHITE);
 		for(BaseObject o:mObjects)
 		{
-			Debug.d(TAG, "SaveTime: - Start System.gc()" + System.currentTimeMillis());
+//			Debug.d(TAG, "SaveTime: - Start System.gc()" + System.currentTimeMillis());
 			// H.M.Wang 增加1行
 			System.gc();
-			Debug.d(TAG, "SaveTime: - Start DrawObject(" + o.mName + ") : " + System.currentTimeMillis());
+//			Debug.d(TAG, "SaveTime: - Start DrawObject(" + o.mName + ") : " + System.currentTimeMillis());
 			if((o instanceof MessageObject)	)
 				continue;
 			
@@ -646,11 +653,11 @@ public class MessageTask {
 					t.recycle();
 				}
 			} else {
-				Debug.d(TAG, "SaveTime: - Start MakeBinBitmap() : " + System.currentTimeMillis());
+//				Debug.d(TAG, "SaveTime: - Start MakeBinBitmap() : " + System.currentTimeMillis());
 				Bitmap t = o.makeBinBitmap(mContext, o.getContent(), (int)(o.getWidth() * scaleW), (int)(o.getHeight() * scaleH), o.getFont());
 				if (t != null) {
-					Debug.d(TAG, "1.bin drawBitmap = [" + Math.round(o.getX() * scaleW) + ", " + Math.round(o.getY() * scaleH) + "]");
-					Debug.d(TAG, "SaveTime: - Start drawBitmap() : " + System.currentTimeMillis());
+//					Debug.d(TAG, "1.bin drawBitmap = [" + Math.round(o.getX() * scaleW) + ", " + Math.round(o.getY() * scaleH) + "]");
+//					Debug.d(TAG, "SaveTime: - Start drawBitmap() : " + System.currentTimeMillis());
 					// H.M.Wang 修改1行
 //					can.drawBitmap(t, (int)(o.getX() * scaleW), (int)(o.getY() * scaleH), p);
 					can.drawBitmap(t, Math.round(o.getX() * scaleW), Math.round(o.getY() * scaleH), p);
@@ -667,11 +674,11 @@ public class MessageTask {
 		}
 //		BinFromBitmap.saveBitmap(bmp, getName()+".png");
 		// 生成bin文件
-		Debug.d(TAG, "SaveTime: - Start BinFileMaker : " + System.currentTimeMillis());
+//		Debug.d(TAG, "SaveTime: - Start BinFileMaker : " + System.currentTimeMillis());
 		BinFileMaker maker = new BinFileMaker(mContext);
 		/** if high resolution, keep original width */
 
-		Debug.d(TAG, "SaveTime: - Start maker.extract : " + System.currentTimeMillis());
+//		Debug.d(TAG, "SaveTime: - Start maker.extract : " + System.currentTimeMillis());
 		// H.M.Wang 修改下列两行
 //		if (msgObj.getResolution() || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT) || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT)) {
 		if (msgObj.getResolution() ||
@@ -679,11 +686,17 @@ public class MessageTask {
 			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT) ||
 			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT)) {
 
-			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth, bHeight, true), getNozzle().mHeads);
+			// H.M.Wang 追加一个是否移位的参数
+			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth, bHeight, true), getNozzle().mHeads, false);
 		} else {
-			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, true), msgObj.getPNozzle().mHeads);
+			// H.M.Wang 追加一个是否移位的参数
+			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, true), msgObj.getPNozzle().mHeads,
+				((getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR))					);
 		}
-		Debug.d(TAG, "SaveTime: - End maker.extract : " + System.currentTimeMillis());
+//		Debug.d(TAG, "SaveTime: - End maker.extract : " + System.currentTimeMillis());
 
 		// H.M.Wang 增加1行
 		bmp.recycle();
@@ -991,7 +1004,7 @@ public class MessageTask {
 		mSaveTask = new SaveTask(message);
 		mSaveTask.execute((Void[])null);
 	}
-	
+
 	private void resetIndexs() {
 		int i = 0;
 		for (BaseObject o : mObjects) {
@@ -1077,22 +1090,22 @@ public class MessageTask {
 			//保存1.TLK文件
 			// saveTlk(mContext);
 			//保存1.bin文件
-			Debug.d(TAG, "SaveTime: - Start saveBin() : " + System.currentTimeMillis());
+			Debug.d(TAG, "SaveTime: - Start : " + System.currentTimeMillis());
 			saveBin();
 
-			Debug.d(TAG, "SaveTime: - Start saveExtras() : " + System.currentTimeMillis());
+//			Debug.d(TAG, "SaveTime: - Start saveExtras() : " + System.currentTimeMillis());
 			//保存其他必要的文件
 			saveExtras();
 
-			Debug.d(TAG, "SaveTime: - Start saveVarBin() : " + System.currentTimeMillis());
+//			Debug.d(TAG, "SaveTime: - Start saveVarBin() : " + System.currentTimeMillis());
 			//保存vx.bin文件
 			saveVarBin();
 
-			Debug.d(TAG, "SaveTime: - Start saveTlk() : " + System.currentTimeMillis());
+//			Debug.d(TAG, "SaveTime: - Start saveTlk() : " + System.currentTimeMillis());
 			//保存1.TLK文件
 			saveTlk(mContext);
 
-			Debug.d(TAG, "SaveTime: - Start savePreview() : " + System.currentTimeMillis());
+//			Debug.d(TAG, "SaveTime: - Start savePreview() : " + System.currentTimeMillis());
 			//保存1.bmp文件
 			savePreview();
 			Debug.d(TAG, "SaveTime: - Finished : " + System.currentTimeMillis());
@@ -1103,7 +1116,7 @@ public class MessageTask {
 		@Override
         protected void onPostExecute(Void result) {
 
-			// H.M.Wang 增加6行。将计数器当前值设置到SystemConfigFile参数当中
+			// H.M.Wang 增加6行。将计数器当前值设置到SystemConfigFile参数当中。后续因为编辑任务中输入的内容做无意义处理，因此取消该段功能
 /*
 			for(BaseObject o : mObjects) {
 				if(o instanceof CounterObject) {

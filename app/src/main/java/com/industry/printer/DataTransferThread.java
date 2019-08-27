@@ -230,7 +230,7 @@ public class DataTransferThread {
 		FpgaGpioOperation.updateSettings(context, task, purgeType);
 		FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(2500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

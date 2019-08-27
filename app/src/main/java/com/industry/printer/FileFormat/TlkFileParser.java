@@ -17,6 +17,7 @@ import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.object.TlkObject;
 
+@Deprecated
 public class TlkFileParser {
 
 	public static final String TAG="Tlk_Parser";

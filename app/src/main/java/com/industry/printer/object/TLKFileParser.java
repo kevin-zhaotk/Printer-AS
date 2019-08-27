@@ -348,30 +348,32 @@ public class TLKFileParser  extends TlkFile{
 		if(!(obj instanceof MessageObject))
 		{
 			try {
-				
-			obj.setIndex(Integer.parseInt(attr[0]));
-			if((obj instanceof CounterObject)||
-					obj instanceof JulianDayObject ||
-					obj instanceof ShiftObject ||
-					obj instanceof WeekOfYearObject ||
-					obj instanceof WeekDayObject)
-			{
-				obj.setX(StringUtil.parseInt(attr[2])/mProportion);
-				obj.setWidth(StringUtil.parseInt(attr[4])/mProportion-StringUtil.parseInt(attr[2])/mProportion);
-			}
-			else
-			{
-				obj.setX(StringUtil.parseInt(attr[2])/(2*mProportion));
-				obj.setWidth(StringUtil.parseInt(attr[4])/(2*mProportion)-StringUtil.parseInt(attr[2])/(2*mProportion));
-			}
-			
-			obj.setY(StringUtil.parseInt(attr[3])/(2*mProportion));
-			
-			obj.setHeight(StringUtil.parseInt(attr[5])/(2*mProportion)-StringUtil.parseInt(attr[3])/(2*mProportion));
-			obj.setDragable(Boolean.parseBoolean(attr[7]));
-			Debug.d(TAG, "--->attr[111] = " + attr[11]);
-			obj.setReverse(StringUtil.parseBool(attr[11]));
-			obj.setFont(attr[19]);
+				obj.setIndex(Integer.parseInt(attr[0]));
+// 必须先设置Y值和高，然后在设置X和宽，否则图片变形
+				obj.setY(StringUtil.parseInt(attr[3])/(2*mProportion));
+				obj.setHeight(StringUtil.parseInt(attr[5])/(2*mProportion)-StringUtil.parseInt(attr[3])/(2*mProportion));
+
+				if((obj instanceof CounterObject)||
+						obj instanceof JulianDayObject ||
+						obj instanceof ShiftObject ||
+						obj instanceof WeekOfYearObject ||
+						obj instanceof WeekDayObject)
+				{
+					obj.setX(StringUtil.parseInt(attr[2])/mProportion);
+					obj.setWidth(StringUtil.parseInt(attr[4])/mProportion-StringUtil.parseInt(attr[2])/mProportion);
+				}
+				else
+				{
+					obj.setX(StringUtil.parseInt(attr[2])/(2*mProportion));
+					obj.setWidth(StringUtil.parseInt(attr[4])/(2*mProportion)-StringUtil.parseInt(attr[2])/(2*mProportion));
+				}
+// 必须先设置Y值和高，然后在设置X和宽，否则图片变形
+//				obj.setY(StringUtil.parseInt(attr[3])/(2*mProportion));
+//				obj.setHeight(StringUtil.parseInt(attr[5])/(2*mProportion)-StringUtil.parseInt(attr[3])/(2*mProportion));
+				obj.setDragable(Boolean.parseBoolean(attr[7]));
+				Debug.d(TAG, "--->attr[111] = " + attr[11]);
+				obj.setReverse(StringUtil.parseBool(attr[11]));
+				obj.setFont(attr[19]);
 			} catch (Exception e) {
 				Debug.d(TAG, "e: " + e.getCause());
 			}

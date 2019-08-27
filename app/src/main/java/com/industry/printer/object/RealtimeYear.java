@@ -84,7 +84,12 @@ public class RealtimeYear extends BaseObject {
 		Debug.d(TAG, ">>getContent, "+mContent);
 		return mContent;
 	}
-	
+
+	@Override
+	public String getMeatureString() {
+		return (mFormat.equals("YY") ? "00" : (mFormat.equals("YYYY") ? "0000" : ""));
+	}
+
 	public String toString()
 	{
 		float prop = getProportion();

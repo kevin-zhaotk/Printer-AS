@@ -31,11 +31,12 @@ public class BinFileMaker {
 		}
 	}
 	
-	public int[]  extract(Bitmap bmp, int heads) {
+	// H.M.Wang 追加一个是否移位的参数
+	public int[]  extract(Bitmap bmp, int heads, boolean needShift) {
 		if (mBinCreater == null) {
 			init();
 		}
-		return mBinCreater.extract(bmp, heads);
+		return mBinCreater.extract(bmp, heads, needShift);
 	}
 	
 	public int extract(String text) {

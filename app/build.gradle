@@ -8,14 +8,14 @@ android {
         applicationId "com.industry.printer"
         minSdkVersion 17
         targetSdkVersion 17
-        versionCode 30067
-        versionName "1908120816"
+        versionCode 30078      //next: 30078
+        versionName "1908120827"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-//        ndk {
-//            moduleName "Hardware_jni"
-//            abiFilters "armeabi-v7a", "x86" //"armeabi",
-//        }
+        ndk {
+            moduleName "NativeGraphicJni"
+            abiFilters "armeabi-v7a", "x86" //"armeabi",
+        }
     }
 
     lintOptions {
@@ -36,11 +36,11 @@ android {
 //        }
 //    }
 
-//    externalNativeBuild {
-//        ndkBuild {
-//            path file("src/main/jni/Android.mk")
-//        }
-//    }
+    externalNativeBuild {
+        ndkBuild {
+            path file("src/main/jni/Android.mk")
+        }
+    }
 }
 
 dependencies {

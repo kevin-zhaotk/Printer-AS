@@ -491,7 +491,13 @@ public class BaseObject{
 		
 		BinFileMaker maker = new BinFileMaker(mContext);
 
-		dots = maker.extract(Bitmap.createScaledBitmap(gBmp, gBmp.getWidth(), dstH, false), 1);
+		// H.M.Wang 追加一个是否移位的参数。修改喷头数
+		dots = maker.extract(Bitmap.createScaledBitmap(gBmp, gBmp.getWidth(), dstH, false), head.mHeads,
+				(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR));
+
 		Debug.d(TAG, "--->id: " + mId + " index:  " + mIndex);
 		maker.save(ConfigPath.getVBinAbsolute(mTask.getName(), mIndex));
 		//
@@ -521,16 +527,22 @@ public class BaseObject{
 		MessageObject msg = mTask.getMsgObject();
 		/*對320高的buffer進行單獨處理*/
 		if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH)) {
-			wDiv = 1;
+// H.M.Wang 修改
+//			wDiv = 1;
+			wDiv = 1.0f * 304/308;
 		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL)) {
-			wDiv = 0.5f;
-
+// H.M.Wang 修改
+//			wDiv = 0.5f;
+			wDiv = 2.0f * 304/308;
 		// H.M.Wang 追加下列4行
 		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE)) {
-			wDiv = 0.333333333333f;
+// H.M.Wang 修改
+//			wDiv = 0.333333333333f;
+			wDiv = 3.0f * 304/308;
 		} else if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR)) {
-			wDiv = 0.25f;
-
+// H.M.Wang 修改
+//			wDiv = 0.25f;
+			wDiv = 4.0f * 304/308;
 		}
 		/*draw Bitmap of single digit*/
 		Bitmap bmp = Bitmap.createBitmap(width, (int)mHeight, Configs.BITMAP_CONFIG);
@@ -622,7 +634,10 @@ public class BaseObject{
 			gBmp = b;
 		}
 		BinFileMaker maker = new BinFileMaker(mContext);
-		dots = maker.extract(gBmp, 1);
+
+		// H.M.Wang 追加一个是否移位的参数
+		dots = maker.extract(gBmp, 1, false);
+
 		Debug.d(TAG, "***************id: " + mId + " index:  " + mIndex);
 		maker.save(ConfigPath.getVBinAbsolute(mTask.getName(), mIndex));
 		//
@@ -665,7 +680,10 @@ public class BaseObject{
 			mCan.drawBitmap(b, 0, getY(), mPaint);
 			// Bitmap scaledBg = Bitmap.createScaledBitmap(bg, singleW, Configs.gDots, true);
 			BinFileMaker maker = new BinFileMaker(mContext);
-			maker.extract(bmp, 1);
+
+			// H.M.Wang 追加一个是否移位的参数
+			maker.extract(bmp, 1, false);
+
 			//byte[] buffer = new byte[BinCreater.mBmpBits.length];
 			byte[] buffer = Arrays.copyOf(maker.getBuffer(), maker.getBuffer().length);
 			BinFromBitmap.recyleBitmap(b);
@@ -749,7 +767,10 @@ public class BaseObject{
 	
 	public void resizeByHeight() {
 		mPaint.setTextSize(getfeed());
-		String s = getContent();
+
+		// H.M.Wang 修改为测量标准字符串，而非实际内容
+//		String s = getContent();
+		String s = getMeatureString();
 		if (s == null) {
 			return;
 		}
@@ -1057,9 +1078,18 @@ public class BaseObject{
 	public float getProportion() {
 		return 1;
 	}
-	
+
+	// H.M.Wang 追加返回测量标准字符串的函数，如果子类没有定义该函数，则直接返回实际内容
+	public String getMeatureString() {
+		return mContent;
+	}
+
 	protected void meature() {
-		int width = (int) mPaint.measureText(getContent());
+		Debug.d(TAG, "meature content = " + getMeatureString());
+
+		// H.M.Wang 修改为测量标准字符串，而非实际内容
+//		int width = (int) mPaint.measureText(getContent());
+		int width = (int) mPaint.measureText(getMeatureString());
 		
 //		if (mHeight <= 4 * MessageObject.PIXELS_PER_MM) {
 //			mWidth = width * 1.25f;

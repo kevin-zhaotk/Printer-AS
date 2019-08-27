@@ -53,7 +53,15 @@ public class GraphicObject  extends BaseObject{
 		}
 		Debug.d(TAG, "setImage w= " + mWidth + " h= " + mHeight);
 	}
-	
+
+	// H.M.Wang 插入图片是宽度缩减一半的问题
+	@Override
+	public void setHeight(float size) {
+		float div = size / mHeight;
+		super.setHeight(size);
+		setWidth(mWidth * div);
+	}
+
 	public String getImage() {
 		return mContent;
 	}

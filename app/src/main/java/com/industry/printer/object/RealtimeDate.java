@@ -51,7 +51,12 @@ public class RealtimeDate extends BaseObject {
 		Debug.d(TAG, "--->Date: " + mContent);
 		return mContent;
 	}
-	
+
+	@Override
+	public String getMeatureString() {
+		return "00";
+	}
+
 	public String toString()
 	{
 		float prop = getProportion();

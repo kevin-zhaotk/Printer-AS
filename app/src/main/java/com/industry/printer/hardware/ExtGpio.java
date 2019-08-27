@@ -78,6 +78,7 @@ public class ExtGpio {
 	}
 	
 	public static void playClick() {
+		Debug.d("ExtGpio", "playClick");
 		int fd = open();
 		FpgaGpioOperation.ioctl(fd, GPIO_PLAY, 0);
 	}

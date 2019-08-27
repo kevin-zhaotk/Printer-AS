@@ -7,6 +7,9 @@ import android.R.integer;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+
 
 /**
  * bitmap图片提取点阵的步骤如下：
@@ -39,10 +42,14 @@ public class BinFromBitmap extends BinCreater {
 	 * @param bmp
 	 */
 	@Override
-	public int[] extract(Bitmap bmp, int head) {
+	// H.M.Wang 追加一个是否移位的参数
+	public int[] extract(Bitmap bmp, int head, boolean needShift) {
     	mWidth = bmp.getWidth();         
         mHeight = bmp.getHeight(); 
         mHeighEachHead = mHeight / head;
+
+/*
+		// H.M.Wang 注释掉该部分JAVA实现的二值化功能，改用JNI实现以提高处理速度
 
         // 计算每列占的字节数
         int colEach = mHeight%8==0?mHeight/8:mHeight/8+1;
@@ -53,7 +60,7 @@ public class BinFromBitmap extends BinCreater {
 //        bmp.getPixels(pixels, 0, mWidth, 0, 0, mWidth, mHeight); 
         //int alpha = 0x00 << 24;  
 
-		Debug.d(TAG, "SaveTime: - Start 二值化 : " + System.currentTimeMillis());
+		Debug.d(TAG, "SaveTime: - Start 二值化(JAVA) : " + System.currentTimeMillis());
         // 逐列进行灰度化和二值化处理
         for(int i = 0; i < mHeight; i++)  { 
         	
@@ -79,11 +86,25 @@ public class BinFromBitmap extends BinCreater {
             }
             // System.out.println();
         }
-		Debug.d(TAG, "SaveTime: - End 二值化 : " + System.currentTimeMillis());
+        for(int i=0; i<8; i++) {
+			Debug.d(TAG, "mDots[JAVA, " + i + "] = " + mDots[i]);
+		}
 
-//        for (int i = 0; i < mDots.length; i++) {
-//        	Debug.d(TAG, "--->mDots[" + i + "] = " + mDots[i]);
-//		}
+		Debug.d(TAG, "SaveTime: - End 二值化(JAVA) : " + System.currentTimeMillis());
+
+*/
+//		Debug.d(TAG, "SaveTime: - Start 二值化(JNI) : " + System.currentTimeMillis());
+
+		// H.M.Wang 增加9行 25.4xn情况下断档和实现JNI的二值化
+		int[] pixels = new int[mWidth * mHeight];
+		bmp.getPixels(pixels, 0, mWidth, 0, 0, mWidth, mHeight);
+
+		if(needShift) {
+			pixels = NativeGraphicJni.ShiftImage(pixels, mWidth, mHeight, head, 308, 320);
+		}
+
+		mBinBits = NativeGraphicJni.Binarize(pixels, mWidth, mHeight, head, 220);
+		mDots = NativeGraphicJni.GetDots();
 
 		// H.M.Wang 增加1行
 		bmp.recycle();

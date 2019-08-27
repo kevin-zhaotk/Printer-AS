@@ -146,8 +146,11 @@ public class Configs {
 	 * 16*16的点阵字库，用于提取点阵图
 	 */
 	public static final String FONT_16_16 = "/16*16.zk";
-	
+
 	public static final String UPGRADE_APK_FILE = "/Printer.apk";
+
+	// H.M.Wang 添加1行，升级必要的so文件
+	public static final String UPGRADE_NGJNI_FILE = "libNativeGraphicJni.so";
 	/**
 	 * SYSTEM_CONFIG_FILE
 	 */

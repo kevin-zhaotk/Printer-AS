@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Window;
+import android.widget.Toast;
 
 public class WelcomeActivity extends Activity {
 	
@@ -29,7 +30,7 @@ public class WelcomeActivity extends Activity {
 		mContext = getApplicationContext();
 		/*初始化系统配置*/
 		Configs.initConfigs(mContext);
-		
+
 		if (!upgrade()) {
 //			asyncInit();
 			Intent intent = new Intent();

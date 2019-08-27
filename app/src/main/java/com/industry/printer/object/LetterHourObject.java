@@ -127,7 +127,10 @@ public class LetterHourObject extends BaseObject {
 		BinFromBitmap.recyleBitmap(bmp);
 		
 		BinFileMaker maker = new BinFileMaker(mContext);
-		dots = maker.extract(gBmp, 1);
+
+		// H.M.Wang 追加一个是否移位的参数
+		dots = maker.extract(gBmp, 1, false);
+
 		Debug.d(TAG, "--->id: " + mId + " index:  " + mIndex);
 		maker.save(ConfigPath.getVBinAbsolute(mTask.getName(), mIndex));
 		//

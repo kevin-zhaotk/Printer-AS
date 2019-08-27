@@ -24,6 +24,7 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.data.BinCreater;
 import com.industry.printer.data.BinFileMaker;
+import com.industry.printer.data.NativeGraphicJni;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
 
 /**
@@ -161,7 +162,10 @@ public class BinInfo {
 		mExtend = extend;
 		BinFileMaker m = new BinFileMaker(ctx);
 		// BinCreater.saveBitmap(bmp, "bar.png");
-		m.extract(bmp, 1);
+
+		// H.M.Wang 追加一个是否移位的参数
+		m.extract(bmp, 1, false);
+
 		mBuffer = m.getBuffer();
 		ByteArrayBuffer buffer = new ByteArrayBuffer(0);
 		byte[] header = new byte[BinCreater.RESERVED_FOR_HEADER];
@@ -293,6 +297,28 @@ public class BinInfo {
 			/*计算整个buffer需要补偿的字节数*/
 			int feed = (mNeedFeed==true?mColumn*mType : 0);
 
+			// 由于原来在填充打印缓冲区的背景区时，会对25.4xn类型的打印头进行切割和移位操作，这个操作从2019-8-21日期转为保存1.bin时进行，因此这里的切割移位功能取消，JNI作了相应的修改
+			// H.M.Wang 注释掉JAVA填充背景图的实现部分，转到JNI实现
+//			Debug.d(TAG, "getBgBuffer Start = " + System.currentTimeMillis());
+
+			byte[] bufferBytes = new byte[mLength];
+			mCacheStream.read(bufferBytes, 0, mLength);
+
+			mBufferChars = NativeGraphicJni.GetBgBuffer(
+				bufferBytes,
+				mLength + feed,
+				mBytesFeed,
+				mBytesPerHFeed,
+				mBytesPerH,
+/*				( null != mTask &&
+				 (mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+				  mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+				  mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+				  mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR)),*/
+				mColumn,
+				mType
+			);
+/*
 			mBufferBytes = new byte[mLength + feed];
 			mBufferChars = new char[(mLength + feed)/2];
 			if(mBufferBytes == null || mBufferChars == null) {
@@ -312,18 +338,20 @@ public class BinInfo {
 			}
 
 			// int bytesPer = mBytesPerColumn + (mNeedFeed==true? mType : 0);
-			/** 从当前位置读取mBytesPerH个字节到背景buffer中，由于需要处理多头情况，所以要注意在每个头的列尾要注意补偿问题（双字节对齐）*/
+			// 从当前位置读取mBytesPerH个字节到背景buffer中，由于需要处理多头情况，所以要注意在每个头的列尾要注意补偿问题（双字节对齐
 			for(int i=0; i < mColumn; i++) {
+//                Debug.d(TAG, "i = " + i+ "; mColumn = " + mColumn);
 				byte tempByte = 0x00, bufferBypte = 0x00;
 				int skipBytes = 0;
 				for (int j = 0; j < mType; j++) {
+//                    Debug.d(TAG, "j = " + j+ "; mType = " + mType);
 //					mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, mBytesPerH);
-					/*
-						每个25.4的头打印像素位308点，需要38.5个字节，为了处理最后的半个字节，设置缺省一次读取38个字节，304位，但鉴于这种请开给你
-						需要对第一和第三头多取一个字节，将最后一个字节的前4位留用，后4位用在第二和第四头使用，放置在其数据的前部，因此第二和第四头
-						的每个字节均需要进行4位的移位处理。因此，对于每一列后部需要跳过的空白区，第一和第三头仅需要跳过1个字节，第二和第四头需要跳
-						过两个字节，整体根据头的数量，跳过上述字节的合计数量字节数
-					 */
+
+					//	每个25.4的头打印像素位308点，需要38.5个字节，为了处理最后的半个字节，设置缺省一次读取38个字节，304位，但鉴于这种请开给你
+					//	需要对第一和第三头多取一个字节，将最后一个字节的前4位留用，后4位用在第二和第四头使用，放置在其数据的前部，因此第二和第四头
+					//	的每个字节均需要进行4位的移位处理。因此，对于每一列后部需要跳过的空白区，第一和第三头仅需要跳过1个字节，第二和第四头需要跳
+					//	过两个字节，整体根据头的数量，跳过上述字节的合计数量字节数
+
 					// H.M.Wang 追加下列27行。为了25.4xn喷头调整实际的喷头字节数
 					if( null != mTask &&
 					   (mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
@@ -336,7 +364,7 @@ public class BinInfo {
 							mBufferBytes[i*mBytesFeed + j*mBytesPerHFeed + bytesPerH] &= 0x0f;
 							tempByte >>= 4;
 							tempByte &= 0x0f;
-							Debug.d(TAG, "tempByte = " + tempByte);
+//							Debug.d(TAG, "tempByte = " + tempByte);
 							skipBytes += 1;
 						} else {
 							mCacheStream.read(mBufferBytes, i*mBytesFeed + j*mBytesPerHFeed, bytesPerH);
@@ -363,14 +391,14 @@ public class BinInfo {
 				}
 			}
 	    	//mFStream.close();
-			/* 如果是奇数列在每列最后添加一个byte */
+			// 如果是奇数列在每列最后添加一个byte
 			
 	    	//把byte[]存为char[]
 	    	for(int i = 0; i < mBufferChars.length; i++) {
 	    		mBufferChars[i] = (char) (((char)(mBufferBytes[2*i+1] << 8) & 0x0ff00) | (mBufferBytes[2*i] & 0x0ff)); 
 	    	}
-	    	// 根据喷头类型抽取实际的打印buffer
-	    	
+			Debug.d(TAG, "getBgBuffer End = " + System.currentTimeMillis());
+*/
 		} catch (Exception e) {
 			Debug.d(TAG, "--->e: " + e.getMessage());
 		} finally {

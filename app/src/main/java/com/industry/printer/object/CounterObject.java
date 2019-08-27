@@ -136,7 +136,7 @@ public class CounterObject extends BaseObject {
 		}
 		mContent = BaseObject.intToFormatString(mValue, mBits);
 	}
-	
+
 	@Override
 	public void setContent(String content) {
 		try{

@@ -30,8 +30,13 @@ public class RealtimeMinute extends BaseObject {
 		setContent(BaseObject.intToFormatString(t.minute, 2));
 		return mContent;
 	}
-	
-//////addby kevin
+
+	@Override
+	public String getMeatureString() {
+		return "00";
+	}
+
+	//////addby kevin
 	@Override	 
 	public Bitmap getpreviewbmp()
 	{		
