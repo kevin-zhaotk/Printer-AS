@@ -30,7 +30,7 @@ public class RealtimeObject extends BaseObject {
 	public String mFormat; /* yyyy-mm-dd hh:nn for example*/
 	public Vector<BaseObject> mSubObjs;
 	public int mOffset;
-	
+
 	public RealtimeObject(Context context,  float x) {
 		super(context, BaseObject.OBJECT_TYPE_RT, x);
 		//Time t = new Time();
@@ -46,6 +46,7 @@ public class RealtimeObject extends BaseObject {
 			return;
 		Debug.d(TAG, ">>>setFormat mcontext: " + mContext);
 		mFormat = format;
+		Debug.d(TAG, ">>>setFormat Format: " + format);
 		parseFormat();
 		super.setWidth(mXcor_end - mXcor);
 		isNeedRedraw = true;
@@ -144,8 +145,10 @@ public class RealtimeObject extends BaseObject {
 			}
 			str = str.substring(i);
 			i=0;
+			Debug.d(TAG, "TEST: x = " + x);
 		}
 		mXcor_end = x;
+		Debug.d(TAG, "TEST: mXcor_end = " + mXcor_end);
 		setWidth(mXcor_end - getX());
 	}
 	
@@ -296,7 +299,8 @@ public class RealtimeObject extends BaseObject {
 		int height = mTask.getMsgObject().getPixels(size);
 		setHeight(height);
 	}
-	
+
+    // H.M.Wang 修改。取消原来的子元素均等加减1的缩放方法，改为均等缩放
 	public void wide() {
 		float x = getX();
 		float ratio = (getWidth() + 5) / getWidth();
@@ -309,7 +313,6 @@ public class RealtimeObject extends BaseObject {
 		setWidth(x - getX());
 		isNeedRedraw = true;
 	}
-
 /*
 	public void wide() {
 		float x = getX();

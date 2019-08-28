@@ -90,6 +90,7 @@
     </string-array>
 
     <string-array name="strTimeFormat">
+        <item>YYYY.MM.DD</item>
         <item>YYYY-MM-DD</item>
         <item>MM-DD-YYYY</item>
         <item>YY-MM-DD</item>
