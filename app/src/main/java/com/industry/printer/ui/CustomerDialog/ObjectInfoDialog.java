@@ -457,7 +457,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						mObject.setX(Float.parseFloat(mXcorEdit.getText().toString())/2);
 						mObject.setY(Float.parseFloat(mYcorEdit.getText().toString())/2);
 						Debug.d(TAG, "content="+mContent.getText().toString());
-						
+
 						Resources res = mContext.getResources();
 						
 						String font = mFont.getText().toString();

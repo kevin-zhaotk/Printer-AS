@@ -604,7 +604,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if (!mRfidManager.isValid(mRfid)) {
 			mInkLevel.setBackgroundColor(Color.RED);
 			mInkLevel.setText(String.valueOf(mRfid + 1) + "--");
-			
+
+			// H.M.Wang RFID错误时报警，禁止打印
+			mBtnStart.setClickable(false);
+			mTvStart.setTextColor(Color.DKGRAY);
+
+			mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
+
 		} else if (ink > 0){
 			//mInkLevel.clearAnimation();
 			mInkLevel.setBackgroundColor(0x436EEE);

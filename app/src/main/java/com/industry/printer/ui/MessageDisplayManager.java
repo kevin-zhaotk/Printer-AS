@@ -245,7 +245,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
         // ViewGroup.LayoutParams param = layout.getLayoutParams();
         LinearLayout layout = new LinearLayout(mContext);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams((int)object.getWidth(), (int)object.getHeight());
-        
+
         Debug.d(TAG, "--->w: " + param.width);
 //        param.width = (int) object.getWidth();
 //        param.height = (int) object.getHeight();

@@ -31,6 +31,8 @@ public class RealtimeObject extends BaseObject {
 	public Vector<BaseObject> mSubObjs;
 	public int mOffset;
 
+	private float mRatio = 1.0f;
+
 	public RealtimeObject(Context context,  float x) {
 		super(context, BaseObject.OBJECT_TYPE_RT, x);
 		//Time t = new Time();
@@ -145,10 +147,8 @@ public class RealtimeObject extends BaseObject {
 			}
 			str = str.substring(i);
 			i=0;
-			Debug.d(TAG, "TEST: x = " + x);
 		}
 		mXcor_end = x;
-		Debug.d(TAG, "TEST: mXcor_end = " + mXcor_end);
 		setWidth(mXcor_end - getX());
 	}
 	
@@ -265,6 +265,7 @@ public class RealtimeObject extends BaseObject {
 			BaseObject object = mSubObjs.get(i);
 			object.meature();
 			object.setX(x);
+			object.setWidth(object.getWidth() * mRatio);
 			x = x + object.getWidth();
 		}
 		mXcor_end = x;
@@ -304,6 +305,7 @@ public class RealtimeObject extends BaseObject {
 	public void wide() {
 		float x = getX();
 		float ratio = (getWidth() + 5) / getWidth();
+		mRatio *= ratio;
 
 		for(BaseObject o : mSubObjs) {
 			o.setX(x);
@@ -328,6 +330,7 @@ public class RealtimeObject extends BaseObject {
 	public void narrow() {
 		float x = getX();
 		float ratio = (getWidth() - 5) / getWidth();
+		mRatio *= ratio;
 
 		for(BaseObject o : mSubObjs) {
 			o.setX(x);
@@ -360,7 +363,7 @@ public class RealtimeObject extends BaseObject {
 		{
 			o.setX(x);
 			x = o.getXEnd();
-			Debug.d(TAG, "===>x=" + o.getX() + ",  end=" + x);
+			Debug.d(TAG, "===>content=" + o.getContent() + ", x=" + o.getX() + ",  end=" + x);
 		}
 	}
 	
