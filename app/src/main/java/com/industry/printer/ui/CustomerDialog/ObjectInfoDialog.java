@@ -6,6 +6,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.common.StringUtils;
 import com.google.zxing.maxicode.MaxiCodeReader;
+import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.R;
 import com.industry.printer.R.array;
 import com.industry.printer.R.id;
@@ -108,7 +109,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	public EditText mDigits;
 	public TextView mDir;
 	public TextView mCode;
-	private EditText mHeight_O;
+//	private EditText mHeight_O;
 	private CheckBox mHeightType;
 	public CheckBox mShow;
 	public EditText mLineWidth;
@@ -259,13 +260,13 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	     mScroll = (ScrollView) findViewById(R.id.viewInfo);
 	     mScroll.setOnTouchListener(this);
 //	    mXCorView 	= (TextView) findViewById(R.id.xCorView);
-//	 	mXCorUnit 		= (TextView) findViewById(R.id.xCorUnit);
+	 	mXCorUnit 		= (TextView) findViewById(R.id.xCorUnit);
 //	 	mYCorView	= (TextView) findViewById(R.id.yCorView);
-//	 	mYCorUnit 		= (TextView) findViewById(R.id.yCorUnit);
+	 	mYCorUnit 		= (TextView) findViewById(R.id.yCorUnit);
 //	 	mWidthView 	= (TextView) findViewById(R.id.widthView);
 //	 	mWidthUnit 	= (TextView) findViewById(R.id.widthUnitView);
 //	 	mHighView 		= (TextView) findViewById(R.id.highView);
-//	 	mHighUnit 		= (TextView) findViewById(R.id.highUnitView);
+	 	mHighUnit 		= (TextView) findViewById(R.id.highUnitView);
 //	 	mCntView 		= (TextView) findViewById(R.id.cntView);
 //	 	mFontView 		= (TextView) findViewById(R.id.fontView);
 //	 	mRtfmtView 	= (TextView) findViewById(R.id.rtFmtView);
@@ -282,7 +283,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		
 		    mWidthEdit = (EditText)findViewById(R.id.widthEdit);
 		    mHighEdit = (TextView)findViewById(R.id.highEdit);
-		    mHeight_O = (EditText) findViewById(R.id.highEdit_o);
+//		    mHeight_O = (EditText) findViewById(R.id.highEdit_o);
 		    mHighEdit.setOnClickListener(this);
 			
 		    mXcorEdit = (EditText)findViewById(R.id.xCorEdit);
@@ -447,15 +448,25 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						// mObject.setHeight(Float.parseFloat(mHighEdit.getText().toString()));
 						Debug.d(TAG, "--->positive click");
 						try {
-							if (mHeightType.isChecked()) {
-								mObject.setHeight(Integer.parseInt(mHeight_O.getText().toString()));
-							} else {
+//							if (mHeightType.isChecked()) {
+//								mObject.setHeight(Integer.parseInt(mHeight_O.getText().toString()));
+//							} else {
 								mObject.setHeight(mHighEdit.getText().toString());
-							}
+//							}
 						} catch (Exception e) {
 						}
-						mObject.setX(Float.parseFloat(mXcorEdit.getText().toString())/2);
-						mObject.setY(Float.parseFloat(mYcorEdit.getText().toString())/2);
+
+						float ratio = mObject.getTask().getNozzle().getPhisicalRatio();
+						if(ratio > 0.0f) {
+							mObject.setX(Float.parseFloat(mXcorEdit.getText().toString())/ratio/2);
+							mObject.setY(Float.parseFloat(mYcorEdit.getText().toString())/ratio/2);
+						} else {
+							mObject.setX(Float.parseFloat(mXcorEdit.getText().toString())/2);
+							mObject.setY(Float.parseFloat(mYcorEdit.getText().toString())/2);
+						}
+
+//						mObject.setX(Float.parseFloat(mXcorEdit.getText().toString())/2);
+//						mObject.setY(Float.parseFloat(mYcorEdit.getText().toString())/2);
 						Debug.d(TAG, "content="+mContent.getText().toString());
 
 						Resources res = mContext.getResources();
@@ -527,9 +538,24 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				Debug.d(TAG, "--->fillObjInfo");
 				mWidthEdit.setText(String.valueOf((int)mObject.getWidth()) );
 				mHighEdit.setText(mObject.getDisplayHeight());
-				mHeight_O.setText(String.valueOf(mObject.getHeight()));
-				mXcorEdit.setText(String.valueOf((int)mObject.getX()*2));
-				mYcorEdit.setText(String.valueOf((int)mObject.getY()*2));
+//				mHeight_O.setText(String.valueOf(mObject.getHeight()));
+
+				float ratio = mObject.getTask().getNozzle().getPhisicalRatio();
+				if(ratio > 0.0f) {
+					mXcorEdit.setText(String.valueOf(1.0f /100 * Math.round(mObject.getX()*2*ratio*100)));
+					mYcorEdit.setText(String.valueOf(1.0f /100 * Math.round(mObject.getY()*2*ratio*100)));
+					mXCorUnit.setText(string.font_unit);
+					mYCorUnit.setText(string.font_unit);
+					mHighUnit.setText(string.font_unit);
+				} else {
+					mXcorEdit.setText(String.valueOf((int)mObject.getX()*2));
+					mYcorEdit.setText(String.valueOf((int)mObject.getY()*2));
+					mXCorUnit.setText(string.dot_unit);
+					mYCorUnit.setText(string.dot_unit);
+					mHighUnit.setText(string.dot_unit);
+				}
+//				mXcorEdit.setText(String.valueOf((int)mObject.getX()*2));
+//				mYcorEdit.setText(String.valueOf((int)mObject.getY()*2));
 				mContent.setText(String.valueOf(mObject.getContent()));
 				mReverse.setChecked(mObject.getReverse());
 				
@@ -813,10 +839,10 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	public void onCheckedChanged(CompoundButton view, boolean checked) {
 		if (view == mHeightType) {
 			if (checked) {
-				mHeight_O.setEnabled(true);
+//				mHeight_O.setEnabled(true);
 				mHighEdit.setEnabled(false);
 			} else {
-				mHeight_O.setEnabled(false);
+//				mHeight_O.setEnabled(false);
 				mHighEdit.setEnabled(true);
 			}
 		} else if (view == mMsgResolution) {

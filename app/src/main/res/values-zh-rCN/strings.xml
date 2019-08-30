@@ -229,6 +229,7 @@
 	<string name="str_format_12">否</string>
 	<string name="cor_unit">像素</string>
 	<string name="font_unit">mm</string>
+	<string name="dot_unit">Dots</string>
 	<string name="str_trans">==></string>
 	<string name="str_column_index">序号</string>
 	<string name="str_column_pic1">图1</string>

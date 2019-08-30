@@ -228,6 +228,7 @@
     <string name="str_format_12">Hayır</string>
     <string name="cor_unit">dp</string>
     <string name="font_unit">mm</string>
+    <string name="dot_unit">Dots</string>
     <string name="str_trans">Sağdan</string>
     <string name="str_column_index">içerik</string>
     <string name="str_column_pic1">resim1</string>

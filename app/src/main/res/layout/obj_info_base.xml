@@ -15,7 +15,7 @@
 	        android:imeOptions="flagNoExtractUi|actionDone"
 	        android:textSize="30sp"
 	        android:singleLine="true"
-	        android:inputType="number"
+	        android:inputType="numberDecimal"
 	        android:hint="@string/strDefault"/>
 	        
 	    <TextView android:id="@+id/xCorView"
@@ -50,7 +50,7 @@
 	        android:imeOptions="flagNoExtractUi|actionDone"
 	        android:textSize="30sp"
 	        android:singleLine="true"
-	        android:inputType="number"
+	        android:inputType="numberDecimal"
 	        android:hint="@string/strDefault"/>
 	        
 	    <TextView android:id="@+id/yCorView" 
@@ -214,7 +214,8 @@
 	        android:textColor="#000000"
 	        />
 	</RelativeLayout>
-	
+
+<!--	H.M.Wang 暂时取消通过像素指定高度的设置项目
 	<RelativeLayout 
         android:layout_width="match_parent"
     	android:layout_height="match_parent"
@@ -252,7 +253,7 @@
 	        android:textColor="#000000"
 	        />
 	</RelativeLayout>
-	
+-->
 	<RelativeLayout 
         android:layout_width="match_parent"
     	android:layout_height="match_parent"

@@ -2123,7 +2123,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		    class Service implements Runnable {  
 		         private volatile boolean kk=true;  
 		      
-		         private BufferedReader in = null;  
+		         private BufferedReader in = null;
 		         private String msg = "";  
 		           
 		         public Service(Socket socket) {  
@@ -2307,7 +2307,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						 }catch (IOException e) {
 		                        Debug.i(TAG, "--->socketE: " + e.getMessage());
 		                        kk=false;  
-		                        this.sendmsg(Constants.pcErr(msg));
+		                        this.sendmsg(Constants.pcErr(msg + e.getMessage()));
 		                        return;
 		                    }  
 		                     
@@ -2475,7 +2475,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				return Constants.pcErr(msg);
 			}
 		    SendFileFlag=0;
-		 	return "000-ok: " + msg;
+		 	return Constants.PC_RESULT_OK + msg;
 	}
 	private void MakeTlk(String msg)
 	{

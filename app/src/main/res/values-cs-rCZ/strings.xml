@@ -225,7 +225,8 @@
 	<string name="str_format_12">Ne</string>
 	<string name="cor_unit">dp</string>
 	<string name="font_unit">mm</string>
-	
+	<string name="dot_unit">Dots</string>
+
 	<string name="str_trans">doprava</string>
 	
 	<string name="str_column_index">index</string>

@@ -203,6 +203,44 @@ public enum PrinterNozzle {
         }
     }
 
+    // H.M.Wang 追加这个函数以便将pixel和mm中间进行转化
+    public float getPhisicalRatio() {
+        float ratio = 0.0f;
+
+        switch (mType) {
+            case NozzleType.NOZZLE_TYPE_12_7:
+                ratio = 1.0f * 12.7f / 304;
+                break;
+            case NozzleType.NOZZLE_TYPE_25_4:
+                ratio = 2.0f * 12.7f / 304;
+                break;
+            case NozzleType.NOZZLE_TYPE_38_1:
+                ratio = 3.0f * 12.7f / 304;
+                break;
+            case NozzleType.NOZZLE_TYPE_50_8:
+                ratio = 4.0f * 12.7f / 304;
+                break;
+            case NozzleType.NOZZLE_TYPE_1_INCH:
+                ratio = 1.0f * 25.4f / 304;
+                break;
+            case NozzleType.NOZZLE_TYPE_1_INCH_DUAL:
+                ratio = 2.0f * 25.4f / 304;
+                break;
+            case NozzleType.NOZZLE_TYPE_1_INCH_TRIPLE:
+                ratio = 3.0f * 25.4f / 304;
+                break;
+            case NozzleType.NOZZLE_TYPE_1_INCH_FOUR:
+                ratio = 4.0f * 25.4f / 304;
+                break;
+            case NozzleType.NOZZLE_TYPE_16_DOT:
+            case NozzleType.NOZZLE_TYPE_32_DOT:
+            case NozzleType.NOZZLE_TYPE_64_DOT:
+            default:
+                break;
+        }
+        return ratio;
+    }
+
     public  float getScaleW() {
         return scaleW;
     }

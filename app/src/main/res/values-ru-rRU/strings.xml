@@ -224,6 +224,7 @@
 	<string name="str_format_12">Нет</string>
 	<string name="cor_unit">dpi</string>
 	<string name="font_unit">мм</string>
+	<string name="dot_unit">Dots</string>
 	<string name="str_trans">Направо</string>
 	<string name="str_column_index">Индекс</string>
 	<string name="str_column_pic1">Рис.1</string>

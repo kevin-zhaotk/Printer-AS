@@ -225,6 +225,7 @@
     <string name="str_format_12">No</string>
     <string name="cor_unit">dp</string>
     <string name="font_unit">mm</string>
+    <string name="dot_unit">Dots</string>
     <string name="str_trans">a destra</string>
     <string name="str_column_index">inizio</string>
     <string name="str_column_pic1">immagine1</string>

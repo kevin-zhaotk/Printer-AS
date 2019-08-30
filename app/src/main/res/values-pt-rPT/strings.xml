@@ -210,6 +210,7 @@
 	<string name="str_format_12">"Não"</string>
 	<string name="cor_unit">dp</string>
 	<string name="font_unit">mm</string>
+	<string name="dot_unit">Dots</string>
 	<string name="str_trans">Para Direita</string>
 	<string name="str_column_index">Indice</string>
 	<string name="str_column_pic1">pic1</string>

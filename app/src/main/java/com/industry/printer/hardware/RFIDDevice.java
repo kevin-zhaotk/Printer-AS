@@ -68,7 +68,7 @@ public class RFIDDevice implements RfidCallback{
 	
 	/*校驗特徵值*/
 	public static final int FEATURE_HIGH = 100;
-	public static final int FEATURE_LOW = 11;
+	public static final int FEATURE_LOW = 1;
 	
 	/*墨水量上下限*/
 	public static final int INK_LEVEL_MAX = 100000;

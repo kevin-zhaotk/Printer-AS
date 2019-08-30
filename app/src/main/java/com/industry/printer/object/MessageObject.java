@@ -29,12 +29,12 @@ public class MessageObject extends BaseObject {
 	};
 
 	public static final String[] mDot_32_Size = {
-			"7x6" , "16x12", "32 Dots"
+			"7x6" , "16x12", "32"
 	};
 
     // H.M.Wang 追加下列3行
     public static final String[] mDot_64_Size = {
-            "7x6" , "16x12", "64 Dots"
+            "7x6" , "16x12", "64"
     };
 
 	public MessageObject(Context context,  float x) {
