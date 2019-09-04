@@ -1,6 +1,8 @@
 package com.industry.printer.PHeader;
 
 
+import com.industry.printer.FileFormat.SystemConfigFile;
+
 public enum PrinterNozzle {
 
 

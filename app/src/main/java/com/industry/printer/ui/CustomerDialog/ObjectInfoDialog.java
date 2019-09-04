@@ -104,6 +104,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	public EditText mXcorEdit;
 	public EditText mYcorEdit;
 	public EditText mContent;
+	public TextView mContentView;
 	public TextView mFont;
 	public TextView mRtFormat;
 	public EditText mDigits;
@@ -268,7 +269,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 //	 	mHighView 		= (TextView) findViewById(R.id.highView);
 	 	mHighUnit 		= (TextView) findViewById(R.id.highUnitView);
 //	 	mCntView 		= (TextView) findViewById(R.id.cntView);
-//	 	mFontView 		= (TextView) findViewById(R.id.fontView);
+	 	mFontView 		= (TextView) findViewById(R.id.fontView);
 //	 	mRtfmtView 	= (TextView) findViewById(R.id.rtFmtView);
 //	 	mBitsView 		= (TextView) findViewById(R.id.bitsView);
 //	 	mDirectView 	= (TextView) findViewById(R.id.viewDirect);
@@ -289,6 +290,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		    mXcorEdit = (EditText)findViewById(R.id.xCorEdit);
 		    mYcorEdit = (EditText)findViewById(R.id.yCorEdit);
 		    mContent = (EditText)findViewById(R.id.cntEdit);
+			mContentView = (TextView)findViewById(R.id.cntView);
 		    mFont = (TextView) findViewById(R.id.fontSpin);
 		    if (!mObject.fixedFont()) {
 		    	mFont.setOnClickListener(this);
@@ -325,6 +327,16 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			    if (mObject.mSource) {
 					mContent.setEnabled(false);
 				}
+				// H.M.Wang 追加这段代码在添加条码的时候不显示字体，追加二维码的时候不显示内容和字体
+				if(((BarcodeObject)mObject).isQRCode()) {
+					mFontView.setVisibility(View.GONE);
+					mFont.setVisibility(View.GONE);
+					mContentView.setVisibility(View.GONE);
+					mContent.setVisibility(View.GONE);
+				} else {
+					mFont.setVisibility(View.GONE);
+					mFontView.setVisibility(View.GONE);
+				}
 			} else if (mObject instanceof LetterHourObject) {
 				mContent.setEnabled(false);
 			} else if (mObject instanceof WeekOfYearObject) {
@@ -343,6 +355,12 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		    if (mObject instanceof GraphicObject) {
 			    mPicture = (TextView) findViewById(R.id.image);
 			    mPicture.setOnClickListener(this);
+
+				// H.M.Wang追加这段代码在插入图片时不显示内容和字体
+				mFontView.setVisibility(View.GONE);
+				mFont.setVisibility(View.GONE);
+				mContentView.setVisibility(View.GONE);
+				mContent.setVisibility(View.GONE);
 			}
 	 	}
 	     
@@ -755,7 +773,26 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		case R.id.rtFormat:
 			mSpiner.setAdapter(mFormatAdapter);
 			mSpiner.showAsDropUp(v);
-			break;
+/*			mSpiner.setOnItemClickListener(new IOnItemClickListener() {
+				@Override
+				public void onItemClick(int index) {
+					// H.M.Wang 追加时间格式选择响应器
+					final int fIndex = index;
+
+					mContent.post(new Runnable() {
+						@Override
+						public void run() {
+							RealtimeObject rtObj = new RealtimeObject(mContext, 0);
+							String[] formats = mContext.getResources().getStringArray(R.array.strTimeFormat);
+							rtObj.setFormat(formats[fIndex]);
+							Debug.d(TAG, String.valueOf(rtObj.getContent()));
+							mContent.setText(String.valueOf(rtObj.getContent()));
+							mRtFormat.setText((String)mFormatAdapter.getItem(fIndex));
+						}
+					});
+				}
+			});
+*/			break;
 		case R.id.spin_line_type:
 			mSpiner.setAdapter(mLineAdapter);
 			mSpiner.showAsDropUp(v);
@@ -820,6 +857,11 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		} else if (view == mFont) {
 			view.setText((String)mFontAdapter.getItem(index));
 		} else if (view == mRtFormat) {
+			RealtimeObject rtObj = new RealtimeObject(mContext, 0);
+			String[] formats = mContext.getResources().getStringArray(R.array.strTimeFormat);
+			rtObj.setFormat(formats[index]);
+			Debug.d(TAG, String.valueOf(rtObj.getContent()));
+			mContent.setText(String.valueOf(rtObj.getContent()));
 			view.setText((String)mFormatAdapter.getItem(index));
 		} else if (view == mLineType) {
 			view.setText((String)mLineAdapter.getItem(index));
