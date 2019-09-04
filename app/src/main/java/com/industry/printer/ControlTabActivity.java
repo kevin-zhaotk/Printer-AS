@@ -612,6 +612,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
 
 		} else if (ink > 0){
+			mBtnStart.setClickable(true);
+			mTvStart.setTextColor(Color.BLACK);
 			//mInkLevel.clearAnimation();
 			mInkLevel.setBackgroundColor(0x436EEE);
 			mInkLevel.setText(level);
