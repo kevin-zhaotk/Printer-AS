@@ -31,8 +31,6 @@ public class RealtimeObject extends BaseObject {
 	public Vector<BaseObject> mSubObjs;
 	public int mOffset;
 
-	private float mRatio = 1.0f;
-
 	public RealtimeObject(Context context,  float x) {
 		super(context, BaseObject.OBJECT_TYPE_RT, x);
 		//Time t = new Time();

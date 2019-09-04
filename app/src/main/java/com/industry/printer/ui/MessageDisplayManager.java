@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.opengl.Visibility;
 import android.text.Layout;
 import android.util.Log;
@@ -157,7 +158,12 @@ public class MessageDisplayManager implements View.OnTouchListener {
         params.topMargin = (int) object.getY();
         params.leftMargin = (int) object.getX();
         view.setLayoutParams(params);
-        showSelectRect(params.leftMargin, params.topMargin, params.width, params.height);
+
+        // H.M.Wang修改，以显示当前对象的选择框
+//        showSelectRect(params.leftMargin, params.topMargin, params.width, params.height);
+        if(object.mIsSelected) {
+            showSelectRect((int)object.getX(), (int)object.getY(), (int)object.getWidth(), (int) object.getHeight());
+        }
     }
 
     /**
@@ -210,7 +216,7 @@ public class MessageDisplayManager implements View.OnTouchListener {
     }
 
     private void draw(BaseObject object) {
-    	//Debug.d(TAG, "--->draw: " + mContainer.getMeasuredHeight());
+//    	Debug.d(TAG, "--->draw: " + mContainer.getMeasuredHeight());
     	if (object instanceof MessageObject) {
             return;
         }
@@ -235,7 +241,12 @@ public class MessageDisplayManager implements View.OnTouchListener {
         mImageMap.put(object, vg);
         vg.setTag(object);
         vg.setOnTouchListener(this);
-        showSelectRect(lp.leftMargin, lp.topMargin, lp.width, lp.height);
+
+        // H.M.Wang修改，以显示当前对象的选择框
+//        showSelectRect(lp.leftMargin, lp.topMargin, lp.width, lp.height);
+        if(object.mIsSelected) {
+            showSelectRect((int)object.getX(), (int)object.getY(), (int)object.getWidth(), (int) object.getHeight());
+        }
     }
 
 

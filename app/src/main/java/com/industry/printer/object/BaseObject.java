@@ -98,9 +98,11 @@ public class BaseObject{
 	
 	public HashMap<String, byte[]> mVBuffer;
 	public MessageTask mTask;
-	
 
-//	public static final String DEFAULT_FONT = "0T+";//	
+	// H.M.Wang 从RealtimeObject移至此处，为的是是的TextObject也能用到
+	protected float mRatio = 1.0f;
+
+	//	public static final String DEFAULT_FONT = "0T+";//
 	public static final String DEFAULT_FONT = "1+";// addbylk	
 	/**
 	 * supported fonts
@@ -114,7 +116,7 @@ public class BaseObject{
 		
 		initName();
 	}
-	
+
 	public BaseObject(Context ctx, String id)
 	{
 		//super(context);
@@ -264,7 +266,12 @@ public class BaseObject{
 	public boolean getReverse() {
 		return mReverse;
 	}
-	
+
+    // H.M.Wang 追加该函数。用来获取初始的横向缩放比例
+	public void setXRatio() {
+		mRatio = 1.0f;
+	}
+
 	private Bitmap draw() {
 		Bitmap bitmap;
 		mPaint.setTextSize(getfeed());
@@ -304,15 +311,25 @@ public class BaseObject{
 			Debug.d(TAG, "--->e: " + e.getMessage());
 		}
 
+		// H.M.Wang 修改，一对应文本的放大缩小倍率
 		int width = (int)mPaint.measureText(getContent());
-	
+		if(mWidth != 0) {
+			mRatio = mWidth / width;
+		} else {
+			mRatio = 1.0f;
+		}
+
 		Debug.e(TAG, "--->content: " + getContent() + "  width=" + width);
 		PrinterNozzle type = mTask != null? mTask.getNozzle() : PrinterNozzle.MESSAGE_TYPE_12_7;
 
 		// H.M.Wang 修改下列两行
 //		if (mWidth == 0 || type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
-		if (mWidth == 0 || type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT || type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
-			setWidth(width);
+//		if (mWidth == 0 || type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT || type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT || type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			setWidth(1.0f * width);
+		} else {
+			// H.M.Wang 修改
+			setWidth(1.0f * width * mRatio);
 		}
 		bitmap = Bitmap.createBitmap(width , (int)mHeight, Configs.BITMAP_CONFIG);
 		Debug.e(TAG,"===--->getBitmap width=" + mWidth + ", mHeight=" + mHeight);
@@ -780,13 +797,13 @@ public class BaseObject{
 //		}
 		setWidth(width);
 	}
-	
+
 	public void setHeight(String size)
 	{
 		float height = mTask.getMsgObject().getPixels(size);
 		setHeight(height);
 	}
-	
+
 	public String getDisplayHeight() {
 		Debug.d(TAG, "--->getDisplayHeight: " + mHeight);
 		return mTask.getMsgObject().getDisplayFs(mHeight);
@@ -806,7 +823,7 @@ public class BaseObject{
 //		isNeedRedraw = true;
 		Debug.d(TAG, "===>setWidth x= " + mXcor + ", mWidth=" + mWidth + ", xend=" + mXcor_end);
 	}
-	
+
 	public float getWidth()
 	{
 

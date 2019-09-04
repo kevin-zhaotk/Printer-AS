@@ -20,8 +20,29 @@ public class TextObject extends BaseObject {
 	@Override
 	public void setContent(String content) {
 		super.setContent(content);
-		mWidth = 0;
+
+		// H.M.Wang取消宽度归零的设置
+//		mWidth = 0;
 	}
+
+	// H.M.Wang 修改。取消原来的子元素均等加减1的缩放方法，改为均等缩放
+	public void wide() {
+		float ratio = (getWidth() + 5) / getWidth();
+		mRatio *= ratio;
+
+		setWidth(getWidth()*ratio);
+		isNeedRedraw = true;
+	}
+
+	// H.M.Wang 修改。取消原来的子元素均等加减1的缩放方法，改为均等缩放
+	public void narrow() {
+		float ratio = (getWidth() - 5) / getWidth();
+		mRatio *= ratio;
+
+        setWidth(getWidth()*ratio);
+		isNeedRedraw = true;
+	}
+
 	public String toString()
 	{
 		float prop = getProportion();

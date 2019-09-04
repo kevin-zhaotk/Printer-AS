@@ -182,8 +182,26 @@ public class BarcodeObject extends BaseObject {
 		}
 		isNeedRedraw = true;
 	}
-	
-	@Override
+
+    // H.M.Wang 修改。取消原来的子元素均等加减1的缩放方法，改为均等缩放
+    public void wide() {
+        float ratio = (getWidth() + 5) / getWidth();
+        mRatio *= ratio;
+
+        setWidth(getWidth()*ratio);
+        isNeedRedraw = true;
+    }
+
+    // H.M.Wang 修改。取消原来的子元素均等加减1的缩放方法，改为均等缩放
+    public void narrow() {
+        float ratio = (getWidth() - 5) / getWidth();
+        mRatio *= ratio;
+
+        setWidth(getWidth()*ratio);
+        isNeedRedraw = true;
+    }
+
+    @Override
 	public void setSource(boolean dynamic) {
 		mSource  = dynamic;
 		if (dynamic) {
@@ -209,40 +227,67 @@ public class BarcodeObject extends BaseObject {
 		return mName;
 	}
 	
-	private static final String CODE = "utf-8"; 
-	
+	private static final String CODE = "utf-8";
+
+	// H.M.Wang 追加该函数。用来获取初始的横向缩放比例
+	@Override
+	public void setXRatio() {
+		if (!is2D()) {
+			mRatio = (mWidth == 0 ? 1.0f : (mWidth / (mContent.length() * 70)));
+		} else {
+			mRatio = (mWidth == 0 ? 1.0f : (mWidth / 152));
+		}
+	}
+
+	// H.M.Wang 修改该函数。以对应于纵向和横向的比例变化
 	public Bitmap getScaledBitmap(Context context) {
 		if (!isNeedRedraw) {
-			return mBitmap; 			
+			return mBitmap;
 		}
 		
 		isNeedRedraw = false;
 		check();
 		if (!is2D()) {
 			if (mWidth <= 0) {
-				mWidth = mContent.length() * 70;
+                mWidth = mRatio * mContent.length() * 70;
+//                mWidth = mContent.length() * 70;
 			}
-			mBitmap = draw(mContent, (int)mWidth, (int)mHeight);
+//			mBitmap = draw(mContent, (int)mWidth, (int)mHeight);
+			mBitmap = draw(mContent, mContent.length() * 70, (int)mHeight);
 		} else {
-			mWidth = mHeight;
+			mWidth = mRatio * 152;
+//			mWidth = mRatio * mHeight;
+//            mWidth = mHeight;
 			if (mFormat.equalsIgnoreCase("DM") || mFormat.equalsIgnoreCase("DATA_MATRIX")) {
-				mBitmap = drawDataMatrix(mContent, (int) mWidth, (int) mHeight);
+//				mBitmap = drawDataMatrix(mContent, (int) mWidth, (int) mHeight);
+				mBitmap = drawDataMatrix(mContent, 152, 152);
 			} else {
-				mBitmap = drawQR(mContent, (int) mWidth, (int) mHeight);
+//				mBitmap = drawQR(mContent, (int) mWidth, (int) mHeight);
+				mBitmap = drawQR(mContent, 152, 152);
 			}
 		}
 		// mBitmap = draw(mContent, (int)mWidth, (int)mHeight);
 		setWidth(mWidth);
 		return mBitmap;
 	}
-	
-	
+
+
+	// H.M.Wang 修改该函数。以对应于纵向和横向的比例变化
 	@Override
 	public Bitmap getpreviewbmp() {
-		if (mBinmap == null || mWidth == 0 || mHeight == 0) {
+		if (mFormat.equalsIgnoreCase("DM") || mFormat.equalsIgnoreCase("DATA_MATRIX")) {
+//				mBitmap = drawDataMatrix(mContent, (int) mWidth, (int) mHeight);
+			return drawDataMatrix(mContent, 152, 152);
+		} else {
+//				mBitmap = drawQR(mContent, (int) mWidth, (int) mHeight);
+			return drawQR(mContent, 152, 152);
+		}
+/*		if (mBitmap == null || mWidth == 0 || mHeight == 0) {
 			getScaledBitmap(mContext);
 		}
+
 		return Bitmap.createScaledBitmap(mBitmap, (int) mWidth, (int) mHeight, false);
+*/
 	}
 
 	@Override
@@ -282,7 +327,10 @@ public class BarcodeObject extends BaseObject {
 			Bitmap bitmap = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
 			
 			bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-			return bitmap;
+
+			// H.M.Wang 修改返回值一行
+			return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
+//			return bitmap;
 		} catch (Exception e) {
 		}
 		return null;
@@ -313,7 +361,10 @@ public class BarcodeObject extends BaseObject {
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
 //		Bitmap bitmap = Bitmap.createBitmap(w, h, Configs.BITMAP_CONFIG);
 		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-		return bitmap;
+
+		// H.M.Wang 修改返回值一行
+		return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
+//		return bitmap;
 	}
 	
 	private Bitmap draw(String content, int w, int h) {
@@ -392,8 +443,10 @@ public class BarcodeObject extends BaseObject {
 				BinFromBitmap.recyleBitmap(code);
 				bitmap = bmp;
 			}
-			
-			return bitmap;
+
+			// H.M.Wang 修改返回值一行
+			return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
+//			return bitmap;
 
 		} catch (Exception e) {
 			Debug.d(TAG, "--->exception: " + e.getMessage());
@@ -536,11 +589,12 @@ public class BarcodeObject extends BaseObject {
 		BinFileMaker maker = new BinFileMaker(mContext);
 
 		// H.M.Wang 追加一个是否移位的参数
-		int[] dots = maker.extract(bmp, mTask.getHeads(),
-				(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
-				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
-				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
-				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR));
+		int[] dots = maker.extract(bmp, mTask.getHeads(), false);
+//		int[] dots = maker.extract(bmp, mTask.getHeads(),
+//				(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+//						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+//						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+//						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR));
 		return dots;
 	}
 

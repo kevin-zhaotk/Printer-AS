@@ -355,7 +355,6 @@ public class MessageTask {
 				} else {
 					dealDot(dots, 0.5f);
 				}
-				
 			}
 		}
 	}
@@ -1090,7 +1089,7 @@ public class MessageTask {
 			//保存1.TLK文件
 			// saveTlk(mContext);
 			//保存1.bin文件
-			Debug.d(TAG, "SaveTime: - Start : " + System.currentTimeMillis());
+//			Debug.d(TAG, "SaveTime: - Start : " + System.currentTimeMillis());
 			saveBin();
 
 //			Debug.d(TAG, "SaveTime: - Start saveExtras() : " + System.currentTimeMillis());
@@ -1108,7 +1107,7 @@ public class MessageTask {
 //			Debug.d(TAG, "SaveTime: - Start savePreview() : " + System.currentTimeMillis());
 			//保存1.bmp文件
 			savePreview();
-			Debug.d(TAG, "SaveTime: - Finished : " + System.currentTimeMillis());
+//			Debug.d(TAG, "SaveTime: - Finished : " + System.currentTimeMillis());
 
 			//
 			return null;

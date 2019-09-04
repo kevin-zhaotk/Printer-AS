@@ -374,6 +374,9 @@ public class TLKFileParser  extends TlkFile{
 				Debug.d(TAG, "--->attr[111] = " + attr[11]);
 				obj.setReverse(StringUtil.parseBool(attr[11]));
 				obj.setFont(attr[19]);
+
+				// H.M.Wang追加一行，设置初始横向缩放比例
+				obj.setXRatio();
 			} catch (Exception e) {
 				Debug.d(TAG, "e: " + e.getCause());
 			}

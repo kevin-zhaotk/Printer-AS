@@ -382,8 +382,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 								mPListener.onClick();
 							return;
 						}
-						
-						
+
 						if (mObject instanceof TextObject) {
 							mObject.setContent(mContent.getText().toString());
 							Debug.d(TAG, "--->redraw: " + mObject.isNeedDraw());
@@ -446,6 +445,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						}
 						// mObject.setWidth(Float.parseFloat(mWidthEdit.getText().toString()));
 						// mObject.setHeight(Float.parseFloat(mHighEdit.getText().toString()));
+
 						Debug.d(TAG, "--->positive click");
 						try {
 //							if (mHeightType.isChecked()) {

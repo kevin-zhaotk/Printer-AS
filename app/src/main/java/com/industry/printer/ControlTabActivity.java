@@ -903,7 +903,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mSysconfig.saveLastMsg(mObjPath);
 //					dismissProgressDialog();
 
-///////////////////////////
 					if (Configs.IGNORE_RFID) {
 						mHandler.sendEmptyMessage(MESSAGE_PRINT_START);
 					} else {
@@ -994,10 +993,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 					Debug.d(TAG, "--->print start");
 					if (mDTransThread != null && mDTransThread.isRunning()) {
-						handleError(R.string.str_print_printing, pcMsg);
+						// H.M.Wang注释掉一行
+//						handleError(R.string.str_print_printing, pcMsg);
 						break;
 					}
-///////////////////////////
+
 					if (!checkRfid()) {
 						handleError(R.string.str_toast_no_ink, pcMsg);
 						return;
@@ -1968,7 +1968,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	
 	private void sendToRemote(String msg) {
 		try {
-			PrintWriter pout = new PrintWriter(new BufferedWriter(  
+			PrintWriter pout = new PrintWriter(new BufferedWriter(
                      new OutputStreamWriter(Gsocket.getOutputStream())),true); 
              pout.println(msg);
 		} catch (Exception e) {
@@ -2415,12 +2415,15 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		        {
 		            return "";
 		        }
-		       
+
+		        // H.M.Wang 追加接收文件长度信息
+				PCCommand cmd = PCCommand.fromString(msg);
+				int length = Integer.valueOf(cmd.size);
+				Debug.d(TAG, "--->length: " + length);
+
 		        InputStream in=null;
 				FileOutputStream file = null;
 				try {
-		            //
-		 
 		        	String savePath=msg.substring(msg.indexOf("/")+1,msg.lastIndexOf("/"));
 
 		        	String[] Apath = savePath.split("\\/");
@@ -2444,38 +2447,50 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					int size = -1;
 				
 					int totalReceived = 0;
-					while (true) {
+
+					// H.M.Wang对以下while语句进行修改，支持文件下载时指定字节数接收完成时结束
+					while (totalReceived < length) {
+//					while (true) {
 						int read = 0;
 						try {
 							if (inb != null) {
 								read = inb.read(buffer);
+								if(read != 0) {
+									Debug.d(TAG, "--->read: " + read);
+									file.write(buffer, 0, read);
+									totalReceived += read;
+								}
 							}
 						} catch (SocketTimeoutException e) {
 							Debug.d(TAG, "--->SocketTimeout: " + read);
-							if (totalReceived != 0) {
-								read = -1;
-							}
-
+//							if (totalReceived != 0) {
+//								read = -1;
+//							}
 						}
 						//passedlen += read;
-						if (read == -1) {
-							break;
-						}
-						Debug.d(TAG, "--->read: " + read);
-						totalReceived += read;
+//						if (read == -1) {
+//							break;
+//						}
+//						Debug.d(TAG, "--->read: " + read);
+//						totalReceived += read;
 						//下面进度条本为图形界面的prograssBar做的，这里如果是打文件，可能会重复打印出一些相同的百分比
 						//System.out.println("文件接收了" +  (passedlen * 100/ len) + "%\n");
-						file.write(buffer, 0, read);
+//						file.write(buffer, 0, read);
+//						totalReceived += read;
 					}
 
 				file.flush();
 				file.close();
 
 			} catch(Exception e){
+					Debug.e(TAG, e.getMessage());
 				return Constants.pcErr(msg);
 			}
 		    SendFileFlag=0;
+
+			// H.M.Wang做一下修改
 		 	return Constants.PC_RESULT_OK + msg;
+//			return "000-ok: " + msg;
 	}
 	private void MakeTlk(String msg)
 	{
