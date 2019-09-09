@@ -580,7 +580,10 @@ public class MessageTask {
 		float scaleH = getNozzle().getScaleH();
 		Debug.d(TAG, "drawAllBmp scaleW = " + scaleW + ", scaleH = " + scaleH);
 		//實際寬度
-		int bWidth = (int) (width * scaleW);
+
+		// H.M.Wang 修改下列一行
+        int bWidth = Math.round(width * scaleW + 0.5f);
+//        int bWidth = (int) (width * scaleW);
 		int bHeight = msgObj.getPNozzle().getHeight();
 //		Debug.d(TAG, "SaveTime: - Start CreateBitmap : " + System.currentTimeMillis());
 		Bitmap bmp = Bitmap.createBitmap(bWidth , bHeight, Configs.BITMAP_CONFIG);

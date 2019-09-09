@@ -214,7 +214,6 @@ public class RFIDManager implements RfidCallback{
 	}
 	
 	public void checkRfid() {
-		
 	}
 	
 	public void switchRfid(final int i) {

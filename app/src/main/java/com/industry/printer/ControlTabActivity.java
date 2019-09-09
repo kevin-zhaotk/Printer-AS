@@ -612,8 +612,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
 
 		} else if (ink > 0){
+			// H.M.Wang RFID恢复正常，打开打印
 			mBtnStart.setClickable(true);
 			mTvStart.setTextColor(Color.BLACK);
+
 			//mInkLevel.clearAnimation();
 			mInkLevel.setBackgroundColor(0x436EEE);
 			mInkLevel.setText(level);
@@ -766,6 +768,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			final String pcMsg = msg.getData().getString(Constants.PC_CMD, "");
 			final boolean printAfterLoad = msg.getData().getBoolean("printAfterLoad", false);
 			final boolean printNext = msg.getData().getBoolean("printNext", false);
+Debug.d(TAG, "msg.what = " + msg.what);
 			switch(msg.what)
 			{
 				case MESSAGE_OPEN_PREVIEW:
@@ -1685,6 +1688,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		// ExtGpio.playClick();
 		switch (v.getId()) {
 			case R.id.StartPrint:
+//	死机			mRfidManager.checkRfid();
+//	拔出墨盒仍然返回有效数值56643			mRfidManager.getLocalInk(0);
 				mHandler.sendEmptyMessage(MESSAGE_OPEN_TLKFILE);
 				break;
 			case R.id.StopPrint:

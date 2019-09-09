@@ -177,6 +177,7 @@ public class DataTask {
 //			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
 		}
 
+//		BinCreater.saveBin("/mnt/sdcard/print1.bin", mPrintBuffer, 32);
 		Debug.d(TAG, "--->BytesPerColumn: " + mBinInfo.mBytesPerColumn);
 //		if (mBinInfo.mBytesPerColumn == 4)  {
 //			evenBitShift();

@@ -30,7 +30,7 @@
 	<string name="str_print_documents"></string>
 	<string name="str_port">Port</string>
 	<string name="str_information">Do you want to execute?</string>
-	<string name="str_btn_saveas">Saveas</string>
+	<string name="str_btn_saveas">Save\nas</string>
 	<string name="str_btn_prerecord">Up</string>
 	<string name="str_btn_nextrecord">Down</string>
 	<string name="str_btn_send">Send</string>

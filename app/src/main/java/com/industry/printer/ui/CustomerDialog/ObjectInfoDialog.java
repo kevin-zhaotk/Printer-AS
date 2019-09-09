@@ -773,26 +773,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		case R.id.rtFormat:
 			mSpiner.setAdapter(mFormatAdapter);
 			mSpiner.showAsDropUp(v);
-/*			mSpiner.setOnItemClickListener(new IOnItemClickListener() {
-				@Override
-				public void onItemClick(int index) {
-					// H.M.Wang 追加时间格式选择响应器
-					final int fIndex = index;
-
-					mContent.post(new Runnable() {
-						@Override
-						public void run() {
-							RealtimeObject rtObj = new RealtimeObject(mContext, 0);
-							String[] formats = mContext.getResources().getStringArray(R.array.strTimeFormat);
-							rtObj.setFormat(formats[fIndex]);
-							Debug.d(TAG, String.valueOf(rtObj.getContent()));
-							mContent.setText(String.valueOf(rtObj.getContent()));
-							mRtFormat.setText((String)mFormatAdapter.getItem(fIndex));
-						}
-					});
-				}
-			});
-*/			break;
+			break;
 		case R.id.spin_line_type:
 			mSpiner.setAdapter(mLineAdapter);
 			mSpiner.showAsDropUp(v);
@@ -857,11 +838,14 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		} else if (view == mFont) {
 			view.setText((String)mFontAdapter.getItem(index));
 		} else if (view == mRtFormat) {
+
+			// H.M.Wang追加下列5行，实时根据新的时间格式变更内容区域的显示内容
 			RealtimeObject rtObj = new RealtimeObject(mContext, 0);
 			String[] formats = mContext.getResources().getStringArray(R.array.strTimeFormat);
 			rtObj.setFormat(formats[index]);
 			Debug.d(TAG, String.valueOf(rtObj.getContent()));
 			mContent.setText(String.valueOf(rtObj.getContent()));
+
 			view.setText((String)mFormatAdapter.getItem(index));
 		} else if (view == mLineType) {
 			view.setText((String)mLineAdapter.getItem(index));

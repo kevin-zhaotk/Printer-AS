@@ -81,7 +81,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	private PopWindowAdapter mLan;
 	
 	private ItemViewHolder mEncoderHolder;
-	private HashMap<Integer, ItemViewHolder> mHoldMap;
+//	private HashMap<Integer, ItemViewHolder> mHoldMap;
 	
 	private ItemOneLine[] mSettingItems = new ItemOneLine[64];
 
@@ -241,7 +241,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		// mTitles = mContext.getResources().getStringArray(R.array.str_settings_params);
 
 		loadSettings();
-		mHoldMap = new HashMap<Integer, ItemViewHolder>();
+//		mHoldMap = new HashMap<Integer, ItemViewHolder>();
 		
 		mEncoderAdapter = new PopWindowAdapter(mContext, null);
 		mTrigerMode = new PopWindowAdapter(mContext, null);
@@ -326,19 +326,23 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mHolder.mValueRTv = (TextView) convertView.findViewById(R.id.setting_value_right_tv);
 			mHolder.mValueREt = (EditText) convertView.findViewById(R.id.setting_value_right_et);
 			mHolder.mUnitR = (TextView) convertView.findViewById(R.id.setting_unit_right);
-			
-			
+
+			// H.M.Wang 修改 20190905 添加这两行，生成控件的时候添加设置
+			mHolder.mValueLEt.addTextChangedListener(new SelfTextWatcher(mHolder.mValueLEt));
+			mHolder.mValueREt.addTextChangedListener(new SelfTextWatcher(mHolder.mValueREt));
+
 			convertView.setTag(mHolder);
-			mHoldMap.put(position, mHolder);
+//			mHoldMap.put(position, mHolder);
 			
 		}
 		mHolder.mValueLEt.setTag(2*position);
 		mHolder.mValueLTv.setTag(2*position);
 		mHolder.mValueREt.setTag(2*position+1);
 		mHolder.mValueRTv.setTag(2*position+1);
-		mHolder.mValueLEt.addTextChangedListener(new SelfTextWatcher(mHolder.mValueLEt));
-		mHolder.mValueREt.addTextChangedListener(new SelfTextWatcher(mHolder.mValueREt));
-		
+		// H.M.Wang 修改 20190905 注释掉这两行，改在生成控件的时候设置
+//		mHolder.mValueLEt.addTextChangedListener(new SelfTextWatcher(mHolder.mValueLEt));
+//		mHolder.mValueREt.addTextChangedListener(new SelfTextWatcher(mHolder.mValueREt));
+
 		if (mSettingItems[2*position].mUnit > 0) {
 			mHolder.mUnitL.setText(mSettingItems[2*position].mUnit);
 		} else {
@@ -351,8 +355,8 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		}
 		mHolder.mTitleL.setText(mContext.getString(mSettingItems[2*position].mTitle));
 		mHolder.mTitleR.setText(mContext.getString(mSettingItems[2*position+1].mTitle));
-		Debug.d(TAG, "===>getView position=" + position);
-		
+//		Debug.d(TAG, "===>getView position=" + position);
+
 		if (mSettingItems[2*position].mType != ItemType.TYPE_NONE) {
 			mHolder.mValueLTv.setVisibility(View.VISIBLE);
 			mHolder.mValueLEt.setVisibility(View.GONE);
@@ -361,7 +365,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		} else {
 			mHolder.mValueLTv.setVisibility(View.GONE);
 			mHolder.mValueLEt.setVisibility(View.VISIBLE);
-			Debug.d(TAG, "--->getView:left=" + mSettingItems[2*position].mValue + "---right=" + mSettingItems[2*position+1].mValue);
+//			Debug.d(TAG, "--->getView:left=" + mSettingItems[2*position].mValue + "---right=" + mSettingItems[2*position+1].mValue);
 			mHolder.mValueLEt.setText(mSettingItems[2*position].getDisplayValue());
 		}
 		
@@ -375,7 +379,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mHolder.mValueREt.setVisibility(View.VISIBLE);
 			mHolder.mValueREt.setText(mSettingItems[2*position+1].getDisplayValue());
 		}
-		
+
 		return convertView;
 	}
 
@@ -634,7 +638,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 
 		// H.M.Wang 增加2行。为计数器清楚前置0
 		} else if (position == 18) { //參數18
-				mSpiner.setAdapter(mClearZero);
+			mSpiner.setAdapter(mClearZero);
 
 		} else if (position == 21) { //參數22
 			mSpiner.setAdapter(mPen4Mirror);

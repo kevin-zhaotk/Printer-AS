@@ -60,10 +60,13 @@ public class GraphicObject  extends BaseObject{
 	{
 		float height = mTask.getMsgObject().getPixels(size);
 
-		float oldHeight = mHeight;
-		super.setHeight(height);
-		setWidth(mWidth * mHeight / oldHeight);
-		Debug.d(TAG, "mWidth = " + mWidth + "; mHeight = " + mHeight);
+		Debug.d(TAG, "====> setHeight: mWidth = " + mWidth + "; mHeight = " + mHeight + "; height = " + height);
+		float ratio = height / mHeight;
+//		setHeight(height);
+//		Debug.d(TAG, "====> setHeight: oldHeight = " + oldHeight);
+		setWidth(mWidth * ratio);
+		setHeight(height);
+		Debug.d(TAG, "====> setHeight: mWidth = " + mWidth + "; mHeight = " + mHeight);
 	}
 /*	H.M.Wang 撤销这个函数，改为采用上面的函数
 	public void setHeight(float size) {

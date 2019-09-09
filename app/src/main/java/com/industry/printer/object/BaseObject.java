@@ -452,7 +452,7 @@ public class BaseObject{
 		int dots[] = new int[1];
 		int singleW;
 		Paint paint = new Paint();
-		int height = (int) (mHeight * scaleH);
+		int height = Math.round(mHeight * scaleH);
 		paint.setTextSize(height);
 		paint.setAntiAlias(true); //去除锯齿  
 		paint.setFilterBitmap(true); //对位图进行滤波处理
@@ -501,7 +501,9 @@ public class BaseObject{
 		{
 			can.drawColor(Color.WHITE);
 			can.drawText(String.valueOf(i), 0, height - fm.descent, paint);
-			gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, height, false), i*singleW, (int)getY() * scaleH, paint);
+			// H.M.Wang 修改 20190905
+//			gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, height, false), i*singleW, (int)getY() * scaleH, paint);
+			gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, height, false), i*singleW, Math.round(getY() * scaleH), paint);
 		}
 
 		BinFromBitmap.recyleBitmap(bmp);
