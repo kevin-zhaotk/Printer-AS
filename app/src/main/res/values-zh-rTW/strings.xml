@@ -65,8 +65,8 @@
 	<string name="strHigh">高</string>
 	<string name="strHightype">位置</string>	
 	<string name="strReverse">反相</string>
-	<string name="strXcor">X座標</string>
-	<string name="strYcor">Y座標</string>
+	<string name="strXcor">橫向位置</string>
+	<string name="strYcor">縱向位置</string>
 	<string name="strCnt">內容</string>
 	<string name="strDefault">0</string>
 	<string name="txtDefault">text</string>

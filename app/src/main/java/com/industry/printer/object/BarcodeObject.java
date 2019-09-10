@@ -249,21 +249,24 @@ public class BarcodeObject extends BaseObject {
 		check();
 		if (!is2D()) {
 			if (mWidth <= 0) {
-                mWidth = mRatio * mContent.length() * 70;
+                mWidth = mContent.length() * 70;
 //                mWidth = mContent.length() * 70;
 			}
 //			mBitmap = draw(mContent, (int)mWidth, (int)mHeight);
 			mBitmap = draw(mContent, mContent.length() * 70, (int)mHeight);
 		} else {
-			mWidth = mRatio * 152;
+			if (mWidth <= 0) {
+				mWidth = mHeight;
+			}
+//			mWidth = mRatio * 152;
 //			mWidth = mRatio * mHeight;
 //            mWidth = mHeight;
 			if (mFormat.equalsIgnoreCase("DM") || mFormat.equalsIgnoreCase("DATA_MATRIX")) {
-//				mBitmap = drawDataMatrix(mContent, (int) mWidth, (int) mHeight);
-				mBitmap = drawDataMatrix(mContent, 152, 152);
+				mBitmap = drawDataMatrix(mContent, (int) mWidth, (int) mHeight);
+//				mBitmap = drawDataMatrix(mContent, 152, 152);
 			} else {
-//				mBitmap = drawQR(mContent, (int) mWidth, (int) mHeight);
-				mBitmap = drawQR(mContent, 152, 152);
+				mBitmap = drawQR(mContent, (int) mWidth, (int) mHeight);
+//				mBitmap = drawQR(mContent, 152, 152);
 			}
 		}
 		// mBitmap = draw(mContent, (int)mWidth, (int)mHeight);
@@ -275,6 +278,7 @@ public class BarcodeObject extends BaseObject {
 	// H.M.Wang 修改该函数。以对应于纵向和横向的比例变化
 	@Override
 	public Bitmap getpreviewbmp() {
+/*
 		if (mFormat.equalsIgnoreCase("DM") || mFormat.equalsIgnoreCase("DATA_MATRIX")) {
 //				mBitmap = drawDataMatrix(mContent, (int) mWidth, (int) mHeight);
 			return drawDataMatrix(mContent, 152, 152);
@@ -282,12 +286,13 @@ public class BarcodeObject extends BaseObject {
 //				mBitmap = drawQR(mContent, (int) mWidth, (int) mHeight);
 			return drawQR(mContent, 152, 152);
 		}
-/*		if (mBitmap == null || mWidth == 0 || mHeight == 0) {
+*/
+		if (mBitmap == null || mWidth == 0 || mHeight == 0) {
 			getScaledBitmap(mContext);
 		}
 
 		return Bitmap.createScaledBitmap(mBitmap, (int) mWidth, (int) mHeight, false);
-*/
+
 	}
 
 	@Override
@@ -329,7 +334,8 @@ public class BarcodeObject extends BaseObject {
 			bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
 
 			// H.M.Wang 修改返回值一行
-			return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
+			return Bitmap.createScaledBitmap(bitmap, w, h, false);
+//			return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
 //			return bitmap;
 		} catch (Exception e) {
 		}
@@ -363,7 +369,8 @@ public class BarcodeObject extends BaseObject {
 		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
 
 		// H.M.Wang 修改返回值一行
-		return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
+		return Bitmap.createScaledBitmap(bitmap, w, h, false);
+//			return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
 //		return bitmap;
 	}
 	
@@ -445,7 +452,8 @@ public class BarcodeObject extends BaseObject {
 			}
 
 			// H.M.Wang 修改返回值一行
-			return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
+			return Bitmap.createScaledBitmap(bitmap, w, h, false);
+//			return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
 //			return bitmap;
 
 		} catch (Exception e) {

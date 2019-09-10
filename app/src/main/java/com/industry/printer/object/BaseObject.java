@@ -463,7 +463,7 @@ public class BaseObject{
 			
 		}
 
-		Debug.d(TAG, "SaveTime: - Start makeVarBin : " + System.currentTimeMillis());
+//		Debug.d(TAG, "SaveTime: - Start makeVarBin : " + System.currentTimeMillis());
 		int width = (int)paint.measureText("8");
 		FontMetrics fm = paint.getFontMetrics();
 		
@@ -524,7 +524,7 @@ public class BaseObject{
 		/*根據變量內容的實際長度計算點數*/
 		dots[0] = (dots[0]* getContent().length()/10) + 1;
 
-		Debug.d(TAG, "SaveTime: - End makeVarBin : " + System.currentTimeMillis());
+//		Debug.d(TAG, "SaveTime: - End makeVarBin : " + System.currentTimeMillis());
 		return dots[0];
 	}
 	public int drawVarBitmap()

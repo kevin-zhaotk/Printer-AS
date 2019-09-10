@@ -235,8 +235,14 @@ public enum PrinterNozzle {
                 ratio = 4.0f * 25.4f / 304;
                 break;
             case NozzleType.NOZZLE_TYPE_16_DOT:
+                ratio = 16f / 304;
+                break;
             case NozzleType.NOZZLE_TYPE_32_DOT:
+                ratio = 32f / 304;
+                break;
             case NozzleType.NOZZLE_TYPE_64_DOT:
+                ratio = 64f / 304;
+                break;
             default:
                 break;
         }

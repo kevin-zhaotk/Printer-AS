@@ -76,8 +76,8 @@
 	<string name="strHigh">Height</string>
 	<string name="strHightype">Stepwise</string>
 	<string name="strReverse">Inversion</string>
-	<string name="strXcor">X-Cor</string>
-	<string name="strYcor">Y-Cor</string>
+	<string name="strXcor">Horizon</string>
+	<string name="strYcor">Vertical</string>
 	<string name="strCnt">Content</string>
 	<string name="strDefault">0</string>
 	<string name="txtDefault">text</string>
