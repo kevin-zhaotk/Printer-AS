@@ -211,7 +211,7 @@ public class TLKFileParser  extends TlkFile{
 		if (attr == null || attr.length != 22) {
 			return null;
 		}
-		
+
 		Debug.d(TAG, "attr[1]="+attr[1]);
 		try {
 			if (BaseObject.OBJECT_TYPE_MsgName.equals(attr[1]))        //msg name

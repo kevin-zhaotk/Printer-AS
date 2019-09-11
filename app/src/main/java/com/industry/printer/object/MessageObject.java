@@ -34,7 +34,7 @@ public class MessageObject extends BaseObject {
 
     // H.M.Wang 追加下列3行
     public static final String[] mDot_64_Size = {
-            "7x6" , "16x12", "64"
+            "7x6" , "16x12", "24", "32", "64"
     };
 
 	public MessageObject(Context context,  float x) {
@@ -346,7 +346,7 @@ public class MessageObject extends BaseObject {
 //			type = 4;
 //		} else
 		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
-			if (size <= 152/2) {
+			if (size <= 152f/2) {
 				return mDotSizes[0]; 
 			} else {
 				return mDotSizes[1];
@@ -354,9 +354,9 @@ public class MessageObject extends BaseObject {
 			
 		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 
-			if (size == 38) {
+			if (size <= 152f/4) {
 				return mDot_32_Size[0];
-			} else if (size == 76) {
+			} else if (size <= 152f/2) {
 				return mDot_32_Size[1];
 			} else {
 				return mDot_32_Size[2];
@@ -365,12 +365,16 @@ public class MessageObject extends BaseObject {
         // H.M.Wang 追加下列10行
         } else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 
-            if (size == 19) {
+            if (size <= 152f/8) {
                 return mDot_64_Size[0];
-            } else if (size == 38) {
-                return mDot_64_Size[1];
+			} else if (size <= 152f/8*2) {
+				return mDot_64_Size[1];
+			} else if (size <= 152f/8*3) {
+				return mDot_64_Size[2];
+			} else if (size <= 152f/8*4) {
+				return mDot_64_Size[3];
             } else {
-                return mDot_64_Size[2];
+                return mDot_64_Size[4];
             }
 
         } else {

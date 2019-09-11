@@ -427,7 +427,9 @@ public class MessageTask {
 			if (o instanceof MessageObject) {
 				continue;
 			}
-			width = (int)(width > o.getXEnd() ? width : o.getXEnd());
+			// H.M.Wang 2019-09-11 将简单取整修改为四舍五入
+			width = Math.round(width > o.getXEnd() ? width : o.getXEnd());
+//			width = (int)(width > o.getXEnd() ? width : o.getXEnd());
 		}
 		float div = (float) (2.0/(getHeads() == 0 ? 1 : getHeads()));
 
@@ -496,7 +498,9 @@ public class MessageTask {
 		 * 	  然后进行灰度和二值化处理；
 		 */
 		Debug.d(TAG, "--->div=" + div + "  h=" + bmp.getHeight() + "  prop = " + prop);
-		Bitmap bitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth()/div * prop), (int) (bmp.getHeight() * getHeads() * prop), true);
+		// H.M.Wang 2019-09-11 将简单取整修改为四舍五入
+		Bitmap bitmap = Bitmap.createScaledBitmap(bmp, Math.round(bmp.getWidth()/div * prop), Math.round(bmp.getHeight() * getHeads() * prop), true);
+//		Bitmap bitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth()/div * prop), (int) (bmp.getHeight() * getHeads() * prop), true);
 		/*對於320列高的 1 Inch打印頭，不使用參數40的設置*/
 		if (msg != null && (msg.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH)) {
 			Bitmap b = Bitmap.createBitmap(bitmap.getWidth(), 320, Configs.BITMAP_CONFIG);
@@ -572,7 +576,9 @@ public class MessageTask {
 			if (o instanceof MessageObject) {
 				continue;
 			}
-			width = (int)(width > o.getXEnd() ? width : o.getXEnd());
+			// H.M.Wang 2019-09-11 将简单取整修改为四舍五入
+			width = Math.round(width > o.getXEnd() ? width : o.getXEnd());
+//			width = (int)(width > o.getXEnd() ? width : o.getXEnd());
 		}
 		/*計算得到的width爲152點陣對應的寬度，要根據噴頭類型轉換成實際寬度 */
 		MessageObject msgObj = getMsgObject();
@@ -613,8 +619,8 @@ public class MessageTask {
 				Bitmap t = ((RealtimeObject)o).getBgBitmap(mContext, scaleW, scaleH);
 
 				// H.M.Wang 修改1行
-//				can.drawBitmap(t, (int)(o.getX() * scaleW), o.getY() * scaleH, p);
 				can.drawBitmap(t, Math.round((o.getX() * scaleW)), Math.round(o.getY() * scaleH), p);
+//				can.drawBitmap(t, (int)(o.getX() * scaleW), o.getY() * scaleH, p);
 
 				// H.M.Wang 增加1行。注释掉1行
 				t.recycle();
@@ -622,10 +628,14 @@ public class MessageTask {
 			} else if (o instanceof BarcodeObject) {
 				// Bitmap t = ((BarcodeObject) o).getScaledBitmap(mContext);
 				Debug.d(TAG, "--->save height=" + o.getHeight() + " scaleH = " + scaleH);
-				int h = (int)(o.getHeight() * scaleH);
+				// H.M.Wang 2019-09-11 将简单取整修改为四舍五入
+				int h = Math.round(o.getHeight() * scaleH);
+//				int h = (int)(o.getHeight() * scaleH);
 				Debug.d(TAG, "--->save height=" + h);
-				h = h%2 == 0? h : h + 1; 
-				int w = (int) (o.getWidth() * scaleW);
+				h = h%2 == 0? h : h + 1;
+				// H.M.Wang 2019-09-11 将简单取整修改为四舍五入
+				int w = Math.round(o.getWidth() * scaleW);
+//				int w = (int) (o.getWidth() * scaleW);
 				Bitmap t = o.makeBinBitmap(mContext, o.getContent(), w, h, o.getFont());
 				if (t == null) {
 					continue;
@@ -640,8 +650,11 @@ public class MessageTask {
                 t.recycle();
 				// BinFromBitmap.saveBitmap(bmp, "barcode_1.png");
 			} else if (o instanceof GraphicObject) {
-				int h = (int)(o.getHeight() * scaleH);
-				int w = (int) (o.getWidth() * scaleW);
+				// H.M.Wang 2019-09-11 将简单取整修改为四舍五入
+				int h = Math.round(o.getHeight() * scaleH);
+//				int h = (int)(o.getHeight() * scaleH);
+				int w = Math.round(o.getWidth() * scaleW);
+//				int w = (int) (o.getWidth() * scaleW);
 				Bitmap t = ((GraphicObject) o).makeBinBitmap(mContext, null, w, h, null);
 				if (t != null) {
 					Debug.d(TAG, "---> w= " + t.getWidth() + " h= " + t.getHeight());
@@ -656,13 +669,15 @@ public class MessageTask {
 				}
 			} else {
 //				Debug.d(TAG, "SaveTime: - Start MakeBinBitmap() : " + System.currentTimeMillis());
-				Bitmap t = o.makeBinBitmap(mContext, o.getContent(), (int)(o.getWidth() * scaleW), (int)(o.getHeight() * scaleH), o.getFont());
+				// H.M.Wang 2019-09-11 将简单取整修改为四舍五入
+				Bitmap t = o.makeBinBitmap(mContext, o.getContent(), Math.round(o.getWidth() * scaleW), Math.round(o.getHeight() * scaleH), o.getFont());
+//				Bitmap t = o.makeBinBitmap(mContext, o.getContent(), (int)(o.getWidth() * scaleW), (int)(o.getHeight() * scaleH), o.getFont());
 				if (t != null) {
 //					Debug.d(TAG, "1.bin drawBitmap = [" + Math.round(o.getX() * scaleW) + ", " + Math.round(o.getY() * scaleH) + "]");
 //					Debug.d(TAG, "SaveTime: - Start drawBitmap() : " + System.currentTimeMillis());
 					// H.M.Wang 修改1行
-//					can.drawBitmap(t, (int)(o.getX() * scaleW), (int)(o.getY() * scaleH), p);
 					can.drawBitmap(t, Math.round(o.getX() * scaleW), Math.round(o.getY() * scaleH), p);
+//					can.drawBitmap(t, (int)(o.getX() * scaleW), (int)(o.getY() * scaleH), p);
 
 					// H.M.Wang 增加1行
 					t.recycle();
@@ -868,7 +883,9 @@ public class MessageTask {
 		return ;
 		for(BaseObject o:mObjects)
 		{
-		width = (int)(width > o.getXEnd() ? width : o.getXEnd());
+			// H.M.Wang 2019-09-11 将简单取整修改为四舍五入
+			width = Math.round(width > o.getXEnd() ? width : o.getXEnd());
+//			width = (int)(width > o.getXEnd() ? width : o.getXEnd());
 		}
 
 		Bitmap bmp = Bitmap.createBitmap(width , Configs.gDots, Configs.BITMAP_PRE_CONFIG);
@@ -958,7 +975,9 @@ public class MessageTask {
 		}
 		// Bitmap.createScaledBitmap();
 		float scale = bmp.getHeight() / 100f;
-		width = (int) (width / scale);
+		// H.M.Wang 2019-09-11 将简单取整修改为四舍五入
+		width = Math.round(width / scale);
+//		width = (int) (width / scale);
 		Debug.d(TAG, "---> +++++++ height = " + bmp.getHeight() + "   scale = " + scale);
 		Bitmap nBmp = Bitmap.createScaledBitmap(bmp, width, 100, false);
 		BitmapWriter.saveBitmap(nBmp, ConfigPath.getTlkDir(getName()), "1.bmp");
@@ -1175,8 +1194,10 @@ public class MessageTask {
 		int x = 0;
 		for (String msg : msgs) {
 			x += 50;
-			
-			int w = (int)paint.measureText(msg);
+
+			// H.M.Wang 2019-09-11 将简单取整修改为四舍五入
+			int w = Math.round(paint.measureText(msg));
+//			int w = (int)paint.measureText(msg);
 			Debug.d("XXX", "--->msg: " + msg);
 			canvas.drawText(msg, x, 60, paint);
 			x += w + 50;

@@ -559,19 +559,25 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 //				mHeight_O.setText(String.valueOf(mObject.getHeight()));
 
 				float ratio = mObject.getTask().getNozzle().getPhisicalRatio();
-				if(ratio > 0.0f) {
-					mXcorEdit.setText(String.valueOf(1.0f /100 * Math.round(mObject.getX()*2*ratio*100)));
-					mYcorEdit.setText(String.valueOf(1.0f /100 * Math.round(mObject.getY()*2*ratio*100)));
+				mXcorEdit.setText(String.valueOf(1.0f /100 * Math.round(mObject.getX()*2*ratio*100)));
+				mYcorEdit.setText(String.valueOf(1.0f /100 * Math.round(mObject.getY()*2*ratio*100)));
+				if(mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_12_7 ||
+					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_25_4 ||
+					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_38_1 ||
+					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_50_8 ||
+					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR ) {
 					mXCorUnit.setText(string.font_unit);
 					mYCorUnit.setText(string.font_unit);
 					mHighUnit.setText(string.font_unit);
 				} else {
-					mXcorEdit.setText(String.valueOf((int)mObject.getX()*2));
-					mYcorEdit.setText(String.valueOf((int)mObject.getY()*2));
 					mXCorUnit.setText(string.dot_unit);
 					mYCorUnit.setText(string.dot_unit);
 					mHighUnit.setText(string.dot_unit);
 				}
+
 //				mXcorEdit.setText(String.valueOf((int)mObject.getX()*2));
 //				mYcorEdit.setText(String.valueOf((int)mObject.getY()*2));
 				mContent.setText(String.valueOf(mObject.getContent()));

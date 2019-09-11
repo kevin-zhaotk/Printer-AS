@@ -37,6 +37,7 @@ import com.industry.printer.Constants.Constants;
 import com.industry.printer.FileFormat.DotMatrixFont;
 import com.industry.printer.FileFormat.QRReader;
 import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Socket_Server.Network;
 import com.industry.printer.Socket_Server.PCCommand;
 import com.industry.printer.Socket_Server.Paths_Create;
@@ -1030,6 +1031,14 @@ Debug.d(TAG, "msg.what = " + msg.what);
 						handleError(task.mTask.unPrintableTips(), pcMsg);
 						break;
 					}
+
+					////////////////// H.M.Wang 2019-9-11 特殊客户需求，仅32点喷头允许打印。不需要时注释掉，
+					////// ！！！！！！！！ 请谨慎放开注释，会严重影响功能 ！！！！！！！ ////////
+//					if(task.mTask.getNozzle() != PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+//						handleError(task.mTask.unPrintableTips(), pcMsg);
+//						break;
+//					}
+					////////////////// H.M.Wang 2019-9-11 特殊客户需求，仅32点喷头允许打印 - 完
 
 					Debug.d(TAG, "--->clean");
 					/**

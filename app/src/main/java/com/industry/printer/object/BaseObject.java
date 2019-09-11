@@ -312,7 +312,7 @@ public class BaseObject{
 		}
 
 		// H.M.Wang 修改，一对应文本的放大缩小倍率
-		int width = (int)mPaint.measureText(getContent());
+		int width = Math.round(mPaint.measureText(getContent()));
 		if(mWidth != 0) {
 			mRatio = mWidth / width;
 		} else {
@@ -331,7 +331,7 @@ public class BaseObject{
 			// H.M.Wang 修改
 			setWidth(1.0f * width * mRatio);
 		}
-		bitmap = Bitmap.createBitmap(width , (int)mHeight, Configs.BITMAP_CONFIG);
+		bitmap = Bitmap.createBitmap(width , Math.round(mHeight), Configs.BITMAP_CONFIG);
 		Debug.e(TAG,"===--->getBitmap width=" + mWidth + ", mHeight=" + mHeight);
 		mCan = new Canvas(bitmap);
 		FontMetrics fm = mPaint.getFontMetrics();
@@ -341,7 +341,7 @@ public class BaseObject{
 //		if (mHeight <= 4 * MessageObject.PIXELS_PER_MM) {
 //			setWidth(width * 1.25f);
 //		}
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+		return Bitmap.createScaledBitmap(bitmap, Math.round(mWidth), Math.round(mHeight), false);
 	}
 	
 	
@@ -371,7 +371,7 @@ public class BaseObject{
 		} catch (Exception e) {
 			
 		}
-		int width = (int)paint.measureText(content);
+		int width = Math.round(paint.measureText(content));
 		Debug.d(TAG, "--->bmp: " + width);
 //		StringBuffer buffer = new StringBuffer();
 //		for (int i = 0 ; i < 10; i++) {
@@ -387,7 +387,7 @@ public class BaseObject{
 		Debug.d(TAG, "--->bmp: " + bitmap.getWidth() +  "  " + bitmap.getHeight() );
 		Canvas canvas = new Canvas(bitmap);
 		FontMetrics fm = paint.getFontMetrics();
-		int adjust = (int)fm.descent;
+		int adjust = Math.round(fm.descent);
 //		if (adjust < 4 && ctH > 32) {
 //			adjust = 4;
 //		}
@@ -427,8 +427,8 @@ public class BaseObject{
 		//mPaint.setColor(Color.RED);
 		//Debug.d(TAG,"getBitmap mContent="+mContent);
 		mPaint.setTypeface(FontCache.get(context, mFont));
-		int width = (int)mPaint.measureText(getContent());
-		int height = (int)mPaint.getTextSize();
+		int width = Math.round(mPaint.measureText(getContent()));
+		int height = Math.round(mPaint.getTextSize());
 		
 		Bitmap bmp = Bitmap.createBitmap(width , Configs.gDots, Configs.BITMAP_CONFIG);
 		Debug.d(TAG,"getBitmap width="+width+", height="+height+ ", mHeight="+mHeight);
@@ -464,7 +464,7 @@ public class BaseObject{
 		}
 
 //		Debug.d(TAG, "SaveTime: - Start makeVarBin : " + System.currentTimeMillis());
-		int width = (int)paint.measureText("8");
+		int width = Math.round(paint.measureText("8"));
 		FontMetrics fm = paint.getFontMetrics();
 		
 		/*draw Bitmap of single digit*/
@@ -479,7 +479,7 @@ public class BaseObject{
 
 			singleW = width;
 		} else {
-			singleW = (int)(mWidth * scaleW/mContent.length());
+			singleW = Math.round(mWidth * scaleW/mContent.length());
 		}
 
 		/*draw 0-9 totally 10 digits Bitmap*/
@@ -539,8 +539,8 @@ public class BaseObject{
 		int[] dots = new int[1];
 		//mPaint.setTextSize(mHeight);
 		int singleW; //the width value of each char
-		int height = (int)mPaint.getTextSize();
-		int width = (int)mPaint.measureText("8");
+		int height = Math.round(mPaint.getTextSize());
+		int width = Math.round(mPaint.measureText("8"));
 		FontMetrics fm = mPaint.getFontMetrics();
 		float wDiv = (float) (2.0/heads);
 		MessageObject msg = mTask.getMsgObject();
@@ -564,14 +564,14 @@ public class BaseObject{
 			wDiv = 4.0f * 304/308;
 		}
 		/*draw Bitmap of single digit*/
-		Bitmap bmp = Bitmap.createBitmap(width, (int)mHeight, Configs.BITMAP_CONFIG);
+		Bitmap bmp = Bitmap.createBitmap(width, Math.round(mHeight), Configs.BITMAP_CONFIG);
 		Canvas can = new Canvas(bmp);
 		
 		// Debug.d(TAG, "--->id = " + mId + " Width=" + mWidth);
 		/*draw 0-9 totally 10 digits Bitmap*/
-		singleW = (int)mWidth/mContent.length();
+		singleW = Math.round(mWidth/mContent.length());
 		//Debug.d(TAG, "--->singleW=" + singleW);
-		singleW = (int) (singleW/wDiv);
+		singleW = Math.round((singleW/wDiv));
 		//Debug.d(TAG, "--->singleW/div=" + singleW);
 		Bitmap gBmp = Bitmap.createBitmap(singleW*10, Configs.gDots * mTask.getHeads(), Configs.BITMAP_CONFIG);
 		Canvas gCan = new Canvas(gBmp);
@@ -582,7 +582,7 @@ public class BaseObject{
 			can.drawColor(Color.WHITE);
 			can.drawText(String.valueOf(i), 0, mHeight-fm.descent, mPaint);
 			// Bitmap b = Bitmap.createScaledBitmap(bmp, singleW, (int)mHeight, true);
-			gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, (int) (mHeight * mTask.getHeads()), false), i*singleW, (int)getY() * mTask.getHeads(), mPaint);
+			gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, Math.round(mHeight * mTask.getHeads()), false), i*singleW, Math.round(getY()) * mTask.getHeads(), mPaint);
 		}
 		BinFromBitmap.recyleBitmap(bmp);
 		/*對320高的buffer進行單獨處理*/
@@ -676,14 +676,14 @@ public class BaseObject{
 		}
 		//mPaint.setTextSize(mHeight);
 		int singleW; //the width value of each char
-		int height = (int)mPaint.getTextSize();
-		int width = (int)mPaint.measureText("8");
+		int height = Math.round(mPaint.getTextSize());
+		int width = Math.round(mPaint.measureText("8"));
 		/*draw Bitmap of single digit*/
 		Bitmap bmp = Bitmap.createBitmap(width, Configs.gDots, Configs.BITMAP_CONFIG);
 		Canvas can = new Canvas(bmp);
 		
 		/*draw 0-9 totally 10 digits Bitmap*/
-		singleW = (int)mWidth/mContent.length();
+		singleW = Math.round(mWidth/mContent.length());
 
 		/*A full-size empty bitmap, width:singleW; height: Configs.gDots*/
 		Bitmap bg = Bitmap.createBitmap(singleW, Configs.gDots, Configs.BITMAP_CONFIG); 
@@ -695,7 +695,7 @@ public class BaseObject{
 			can.drawColor(Color.WHITE);
 			mCan.drawColor(Color.WHITE);
 			can.drawText(String.valueOf(i), 0, height-30, mPaint);
-			Bitmap b = Bitmap.createScaledBitmap(bmp, singleW, (int)mHeight, true);
+			Bitmap b = Bitmap.createScaledBitmap(bmp, singleW, Math.round(mHeight), true);
 			mCan.drawBitmap(b, 0, getY(), mPaint);
 			// Bitmap scaledBg = Bitmap.createScaledBitmap(bg, singleW, Configs.gDots, true);
 			BinFileMaker maker = new BinFileMaker(mContext);
@@ -754,31 +754,35 @@ public class BaseObject{
 		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			Debug.d(TAG, "--->display H = " + dspH + "   mHeight: " + mHeight);
 			if (MessageObject.mDotSizes[0].equalsIgnoreCase(dspH)) {
-				mHeight = 152/2;
+				mHeight = 152f/2;
 			} else {
-				mHeight = 152;
+				mHeight = 152f;
 			}
+        // H.M.Wang 2019-09-11 MessageObject.mDotSizes 修改为 MessageObject.mDot_32_Size
 		} else if (type == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 			Debug.d(TAG, "--->display H = " + dspH + "   mHeight: " + mHeight);
-			if (MessageObject.mDotSizes[0].equalsIgnoreCase(dspH)) {
-				mHeight = 152/4;
-			} else if (MessageObject.mDotSizes[1].equalsIgnoreCase(dspH)) {
-				mHeight = 152/2;
+			if (MessageObject.mDot_32_Size[0].equalsIgnoreCase(dspH)) {
+				mHeight = 152f/4;
+			} else if (MessageObject.mDot_32_Size[1].equalsIgnoreCase(dspH)) {
+				mHeight = 152f/2;
 			} else {
-				mHeight = 152;
+				mHeight = 152f;
 			}
 
 		// H.M.Wang 追加下列11行
+		// H.M.Wang 2019-09-11 MessageObject.mDotSizes 修改为 MessageObject.mDot_64_Size
 		} else if (type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 			Debug.d(TAG, "--->display H = " + dspH + "   mHeight: " + mHeight);
-			if (MessageObject.mDotSizes[0].equalsIgnoreCase(dspH)) {
-				mHeight = 152/8;
-			} else if (MessageObject.mDotSizes[1].equalsIgnoreCase(dspH)) {
-				mHeight = 152/4;
-			} else if (MessageObject.mDotSizes[2].equalsIgnoreCase(dspH)) {
-				mHeight = 152/2;
+			if (MessageObject.mDot_64_Size[0].equalsIgnoreCase(dspH)) {
+				mHeight = 152f/8;
+			} else if (MessageObject.mDot_64_Size[1].equalsIgnoreCase(dspH)) {
+				mHeight = 152f/8*2;
+			} else if (MessageObject.mDot_64_Size[2].equalsIgnoreCase(dspH)) {
+				mHeight = 152f/8*3;
+			} else if (MessageObject.mDot_64_Size[3].equalsIgnoreCase(dspH)) {
+				mHeight = 152f/8*4;
 			} else {
-				mHeight = 152;
+				mHeight = 152f;
 			}
 		}
 
@@ -1108,7 +1112,7 @@ public class BaseObject{
 
 		// H.M.Wang 修改为测量标准字符串，而非实际内容
 //		int width = (int) mPaint.measureText(getContent());
-		int width = (int) mPaint.measureText(getMeatureString());
+		int width = Math.round(mPaint.measureText(getMeatureString()));
 		
 //		if (mHeight <= 4 * MessageObject.PIXELS_PER_MM) {
 //			mWidth = width * 1.25f;
@@ -1124,7 +1128,7 @@ public class BaseObject{
 		return  Bitmap.createBitmap(10 , Configs.gDots, Configs.BITMAP_CONFIG);
 	}
 	public int getfeed() {
-		return (int)mHeight;
+		return Math.round(mHeight);
 	}
 	
 	
