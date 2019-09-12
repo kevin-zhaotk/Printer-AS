@@ -1098,7 +1098,10 @@ Debug.d(TAG, "msg.what = " + msg.what);
 				case MESSAGE_INKLEVEL_CHANGE:
 					int devIndex = msg.arg1;
 					// for (int i = 0; i < mSysconfig.getHeads(); i++) {
-					mRfidManager.downLocal(devIndex);
+					// H.M.Wang 2019-09-12 修改在Configs.IGNORE_RFID = true时，跳过减记操作
+					if(!Configs.IGNORE_RFID) {
+						mRfidManager.downLocal(devIndex);
+					}
 					// }
 					/*鎵撳嵃鏅備笉鍐嶅鏅傛洿鏂板ⅷ姘撮噺*/
 					// refreshInk();
@@ -1139,13 +1142,15 @@ Debug.d(TAG, "msg.what = " + msg.what);
 					}
 
 					if (Configs.IGNORE_RFID) {
+						// H.M.Wang 2019-09-12 修改在Configs.IGNORE_RFID = true时，直接显示缺省值，而不是在尝试10此后显示
+						mRfidManager.defaultInkForIgnoreRfid();
 
-						if (repeatTimes <= 0) {
-							mRfidManager.defaultInkForIgnoreRfid();
-							ready = true;
-						} else {
-							repeatTimes--;
-						}
+//						if (repeatTimes <= 0) {
+//							mRfidManager.defaultInkForIgnoreRfid();
+//							ready = true;
+//						} else {
+//							repeatTimes--;
+//						}
 					}
 					if (!ready) {
 						mHandler.sendEmptyMessageDelayed(RFIDManager.MSG_RFID_INIT, 5000);

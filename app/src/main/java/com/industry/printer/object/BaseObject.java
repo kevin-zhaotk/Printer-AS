@@ -733,7 +733,7 @@ public class BaseObject{
 		}*/ else if (size > 152) {
 			size = 152;
 		}
-		
+
 		mHeight = size;
 		tuningHeightOfSpecialHeadtype();
 		mYcor_end = mYcor + mHeight;

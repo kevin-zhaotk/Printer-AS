@@ -290,32 +290,45 @@ public class MessageObject extends BaseObject {
 		} else if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT )//addbylk 喷头类型
 		{
 			if (size.equalsIgnoreCase("7x6")) {
-				h = 6.4f;
+				h = 12.7f / 2;
+//				h = 6.4f;
 			} else if (size.equalsIgnoreCase("16x12")) {
 				h = 12.7f;
 			}  
 			
 		} else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT ) { //addbylk
 			if (size.equalsIgnoreCase("7x6")) {
-				h = 3.2f;
+				h = 12.7f / 4;
+//				h = 3.2f;
 			} else if (size.equalsIgnoreCase("16x12")) {
-				h = 6.4f;
+				h = 12.7f / 2;
+//				h = 6.4f;
 			} else {
 				h = 12.7f;
 			}
-			return h;
+//			return h;
 
         // H.M.Wang 追加下列9行
         } else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT ) {
             if (size.equalsIgnoreCase("7x6")) {
-                h = 1.6f;
+				h = 12.7f / 8;
+//				h = 1.6f;
             } else if (size.equalsIgnoreCase("16x12")) {
-                h = 3.2f;
+				h = 12.7f / 8 * 2;
+//                h = 3.2f;
+			// H.M.Wang 2019-09-12 修改对应64DOT时指定的24点和32点高设置
+			} else if (size.equalsIgnoreCase("24")) {
+				h = 12.7f / 8 * 3;
+//				h = 4.8f;
+			} else if (size.equalsIgnoreCase("32")) {
+				h = 12.7f / 8 * 4;
+//				h = 6.4f;
             } else {
                 h = 12.7f;
             }
-            return h;
+//            return h;
 		}
+		Debug.d(TAG, "--->h: " + h + ", type=" + mPNozzle.mType);
 		return h;
 	}
 	
