@@ -103,18 +103,22 @@ public class MessageTask {
 		} catch (PermissionDeniedException e) {
 			ToastUtil.show(mContext, R.string.str_no_permission);
 			isPrintable = false;
+			Debug.d(TAG, "PermissionDeniedException");
 		} catch (TlkNotFoundException ex) {
 			ToastUtil.show(mContext, R.string.str_tlk_not_found);
 			isPrintable = false;
+			Debug.d(TAG, "TlkNotFoundException");
 		}
 		mDots = parser.getDots();
 		if (!checkBin()) {
 			isPrintable = false;
+			Debug.d(TAG, "!checkBin()");
 			unPrintableTips = R.string.str_toast_no_bin;
 		}
 
 		if (!checkVBin()) {
 			isPrintable = false;
+			Debug.d(TAG, "!checkVBin()");
 			unPrintableTips = R.string.str_toast_no_bin;
 		}
 	}
@@ -146,6 +150,7 @@ public class MessageTask {
 			}
 		} catch (PermissionDeniedException e) {
 			isPrintable = false;
+			Debug.d(TAG, "PermissionDeniedException");
 			((MainActivity)context).runOnUiThread(new  Runnable() {
 				@Override
 				public void run() {
@@ -162,16 +167,19 @@ public class MessageTask {
 			});
 
 			isPrintable = false;
+			Debug.d(TAG, "TlkNotFoundException");
 		}
 
 		mDots = parser.getDots();
 		if (!checkBin()) {
 			isPrintable = false;
+			Debug.d(TAG, "!checkBin()");
 			unPrintableTips = R.string.str_toast_no_bin;
 		}
 
 		if (!checkVBin()) {
 			isPrintable = false;
+			Debug.d(TAG, "!checkVBin()");
 			unPrintableTips = R.string.str_toast_no_bin;
 		}
 	}

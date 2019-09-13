@@ -910,7 +910,17 @@ Debug.d(TAG, "msg.what = " + msg.what);
 //					dismissProgressDialog();
 
 					if (Configs.IGNORE_RFID) {
-						mHandler.sendEmptyMessage(MESSAGE_PRINT_START);
+					// H.M.Wang 2019-09-13 RGNORE_RFID的时候将原来的网络命令传递下去
+//						mHandler.sendEmptyMessage(MESSAGE_PRINT_START);
+						msg = mHandler.obtainMessage(MESSAGE_PRINT_START);
+
+						if (pcMsg != null) {
+							Bundle bundle = new Bundle();
+							bundle.putString(Constants.PC_CMD, pcMsg);
+							msg.setData(bundle);
+						}
+
+						mHandler.sendMessage(msg);
 					} else {
 						mHandler.sendEmptyMessage(MESSAGE_PRINT_CHECK_UID);
 					}
