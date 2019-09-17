@@ -597,7 +597,6 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 
 	@Override
 	public void onClick(View view) {
-		Debug.d(TAG, "===>onclick " + view);
 		int position = 0;
 		if (view != null) {
 			position = (Integer)view.getTag();
@@ -610,6 +609,9 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		if (mSettingItems[position].mType == ItemType.TYPE_NONE) {
 			return;
 		}
+
+		Debug.d(TAG, "===>onclick " + position);
+
 		mSpiner.setAttachedView(view);
 		if (position == 1) { //參數2
 			mSpiner.setAdapter(mDirection);
@@ -637,7 +639,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mSpiner.setAdapter(mPen3Mirror);
 
 		// H.M.Wang 增加2行。为计数器清楚前置0
-		} else if (position == 18) { //參數18
+		} else if (position == 17) { //參數18
 			mSpiner.setAdapter(mClearZero);
 
 		} else if (position == 21) { //參數22

@@ -769,7 +769,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			final String pcMsg = msg.getData().getString(Constants.PC_CMD, "");
 			final boolean printAfterLoad = msg.getData().getBoolean("printAfterLoad", false);
 			final boolean printNext = msg.getData().getBoolean("printNext", false);
-Debug.d(TAG, "msg.what = " + msg.what);
 			switch(msg.what)
 			{
 				case MESSAGE_OPEN_PREVIEW:

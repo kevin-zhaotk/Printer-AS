@@ -596,7 +596,7 @@ public class MessageTask {
 		//實際寬度
 
 		// H.M.Wang 修改下列一行
-        int bWidth = Math.round(width * scaleW + 0.5f);
+        int bWidth = Math.round(width * scaleW);
 //        int bWidth = (int) (width * scaleW);
 		int bHeight = msgObj.getPNozzle().getHeight();
 //		Debug.d(TAG, "SaveTime: - Start CreateBitmap : " + System.currentTimeMillis());
@@ -665,15 +665,15 @@ public class MessageTask {
 //				int w = (int) (o.getWidth() * scaleW);
 				Bitmap t = ((GraphicObject) o).makeBinBitmap(mContext, null, w, h, null);
 				if (t != null) {
-					Debug.d(TAG, "---> w= " + t.getWidth() + " h= " + t.getHeight());
+					Debug.d(TAG, "---> w= " + t.getWidth() * scaleW + " h= " + t.getHeight() * scaleH);
 					Debug.d(TAG, "---> x= " + o.getX() * scaleW + " y= " + o.getY() * scaleH);
 
 					// H.M.Wang 修改1行
 //					can.drawBitmap(t, o.getX() * scaleW, o.getY() * scaleH, p);
 					can.drawBitmap(t, Math.round(o.getX() * scaleW), Math.round(o.getY() * scaleH), p);
 
-					// H.M.Wang 增加1行
-					t.recycle();
+					// H.M.Wang2019-9-17 注释掉1行。否则，将可能把GraphicObject的元图片回收，后续操作死机
+//					t.recycle();
 				}
 			} else {
 //				Debug.d(TAG, "SaveTime: - Start MakeBinBitmap() : " + System.currentTimeMillis());
