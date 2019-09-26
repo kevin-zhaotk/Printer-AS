@@ -158,7 +158,9 @@ public class BaseObject{
 		Debug.d(TAG, "--->new baseobject: " + isNeedRedraw);
 		// setHeight(Configs.gDots);
 		setLineWidth(5);
-		setContent("");
+		// H.M.Wang 2019-9-25 调用setContent会在CounterObject的时候造成死机，因为此时mStart和mBits都没有初始化
+//		setContent("");
+		mContent = "";
 
 		mVBuffer = new HashMap<String, byte[]>();
 
@@ -832,7 +834,6 @@ public class BaseObject{
 
 	public float getWidth()
 	{
-
 		return mWidth;
 	}
 	
@@ -840,7 +841,7 @@ public class BaseObject{
 	{
 		mXcor=x;
 		mXcor_end = mXcor + mWidth; 
-		Debug.d(TAG, "===>setX x= " + mXcor + ", mWidth=" + mWidth + ", xend=" + mXcor_end);
+		Debug.d(TAG, "===>setX Content = " + mContent + ", x= " + mXcor + ", mWidth=" + mWidth + ", xend=" + mXcor_end);
 	}
 	
 	public float getX()
@@ -962,8 +963,14 @@ public class BaseObject{
 	public void setSource(boolean dynamic) {
 		mSource  = dynamic;
 	}
-	
-	
+
+	// H.M.Wang 2019-9-24 原来的实现未考虑负数的情况，导致f为负数时，变换结果不正确（如-1，变为000-1）
+	public static String floatToFormatString(float f, int n)
+	{
+		String format = "%0" + n + "d";
+		return String.format(format, Math.round(f));
+	}
+/*
 	public static String floatToFormatString(float f, int n)
 	{
 		String str = "";
@@ -978,7 +985,15 @@ public class BaseObject{
 		// Debug.d(TAG,"floatToFormatString str ="+str);
 		return str;
 	}
-	
+*/
+
+	// H.M.Wang 2019-9-24 原来的实现未考虑负数的情况，导致f为负数时，变换结果不正确（如-1，变为000-1）
+	public static String intToFormatString(int f, int n)
+	{
+		String format = "%0" + n + "d";
+		return String.format(format, f);
+	}
+/*
 	public static String intToFormatString(int f, int n)
 	{
 		String str = "";
@@ -993,7 +1008,7 @@ public class BaseObject{
 		// Debug.d(TAG,"intToFormatString str ="+str);
 		return str;
 	}
-	
+*/
 	public static String boolToFormatString(boolean b, int n)
 	{
 		String str = "";

@@ -197,10 +197,8 @@ public class TLKFileParser  extends TlkFile{
 			Debug.d(TAG, "--->x = " + (StringUtil.parseInt(attr[2]) / mProportion));
 			object.setX(StringUtil.parseInt(attr[2]) / mProportion);
 			object.setWidth(StringUtil.parseInt(attr[4])/mProportion-StringUtil.parseInt(attr[2])/mProportion);
-			Debug.d(TAG, "--->xEnd =" +
-					"" + object.getXEnd());
+			Debug.d(TAG, "--->xEnd = " + object.getXEnd());
 		}
-		
 	}
 	
 	public BaseObject parseLine(MessageTask task, String str)

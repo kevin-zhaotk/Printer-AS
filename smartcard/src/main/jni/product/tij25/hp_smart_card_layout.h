@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2015 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -192,7 +192,7 @@ const HP_SMART_CARD_field_desc_t smart_card_ink_sps_trademark_data[] =
     { (HP_SMART_CARD_field_t) HP_SMART_CARD_INK_HP_TRADEMARK_CHAR_5, 4, 7, 6 },
     { (HP_SMART_CARD_field_t) HP_SMART_CARD_INK_UD4_FUSE,            4, 1, 1 },
 };
-#define N_INK_SPS_HP_TRADEMARK_DATA_BYTES       8
+#define N_INK_SPS_HP_TRADEMARK_DATA_BYTES       8       // H.M.Wang 2019-9-23. This might to be 4
 #define N_INK_SPS_HP_TRADEMARK_DATA_FIELDS      (sizeof(smart_card_ink_sps_trademark_data) / sizeof(HP_SMART_CARD_field_desc_t))
 
 /* HP_SMART_CARD_INK_INK_USE_AND_WARRANTY_TAG */

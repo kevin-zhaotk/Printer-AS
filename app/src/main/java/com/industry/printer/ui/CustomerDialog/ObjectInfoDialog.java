@@ -327,16 +327,16 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			    if (mObject.mSource) {
 					mContent.setEnabled(false);
 				}
+
 				// H.M.Wang 追加这段代码在添加条码的时候不显示字体，追加二维码的时候不显示内容和字体
-				if(((BarcodeObject)mObject).isQRCode()) {
-					mFontView.setVisibility(View.GONE);
-					mFont.setVisibility(View.GONE);
+				// H.M.Wang 2019-9-21 二维码有两种QRCode和DynamicQRCode，只有第二种需要隐藏内容编辑窗
+//				if(((BarcodeObject)mObject).isQRCode()) {
+				if(((BarcodeObject)mObject).isDynamicQRCode()) {
 					mContentView.setVisibility(View.GONE);
 					mContent.setVisibility(View.GONE);
-				} else {
-					mFont.setVisibility(View.GONE);
-					mFontView.setVisibility(View.GONE);
 				}
+				mFontView.setVisibility(View.GONE);
+				mFont.setVisibility(View.GONE);
 			} else if (mObject instanceof LetterHourObject) {
 				mContent.setEnabled(false);
 			} else if (mObject instanceof WeekOfYearObject) {
@@ -469,7 +469,11 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 //							if (mHeightType.isChecked()) {
 //								mObject.setHeight(Integer.parseInt(mHeight_O.getText().toString()));
 //							} else {
-								mObject.setHeight(mHighEdit.getText().toString());
+							// H.M.Wang 2019-9-25 属性内部设置高（已修改为字号）时，重新按自然比例调整
+								if(!mObject.getDisplayHeight().equals(mHighEdit.getText().toString())) {
+									mObject.setHeight(mHighEdit.getText().toString());
+									mObject.resizeByHeight();
+								}
 //							}
 						} catch (Exception e) {
 						}

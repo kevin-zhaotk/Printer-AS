@@ -52,13 +52,17 @@ public class TlkFileWriter extends TlkFile{
 				{
 					// System.out.println("******"+BaseObject.intToFormatString(i, 3)+"^"+o.toString());
 					bw.write(BaseObject.intToFormatString(i, 3)+"^"+o.toString());
-					bw.newLine();
+// H.M.Wang 2019-9-24 修改换行符号，newLine很可能只返回/n，文件不会换行
+//					bw.newLine();
+					bw.write("\r\n");
 					o.setIndex(i++);
 					for(BaseObject so : ((RealtimeObject) o).getSubObjs())
 					{
 						// System.out.println("******"+BaseObject.intToFormatString(i, 3)+"^"+so.toString());
 						bw.write(BaseObject.intToFormatString(i, 3)+"^"+so.toString());
-						bw.newLine();
+// H.M.Wang 2019-9-24 修改换行符号，newLine很可能只返回/n，文件不会换行
+//						bw.newLine();
+						bw.write("\r\n");
 
 						so.setIndex(i++);
 					}
@@ -67,7 +71,9 @@ public class TlkFileWriter extends TlkFile{
 				{
 					// Debug.d(TAG, "filestr="+BaseObject.intToFormatString(i, 3) +"^"+o.toString());
 					bw.write(BaseObject.intToFormatString(i, 3)+"^"+o.toString());
-					bw.newLine();
+// H.M.Wang 2019-9-24 修改换行符号，newLine很可能只返回/n，文件不会换行
+//					bw.newLine();
+					bw.write("\r\n");
 					o.setIndex(i++);
 				}
 				

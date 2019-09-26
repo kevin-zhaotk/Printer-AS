@@ -14,12 +14,20 @@ import android.graphics.Paint.FontMetrics;
 import android.text.format.Time;
 
 public class RealtimeMinute extends BaseObject {
+	// H.M.Wang 追加时间对象的所属信息
+	public RealtimeObject mParent;
 
 	public RealtimeMinute(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_RT_MIN, x);
 		Time t = new Time();
 		t.set(System.currentTimeMillis());
 		setContent(BaseObject.intToFormatString(t.minute, 2));
+		mParent = null;
+	}
+
+	public RealtimeMinute(Context context, RealtimeObject parent, float x) {
+		this(context, x);
+		mParent = parent;
 	}
 
 	@Override
@@ -110,7 +118,9 @@ public class RealtimeMinute extends BaseObject {
 				.append("^")
 				.append(BaseObject.boolToFormatString(mDragable, 3))
 				.append("^")
-				.append("000^000^000^000^000^00000000^00000000^00000000^00000000^0000^0000^")
+// H.M.Wang 2019-9-24 追加所属信息
+				.append("000^000^000^000^000^00000000^00000000^00000000^00000000^" + (mParent == null ? "0000" : String.format("%03d", mParent.mIndex)) + "^0000^")
+//				.append("000^000^000^000^000^00000000^00000000^00000000^00000000^0000^0000^")
 				.append(mFont)
 				.append("^000^000");
 		String str = builder.toString();

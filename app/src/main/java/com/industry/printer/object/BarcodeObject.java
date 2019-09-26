@@ -150,7 +150,12 @@ public class BarcodeObject extends BaseObject {
 	public boolean isQRCode() {
 		return "QR".equals(mFormat);
 	}
-	
+
+	// H.M.Wang 2019-9-21 二维码有两种QRCode和DynamicQRCode，只有第二种需要隐藏内容编辑窗，为此增加判断动态二维码的函数
+	public boolean isDynamicQRCode() {
+		return isQRCode() && mName.equals(mContext.getString(R.string.object_dynamic_qr));
+	}
+
 	public void setShow(boolean show)
 	{
 		mShow = show;
@@ -226,7 +231,7 @@ public class BarcodeObject extends BaseObject {
 		}
 		return mName;
 	}
-	
+
 	private static final String CODE = "utf-8";
 
 	// H.M.Wang 追加该函数。用来获取初始的横向缩放比例

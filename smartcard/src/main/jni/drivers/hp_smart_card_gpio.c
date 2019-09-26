@@ -23,10 +23,26 @@
 
 #include "bcm2835.h"
 
-
+/* Modified by H.M.Wang 2019-9-22
 #define RESET_PIN       RPI_V2_GPIO_P1_13
 #define BUSY_PIN        RPI_V2_GPIO_P1_15
 #define SUPPLY_PIN      RPI_V2_GPIO_P1_12
+*/
+
+/* A20 GPIO Definition
+    1 GPIOA: 0
+    6 GPIOB: 32
+    7 GPIOC: 64
+    8 GPIOD: 96
+    2 GPIOE: 128
+    3 GPIOF: 160
+    4 GPIOG: 192
+    5 GPIOH: 224
+*/
+
+#define RESET_PIN       198             // PG6 = PG0(192) + 6
+#define BUSY_PIN        199             // PG7 = PG0(192) + 7
+//#define SUPPLY_PIN      RPI_V2_GPIO_P1_12
 
 unsigned int                bcm2835_LibVersion = 0;
 
@@ -38,7 +54,7 @@ void HP_SMART_CARD_gpio_init()
     // if already initialized, don't do it again
     if (Initialized)
         return;
-
+/* Cut by H.M.Wang 2019-9-22
     // initialize lib
     if (bcm2835_init() == 0)
         return;                                                 // failure
@@ -54,7 +70,7 @@ void HP_SMART_CARD_gpio_init()
     // set to I2C mode and baud rate
     bcm2835_i2c_begin();
     bcm2835_i2c_set_baudrate(100000);       // 100kHz
-
+*/
     // Initialized
     Initialized = HP_SMART_CARD_TRUE;
     return;

@@ -433,7 +433,6 @@ public class BinInfo {
 			bClearZero = true;
 		}
 
-
 		ByteArrayBuffer ba = new ByteArrayBuffer(0);
    		for(int i=0; i<var.length(); i++)
    		{
@@ -492,6 +491,12 @@ public class BinInfo {
    		if (mExtend != null && mExtend.getScale() > 1) {
 			mBufferChars = new char[mBufferBytes.length/2];
 		}
+
+		// H.M.Wang 2019-9-24 将打印缓冲区全部置白
+		for(int i=0; i<mBufferChars.length; i++) {
+			mBufferChars[i] = 0xffff;
+		}
+
    		Debug.d(TAG, "--->char len = " + mBufferChars.length + "   bytes: " + mBufferBytes.length);
     	for(int i = 0; i < mBufferChars.length; i++) {
     		mBufferChars[i] = (char) ((char)((mBufferBytes[2*i+1] << 8) & 0x0ff00) | (mBufferBytes[2*i] & 0x0ff)); 

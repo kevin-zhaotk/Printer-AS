@@ -107,7 +107,7 @@ static HP_thread_t              _thread;
 // Status to string translation table
 //-----------------------------------------------------------------------------
 
-// NOTE: This table must match values in HP_SMART_CARD_result_t used as index.
+// NOTE: This table must match values in HP_SMART_CARD_result_t(hp_smart_card.h) used as index.
 static const char* ResultToString[] =
 {
     "HP_SMART_CARD_OK",
@@ -132,7 +132,7 @@ static const char* ResultToString[] =
     "HP_SMART_CARD_LIB_NOT_INITIALIZED",
 };
 
-// NOTE: This table must match values in HW_SMART_CARD_status_t used as index.
+// NOTE: This table must match values in HW_SMART_CARD_status_t(hw_smart_card_private.h) used as index.
 static const char* StatusToString[] =
 {
     "",                                                 // show success as an empty string, since also used for "no additional status"

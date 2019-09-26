@@ -78,7 +78,9 @@ public class RealtimeDate extends BaseObject {
 				.append("000^000^000^000^000^")
 				.append(mParent == null? "00000":BaseObject.intToFormatString(mParent.getOffset(), 5))
 				.append("^")
-				.append("00000000^00000000^00000000^0000^0000^")
+// H.M.Wang 2019-9-24 追加所属信息
+				.append("00000000^00000000^00000000^" + (mParent == null ? "0000" : String.format("%03d", mParent.mIndex)) + "^0000^")
+//				.append("00000000^00000000^00000000^0000^0000^")
 				.append(mFont)
 				.append("^000^000");
 		String str = builder.toString();

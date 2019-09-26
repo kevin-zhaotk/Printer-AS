@@ -62,7 +62,7 @@
 	<string name="str_goto">跳转</string>
 	<!-- object info table -->
 	<string name="strWidth">宽</string>
-	<string name="strHigh">高</string>
+	<string name="strHigh">字号</string>
 	<string name="strHightype">位置</string>	
 	<string name="strReverse">反相</string>
 	<string name="strXcor">横向位置</string>

@@ -73,7 +73,7 @@
 	<string name="str_goto">goto</string>
 	<!-- object info table -->
 	<string name="strWidth">Width</string>
-	<string name="strHigh">Height</string>
+	<string name="strHigh">Size</string>
 	<string name="strHightype">Stepwise</string>
 	<string name="strReverse">Inversion</string>
 	<string name="strXcor">Horizon</string>

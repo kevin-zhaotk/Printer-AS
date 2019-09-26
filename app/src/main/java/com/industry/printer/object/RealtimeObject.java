@@ -86,7 +86,7 @@ public class RealtimeObject extends BaseObject {
 			Debug.d(TAG, "str="+str+", i="+i);
 			if(i>0)
 			{
-				o = new TextObject(mContext, x);
+				o = new TextObject(mContext, this, x);
 				o.setContent(str.substring(0, i));
 				mSubObjs.add(o);
 				
@@ -122,13 +122,17 @@ public class RealtimeObject extends BaseObject {
 			}
 			else if(str.startsWith("HH", i))
 			{
-				o = new RealtimeHour(mContext, x);
+// H.M.Wang 2019-9-24 追加小时的所属信息
+				o = new RealtimeHour(mContext, this, x);
+//				o = new RealtimeHour(mContext, x);
 				mSubObjs.add(o);
 				i += 2;
 			}
 			else if(str.startsWith("NN", i))
 			{
-				o = new RealtimeMinute(mContext, x);
+// H.M.Wang 2019-9-24 追加分钟的所属信息
+				o = new RealtimeMinute(mContext, this, x);
+//				o = new RealtimeMinute(mContext, x);
 				mSubObjs.add(o);
 				i += 2;
 			} else {
@@ -285,7 +289,7 @@ public class RealtimeObject extends BaseObject {
 		{
 			// o.setX(x);
 			o.setHeight(size);
-			o.resizeByHeight();
+//			super.resizeByHeight();
 			
 			// x = o.getXEnd();
 		}
@@ -295,11 +299,25 @@ public class RealtimeObject extends BaseObject {
 	@Override
 	public void setHeight(String size)
 	{
-		int height = mTask.getMsgObject().getPixels(size);
-		setHeight(height);
+		float height = 1.0f * mTask.getMsgObject().getPixels(size);
+		this.setHeight(height);
 	}
 
-    // H.M.Wang 修改。取消原来的子元素均等加减1的缩放方法，改为均等缩放
+	// H.M.Wang 2019-9-25 该类对象重新根据高度重新设置宽度的时候，主要根据子项目的内容来设置，跟自己的内容无关
+	@Override
+	public void resizeByHeight() {
+		float x = super.getX();
+
+		for(BaseObject o : mSubObjs)
+		{
+			o.setX(x);
+			o.resizeByHeight();
+			x = o.getXEnd();
+		}
+		setWidth(x - getX());
+	}
+
+	// H.M.Wang 修改。取消原来的子元素均等加减1的缩放方法，改为均等缩放
 	public void wide() {
 		float x = getX();
 		float ratio = (getWidth() + 5) / getWidth();

@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2015 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -84,7 +84,7 @@ typedef enum
 //
 // Return: Smart card library version as NULL terminated ASCII string ("Major.Minor")
 //         Example: "1.0"
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern const char* LIB_HP_SMART_CARD_get_version(void);
 
@@ -99,7 +99,7 @@ extern const char* LIB_HP_SMART_CARD_get_version(void);
 // Inputs: none
 //
 // Return: none
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern void LIB_HP_SMART_CARD_init(void);
 
@@ -112,7 +112,7 @@ extern void LIB_HP_SMART_CARD_init(void);
 // Inputs: none
 //
 // Return: none
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern void LIB_HP_SMART_CARD_shutdown(void);
 
@@ -127,7 +127,7 @@ extern void LIB_HP_SMART_CARD_shutdown(void);
 // Inputs: device_id of the device to initialize.
 //
 // Return: HP_SMART_CARD_result_t code.
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_device_id_t device_id);
 
@@ -140,7 +140,7 @@ extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_device
 // Inputs: device_id - device id of smart card to check for
 //
 // Return: HP_SMART_CARD_OK or HP_SMART_CARD_ABSENT, or specific smart card error.
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_device_id_t device_id);
 
@@ -153,7 +153,7 @@ extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_dev
 // Inputs: device_id - device id of smart card to close
 //
 // Return: none
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_device_close(HP_SMART_CARD_device_id_t device_id);
 
@@ -163,7 +163,7 @@ extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_device_close(HP_SMART_CARD_devic
 // Description - Flushes all smart card device caches (if needed).
 //
 // Return: none
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_flush(void);
 
@@ -180,7 +180,7 @@ extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_flush(void);
 //                     in this buffer.
 //
 // Return: HP_SMART_CARD_result_t
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_read_field(HP_SMART_CARD_device_id_t device_id,
                                                            HP_SMART_CARD_field_t field,
@@ -200,7 +200,7 @@ extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_read_field(HP_SMART_CARD_device_
 //                       in this buffer.
 //
 // Return: HP_SMART_CARD_result_t
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_read_string(HP_SMART_CARD_device_id_t device_id,
                                                             HP_SMART_CARD_field_t first_field,
@@ -219,7 +219,7 @@ extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_read_string(HP_SMART_CARD_device
 //         src       - value read from this buffer will be written to smart card field.
 //
 // Return: HP_SMART_CARD_result_t
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_write_field(HP_SMART_CARD_device_id_t device_id,
                                                             HP_SMART_CARD_field_t field,
@@ -238,7 +238,7 @@ extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_write_field(HP_SMART_CARD_device
 //         src         - value read from this buffer will be written to smart card string.
 //
 // Return: HP_SMART_CARD_result_t
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_write_string(HP_SMART_CARD_device_id_t device_id,
                                                              HP_SMART_CARD_field_t first_field,
@@ -258,7 +258,7 @@ extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_write_string(HP_SMART_CARD_devic
 //                     in this buffer.
 //
 // Return: HP_SMART_CARD_result_t
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_read(HP_SMART_CARD_device_id_t device_id,
                                                      uint8_t start,
@@ -277,7 +277,7 @@ extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_read(HP_SMART_CARD_device_id_t d
 //         new_access_mode (C_MODE_RO is the only value that will work)
 //
 // Return: HP_SMART_CARD_result_t
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_change_RW_partition_to_RO(HP_SMART_CARD_device_id_t device_id,
                                                                           uint8_t id);
@@ -293,11 +293,12 @@ extern HP_SMART_CARD_result_t LIB_HP_SMART_CARD_change_RW_partition_to_RO(HP_SMA
 //                                     when cache flush fails.
 //
 // Return: none
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern void LIB_HP_SMART_CARD_register_cache_monitor_callback(void (*callback_func)(HP_SMART_CARD_device_id_t,
                                                                                     HP_SMART_CARD_result_t));
 
+//                                                              hp_smart_card.c
 extern void CACHE_MONITOR_impl(HP_SMART_CARD_device_id_t device_id, HP_SMART_CARD_result_t result);
 
 //*****************************************************************************
@@ -318,7 +319,7 @@ extern void CACHE_MONITOR_impl(HP_SMART_CARD_device_id_t device_id, HP_SMART_CAR
 // Inputs: level - area level of the message to be enabled.
 //
 // Return: None
-//
+//                                                              hp_debug.log.c
 //*****************************************************************************
 extern void LIB_HP_SMART_CARD_set_log_mask(HP_DEBUG_level_t category);
 
@@ -335,7 +336,7 @@ extern void LIB_HP_SMART_CARD_set_log_mask(HP_DEBUG_level_t category);
 // Inputs: mask - area level of the message to be disabled
 //
 // Return: None
-//
+//                                                              hp_debug.log.c
 //*****************************************************************************
 extern void LIB_HP_SMART_CARD_clear_log_mask(HP_DEBUG_level_t category);
 
@@ -360,7 +361,7 @@ extern void LIB_HP_SMART_CARD_clear_log_mask(HP_DEBUG_level_t category);
 // Inputs: depth - depth of the messages to be enabled.
 //
 // Return: None
-//
+//                                                              hp_debug.log.c
 //*****************************************************************************
 extern void LIB_HP_SMART_CARD_set_log_depth(uint8_t depth);
 
@@ -379,7 +380,7 @@ extern void LIB_HP_SMART_CARD_set_log_depth(uint8_t depth);
 // Inputs: assert_callback_func - Function pointer to assert handler.
 //
 // Return: None
-//
+//                                                              hp_assert.c
 //*****************************************************************************
 extern void LIB_HP_SMART_CARD_register_assert_callback(void (*assert_callback_func)(const char *error_str));
 
@@ -391,7 +392,7 @@ extern void LIB_HP_SMART_CARD_register_assert_callback(void (*assert_callback_fu
 // Inputs: none
 //
 // Return: none
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern const char* LIB_HP_SMART_CARD_result_string(int result);
 
@@ -403,7 +404,7 @@ extern const char* LIB_HP_SMART_CARD_result_string(int result);
 // Inputs: none
 //
 // Return: none
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern HW_SMART_CARD_status_t LIB_HP_SMART_CARD_last_status(void);
 
@@ -415,7 +416,7 @@ extern HW_SMART_CARD_status_t LIB_HP_SMART_CARD_last_status(void);
 // Inputs: none
 //
 // Return: none
-//
+//                                                              hp_smart_card.c
 //*****************************************************************************
 extern const char* LIB_HP_SMART_CARD_status_string(int status);
 #endif /* _LIB_HP_SMART_CARD_H_ */
