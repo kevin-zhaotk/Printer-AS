@@ -107,7 +107,7 @@ public class BinFromBitmap extends BinCreater {
 		mDots = NativeGraphicJni.GetDots();
 
 		// H.M.Wang 增加1行
-		bmp.recycle();
+//		bmp.recycle();
 
         return mDots; 
     }

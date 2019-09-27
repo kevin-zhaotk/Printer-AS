@@ -29,10 +29,10 @@ public class TextObject extends BaseObject {
 	public void setContent(String content) {
 		super.setContent(content);
 
-		// H.M.Wang取消宽度归零的设置
+		// H.M.Wang取消宽度归零的设置。如果有这行，用户对高度进行缩小以后，设置属性重新计算宽度，此时宽度也会变小
 //		mWidth = 0;
 	}
-
+/*
 	// H.M.Wang 修改。取消原来的子元素均等加减1的缩放方法，改为均等缩放
 	public void wide() {
 		float ratio = (getWidth() + 5) / getWidth();
@@ -50,7 +50,7 @@ public class TextObject extends BaseObject {
         setWidth(getWidth()*ratio);
 		isNeedRedraw = true;
 	}
-
+*/
 	public String toString()
 	{
 		float prop = getProportion();

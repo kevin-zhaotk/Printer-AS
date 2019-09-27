@@ -59,7 +59,7 @@ public class BarcodeObject extends BaseObject {
 	public boolean mShow;
 	public int mTextSize;
 	
-	public Bitmap mBinmap;
+//	public Bitmap mBinmap;
 	
 	private Map<String, Integer> code_format;
 	private Map<Integer, String> format_code;
@@ -187,7 +187,7 @@ public class BarcodeObject extends BaseObject {
 		}
 		isNeedRedraw = true;
 	}
-
+/*
     // H.M.Wang 修改。取消原来的子元素均等加减1的缩放方法，改为均等缩放
     public void wide() {
         float ratio = (getWidth() + 5) / getWidth();
@@ -205,7 +205,7 @@ public class BarcodeObject extends BaseObject {
         setWidth(getWidth()*ratio);
         isNeedRedraw = true;
     }
-
+*/
     @Override
 	public void setSource(boolean dynamic) {
 		mSource  = dynamic;
@@ -233,7 +233,7 @@ public class BarcodeObject extends BaseObject {
 	}
 
 	private static final String CODE = "utf-8";
-
+/*
 	// H.M.Wang 追加该函数。用来获取初始的横向缩放比例
 	@Override
 	public void setXRatio() {
@@ -243,22 +243,36 @@ public class BarcodeObject extends BaseObject {
 			mRatio = (mWidth == 0 ? 1.0f : (mWidth / 152));
 		}
 	}
+*/
+// H.M.Wang 2019-9-27 追加该函数，用来在条码/二维码设置字号的时候，恢复到原始比例状态，并且根据新的高计算新的宽
+	@Override
+	public void resizeByHeight() {
+		if (!is2D()) {
+			mWidth = mContent.length() * 70 * mHeight / 152;
+		} else {
+			mWidth = mHeight;
+		}
+	}
 
 	// H.M.Wang 修改该函数。以对应于纵向和横向的比例变化
 	public Bitmap getScaledBitmap(Context context) {
+		Debug.i(TAG, "getScaledBitmap()");
+
 		if (!isNeedRedraw) {
 			return mBitmap;
 		}
-		
+
 		isNeedRedraw = false;
 		check();
 		if (!is2D()) {
 			if (mWidth <= 0) {
-                mWidth = mContent.length() * 70;
+// H.M.Wang 2019-9-26 这个宽度的设置，由于参照的元是根据字数直接算的，而不是像其他的元素根据高计算的，因此如果高做了调整，mRatio里面已经考虑了高变化的因素，因此需要将高的因素化解后使用
+                mWidth = mContent.length() * 70 * mRatio * mHeight / 152;
 //                mWidth = mContent.length() * 70;
 			}
-//			mBitmap = draw(mContent, (int)mWidth, (int)mHeight);
-			mBitmap = draw(mContent, mContent.length() * 70, (int)mHeight);
+// H.M.Wang2019-9-26 恢复使用mWidth和mHeight进行画图
+			mBitmap = draw(mContent, (int)mWidth, (int)mHeight);
+//			mBitmap = draw(mContent, mContent.length() * 70, (int)mHeight);
 		} else {
 			if (mWidth <= 0) {
 				mWidth = mHeight;
@@ -292,12 +306,14 @@ public class BarcodeObject extends BaseObject {
 			return drawQR(mContent, 152, 152);
 		}
 */
-		if (mBitmap == null || mWidth == 0 || mHeight == 0) {
-			getScaledBitmap(mContext);
+//H.M.Wang 2019-9-27 追加判断是否已经回收
+//		if (mBitmap == null || mWidth == 0 || mHeight == 0) {
+		if (mBitmap == null || mBitmap.isRecycled() || mWidth == 0 || mHeight == 0) {
+			isNeedRedraw = true;
+			mBitmap = getScaledBitmap(mContext);
 		}
 
 		return Bitmap.createScaledBitmap(mBitmap, (int) mWidth, (int) mHeight, false);
-
 	}
 
 	@Override
@@ -456,7 +472,7 @@ public class BarcodeObject extends BaseObject {
 				bitmap = bmp;
 			}
 
-			// H.M.Wang 修改返回值一行
+			// H.M.Wang 2019-9-26 因为传入的元素已经是mWidth和mHeight，因此直接使用参数
 			return Bitmap.createScaledBitmap(bitmap, w, h, false);
 //			return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
 //			return bitmap;

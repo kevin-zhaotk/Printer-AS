@@ -48,7 +48,7 @@ public class RealtimeObject extends BaseObject {
 		mFormat = format;
 		Debug.d(TAG, ">>>setFormat Format: " + format);
 		parseFormat();
-		super.setWidth(mXcor_end - mXcor);
+//		setWidth(mXcor_end - mXcor);
 		isNeedRedraw = true;
 		setTask(mTask);
 	}
@@ -289,7 +289,7 @@ public class RealtimeObject extends BaseObject {
 		{
 			// o.setX(x);
 			o.setHeight(size);
-//			super.resizeByHeight();
+			o.resizeByHeight();
 			
 			// x = o.getXEnd();
 		}

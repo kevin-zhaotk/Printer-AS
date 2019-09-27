@@ -1256,7 +1256,11 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		if (object == null || object instanceof MessageObject) {
 			return;
 		}
+
+// H.M.Wang 2019-9-26 所有元素缩放处理
+		object.wide();
 		// H.M.Wang修改，扩充文本的放大缩小功能
+/*
 //		if (object instanceof RealtimeObject) {
 		if (object instanceof RealtimeObject) {
 			((RealtimeObject)object).wide();
@@ -1267,6 +1271,7 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		} else {
 			object.setWidth(object.getWidth() + 4);
 		}
+*/
 		Message msg = mObjRefreshHandler.obtainMessage(OBJECT_UPDATE);
 		msg.obj = object;
 		msg.sendToTarget();
@@ -1300,6 +1305,9 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		if (object == null || object instanceof MessageObject) {
 			return;
 		}
+// H.M.Wang 2019-9-26 所有元素缩放处理
+		object.narrow();
+/*
 		if (object instanceof RealtimeObject) {
 			((RealtimeObject)object).narrow();
 		} else if (object instanceof TextObject) {
@@ -1309,7 +1317,7 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		} else {
 			object.setWidth(object.getWidth() - 4);
 		}
-
+*/
 		Message msg = mObjRefreshHandler.obtainMessage(OBJECT_UPDATE);
 		msg.obj = object;
 		msg.sendToTarget();

@@ -655,7 +655,7 @@ public class MessageTask {
 				can.drawBitmap(t, Math.round(o.getX() * scaleW), Math.round(o.getY() * scaleH), p);
 
 				// H.M.Wang 增加1行
-                t.recycle();
+//                t.recycle();
 				// BinFromBitmap.saveBitmap(bmp, "barcode_1.png");
 			} else if (o instanceof GraphicObject) {
 				// H.M.Wang 2019-09-11 将简单取整修改为四舍五入

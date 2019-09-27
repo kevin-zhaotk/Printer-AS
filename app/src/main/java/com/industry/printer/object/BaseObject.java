@@ -133,7 +133,12 @@ public class BaseObject{
 		mReverse = false;
 		// 參數40：列高
 		mDotsPerClm = 152;//SystemConfigFile.getInstance(mContext).getParam(39);
-		setHeight(Configs.gDots);
+
+// H.M.Wang 2019-9-26 直接设置高，因为setHeight里面做了很多事情，不适合初始化的时候调用
+//		setHeight(Configs.gDots);
+		mHeight = Configs.gDots;
+		mWidth = 0;
+
 		boolean findFont = false;
 		Debug.d(TAG, "--->fonts: " + mFonts);
 		if (mFonts != null && mFonts.length > 0) {
@@ -272,6 +277,7 @@ public class BaseObject{
     // H.M.Wang 追加该函数。用来获取初始的横向缩放比例
 	public void setXRatio() {
 		mRatio = 1.0f;
+		Debug.d(TAG, "mRatio = " + mRatio);
 	}
 
 	private Bitmap draw() {
@@ -315,13 +321,16 @@ public class BaseObject{
 
 		// H.M.Wang 修改，一对应文本的放大缩小倍率
 		int width = Math.round(mPaint.measureText(getContent()));
+// H.M.Wang2019-9-26 去掉画图时对倍率的调整
+// H.M.Wang2019-9-27 恢复该调整
+		float ratio;
 		if(mWidth != 0) {
-			mRatio = mWidth / width;
+			ratio = mWidth / width;
 		} else {
-			mRatio = 1.0f;
+			ratio = 1.0f;
 		}
 
-		Debug.e(TAG, "--->content: " + getContent() + "  width=" + width);
+		Debug.e(TAG, "--->content: " + getContent() + "  width=" + width + "  ratio=" + ratio);
 		PrinterNozzle type = mTask != null? mTask.getNozzle() : PrinterNozzle.MESSAGE_TYPE_12_7;
 
 		// H.M.Wang 修改下列两行
@@ -331,7 +340,7 @@ public class BaseObject{
 			setWidth(1.0f * width);
 		} else {
 			// H.M.Wang 修改
-			setWidth(1.0f * width * mRatio);
+			setWidth(1.0f * width * ratio);
 		}
 		bitmap = Bitmap.createBitmap(width , Math.round(mHeight), Configs.BITMAP_CONFIG);
 		Debug.e(TAG,"===--->getBitmap width=" + mWidth + ", mHeight=" + mHeight);
@@ -735,7 +744,9 @@ public class BaseObject{
 		}*/ else if (size > 152) {
 			size = 152;
 		}
-
+// H.M.Wang 2019-9-26 考虑高的变化对倍率的影响
+		mRatio *= mHeight / size;
+Debug.d(TAG, "mRatio = " + mRatio);
 		mHeight = size;
 		tuningHeightOfSpecialHeadtype();
 		mYcor_end = mYcor + mHeight;
@@ -743,7 +754,27 @@ public class BaseObject{
 		isNeedRedraw = true;
 		
 	}
-	
+
+	// H.M.Wang 2019-9-26 从TextObject和BarcodeObject移至此，对所有元素有效。RealtimeObject元素及其其元素除外
+	public void wide() {
+		float ratio = (getWidth() + 5) / getWidth();
+		mRatio *= ratio;
+Debug.d(TAG, "mRatio = " + mRatio);
+
+		setWidth(getWidth()*ratio);
+		isNeedRedraw = true;
+	}
+
+	// H.M.Wang 2019-9-26 从TextObject和BarcodeObject移至此，对所有元素有效。RealtimeObject元素及其其元素除外
+	public void narrow() {
+		float ratio = (getWidth() - 5) / getWidth();
+		mRatio *= ratio;
+Debug.d(TAG, "mRatio = " + mRatio);
+
+		setWidth(getWidth()*ratio);
+		isNeedRedraw = true;
+	}
+
 	/**
 	 * 根据不同喷头类型处理一些需要特殊对待的尺寸
 	 */
@@ -800,6 +831,8 @@ public class BaseObject{
 			return;
 		}
 		float width = mPaint.measureText(s);
+
+		Debug.d(TAG, "Messure: s=" + s + "; width=" + width + "; height=" + getfeed());
 //		if (getHeight() <= 4 * MessageObject.PIXELS_PER_MM) {
 //			width = width * 1.25f;
 //		}
@@ -1128,7 +1161,8 @@ public class BaseObject{
 		// H.M.Wang 修改为测量标准字符串，而非实际内容
 //		int width = (int) mPaint.measureText(getContent());
 		int width = Math.round(mPaint.measureText(getMeatureString()));
-		
+		Debug.d(TAG, "meature: s=" + getMeatureString() + "; width=" + width + "; height=" + getfeed());
+
 //		if (mHeight <= 4 * MessageObject.PIXELS_PER_MM) {
 //			mWidth = width * 1.25f;
 //		} else {

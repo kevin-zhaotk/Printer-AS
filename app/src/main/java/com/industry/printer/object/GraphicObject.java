@@ -79,8 +79,16 @@ public class GraphicObject  extends BaseObject{
 	public String getImage() {
 		return mContent;
 	}
-	
-	
+
+
+	// H.M.Wang 2019-9-27 追加该函数，用来在条码/二维码设置字号的时候，恢复到原始比例状态，并且根据新的高计算新的宽
+	@Override
+	public void resizeByHeight() {
+		if(null != mBitmap) {
+			mWidth = mBitmap.getWidth() * mHeight / mBitmap.getHeight();
+		}
+	}
+
 	public Bitmap getScaledBitmap(Context context)
 	{
 		if (mBitmap != null) {
@@ -136,10 +144,14 @@ public class GraphicObject  extends BaseObject{
 	@Override
 	public Bitmap getpreviewbmp() {
 		Debug.d(TAG, "--->getpreviewbmp w= " + mWidth + " h= " + mHeight);
-		if (mBitmap == null) {
-			Debug.e(TAG, "--->no image");
-			return null;
+// H.M.Wang 2019-9-27 追加判断是否已经被回收
+		if (mBitmap == null || mBitmap.isRecycled()) {
+			getScaledBitmap(mContext);
 		}
+//		if (mBitmap == null) {
+//			Debug.e(TAG, "--->no image");
+//			return null;
+//		}
 		return Bitmap.createScaledBitmap(mBitmap, (int)mWidth, (int)mHeight, false);
 	}
 

@@ -473,6 +473,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 								if(!mObject.getDisplayHeight().equals(mHighEdit.getText().toString())) {
 									mObject.setHeight(mHighEdit.getText().toString());
 									mObject.resizeByHeight();
+									mObject.setXRatio();
+								} else {
+									mObject.setHeight(mHighEdit.getText().toString());
 								}
 //							}
 						} catch (Exception e) {
