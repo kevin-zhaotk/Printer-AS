@@ -391,8 +391,10 @@ public class MessageObject extends BaseObject {
             }
 
         } else {
-			h = mPNozzle.getScaleH() * size/PIXELS_PER_MM;
+// H.M.Wang 2019-9-29 去除ScaleH，否则会由于其采用了308/304而使得计算结果被放大
+//			h = mPNozzle.getScaleH() * size/PIXELS_PER_MM;
 			type = mPNozzle.factor();
+			h = type * size/PIXELS_PER_MM;
 		}
 		for (int i = 0; i < sizelist.length; i++) {
 			if ((h > type * sizelist[i] - 0.3) && (h < type * sizelist[i] + 0.3)) {
@@ -400,6 +402,9 @@ public class MessageObject extends BaseObject {
 				break;
 			}
 		}
-		return String.valueOf(h);
+
+// H.M.Wang 2019-9-29 保留小数点后1位
+		return String.format("%.1f", h);
+//		return String.valueOf(h);
 	}
 }

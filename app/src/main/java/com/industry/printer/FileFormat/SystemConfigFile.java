@@ -111,6 +111,9 @@ public class SystemConfigFile{
 	public static final int INDEX_HEAD_TYPE = 30;
 	public static final int INDEX_SLANT = 35;
 
+// H.M.Wang 2019-9-28 增加1带多参数索引
+	public static final int INDEX_ONE_MULTIPLE = 37;
+
 	/**
 	 * 参数39接收网络bin并直接打印
 	 * 1 像以前一样载入信息

@@ -114,7 +114,7 @@ public class DataTransferThread {
 
 	private synchronized void next() {
 		mIndex++;
-		if (isLandPrint()) {
+		if (isLanPrint()) {
 			if (!mLanBuffer.containsKey(String.valueOf(mIndex))){
 				mIndex = 0;
 			}
@@ -126,7 +126,7 @@ public class DataTransferThread {
 		Debug.i(TAG, "--->next: " + mIndex);
 	}
 
-	private boolean isLandPrint() {
+	private boolean isLanPrint() {
 		int lan = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_LAN_PRINT);
 		return lan == 1;
 	}
@@ -418,7 +418,7 @@ public class DataTransferThread {
 	}
 
 	public void setDotCount(List<MessageTask> messages) {
-		if (isLandPrint()) return;
+		if (isLanPrint()) return;
 		for (int i = 0; i < mDataTask.size(); i++) {
 			DataTask t = mDataTask.get(i);
 			if (messages.size() <= i) {
@@ -486,14 +486,27 @@ public class DataTransferThread {
 	 * @return
 	 */
 	public int getInkThreshold(int head) {
-		//if (isLandPrint()) return 1;
+		//if (isLanPrint()) return 1;
 		int bold = 1;
-		int index = isLandPrint() ? 0 : index();
+		int index = isLanPrint() ? 0 : index();
+
 		int dotCount = getDotCount(mDataTask.get(index), head);
+
+// H.M.Wang2019-9-28 考虑1带多的情况
+		int one2multiple = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_ONE_MULTIPLE);
+		if( one2multiple == 2 || 		// 1带2
+			one2multiple == 3 || 		// 1带3
+			one2multiple == 4  			// 1带4
+		) {
+			dotCount = getDotCount(mDataTask.get(index), 0);		// 使用第一个头的数据
+		}
+
 		// Debug.d(TAG, "--->getInkThreshold  head: " + head + "   index = " + index + " dataTask: " + mDataTask.size());
 		Debug.d(TAG, "--->dotCount: " + dotCount + "  bold=" + bold);
 		if (dotCount <= 0) {
-			return 1;
+// H.M.Wang 2019-9-28 当该打印头没有数据可打印的时候，原来返回1，会产生错误效果，返回一个尽量大的数以避免之
+//			return 1;
+			return 65536 * 8;
 		}
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
 		if (config.getParam(2) <= 0) {
@@ -610,7 +623,7 @@ public class DataTransferThread {
 			Debug.d(TAG, "--->print run");
 
 			buffer = mDataTask.get(index()).getPrintBuffer();
-			if (isLandPrint()) {
+			if (isLanPrint()) {
 				setLanBuffer(index(), buffer);
 			} else {
 				Debug.d(TAG, "--->print buffer ready");
@@ -638,7 +651,7 @@ public class DataTransferThread {
 
 				if (writable == 0) { //timeout
 
-//					if (isLandPrint() && pcReset == true) {
+//					if (isLanPrint() && pcReset == true) {
 //						buffer = getLanBuffer(index());
 //						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
 //						pcReset = false;
@@ -655,7 +668,7 @@ public class DataTransferThread {
 
 					synchronized (DataTransferThread.class) {
 						next();
-						if (isLandPrint()) {
+						if (isLanPrint()) {
 							buffer = getLanBuffer(index());
 							Debug.i(TAG, "--->buffer.length: " + buffer.length);
 
