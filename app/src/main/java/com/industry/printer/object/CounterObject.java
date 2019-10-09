@@ -46,6 +46,8 @@ public class CounterObject extends BaseObject {
 		mValue = 1;
 		setContent( BaseObject.intToFormatString(mValue, mBits));
 		mEnd = (int) Math.pow(10, mBits) -1;
+		// H.M.Wang 2019-10-8 根据位数调整宽度
+		setWidth(mPaint.measureText(getContent()));
 	}
 	
 //	@Override

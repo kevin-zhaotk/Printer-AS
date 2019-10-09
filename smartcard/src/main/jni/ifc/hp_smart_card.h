@@ -60,7 +60,7 @@ typedef enum
     HP_DBG_LEVEL_ERROR      = 0x00,                             // Errors. Always enabled
     HP_DBG_LEVEL_IFC_TRACE  = 0x01,                             // Interface API traces
     HP_DBG_LEVEL_AUTH_INFO  = 0x02,                             // Info on authentication
-    HP_DBG_LEVEL_HSCC_INFO  = 0x04,                             // Info on Host Smart card
+    HP_DBG_LEVEL_HSCC_INFO  = 0x04,                             // Info on Host Smart card  --- Not Used
     HP_DBG_LEVEL_HSCC_TRACE = 0x08,                             // host smart card chip trace
     HP_DBG_LEVEL_HSC_TRACE  = 0x10,                             // host smart card trace
     HP_DBG_LEVEL_SCP_TRACE  = 0x20,                             // smart card proto trace

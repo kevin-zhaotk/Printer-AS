@@ -81,7 +81,7 @@ public class GraphicObject  extends BaseObject{
 	}
 
 
-	// H.M.Wang 2019-9-27 追加该函数，用来在条码/二维码设置字号的时候，恢复到原始比例状态，并且根据新的高计算新的宽
+	// H.M.Wang 2019-9-27 追加该函数，用来在设置字号的时候，恢复到原始比例状态，并且根据新的高计算新的宽
 	@Override
 	public void resizeByHeight() {
 		if(null != mBitmap) {

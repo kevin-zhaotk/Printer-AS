@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   � Copyright 2009-2016 HP Development Company, L.P.
+   � Copyright 2009-2016 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -44,7 +44,7 @@ typedef enum
 /* Add product specific smart chip fields here */
 enum HP_SMART_CARD_product_fields
 {
-    /* HP_SMART_CARD_INK_DRY_CTRDG_MFG_DATA_TAG */
+    /* HP_SMART_CARD_INK_DRY_CTRDG_MFG_DATA_TAG */                  // TAG1 的 项目索引，但是缺少文档中的最后一行
     HP_SMART_CARD_INK_UD0_FUSE                          = 11,       // HP_SMART_CARD_FIRST_NON_HEADER_FIELD_ID
     HP_SMART_CARD_INK_EXTENDED_OEM_ID                   = 12,
     HP_SMART_CARD_INK_HP_OEM_INK_DESIGNATOR             = 13,
@@ -59,14 +59,20 @@ enum HP_SMART_CARD_product_fields
     HP_SMART_CARD_INK_DRY_PROCESS_POSITION              = 22,
     HP_SMART_CARD_INK_MAX_USABLE_CARTRIDGE_VOLUME       = 23,
     HP_SMART_CARD_INK_PRINTER_LOCK_DOWN_PARTITION       = 24,
+// H.M.Wang 2019-9-29 追加占位定义，文档中这里是blank，一行
+//  HP_BLANK
 
-
-    /* HP_SMART_CARD_INK_DRY_CTRDG_SPECIFIC_DATA_TAG  */
+    /* HP_SMART_CARD_INK_DRY_CTRDG_SPECIFIC_DATA_TAG  */            // TAG2 的 项目索引，但是缺少文档当中的最后四行
     HP_SMART_CARD_INK_TSR                               = 25,
     HP_SMART_CARD_INK_TSR_THERMAL_COEFFICIENT           = 26,
     HP_SMART_CARD_INK_BULK_CTRDG                        = 27,
+// H.M.Wang 2019-9-29 追加占位定义，文档中这里是blank，四行
+//  HP_BLANK
+//  HP_BLANK
+//  HP_BLANK
+//  HP_BLANK
 
-    /* HP_SMART_CARD_INK_INK_FILL_MFG_DATA_TAG */
+    /* HP_SMART_CARD_INK_INK_FILL_MFG_DATA_TAG */                   // TAG3 的 项目索引，似乎从HP_SMART_CARD_INK_REGIONALIZATION_ID至HP_SMART_CARD_INK_REORDER_PART_NUM_CHAR_12对应于四行的blank
     HP_SMART_CARD_INK_UD1_FUSE                          = 28,
     HP_SMART_CARD_INK_CARTRIDGE_FILL_SITE_ID            = 29,
     HP_SMART_CARD_INK_CARTRIDGE_FILL_LINE               = 30,
@@ -77,7 +83,7 @@ enum HP_SMART_CARD_product_fields
     HP_SMART_CARD_INK_CARTRIDGE_FILL_MOH                = 35,
     HP_SMART_CARD_INK_CARTRIDGE_FILL_SOM                = 36,
     HP_SMART_CARD_INK_CARTRIDGE_FILL_PROCESS_POSITION   = 37,
-    HP_SMART_CARD_INK_REGIONALIZATION_ID                = 38,
+    HP_SMART_CARD_INK_REGIONALIZATION_ID                = 38,       // 从这项开始，对应的是四行blank
     HP_SMART_CARD_INK_REORDER_PART_NUM_CHAR_1           = 39,
     HP_SMART_CARD_INK_REORDER_PART_NUM_CHAR_2           = 40,
     HP_SMART_CARD_INK_REORDER_PART_NUM_CHAR_3           = 41,
@@ -92,7 +98,7 @@ enum HP_SMART_CARD_product_fields
     HP_SMART_CARD_INK_REORDER_PART_NUM_CHAR_12          = 50,
 
 
-    /* HP_SMART_CARD_INK_INK_DATA_AND_PROPERTIES_TAG  */
+    /* HP_SMART_CARD_INK_INK_DATA_AND_PROPERTIES_TAG  */            // TAG4 的 项目的索引，但是缺少最后一行blank
     HP_SMART_CARD_INK_FORMULATOR_ID                     = 51,
     HP_SMART_CARD_INK_INK_FAMILY                        = 52,
     HP_SMART_CARD_INK_COLOR_CODES_GENERAL               = 53,
@@ -109,8 +115,10 @@ enum HP_SMART_CARD_product_fields
     HP_SMART_CARD_INK_INSTALLED_LIFE_DAYS               = 64,
     HP_SMART_CARD_INK_USABLE_INK_WEIGHT                 = 65,
     HP_SMART_CARD_INK_ALTERED_SUPPLY_NOTIFICATION_LEVEL = 66,
+// H.M.Wang 2019-9-29 追加占位定义，文档中这里是blank，一行
+//  HP_BLANK
 
-    /* HP_SMART_CARD_INK_FILLED_CTRDG_SPECIFIC_DATA_TAG  */
+    /* HP_SMART_CARD_INK_FILLED_CTRDG_SPECIFIC_DATA_TAG  */         // TAG5 的 项目的索引，但是缺少最后一行blank
     HP_SMART_CARD_INK_FIRING_FREQ                       = 67,
     HP_SMART_CARD_INK_PULSE_WIDTH                       = 68,
     HP_SMART_CARD_INK_FIRING_VOLTAGE                    = 69,
@@ -118,10 +126,12 @@ enum HP_SMART_CARD_product_fields
     HP_SMART_CARD_INK_PULSE_WARMING_TEMP                = 71,
     HP_SMART_CARD_INK_MAX_TEMP                          = 72,
     HP_SMART_CARD_INK_DROP_VOLUME                       = 73,
+// H.M.Wang 2019-9-29 追加占位定义，文档中这里是blank，一行
+//  HP_BLANK
 
-    /* HP_SMART_CARD_INK_CTRDG_FIRST_INSTALLED_DATA_TAG  */
+    /* HP_SMART_CARD_INK_CTRDG_FIRST_INSTALLED_DATA_TAG  */         // TAG6 的 项目的索引，但是第二项分解为12个项目，缺少最后一行blank
     HP_SMART_CARD_INK_WRITE_PROTECT                     = 74,
-    HP_SMART_CARD_INK_FIRST_PLATFORM_ID_CHAR_1          = 75,
+    HP_SMART_CARD_INK_FIRST_PLATFORM_ID_CHAR_1          = 75,       // 此项目开始的12个项目对应于文档的一个项目
     HP_SMART_CARD_INK_FIRST_PLATFORM_ID_CHAR_2          = 76,
     HP_SMART_CARD_INK_FIRST_PLATFORM_ID_CHAR_3          = 77,
     HP_SMART_CARD_INK_FIRST_PLATFORM_ID_CHAR_4          = 78,
@@ -146,22 +156,25 @@ enum HP_SMART_CARD_product_fields
     ////////////////////////////////////////////////////////
     /*2016-05 New OEM field*/
     HP_SMART_CARD_INK_FIRST_INSTALL_OEM_FIELD           = 97,
+// H.M.Wang 2019-9-29 追加占位定义，文档中这里是blank，一行
+//  HP_BLANK
 
     /* HP_SMART_CARD_INK_OEM_LOCKABLE_MEMORY_TAG  */
-    HP_SMART_CARD_INK_UD3_FUSE                          = 98,
+    HP_SMART_CARD_INK_UD3_FUSE                          = 98,       // TAG7 的 项目的索引
     HP_SMART_CARD_INK_OEM_DEFINED_FIELD_1               = 99,
     HP_SMART_CARD_INK_OEM_DEFINED_FIELD_2               = 100,
 
-    /* HP_SMART_CARD_INK_HP_TRADEMARK_TAG */
+    /* HP_SMART_CARD_INK_HP_TRADEMARK_TAG */                        // TAG8 的 项目的索引。第一项包含5个字符，缺少最后一个blank
     HP_SMART_CARD_INK_HP_TRADEMARK_CHAR_1               = 101,
     HP_SMART_CARD_INK_HP_TRADEMARK_CHAR_2               = 102,
     HP_SMART_CARD_INK_HP_TRADEMARK_CHAR_3               = 103,
     HP_SMART_CARD_INK_HP_TRADEMARK_CHAR_4               = 104,
     HP_SMART_CARD_INK_HP_TRADEMARK_CHAR_5               = 105,
     HP_SMART_CARD_INK_UD4_FUSE                          = 106,
+// H.M.Wang 2019-9-29 追加占位定义，文档中这里是blank，一行
+//  HP_BLANK
 
-
-    /* HP_SMART_CARD_INK_INK_USE_AND_WARRANTY_TAG */
+    /* HP_SMART_CARD_INK_INK_USE_AND_WARRANTY_TAG */                // TAG9 的 项目的索引。缺少最后两行blank
     HP_SMART_CARD_INK_OUT_OF_INK_BIT                    = 107,
     HP_SMART_CARD_INK_ILG_BIT_01_25                     = 108,
     HP_SMART_CARD_INK_ILG_BIT_26_50                     = 109,
@@ -176,16 +189,19 @@ enum HP_SMART_CARD_product_fields
     HP_SMART_CARD_INK_USER_ACK_NON_ORG_INK              = 118,
     HP_SMART_CARD_INK_USER_ACK_EXPIRED_INK              = 119,
     HP_SMART_CARD_INK_FAULTY_REPLACE_IMMEDIATELY        = 120,
+// H.M.Wang 2019-9-29 追加占位定义，文档中这里是blank，两行
+//  HP_BLANK
+//  HP_BLANK
 
-    /* HP_SMART_CARD_INK_OEM_RW_OR_MEMORY_TAG */
+    /* HP_SMART_CARD_INK_OEM_RW_OR_MEMORY_TAG */                    // TAG10 的 项目的索引
     HP_SMART_CARD_INK_OEM_RW_OR_FIELD_1                 = 121,
     HP_SMART_CARD_INK_OEM_RW_OR_FIELD_2                 = 122,
 
-    /* HP_SMART_CARD_INK_HP_SCRATCH_PAD_TAG */
+    /* HP_SMART_CARD_INK_HP_SCRATCH_PAD_TAG */                      // TAG11 的 项目的索引。INK_MRU_PLATFORM_ID占12项，后面缺少5个Reserved项目
     HP_SMART_CARD_INK_CARTRIDGE_MRU_YEAR                = 123,
     HP_SMART_CARD_INK_CARTRIDGE_MRU_WOY                 = 124,
     HP_SMART_CARD_INK_CARTRIDGE_MRU_DOW                 = 125,
-    HP_SMART_CARD_INK_MRU_PLATFORM_ID_CHAR_1            = 126,
+    HP_SMART_CARD_INK_MRU_PLATFORM_ID_CHAR_1            = 126,      // 此项目开始12项（字符）对应于文档一个项目
     HP_SMART_CARD_INK_MRU_PLATFORM_ID_CHAR_2            = 127,
     HP_SMART_CARD_INK_MRU_PLATFORM_ID_CHAR_3            = 128,
     HP_SMART_CARD_INK_MRU_PLATFORM_ID_CHAR_4            = 129,
@@ -206,19 +222,26 @@ enum HP_SMART_CARD_product_fields
     HP_SMART_CARD_INK_STALL_INSERTION_COUNT             = 144,
     HP_SMART_CARD_INK_LAST_FAILURE_CODE                 = 145,
     HP_SMART_CARD_INK_USER_REPORTED_STATUS              = 146,
+// H.M.Wang 2019-9-29 追加占位定义，文档中这里是Reserved，两行
+//  HP_RESERVED
+//  HP_RESERVED
     HP_SMART_CARD_INK_MARKETING_DATA_REVISION           = 147,
+// H.M.Wang 2019-9-29 追加占位定义，文档中这里是Reserved，三行
+//  HP_RESERVED
+//  HP_RESERVED
+//  HP_RESERVED
 
-    /* HP_SMART_CARD_INK_OEM_SCRATCH_PAD_TAG */
+    /* HP_SMART_CARD_INK_OEM_SCRATCH_PAD_TAG */                     // TAG12 的 项目的索引
     HP_SMART_CARD_INK_OEM_DEF_RW_FIELD_1                = 148,
     HP_SMART_CARD_INK_OEM_DEF_RW_FIELD_2                = 149,
 
     ////////////////////////////////////////////////////////
-    /*Newly added entries for Memory Map Revision 2.0.1*/
+    /*Newly added entries for Memory Map Revision 2.0.1*/           // TAG13 的 项目的索引。但项目定义不太一致，好像与TAG14有重叠
     HP_SMART_CARD_INK_UD7_FUSE                          = 150,
     HP_SMART_CARD_INK_UD8_FUSE                          = 151,
     HP_SMART_CARD_INK_BLANK_1                           = 152,
     HP_SMART_CARD_INK_BLANK_2                           = 153,
-
+                                                                    // 缺少TAG14的索引
     /* this should be the last entry in this enum */
     HP_SMART_CARD_INK_LAST_FIELD                        = 154,
 };

@@ -746,7 +746,6 @@ public class BaseObject{
 		}
 // H.M.Wang 2019-9-26 考虑高的变化对倍率的影响
 		mRatio *= mHeight / size;
-Debug.d(TAG, "mRatio = " + mRatio);
 		mHeight = size;
 		tuningHeightOfSpecialHeadtype();
 		mYcor_end = mYcor + mHeight;
@@ -759,7 +758,6 @@ Debug.d(TAG, "mRatio = " + mRatio);
 	public void wide() {
 		float ratio = (getWidth() + 5) / getWidth();
 		mRatio *= ratio;
-Debug.d(TAG, "mRatio = " + mRatio);
 
 		setWidth(getWidth()*ratio);
 		isNeedRedraw = true;
@@ -769,7 +767,6 @@ Debug.d(TAG, "mRatio = " + mRatio);
 	public void narrow() {
 		float ratio = (getWidth() - 5) / getWidth();
 		mRatio *= ratio;
-Debug.d(TAG, "mRatio = " + mRatio);
 
 		setWidth(getWidth()*ratio);
 		isNeedRedraw = true;

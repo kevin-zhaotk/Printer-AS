@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   � Copyright 2009-2015 HP Development Company, L.P.
+   � Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -46,7 +46,7 @@ typedef enum
 //-----------------------------------------------------------------------------
 // Common smart card fields.
 //-----------------------------------------------------------------------------
-typedef enum
+typedef enum                                            // TAG0 的 项目的索引
 {
     // Common field ids
     HP_SMART_CARD_NOT_A_FIELD               = 0,
@@ -109,7 +109,7 @@ extern const HP_SMART_CARD_device_info_t    hp_smart_card_device[];
 //-----------------------------------------------------------------------------
 // Smart card header layout - common to all CHIP_TAG 2 smart card devices
 //-----------------------------------------------------------------------------
-const HP_SMART_CARD_field_desc_t hp_smart_card_header_fields[] =
+const HP_SMART_CARD_field_desc_t hp_smart_card_header_fields[] =        // TAG0 详细定义
 {
     { HP_SMART_CARD_CHIP_TAG,               0, 7, 4 },
     { HP_SMART_CARD_RESERVED_1,             0, 3, 1 },

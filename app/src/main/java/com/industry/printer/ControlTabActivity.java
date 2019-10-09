@@ -1194,12 +1194,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				case MESSAGE_RFID_ALARM:
 					mFlagAlarming = true;
 					ExtGpio.writeGpio('h', 7, 1);
-					if (mRfiAlarmTimes++ < 3) {
+////////////////////// H.M.Wang 2019-10-8 为了调试，注释掉
+/*					if (mRfiAlarmTimes++ < 3) {
 						ExtGpio.playClick();
 						mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_ALARM, 150);
 					} else {
 						mRfiAlarmTimes = 0;
 					}
+*/
 					break;
 				case MESSAGE_RECOVERY_PRINT:
 					SharedPreferences preference = mContext.getSharedPreferences(SettingsTabActivity.PREFERENCE_NAME, Context.MODE_PRIVATE);
@@ -2204,7 +2206,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                          //	msg= toStringHex(msg); 
 		                        	Debug.d(TAG, "--->fromPc: " + msg);
 									PCCommand cmd = PCCommand.fromString(msg);
-		                        	if (PCCommand.CMD_SEND_BIN.equalsIgnoreCase(cmd.command)) {  // LAN Printing
+
+// H.M.Wang 当解析命令失败时，抛弃这个命令
+									if(null == cmd) continue;
+
+									if (PCCommand.CMD_SEND_BIN.equalsIgnoreCase(cmd.command)) {  // LAN Printing
 
 										cacheBin(Gsocket, msg);
 									} else if (PCCommand.CMD_DEL_LAN_BIN.equalsIgnoreCase(cmd.command)) {
@@ -2255,7 +2261,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            		SendFileFlag=1;
 		                            		this.sendmsg(WriteFiles(Gsocket,msg));
 		                            	}
-		                           
 		                            }
 		                            else if(PCCommand.CMD_READ_COUNTER.equalsIgnoreCase(cmd.command)) {
 		                            	//400取计数器
@@ -2380,6 +2385,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				try {
 					InputStream stream = socket.getInputStream();
 					int readLen = stream.read(readBuf);
+					Debug.i(TAG, "--->read length: " + readLen);
 					if (readLen == -1) { // EOF
 						break;
 					}
@@ -2477,7 +2483,32 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					int size = -1;
 				
 					int totalReceived = 0;
+/* H.M.Wang 2019-10-1 原来赵工的代码
+					while (true) {
+						int read = 0;
+						try {
+							if (inb != null) {
+								read = inb.read(buffer);
+							}
+						} catch (SocketTimeoutException e) {
+							Debug.d(TAG, "--->SocketTimeout: " + read);
+							if (totalReceived != 0) {
+								read = -1;
+							}
 
+						}
+						//passedlen += read;
+						if (read == -1) {
+							break;
+						}
+						Debug.d(TAG, "--->read: " + read);
+						totalReceived += read;
+						//下面进度条本为图形界面的prograssBar做的，这里如果是打文件，可能会重复打印出一些相同的百分比
+						//System.out.println("文件接收了" +  (passedlen * 100/ len) + "%\n");
+						file.write(buffer, 0, read);
+					}
+*/
+/* H.M.Wang 2019-10-1 以前我修改的代码，修改的不全面
 					// H.M.Wang对以下while语句进行修改，支持文件下载时指定字节数接收完成时结束
 					while (totalReceived < length) {
 //					while (true) {
@@ -2508,9 +2539,31 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //						file.write(buffer, 0, read);
 //						totalReceived += read;
 					}
+*/
 
-				file.flush();
-				file.close();
+// H.M.Wang 2019-10-1 再次修改代码
+					// H.M.Wang 2019-10-1
+					while (totalReceived < length) {
+						int read = 0;
+						try {
+							if (inb != null) {
+								read = inb.read(buffer);
+								if(read == -1) break;		// 到了输入流的结尾，退出接收
+								Debug.d(TAG, "--->read: " + read);
+								file.write(buffer, 0, read);
+								totalReceived += read;
+							} else {
+								Debug.e(TAG, "--->Error: null InputStream");
+								break;
+							}
+						} catch (SocketTimeoutException e) {
+							Debug.d(TAG, "--->SocketTimeout: " + read);
+							break;
+						}
+					}
+
+					file.flush();
+					file.close();
 
 			} catch(Exception e){
 					Debug.e(TAG, e.getMessage());

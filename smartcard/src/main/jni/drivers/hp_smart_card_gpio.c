@@ -30,14 +30,14 @@
 */
 
 /* A20 GPIO Definition
-    1 GPIOA: 0
-    6 GPIOB: 32
-    7 GPIOC: 64
-    8 GPIOD: 96
-    2 GPIOE: 128
-    3 GPIOF: 160
-    4 GPIOG: 192
-    5 GPIOH: 224
+    1 GPIOA: 0          // 0x00
+    6 GPIOB: 32         // 0x20
+    7 GPIOC: 64         // 0x40
+    8 GPIOD: 96         // 0x60
+    2 GPIOE: 128        // 0x80
+    3 GPIOF: 160        // 0xA0
+    4 GPIOG: 192        // 0xC0
+    5 GPIOH: 224        // 0xE0
 */
 
 #define RESET_PIN       198             // PG6 = PG0(192) + 6
