@@ -1195,13 +1195,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mFlagAlarming = true;
 					ExtGpio.writeGpio('h', 7, 1);
 ////////////////////// H.M.Wang 2019-10-8 为了调试，注释掉
-/*					if (mRfiAlarmTimes++ < 3) {
+					if (mRfiAlarmTimes++ < 3) {
 						ExtGpio.playClick();
 						mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_ALARM, 150);
 					} else {
 						mRfiAlarmTimes = 0;
 					}
-*/
+
 					break;
 				case MESSAGE_RECOVERY_PRINT:
 					SharedPreferences preference = mContext.getSharedPreferences(SettingsTabActivity.PREFERENCE_NAME, Context.MODE_PRIVATE);

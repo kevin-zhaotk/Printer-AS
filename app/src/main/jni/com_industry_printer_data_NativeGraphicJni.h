@@ -46,18 +46,18 @@ JNIEXPORT jintArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_GetD
 /*
  * Class:     com_industry_printer_data_NativeGraphicJni
  * Method:    GetBgBuffer
- * Signature: ([{IIIIZII})[C
- */
-/*JNIEXPORT jcharArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_GetBgBuffer
-  (JNIEnv *env, jclass thiz, jbyteArray src, jint length, jint bytesFeed, jint bytesPerHFeed, jint bytesPerH, jboolean isInchType, jint column, jint type);*/
-
-/*
- * Class:     com_industry_printer_data_NativeGraphicJni
- * Method:    GetBgBuffer
  * Signature: ([BIIIIII})[C
  */
 JNIEXPORT jcharArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_GetBgBuffer
         (JNIEnv *, jclass, jbyteArray, jint, jint, jint, jint, jint, jint);
+
+/*
+ * Class:     com_industry_printer_data_NativeGraphicJni
+ * Method:    GetPrintDots
+ * Signature: ([CIII})[I
+ */
+JNIEXPORT jintArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_GetPrintDots
+        (JNIEnv *, jclass thiz, jcharArray, jint, jint, jint);
 
 #ifdef __cplusplus
 }

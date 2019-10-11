@@ -70,9 +70,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_Bin
 
     int heighEachHead = height / head;
 
-    for(int k=0; k<8; k++) {
-        DOTS[k] = 0;
-    }
+    memset(DOTS, 0x00, 8 * sizeof(jint));
 
     for(int i=0; i<width; i++) {
         for(int j=0; j<height; j++) {
@@ -126,99 +124,6 @@ JNIEXPORT jintArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_GetD
  *      bytesFeed:  目标缓冲区每列的数据长度（因为有不同打印头之间的缝隙，要比实际数据长）
  *      bytesPerHFeed：目标缓冲区每个打印头的数据长度
  *      bytesPerH： 原始缓冲区每个头侧数据长度
- *      isInchType：是否为25.4种类的打印头
- *      column：    数据总列数
- *      type：      打印头的数量
- * Signature: ([{IIIIZII})[C
- */
-/* 这个获取背景缓冲区的实现方法潜入了对25.4xn打印头进行纵向移位（每头308点纵向紧凑排法变成320点靠上排列308点，剩余12点镂空的排法），由于该实现方法转移到了生成bin文件时实现，因此该实现方法取消
-JNIEXPORT jcharArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_GetBgBuffer
-  (JNIEnv *env, jclass thiz, jbyteArray src, jint length, jint bytesFeed, jint bytesPerHFeed, jint bytesPerH, jboolean isInchType, jint column, jint type) {
-
-    LOGD("GetBgBuffer length=%d, bytesFeed=%d, bytesPerHFeed=%d, bytesPerH=%d, isInchType=%d, column=%d, type=%d", length, bytesFeed, bytesPerHFeed, bytesPerH, isInchType, column, type);
-
-    jbyte *cbuf;
-    cbuf = env->GetByteArrayElements(src, 0);
-
-    jbyte *rByteBuf = new jbyte[length];
-    jchar *rCharBuf = new jchar[length/2];
-
-    size_t orgPointer = 0;
-
-    if( isInchType ) {
-        bytesPerH -= 2;
-    }
-
-    // 从当前位置读取mBytesPerH个字节到背景buffer中，由于需要处理多头情况，所以要注意在每个头的列尾要注意补偿问题（双字节对齐
-    for(int i=0; i < column; i++) {
-//        LOGD("GetBgBuffer Column = %d", column);
-        jbyte tempByte = 0x00, bufferByte = 0x00;
-        int skipBytes = 0;
-
-        for (int j = 0; j < type; j++) {
-//            LOGD("GetBgBuffer Type = %d", type);
-            jint pos = i*bytesFeed + j*bytesPerHFeed;
-
-            if( isInchType) {
-                if(j%2 == 0) {
-                    memcpy(rByteBuf + pos, cbuf + orgPointer, bytesPerH + 1);
-                    orgPointer += (bytesPerH + 1);
-
-                    tempByte = rByteBuf[pos + bytesPerH];
-                    rByteBuf[pos + bytesPerH] &= 0x0f;
-                    tempByte >>= 4;
-                    tempByte &= 0x0f;
-                    skipBytes += 1;
-                } else {
-                    memcpy(rByteBuf + pos, cbuf + orgPointer, bytesPerH);
-                    orgPointer += bytesPerH;
-
-                    for(int k=0; k<bytesPerH; k++) {
-                        bufferByte = rByteBuf[pos + k];
-                        tempByte |= (jbyte)((bufferByte << 4) & 0xf0);
-                        rByteBuf[pos + k] = tempByte;
-                        tempByte = (jbyte)((bufferByte >> 4) & 0x0f);
-                    }
-                    rByteBuf[pos + bytesPerH] = tempByte;
-                    skipBytes += 2;
-                }
-            } else {
-                memcpy(rByteBuf + pos, cbuf + orgPointer, bytesPerH);
-                orgPointer += bytesPerH;
-            }
-        }
-        orgPointer += skipBytes;
-    }
-    //mFStream.close();
-
-    // 如果是奇数列在每列最后添加一个byte
-
-    //把byte[]存为char[]
-//    LOGD("GetBgBuffer Byte => Char");
-    for(int i = 0; i < length/2; i++) {
-        rCharBuf[i] = (jchar) (((jchar)(rByteBuf[2*i+1] << 8) & 0x0ff00) | (rByteBuf[2*i] & 0x0ff));
-    }
-
-    jcharArray result = env->NewCharArray(length/2);
-    env->SetCharArrayRegion(result, 0, length/2, rCharBuf);
-    env->ReleaseByteArrayElements(src, cbuf, 0);
-    delete rByteBuf;
-    env->ReleaseCharArrayElements(result, rCharBuf, JNI_ABORT);
-
-//    LOGD("GetBgBuffer Done");
-    return result;
-}
-*/
-
-/*
- * Class:     com_industry_printer_data_NativeGraphicJni
- * Method:    GetBgBuffer
- * Parameters:
- *      src:        原始位图数据缓冲区，一个bit代表一个dot;
- *      length:     缓冲区总长度;
- *      bytesFeed:  目标缓冲区每列的数据长度（因为有不同打印头之间的缝隙，要比实际数据长）
- *      bytesPerHFeed：目标缓冲区每个打印头的数据长度
- *      bytesPerH： 原始缓冲区每个头侧数据长度
  *      column：    数据总列数
  *      type：      打印头的数量
  * Signature: ([BIIIIII})[C
@@ -237,6 +142,8 @@ JNIEXPORT jcharArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_Get
     // 当每个头需要的DOT数据字节数大于每个头实际拥有的DOT字节数（12.7xn喷头时，每个头的实际数据为152点，19个字节，但打印缓冲区每个头必须为20字节，因此会出现这个需要补齐的情况）
     if(bytesPerHFeed > bytesPerH) {
         rByteBuf = new jbyte[length];
+        memset(rByteBuf, 0x00, length);
+
         size_t orgPointer = 0;
         for(int i=0; i < column; i++) {
 //        LOGD("GetBgBuffer Column = %d", column);
@@ -270,7 +177,93 @@ JNIEXPORT jcharArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_Get
         env->ReleaseCharArrayElements(result, rCharBuf, JNI_ABORT);
     }
 
-    LOGD("GetBgBuffer Done");
+    return result;
+}
+
+/*
+ * Class:     com_industry_printer_data_NativeGraphicJni
+ * Method:    GetPrintDots
+ * Parameters:
+ *      src:                原始位图数据缓冲区，一个bit代表一个dot;
+ *      bytesPerHFeed：     目标缓冲区每个打印头的数据长度
+ *      heads：             打印头的数量
+ * Signature: ([CIII})[I
+ */
+JNIEXPORT jintArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_GetPrintDots
+        (JNIEnv *env, jclass thiz, jcharArray src, jint length, jint charsPerHFeed, jint heads) {
+
+    jchar *srcBuf = env->GetCharArrayElements(src, 0);
+
+    LOGD("GetPrintDots length=%d, charsPerHFeed=%d, heads=%d", length, charsPerHFeed, heads);
+
+    jint *dots = new jint[8];
+    memset(dots, 0x00, 8 * sizeof(jint));
+
+    int headIndex = -1;      // 当前数据所属打印头。初值为-1，为进入循环处理做准备
+    for(int i=0; i<length; i++) {
+        if((i % charsPerHFeed) == 0) {
+            headIndex++;
+            headIndex %= heads;
+        }
+
+        if( (srcBuf[i] & 0x0001) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x0002) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x0004) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x0008) != 0x0000) {
+            dots[headIndex]++;
+        }
+
+        if( (srcBuf[i] & 0x0010) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x0020) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x0040) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x0080) != 0x0000) {
+            dots[headIndex]++;
+        }
+
+        if( (srcBuf[i] & 0x0100) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x0200) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x0400) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x0800) != 0x0000) {
+            dots[headIndex]++;
+        }
+
+        if( (srcBuf[i] & 0x1000) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x2000) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x4000) != 0x0000) {
+            dots[headIndex]++;
+        }
+        if( (srcBuf[i] & 0x8000) != 0x0000) {
+            dots[headIndex]++;
+        }
+    }
+
+    env->ReleaseCharArrayElements(src, srcBuf, 0);
+
+    jintArray result = env->NewIntArray(8);
+    env->SetIntArrayRegion(result, 0, 8, dots);
+
     return result;
 }
 

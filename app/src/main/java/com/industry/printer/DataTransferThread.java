@@ -34,6 +34,7 @@ import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.data.BinCreater;
 import com.industry.printer.data.DataTask;
+import com.industry.printer.data.NativeGraphicJni;
 import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
@@ -448,15 +449,23 @@ public class DataTransferThread {
 	public void initCount() {
 		if (mcountdown == null) {
 			mcountdown = new int[8];
-		} else {
-			for (int i = 0; i < mcountdown.length; i++) {
-				mcountdown[i] = 0;
-			}
+// H.M.Wang 2019-10-10 取消内部初始化0的操作，这样不全面
+//		} else {
+//			for (int i = 0; i < mcountdown.length; i++) {
+//				mcountdown[i] = 0;
+//			}
 		}
+
+		// H.M.Wang 初始化0的部分移到外部，这样更全面
 		for (int i = 0; i < mcountdown.length; i++) {
-			mcountdown[i] = getInkThreshold(i);
-			//Debug.d(TAG, "--->initCount countdown[" + i + "] = " + mcountdown[i]);
+			mcountdown[i] = 0;
 		}
+
+		// H.M.Wang 2019-10-10 注释掉添加初值的部分，如果初值为0，则表示该处置还没有初始化，待后续计算后添加
+//		for (int i = 0; i < mcountdown.length; i++) {
+//			mcountdown[i] = getInkThreshold(i);
+			//Debug.d(TAG, "--->initCount countdown[" + i + "] = " + mcountdown[i]);
+//		}
 	}
 	/**
 	 * 倒计数，当计数倒零时表示墨水量需要减1，同时倒计数回归
@@ -464,6 +473,9 @@ public class DataTransferThread {
 	 */
 	private void countDown() {
 		for (int i = 0; i < mScheduler.count(); i++) {
+			// H.M.Wang 添加初值是否为0的判断，如果为0，则判定为还没有初始化，首先进行初始化
+			if(mcountdown[i] == 0) mcountdown[i] = getInkThreshold(i);
+
 			mcountdown[i]--;
 			if (mcountdown[i] <= 0) {
 				// 赋初值
@@ -635,6 +647,34 @@ public class DataTransferThread {
 				int cH = mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads;
 				Debug.d(TAG, "--->cH: " + cH);
 				BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, cH);
+
+				// H.M.Wang 2019-10-10 追加计算打印区对应于各个头的打印点数
+				DataTask t = mDataTask.get(mIndex);
+//				Debug.d(TAG, "GetPrintDots Start Time: " + System.currentTimeMillis());
+				int[] dots = NativeGraphicJni.GetPrintDots(buffer, buffer.length, t.getInfo().mCharsPerHFeed, t.getPNozzle().mHeads);
+
+				int totalDot = 0;
+				for (int j = 0; j < dots.length; j++) {
+					// H.M.Wang 2019-10-11 获得的点数乘2
+                    dots[j] *= 2;
+					totalDot += dots[j];
+				}
+				t.setDots(totalDot);
+				t.setDotsEach(dots);
+
+//				Debug.d(TAG, "GetPrintDots Done Time: " + System.currentTimeMillis());
+
+				StringBuilder sb = new StringBuilder();
+				sb.append("Dots per Head: [");
+				for (int i=0; i<dots.length; i++) {
+					if(i != 0) {
+						sb.append(", ");
+					}
+					sb.append(dots[i]);
+				}
+				sb.append("]");
+				Debug.d(TAG, sb.toString());
+
 				int n = 0;
 
 				Debug.e(TAG, "--->write data");

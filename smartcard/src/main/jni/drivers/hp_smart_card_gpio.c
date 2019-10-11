@@ -39,7 +39,138 @@
     4 GPIOG: 192        // 0xC0
     5 GPIOH: 224        // 0xE0
 */
+/*
 
+GPA(0) - 18个
+gpio0
+gpio1
+gpio2
+gpio3
+gpio4
+gpio5
+gpio6
+gpio7
+gpio8
+gpio9
+gpio10
+gpio11
+gpio12
+gpio13
+gpio14
+gpio15
+gpio16
+gpio17
+
+GPB(24) - 24
+gpio26
+gpio27
+gpio28
+gpio29
+gpio30
+gpio31
+gpio32
+gpio33
+gpio34
+gpio36
+gpio38
+gpio39
+gpio40
+gpio41
+
+GPC(54) - 25
+gpio54
+gpio55
+gpio56
+gpio57
+gpio58
+gpio59
+gpio66
+gpio67
+gpio68
+gpio69
+gpio70
+gpio71
+gpio72
+gpio73
+gpio74
+gpio75
+gpio76
+gpio77
+gpio78
+
+GPD(85) - 28
+gpio85
+gpio86
+gpio87
+gpio88
+gpio89
+gpio90
+gpio91
+gpio92
+gpio93
+gpio94
+gpio95
+gpio96
+gpio97
+gpio98
+gpio99
+gpio100
+gpio101
+gpio102
+gpio103
+gpio104
+gpio105
+gpio106
+gpio107
+gpio108
+gpio109
+gpio110
+gpio111
+gpio112
+
+GPE(119) - 12
+gpio119
+gpio120
+gpio121
+gpio122
+
+GPF(137) - 6
+GPG(149) - 12
+
+GPH(167) - 28
+gpio167
+gpio169
+gpio175
+gpio176
+gpio177
+gpio178
+gpio179
+gpio180
+gpio181
+gpio182
+gpio183
+gpio184
+gpio185
+gpio186
+gpio189
+gpio190
+gpio191
+gpio192
+
+GPI(201) - 22
+gpio215
+gpio216
+gpio221
+gpio222
+
+axp_pin(229) - 5
+gpio229
+gpio230
+gpio231
+gpio232
+gpio233
+
+ */
 #define RESET_PIN       198             // PG6 = PG0(192) + 6
 #define BUSY_PIN        199             // PG7 = PG0(192) + 7
 //#define SUPPLY_PIN      RPI_V2_GPIO_P1_12
