@@ -1,11 +1,6 @@
 package com.industry.printer;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -15,36 +10,27 @@ import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import rx.Observable;
-import rx.Observer;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-import android.R.bool;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.hardware.usb.UsbManager;
-import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -58,8 +44,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -74,13 +58,12 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.Utils.KZFileObserver;
 import com.industry.printer.Utils.PlatformInfo;
-import com.industry.printer.Utils.StringUtil;
 import com.industry.printer.Utils.SystemPropertiesProxy;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.Utils.ZipUtil;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
-import com.industry.printer.object.BaseObject;
+import com.industry.printer.hardware.SmartCard;
 import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
 import com.industry.printer.ui.CustomerDialog.DialogListener;
 import com.industry.printer.ui.CustomerDialog.ImportDialog;
@@ -250,7 +233,21 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				ExtGpio.playClick();
 			}
 		}.start();
-    }
+
+		new Thread() {
+			@Override
+			public void run() {
+				try{
+					while(true) {
+						Thread.sleep(5000);
+						ExtGpio.playClick();
+						SmartCard.open();
+					}
+				} catch (Exception e) {
+				}
+			}
+		}.start();
+	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {

@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2015 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -56,29 +56,71 @@ void HP_SMART_CARD_i2c_init(void);
 //         data  - pointer to buffer that is used to return the data read.
 //         num_bytes_to_read - Number of bytes to read.
 //
-// Return: None
+// Return:
+//  HP_SMART_CARD_I2C_SUCCESS: success
+//  HP_SMART_CARD_I2C_FAILED: failed
 //
 //*****************************************************************************
 HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read(HP_SMART_CARD_device_id_t device_id,
                                                   uint8_t addr,
-                                                  uint8_t                  *data,
+                                                  uint8_t *data,
                                                   size_t num_bytes_to_read);
+
+//*****************************************************************************
+// HP_SMART_CARD_i2c_read -
+//-----------------------------------------------------------------------------
+// Description - This function reads data from the requested I2C device.
+//
+// Inputs: i2c_addr - smart card i2c address
+//         addr  - internal register address to read
+//         data  - pointer to buffer that is used to return the data read.
+//         num_bytes_to_read - Number of bytes to read.
+//
+//  HP_SMART_CARD_I2C_SUCCESS: success
+//  HP_SMART_CARD_I2C_FAILED: failed
+//
+//*****************************************************************************
+HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read_direct(uint8_t i2c_addr,
+                                                         uint8_t addr,
+                                                         uint8_t *data,
+                                                         size_t num_bytes_to_read);
 
 //*****************************************************************************
 // HP_SMART_CARD_i2c_write -
 //-----------------------------------------------------------------------------
-// Description - This function reads data from the requested I2C device.
+// Description - This function writes data to the requested I2C device.
 //
 // Inputs: device_id - smart card device identifier
 //         addr  - internal register address to read.
 //         data  - pointer to buffer that is contains data to write.
 //         num_bytes_to_write - Number of bytes to write.
 //
-// Return: None
+//  HP_SMART_CARD_I2C_SUCCESS: success
+//  HP_SMART_CARD_I2C_FAILED: failed
 //
 //*****************************************************************************
 HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write(HP_SMART_CARD_device_id_t device_id,
                                                    uint8_t addr,
                                                    uint8_t                   *data,
                                                    size_t num_bytes_to_write);
+
+//*****************************************************************************
+// HP_SMART_CARD_i2c_write_direct -
+//-----------------------------------------------------------------------------
+// Description - This function writes data to the requested I2C device.
+//
+// Inputs: i2c_addr - smart card i2c address
+//         addr  - internal register address to read.
+//         data  - pointer to buffer that is contains data to write.
+//         num_bytes_to_write - Number of bytes to write.
+//
+//  HP_SMART_CARD_I2C_SUCCESS: success
+//  HP_SMART_CARD_I2C_FAILED: failed
+//
+//*****************************************************************************
+HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write_direct(uint8_t i2c_addr,
+                                                          uint8_t addr,
+                                                          uint8_t *data,
+                                                          size_t num_bytes_to_write);
+
 #endif /*  _HP_SMART_CARD_I2C_IFC_H_ */

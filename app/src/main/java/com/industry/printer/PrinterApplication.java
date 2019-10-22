@@ -8,6 +8,7 @@ import com.industry.printer.Utils.KZFileObserver;
 import com.industry.printer.Utils.PreferenceConstants;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.data.NativeGraphicJni;
+import com.industry.printer.hardware.SmartCard;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -48,9 +49,6 @@ public class PrinterApplication extends Application {
 			@Override
 			public void run() {
 				try {
-					AssetManager assetManager = sInstance.getAssets();
-					InputStream is = assetManager.open(Configs.UPGRADE_NGJNI_FILE);
-
 					Debug.d(TAG, "su -> start");
 					Process process = Runtime.getRuntime().exec("su");
 					DataOutputStream os = new DataOutputStream(process.getOutputStream());
@@ -60,17 +58,33 @@ public class PrinterApplication extends Application {
 					os.writeBytes("chmod 777 /system/lib\n");
 					sleep(100);
 
-					Debug.d(TAG, "chmod 777 /system/lib" + Configs.UPGRADE_NGJNI_FILE);
-					os.writeBytes("chmod 777 /system/lib\n" + Configs.UPGRADE_NGJNI_FILE);
+					Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_NGJNI_FILE);
+					os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_NGJNI_FILE);
 					sleep(100);
+
+					AssetManager assetManager = sInstance.getAssets();
+					InputStream is = assetManager.open(Configs.UPGRADE_NGJNI_FILE);
 
 					FileUtil.writeFile("/system/lib/" + Configs.UPGRADE_NGJNI_FILE, is);
 
-					Debug.d(TAG, "chmod 777 /system/lib" + Configs.UPGRADE_NGJNI_FILE);
-					os.writeBytes("chmod 777 /system/lib\n" + Configs.UPGRADE_NGJNI_FILE);
+					is.close();
+
+					Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_SCJNI_FILE);
+					os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_SCJNI_FILE);
+					sleep(100);
+
+					is = assetManager.open(Configs.UPGRADE_SCJNI_FILE);
+
+					FileUtil.writeFile("/system/lib/" + Configs.UPGRADE_SCJNI_FILE, is);
+
+					is.close();
+
+//					Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_NGJNI_FILE);
+//					os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_NGJNI_FILE);
 					os.writeBytes("exit\n");
 
 					NativeGraphicJni.init();
+					SmartCard.init();
 
                 } catch (Exception e) {
 					Debug.e(TAG, "--->e: " + e.getMessage());

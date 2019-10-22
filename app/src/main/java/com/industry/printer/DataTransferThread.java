@@ -473,7 +473,7 @@ public class DataTransferThread {
 	 */
 	private void countDown() {
 		for (int i = 0; i < mScheduler.count(); i++) {
-			// H.M.Wang 添加初值是否为0的判断，如果为0，则判定为还没有初始化，首先进行初始化
+			// H.M.Wang 2019-10-10 添加初值是否为0的判断，如果为0，则判定为还没有初始化，首先进行初始化
 			if(mcountdown[i] == 0) mcountdown[i] = getInkThreshold(i);
 
 			mcountdown[i]--;

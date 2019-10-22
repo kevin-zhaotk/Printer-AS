@@ -23,6 +23,11 @@
 typedef enum
 {
     HP_SMART_CARD_DEVICE_ID_0,                              // This is the device id of the first Component Smart Card
+// H.M.Wang 2019-10-17 Added the following 3 devices
+    HP_SMART_CARD_DEVICE_ID_1,                              // This is the device id of the second Component Smart Card
+    HP_SMART_CARD_DEVICE_ID_2,                              // This is the device id of the third Component Smart Card
+    HP_SMART_CARD_DEVICE_ID_3,                              // This is the device id of the fourth Component Smart Card
+
 #ifdef INCLUDE_HP_SMART_CARD_SUPPLY
     HP_SMART_CARD_DEVICE_ID_1,                              // If supply is supported, a second Component device is assumed
 #endif
@@ -46,8 +51,8 @@ enum HP_SMART_CARD_product_fields
 {
     /* HP_SMART_CARD_INK_DRY_CTRDG_MFG_DATA_TAG */                  // TAG1 的 项目索引，但是缺少文档中的最后一行
     HP_SMART_CARD_INK_UD0_FUSE                          = 11,       // HP_SMART_CARD_FIRST_NON_HEADER_FIELD_ID
-    HP_SMART_CARD_INK_EXTENDED_OEM_ID                   = 12,
-    HP_SMART_CARD_INK_HP_OEM_INK_DESIGNATOR             = 13,
+    HP_SMART_CARD_INK_EXTENDED_OEM_ID                   = 12,       // H.M.Wang seems not to be an item of Tag 1
+    HP_SMART_CARD_INK_HP_OEM_INK_DESIGNATOR             = 13,       // H.M.Wang seems not to be an item of Tag 1
     HP_SMART_CARD_INK_MANUFACTURE_ID                    = 14,
     HP_SMART_CARD_INK_MANUFACTURE_LINE                  = 15,
     HP_SMART_CARD_INK_MANUFACTURE_YEAR                  = 16,
@@ -126,7 +131,8 @@ enum HP_SMART_CARD_product_fields
     HP_SMART_CARD_INK_PULSE_WARMING_TEMP                = 71,
     HP_SMART_CARD_INK_MAX_TEMP                          = 72,
     HP_SMART_CARD_INK_DROP_VOLUME                       = 73,
-// H.M.Wang 2019-9-29 追加占位定义，文档中这里是blank，一行
+// H.M.Wang 2019-9-29 追加占位定义，文档中这里是blank，两行
+//  HP_BLANK
 //  HP_BLANK
 
     /* HP_SMART_CARD_INK_CTRDG_FIRST_INSTALLED_DATA_TAG  */         // TAG6 的 项目的索引，但是第二项分解为12个项目，缺少最后一行blank

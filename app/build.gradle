@@ -8,8 +8,8 @@ android {
         applicationId "com.industry.printer"
         minSdkVersion 17
         targetSdkVersion 17
-        versionCode 30117           //next: 30118
-        versionName "1908121011A"
+        versionCode 30022           //next: 30123
+        versionName "19081210122-Smartcard"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk {
@@ -49,6 +49,7 @@ dependencies {
     provided files('libs/systemapi.jar')
 
     compile project(':hardware');
+    compile project(':smartcard');
     compile 'com.android.support:support-v4:25.3.0'
     compile 'io.reactivex:rxjava:1.1.0'
     compile project(':zxingcore')

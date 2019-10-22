@@ -8,24 +8,24 @@ import org.apache.http.util.ByteArrayBuffer;
 import android.R.string;
 
 public class RFIDData {
-	
+
 	/*设置模块工作在 ISO14443 TYPE A 模式*/
-	public static final byte RFID_CMD_SETTYPE = 0x3A;
-	public static final byte RFID_DATA_TYPEA = 0x41;
+//	public static final byte RFID_CMD_SETTYPE = 0x3A;
+//	public static final byte RFID_DATA_TYPEA = 0x41;
 	/*Mifare one/Ultralight 卡寻卡：*/
-	public static final byte RFID_CMD_SEARCH = 0x46;
-	public static final byte RFID_DATA_CARDWAKEUP = 0x26;
-	public static final byte RFID_DATA_CARDALL = 0x52;
+//	public static final byte RFID_CMD_SEARCH = 0x46;
+//	public static final byte RFID_DATA_CARDWAKEUP = 0x26;
+//	public static final byte RFID_DATA_CARDALL = 0x52;
 	/*Ultralight 卡选卡*/
-	public static final byte RFID_CMD_SELECTCARD = 0x33;
+//	public static final byte RFID_CMD_SELECTCARD = 0x33;
 	/*Ultralight 卡读卡*/
-	public static final byte RFID_CMD_READCARD = 0x4b;
+//	public static final byte RFID_CMD_READCARD = 0x4b;
 	/*Ultralight 卡写卡*/
-	public static final byte RFID_CMD_WRITECARD = 0x35;
+//	public static final byte RFID_CMD_WRITECARD = 0x35;
 	/*Mifare one 卡防冲突*/
-	public static final byte RFID_CMD_AVOIDCONFLICT = 0x47;
-	public static final byte RFID_DATA_AVOIDCONFLICT = 0x04;
-	
+//	public static final byte RFID_CMD_AVOIDCONFLICT = 0x47;
+//	public static final byte RFID_DATA_AVOIDCONFLICT = 0x04;
+
 	private static final byte mIdentificator = 0x10;
 	private static final byte mHeader = 0x02;
 	private static final byte mTailer = 0x03;
