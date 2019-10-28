@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2016 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2016 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -24,10 +24,12 @@ typedef enum
 {
     HP_SMART_CARD_GPIO_HOST_RESET,                          /* GPIO line to reset host smart card */
     HP_SMART_CARD_GPIO_HOST_READY,                          /* GPIO line to check if host smart card is ready */
-    HP_SMART_CARD_SUPPLY_SELECT,                            /* GPIO line to select supply component */
+// Removed by H.M.Wang 2019-10-17
+//    HP_SMART_CARD_SUPPLY_SELECT,                            /* GPIO line to select supply component */
 
     /* Last entry */
-    HP_SMART_CARD_NUM_GPIO
+//    HP_SMART_CARD_NUM_GPIO
+// Removed by H.M.Wang 2019-10-17 end
 } HP_SMART_CARD_gpio_line_t;
 
 //-----------------------------------------------------------------------------
@@ -69,8 +71,10 @@ HP_SMART_CARD_bool_t HP_SMART_CARD_gpio_get_value(HP_SMART_CARD_gpio_line_t line
 // Inputs: line - which GPIO line to set
 //         value - HP_SMART_CARD_FALSE or HP_SMART_CARD_TRUE.
 //
-// Return: None
+// Return: HP_SMART_CARD_TRUE  - If success
+//         HP_SMART_CARD_FALSE - If failed
 //
 //*****************************************************************************
-void HP_SMART_CARD_gpio_set_value(HP_SMART_CARD_gpio_line_t line, HP_SMART_CARD_bool_t value);
+HP_SMART_CARD_bool_t HP_SMART_CARD_gpio_set_value(HP_SMART_CARD_gpio_line_t line, HP_SMART_CARD_bool_t value);
+
 #endif /* _HP_SMART_CARD_GPIO_IFC_H_ */

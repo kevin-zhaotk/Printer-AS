@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2016 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2016 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -23,6 +23,7 @@
 
 #include "hp_debug_log_internal.h"
 #include "hp_os_service.h"
+#include "common_log.h"
 
 #define BUFF_SIZE    256
 
@@ -80,6 +81,21 @@ void HP_DEBUG_printf(const char *module_id, unsigned char level, unsigned char l
         va_end(args);
 
         HP_OS_PRINT(buf);
+
+/* Added by H.M.Wang 2019-10-18 */
+        switch(level) {
+            case HP_DBG_LEVEL_ERROR:
+                LOGE("%s", buf);
+                break;
+            case HP_DBG_LEVEL_AUTH_INFO:
+            case HP_DBG_LEVEL_HSCC_INFO:
+                LOGI("%s", buf);
+                break;
+            default:
+                LOGD("%s", buf);
+                break;
+        }
+/* Added by H.M.Wang 2019-10-18 end */
     }
 }
 

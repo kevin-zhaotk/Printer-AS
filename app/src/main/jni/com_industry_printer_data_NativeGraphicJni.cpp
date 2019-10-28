@@ -268,7 +268,7 @@ JNIEXPORT jintArray JNICALL Java_com_industry_printer_data_NativeGraphicJni_GetP
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved){
-    LOGI("NativeGraphicJni.so Loaded.");
+    LOGI("NativeGraphicJni.so 1.0.2 Loaded.");
     return JNI_VERSION_1_4;     //这里很重要，必须返回版本，否则加载会失败。
 }
 

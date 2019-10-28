@@ -250,7 +250,7 @@ public class RFIDDevice implements RfidCallback{
 	 * 端口连接
 	 */
 	public boolean connect() {
-		Debug.d(TAG, "--->RFID connect");
+		Debug.d(TAG, "--->RFID connect: " + PlatformInfo.getRfidDevice());
 		mFd = open(PlatformInfo.getRfidDevice());
 		RFIDData data = new RFIDData(RFID_CMD_CONNECT, RFID_DATA_CONNECT);
 		byte[] readin = writeCmd(data);

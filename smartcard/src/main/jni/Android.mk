@@ -1,16 +1,15 @@
 LOCAL_PATH := $(call my-dir)
-
-
 include $(CLEAR_VARS)
 LOCAL_MODULE := libsmartcard
 LOCAL_MODULE_TAGS := optional
 LOCAL_LDLIBS += -L$(SYSROOT)/usr/lib -llog
-# LOCAL_SHARED_LIBRARIES := libcutil
-
-
+# LOCAL_SHARED_LIBRARIES := libutils \
+        libcutils
 
 LOCAL_SRC_FILES := com_smartcard.c \
-                    bcm2835.c \
+                    drivers/sc_gpio_driver.c \
+                    drivers/sc_gpio_adapter.c \
+                    drivers/sc_i2c_driver.c \
                     drivers/hp_smart_card_gpio.c \
                     drivers/hp_smart_card_i2c.c \
                     infrastructure/assert/hp_assert.c \

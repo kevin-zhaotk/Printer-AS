@@ -21,13 +21,92 @@
 #include "hp_smart_card.h"
 #include "hp_debug_log_internal.h"
 
+#include "internal_ifc/sc_gpio_adapter.h"
+
+/* Removed by H.M.Wang 2019-10-17
 #include "bcm2835.h"
 
-/* Modified by H.M.Wang 2019-9-22
 #define RESET_PIN       RPI_V2_GPIO_P1_13
 #define BUSY_PIN        RPI_V2_GPIO_P1_15
 #define SUPPLY_PIN      RPI_V2_GPIO_P1_12
+
+unsigned int                bcm2835_LibVersion = 0;
 */
+
+static HP_SMART_CARD_bool_t Initialized = HP_SMART_CARD_FALSE;
+
+void HP_SMART_CARD_gpio_init() {
+    // if already initialized, don't do it again
+    if (Initialized)
+        return;
+/* Cut by H.M.Wang 2019-9-22
+    // initialize lib
+    if (bcm2835_init() == 0)
+        return;                                                 // failure
+    bcm2835_LibVersion = bcm2835_version();
+
+    // set up GPIO pins
+    bcm2835_gpio_fsel(RESET_PIN, BCM2835_GPIO_FSEL_OUTP);               // Reset output
+    bcm2835_gpio_set_pud(RESET_PIN, BCM2835_GPIO_PUD_OFF);
+    bcm2835_gpio_fsel(BUSY_PIN, BCM2835_GPIO_FSEL_INPT);                // Busy input
+    bcm2835_gpio_fsel(SUPPLY_PIN, BCM2835_GPIO_FSEL_OUTP);              // Mux output
+    bcm2835_gpio_set_pud(SUPPLY_PIN, BCM2835_GPIO_PUD_OFF);
+
+    // set to I2C mode and baud rate
+    bcm2835_i2c_begin();
+    bcm2835_i2c_set_baudrate(100000);       // 100kHz
+*/
+    // Initialized
+    Initialized = HP_SMART_CARD_TRUE;
+    return;
+}
+
+HP_SMART_CARD_bool_t HP_SMART_CARD_gpio_get_value(HP_SMART_CARD_gpio_line_t line) {
+    // If not initialized, return TRUE (since that is interpretted as Busy)
+    if (!Initialized)
+        return HP_SMART_CARD_TRUE;
+
+    // Host Ready is the only valid line to read
+    if (line != HP_SMART_CARD_GPIO_HOST_READY)
+        return HP_SMART_CARD_TRUE;
+
+/* Removed by H.M.Wang 2019-10-17
+    // Read busy line and return the value
+    uint8_t lev = bcm2835_gpio_lev(GPIOLineToPin(line));
+*/
+/* Added by H.M.Wang 2019-10-17 */
+    uint8_t lev = SC_GPIO_ADAPTER_read_value(line);
+/* Added by H.M.Wang 2019-10-17 end */
+
+    //HP_DEBUG_printf("Pi",
+    //	HP_DBG_LEVEL_CUSTOMER, 5,
+    //	"GPIO GET from line %d returns %d\n", line, lev);
+
+    return((lev == LOW) ? HP_SMART_CARD_FALSE : HP_SMART_CARD_TRUE);
+}
+
+HP_SMART_CARD_bool_t HP_SMART_CARD_gpio_set_value(HP_SMART_CARD_gpio_line_t line, HP_SMART_CARD_bool_t value) {
+    // If not initialized, return
+    if (!Initialized)
+        return HP_SMART_CARD_FALSE;
+
+    // Host Reset and Supply Select are the only valid lines to write
+// Modified by H.M.Wang 2019-10-17
+//    if (line != HP_SMART_CARD_GPIO_HOST_RESET && line != HP_SMART_CARD_SUPPLY_SELECT)
+    if (line != HP_SMART_CARD_GPIO_HOST_RESET)
+        return HP_SMART_CARD_FALSE;
+
+/* Added by H.M.Wang 2019-10-17 */
+    int ret = SC_GPIO_ADAPTER_set_value(line, value);
+/* Added by H.M.Wang 2019-10-17 end */
+
+
+    //HP_DEBUG_printf("Pi",
+    //	HP_DBG_LEVEL_CUSTOMER, 5,
+    //	"GPIO line %d is %s\n", line, (value != 0 ? "SET" : "CLR"));
+
+    return ((ret == -1) ? HP_SMART_CARD_FALSE : HP_SMART_CARD_TRUE);
+}
 
 /* A20 GPIO Definition
     1 GPIOA: 0          // 0x00
@@ -171,100 +250,3 @@ gpio232
 gpio233
 
  */
-#define RESET_PIN       198             // PG6 = PG0(192) + 6
-#define BUSY_PIN        199             // PG7 = PG0(192) + 7
-//#define SUPPLY_PIN      RPI_V2_GPIO_P1_12
-
-unsigned int                bcm2835_LibVersion = 0;
-
-static HP_SMART_CARD_bool_t Initialized = HP_SMART_CARD_FALSE;
-
-
-void HP_SMART_CARD_gpio_init()
-{
-    // if already initialized, don't do it again
-    if (Initialized)
-        return;
-/* Cut by H.M.Wang 2019-9-22
-    // initialize lib
-    if (bcm2835_init() == 0)
-        return;                                                 // failure
-    bcm2835_LibVersion = bcm2835_version();
-
-    // set up GPIO pins
-    bcm2835_gpio_fsel(RESET_PIN, BCM2835_GPIO_FSEL_OUTP);               // Reset output
-    bcm2835_gpio_set_pud(RESET_PIN, BCM2835_GPIO_PUD_OFF);
-    bcm2835_gpio_fsel(BUSY_PIN, BCM2835_GPIO_FSEL_INPT);                // Busy input
-    bcm2835_gpio_fsel(SUPPLY_PIN, BCM2835_GPIO_FSEL_OUTP);              // Mux output
-    bcm2835_gpio_set_pud(SUPPLY_PIN, BCM2835_GPIO_PUD_OFF);
-
-    // set to I2C mode and baud rate
-    bcm2835_i2c_begin();
-    bcm2835_i2c_set_baudrate(100000);       // 100kHz
-*/
-    // Initialized
-    Initialized = HP_SMART_CARD_TRUE;
-    return;
-}
-
-uint8_t GPIOLineToPin(HP_SMART_CARD_gpio_line_t line)
-{
-    if (line == HP_SMART_CARD_GPIO_HOST_RESET)
-    {
-        return RESET_PIN;
-    }
-    else if (line == HP_SMART_CARD_GPIO_HOST_READY)
-    {
-        return BUSY_PIN;
-    }
-    else if (line == HP_SMART_CARD_SUPPLY_SELECT)
-    {
-        return SUPPLY_PIN;
-    }
-    return 0;
-}
-
-HP_SMART_CARD_bool_t HP_SMART_CARD_gpio_get_value(HP_SMART_CARD_gpio_line_t line)
-{
-    // If not initialized, return TRUE (since that is interpretted as Busy)
-    if (!Initialized)
-        return HP_SMART_CARD_TRUE;
-
-    // Host Ready is the only valid line to read
-    if (line != HP_SMART_CARD_GPIO_HOST_READY)
-        return HP_SMART_CARD_TRUE;
-
-    // Read busy line and return the value
-    uint8_t lev = bcm2835_gpio_lev(GPIOLineToPin(line));
-
-    //HP_DEBUG_printf("Pi",
-    //	HP_DBG_LEVEL_CUSTOMER, 5,
-    //	"GPIO GET from line %d returns %d\n", line, lev);
-
-    return((lev == LOW) ? HP_SMART_CARD_FALSE : HP_SMART_CARD_TRUE);
-}
-
-
-void HP_SMART_CARD_gpio_set_value(HP_SMART_CARD_gpio_line_t line, HP_SMART_CARD_bool_t value)
-{
-    // If not initialized, return
-    if (!Initialized)
-        return;
-
-    // Host Reset and Supply Select are the only valid lines to write
-    if (line != HP_SMART_CARD_GPIO_HOST_RESET && line != HP_SMART_CARD_SUPPLY_SELECT)
-        return;
-
-
-    // Set or Clear the line
-    if (value != 0)
-        bcm2835_gpio_set(GPIOLineToPin(line));
-    else
-        bcm2835_gpio_clr(GPIOLineToPin(line));
-
-    //HP_DEBUG_printf("Pi",
-    //	HP_DBG_LEVEL_CUSTOMER, 5,
-    //	"GPIO line %d is %s\n", line, (value != 0 ? "SET" : "CLR"));
-
-    return;
-}

@@ -15,7 +15,7 @@ android {
 
         ndk {
             moduleName "smartcard"
-            abiFilters "armeabi-v7a"//"armeabi",
+            abiFilters "armeabi-v7a", "x86" //"armeabi",
         }
     }
 
@@ -42,5 +42,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:support-v4:25.3.0'
     compile 'com.android.support.test:runner:0.5'
 }

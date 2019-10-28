@@ -59,6 +59,7 @@ import com.industry.printer.hardware.LRADCBattery;
 import com.industry.printer.hardware.RFIDDevice;
 import com.industry.printer.hardware.RFIDManager;
 import com.industry.printer.hardware.RTCDevice;
+import com.industry.printer.hardware.SmartCard;
 import com.industry.printer.hardware.UsbSerial;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
