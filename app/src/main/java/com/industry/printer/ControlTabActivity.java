@@ -1072,6 +1072,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					handlerSuccess(R.string.str_print_startok, pcMsg);
 					break;
 				case MESSAGE_PRINT_STOP:
+
+					FpgaGpioOperation.updateSettings(mContext, null, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 					// do nothing if not in printing state
 					if (mDTransThread == null || !mDTransThread.isRunning()) {
 						sendToRemote(Constants.pcOk(msg.getData().getString(Constants.PC_CMD)));
@@ -1430,8 +1432,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			case STATE_PRINTING:
 				mBtnStart.setClickable(false);
 				mTvStart.setTextColor(Color.DKGRAY);
-				mBtnStop.setClickable(true);
-				mTvStop.setTextColor(Color.BLACK);
+//				mBtnStop.setClickable(true);
+//				mTvStop.setTextColor(Color.BLACK);
 				mBtnOpenfile.setClickable(false);
 				mTvOpen.setTextColor(Color.DKGRAY);
 				mTVPrinting.setVisibility(View.VISIBLE);
@@ -1446,8 +1448,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			case STATE_STOPPED:
 				mBtnStart.setClickable(true);
 				mTvStart.setTextColor(Color.BLACK);
-				mBtnStop.setClickable(false);
-				mTvStop.setTextColor(Color.DKGRAY);
+//				mBtnStop.setClickable(false);
+//				mTvStop.setTextColor(Color.DKGRAY);
 				mBtnOpenfile.setClickable(true);
 				mTvOpen.setTextColor(Color.BLACK);
 				mTVPrinting.setVisibility(View.GONE);
