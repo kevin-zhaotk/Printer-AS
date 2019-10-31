@@ -52,6 +52,8 @@ import android.widget.TextView;
 
 import com.industry.printer.FileFormat.QRReader;
 import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Serial.SerialHandler;
+import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
@@ -63,6 +65,7 @@ import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.Utils.ZipUtil;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
+import com.industry.printer.Serial.SerialPort;
 import com.industry.printer.hardware.SmartCard;
 import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
 import com.industry.printer.ui.CustomerDialog.DialogListener;
@@ -238,12 +241,13 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			@Override
 			public void run() {
 				try{
-					while(true) {
-						Thread.sleep(5000);
-						ExtGpio.playClick();
-						SmartCard.open();
-					}
+//					while(true) {
+//						Thread.sleep(5000);
+//						ExtGpio.playClick();
+//						SmartCard.open();
+//					}
 				} catch (Exception e) {
+					Debug.e(TAG, e.getMessage());
 				}
 			}
 		}.start();

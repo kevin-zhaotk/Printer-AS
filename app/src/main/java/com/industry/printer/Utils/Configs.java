@@ -150,10 +150,14 @@ public class Configs {
 	public static final String UPGRADE_APK_FILE = "/Printer.apk";
 
 	// H.M.Wang 添加1行，升级必要的so文件
-	public static final String UPGRADE_NGJNI_FILE = "libNativeGraphicJni.so";
+	public static final String UPGRADE_NATIVEGRAPHIC_SO = "libNativeGraphicJni.so";
 
 	// H.M.Wang 2019-10-21 添加1行，升级smartcard的so库文件
-	public static final String UPGRADE_SCJNI_FILE = "libsmartcard.so";
+	public static final String UPGRADE_SMARTCARD_SO = "libsmartcard.so";
+
+	// H.M.Wang 2019-10-31 添加1行，升级SerialPort的so库文件
+	public static final String UPGRADE_SERIAL_SO = "libSerialPort.so";
+
 	/**
 	 * SYSTEM_CONFIG_FILE
 	 */

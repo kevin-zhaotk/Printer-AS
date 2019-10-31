@@ -10,6 +10,7 @@ extern "C" {
 
 #ifndef LOG_TAG
 #define LOG_TAG "SmartCard"
+//#define LOG_TAG strcat(strcat("SmartCard: ", __FILE__), __LINE__)
 #endif
 
 #define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, __VA_ARGS__)

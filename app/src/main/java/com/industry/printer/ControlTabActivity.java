@@ -38,10 +38,13 @@ import com.industry.printer.FileFormat.DotMatrixFont;
 import com.industry.printer.FileFormat.QRReader;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
+import com.industry.printer.Serial.EC_DOD_Protocol;
+import com.industry.printer.Serial.SerialHandler;
 import com.industry.printer.Socket_Server.Network;
 import com.industry.printer.Socket_Server.PCCommand;
 import com.industry.printer.Socket_Server.Paths_Create;
 import com.industry.printer.Socket_Server.Printer_Database;
+import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
@@ -481,6 +484,61 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		SocketBegin();// Beging Socket service start;
 		Querydb=new Printer_Database(mContext);
 
+		// H.M.Wang 2019-10-26 追加串口命令处理部分
+        if(SystemConfigFile.getInstance().getParam(39) == 1) {
+			final SerialHandler sHandler = SerialHandler.getInstance(true);
+			sHandler.setNormalCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
+				@Override
+				public void onCommandReceived(int cmd, byte[] data) {
+					Debug.d(TAG, "CMD = " + Integer.toHexString(cmd) + "; DATA = [" + ByteArrayUtils.toHexString(data) + "]");
+					switch(cmd) {
+						case EC_DOD_Protocol.CMD_CHECK_CHANNEL:                // 检查信道	0x0001
+//							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_CHECK_CHANNEL, 0, 0, 0, "");
+							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_CHECK_CHANNEL, 1, 0, 0, "");
+							break;
+						case EC_DOD_Protocol.CMD_SET_PRINT_DELAY:              // 设定喷头喷印延时	0x0008
+							if(data.length != 3) {
+								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_PRINT_DELAY, 1, 0, 1, "");
+							} else {
+								SystemConfigFile.getInstance().setParam(3, (0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]));
+//							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_PRINT_DELAY, 0, 0, 0, "");
+								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_PRINT_DELAY, 1, 0, 0, "");
+							}
+							break;
+						case EC_DOD_Protocol.CMD_SET_MOVE_SPEED:               // 设定物体移动速度	0x000a
+							if(data.length != 3) {
+								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_MOVE_SPEED, 1, 0, 1, "");
+							} else {
+								SystemConfigFile.getInstance().setParam(0, Math.round(1.6f * ((0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]))));
+//							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_MOVE_SPEED, 0, 0, 0, "Set Speed Done!");
+								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_MOVE_SPEED, 1, 0, 0, "");
+							}
+							break;
+						case EC_DOD_Protocol.CMD_SET_REVERSE:                  // 设定喷头翻转喷印	0x0010
+							SystemConfigFile.getInstance().setParam(1, (0x01 & data[1]));
+//							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_REVERSE, 0, 0, 0, "Set Reverse Done!");
+							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_REVERSE, 1, 0, 0, "");
+							break;
+						case EC_DOD_Protocol.CMD_START_PRINT:                  // 启动喷码机开始喷印	0x0015
+							mHandler.sendEmptyMessage(MESSAGE_OPEN_TLKFILE);
+//							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_START_PRINT, 0, 0, 0, "Launch Print Done!");
+							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_START_PRINT, 1, 0, 0, "");
+							break;
+						case EC_DOD_Protocol.CMD_STOP_PRINT:                   // 停机命令	0x0016
+							mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
+//							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_STOP_PRINT, 0, 0, 0, "Stop Print Done!");
+							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_STOP_PRINT, 1, 0, 0, "");
+							break;
+					}
+				}
+			});
+		}
+
+		if(SystemConfigFile.getInstance().getParam(41) == 1) {
+			Toast.makeText(mContext, "Launching Print...", Toast.LENGTH_SHORT).show();
+			mHandler.sendEmptyMessageDelayed(MESSAGE_OPEN_TLKFILE, 1000);
+		}
+		// End ---------------------------------
 	}
 
 	@Override
@@ -798,7 +856,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					break;
 
 				case MESSAGE_OPEN_TLKFILE:		//
-
+					// H.M.Wang 2019-10-27 修改原来代码BUG，当mObjPath == null的时候，并且(!printNext && !messageNew )的时候，会出现死机现象
+					if (mObjPath == null) {
+						ToastUtil.show(mContext, R.string.str_toast_no_message);
+						break;
+					}
+					// End -------------------------------
 					if (!printNext && !messageNew ) {
 						mHandler.sendEmptyMessage(MESSAGE_OPEN_MSG_SUCCESS);
 						break;

@@ -11,7 +11,7 @@ public class SmartCard {
 		System.loadLibrary("smartcard");
     }
 
-    public static void init() {
+    public static void loadLibrary() {
         Debug.d("SmartCard", "Loading smartcard library...");
     }
 

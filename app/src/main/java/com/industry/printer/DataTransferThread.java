@@ -1,6 +1,5 @@
 package com.industry.printer;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,15 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
 
-import org.apache.http.impl.conn.IdleConnectionHandler;
-
-import android.R.bool;
-import android.R.color;
-import android.R.integer;
-import android.app.LauncherActivity;
-import android.app.PendingIntent.OnFinished;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -27,15 +18,16 @@ import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Rfid.RfidScheduler;
 import com.industry.printer.Rfid.RfidTask;
-import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Serial.EC_DOD_Protocol;
+import com.industry.printer.Serial.SerialHandler;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.FileUtil;
-import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.data.BinCreater;
 import com.industry.printer.data.DataTask;
 import com.industry.printer.data.NativeGraphicJni;
 import com.industry.printer.hardware.FpgaGpioOperation;
+import com.industry.printer.Serial.SerialPort;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
 import com.industry.printer.object.BaseObject;
@@ -86,7 +78,7 @@ public class DataTransferThread {
 
 
 	private InkLevelListener mInkListener = null;
-	
+
 	public static DataTransferThread getInstance() {
 		if(mInstance == null) {
 			synchronized (DataTransferThread.class) {
@@ -313,8 +305,63 @@ public class DataTransferThread {
 	public boolean isRunning() {
 		return mRunning;
 	}
-	
+
 	public boolean launch(Context ctx) {
+		// H.M.Wang 2019-10-23 串口发送数据支持
+		final SerialHandler serialHandler =  SerialHandler.getInstance(false);
+		if(SystemConfigFile.getInstance().getParam(39) == 1) {
+			ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+			for(BaseObject baseObject: objList) {
+				if(baseObject instanceof CounterObject) {
+					int bits = ((CounterObject)baseObject).getBits();
+					StringBuilder sb = new StringBuilder();
+					for(int i=0; i<bits; i++) {
+						sb.append(" ");
+					}
+					((CounterObject)baseObject).setSerialContent(sb.toString());
+				}
+			}
+
+			serialHandler.setPrintCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
+				@Override
+				public void onCommandReceived(int cmd, byte[] data) {
+					if(cmd == EC_DOD_Protocol.CMD_TEXT) {                         // 发送一条文本	0x0013
+//						try {
+							String datastring = new String(data, 7, data.length - 7);
+							Debug.d(TAG, "Serial String = [" + datastring + "]");
+//							Integer.parseInt(datastring);
+							ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+
+							int strIndex = 0;
+							boolean needUpdate = false;
+
+							for(BaseObject baseObject: objList) {
+								if(baseObject instanceof CounterObject) {
+									Debug.d(TAG, "Counter Bits: " + ((CounterObject)baseObject).getBits());
+									try {
+										Debug.d(TAG, datastring.substring(strIndex, strIndex + ((CounterObject)baseObject).getBits()));
+										((CounterObject)baseObject).setSerialContent(datastring.substring(strIndex, strIndex + ((CounterObject)baseObject).getBits()));
+										strIndex += ((CounterObject)baseObject).getBits();
+										needUpdate = true;
+									} catch (IndexOutOfBoundsException e) {
+										serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 0, 0, 1, "Not sufficient data bits!");
+										Debug.e(TAG, "Not sufficient data bits .");
+									}
+								}
+							}
+							mNeedUpdate = needUpdate;
+							serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 0, 0, 0, "Set Print Text Done!");
+//						} catch(NumberFormatException e) {
+//							Debug.e(TAG, "Only digital string accepted.");
+//						}
+					}
+				}
+			});
+		} else {
+			serialHandler.setPrintCommandListener(null);
+		}
+		// End --------------------
+
 		mRunning = true;
 
 		mPrinter = new PrintTask();
@@ -329,7 +376,12 @@ public class DataTransferThread {
 	
 	public void finish() {
 		mRunning = false;
-		
+
+		// H.M.Wang 2019-10-23 串口发送数据支持
+		SerialHandler serialHandler =  SerialHandler.getInstance(false);
+		serialHandler.setPrintCommandListener(null);
+		// End --------------------
+
 		PrintTask t = mPrinter;
 		mPrinter = null;
 		mHandler.removeMessages(MESSAGE_DATA_UPDATE);

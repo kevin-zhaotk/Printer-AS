@@ -154,6 +154,18 @@ public class CounterObject extends BaseObject {
 //		Debug.d(TAG, "setContent content="+content+", value="+mValue+", mMax="+mMax);
 	}
 
+	// H.M.Wang 追加对串口设置的数据的支持
+	private String mSerialContent = "";
+
+	public void setSerialContent(String content) {
+		mSerialContent = content;
+	}
+
+	public String getSerialContent() {
+		return mSerialContent;
+	}
+	// End --------------------------
+
 	public String getNext()
 	{
 		Debug.d(TAG, "--->getNext mContent="+mContent+", mValue="+mValue+", mSteplen=" + mStepLen + " direction=" + mDirection);

@@ -62,6 +62,62 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init
 
     LOGI("Initializing smart card library....\n");
 
+/*
+// 测试I2C访问是否能够正常实施
+    SC_I2C_DRIVER_RESULT ret1 = SC_I2C_DRIVER_open(0x01, 0x68);
+    SC_I2C_DRIVER_write(0x0f,"0x55");
+    uint8_t result[1024];
+
+    SC_I2C_DRIVER_read(1, 0x0f, &result);
+
+    LOGD("I2C Read: %s", result);
+*/
+    int fd = open("/dev/ttyS4", O_RDWR);
+    LOGD("open [/dev/ttyS4] as %d", fd);
+
+    struct termios options;
+
+    if  ( tcgetattr( fd,&options)  !=  0)
+    {
+        perror("SetupSerial 1");
+
+        return(FALSE);
+    }
+
+    options.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+    options.c_oflag &= ~OPOST;
+    options.c_cflag |= CLOCAL | CREAD;
+    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    options.c_lflag &= (~ECHOE);
+    tcsetattr(fd,TCSAFLUSH,&options);
+
+    if(fd > 0) {
+        write(fd, "[Hello]", 7);
+        LOGD("write [Hello]");
+        char aaa;
+        char abc[16];
+
+        LOGD("reading...");
+/*        int i=0;
+        while(read(fd, &aaa, 1) > 0) {
+            abc[i++] = aaa;
+            LOGD("%02X ", aaa);
+        }
+*/
+        int ret = read(fd, abc, 16);
+        LOGD("read [%d]", ret);
+        write(fd, "[OK]", 4);
+
+        LOGD("[%02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X]",
+             abc[0], abc[1], abc[2], abc[3], abc[4], abc[5], abc[6], abc[7], abc[8], abc[9], abc[10], abc[11], abc[12], abc[13], abc[14], abc[15]);
+    } else {
+        LOGE("Serial port failed.");
+    }
+
+    close(fd);
+
+    return 0;
+
     // Register for assert callback
     LIB_HP_SMART_CARD_register_assert_callback(assert_handler);
 
@@ -70,6 +126,11 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init
 
     // Initialise the library
     LIB_HP_SMART_CARD_init();
+
+    // Command sent [1,0xF0]
+    // Command sent Command sent [0x0,0x80,0x06,0x48,0x65,0x6C,0x6C,0x6F,0x00]
+    // Command sent [1,0xF0]
+    // Command sent [3,0x80]
 
 /* Added by H.M.Wang 2019-10-17 */
     if(LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_HOST) != HP_SMART_CARD_OK) {
@@ -1718,7 +1779,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     JNIEnv* env = NULL;
     jint result = -1;
 
-    LOGI("SmartCard.so 1.0.4 Loaded.");
+    LOGI("SmartCard.so 1.0.36 Loaded.");
 
     if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
         //__android_log_print(ANDROID_LOG_INFO, JNI_TAG,"ERROR: GetEnv failed\n");
@@ -1728,6 +1789,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     if (register_com_smartcard(env) < 0) {
         goto fail;
     }
+
     /* success -- return valid version number */
     result = JNI_VERSION_1_4;
 

@@ -155,8 +155,11 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
             if (HOST_SMART_CARD_NO_RESPONSE ==
                 _wait_till_ready(retries * retries * (cmd_rsp_p->delay_till_rsp_usec)))
             {
-                HP_ASSERT(0);
-                continue;                                                                                                                                                                                                                                                                                                                 // Must reset and resend the command
+                HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
+                                HP_DBG_LEVEL_ERROR, 0,
+                                "ERROR - HOST_SMART_CARD_NO_RESPONSE\n");
+//                HP_ASSERT(0);
+//                continue;                                                                                                                                                                                                                                                                                                                 // Must reset and resend the command
             }
         }
         if (cmd_rsp_p->rsp_p)

@@ -1,5 +1,6 @@
 package com.industry.printer.data;
 
+import com.industry.printer.Serial.SerialPort;
 import com.industry.printer.Utils.Debug;
 
 /**
@@ -7,12 +8,14 @@ import com.industry.printer.Utils.Debug;
  */
 
 public class NativeGraphicJni {
+    private static final String TAG = NativeGraphicJni.class.getSimpleName();
+
     static {
 		System.loadLibrary("NativeGraphicJni");
     }
 
-    public static void init() {
-        Debug.d("NativeGraphicJni", "Loading NativeGraphicJni library...");
+    public static void loadLibrary() {
+        Debug.d(TAG, "Loading NativeGraphicJni library...");
     }
 
     public static native int[] ShiftImage(int[] src, int width, int height, int head, int orgLines, int tarLines);

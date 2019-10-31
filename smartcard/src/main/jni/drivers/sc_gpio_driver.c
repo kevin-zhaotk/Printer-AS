@@ -42,16 +42,16 @@ int SC_GPIO_DRIVER_open(char *dev) {
     LOGI(">>> SC_GPIO_DRIVER_open: %s", dev);
 
     if(dev == NULL)	{
-        LOGE("Error: SC_GPIO_DRIVER_open - null device");
+        LOGE(">>> SC_GPIO_DRIVER_open: [null device]");
         return SC_GPIO_DRIVER_FAIL;
     }
 
     int fd = open(dev, O_RDWR);
 
     if(fd == SC_GPIO_DRIVER_FAIL) {
-        LOGE("Error: SC_GPIO_DRIVER_open - %s", strerror(errno));
+        LOGE(">>> SC_GPIO_DRIVER_open: Error[%s]", strerror(errno));
     } else {
-        LOGD("Gpio port[%s] opened as [%d] ", dev, fd);
+        LOGD(">>> SC_GPIO_DRIVER_open: opened [%s] as [%d] ", dev, fd);
     }
 
     return fd;
@@ -116,19 +116,19 @@ int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count) {
 **********************************************************************************/
 
 int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
-    LOGI(">>> SC_GPIO_DRIVER_ioctl: 0x%02X[0x%08X] -> %d", cmd, arg1, fd);
+    LOGI(">>> SC_GPIO_DRIVER_ioctl: 0x%02X[0x%04X] -> %d", cmd, arg1, fd);
 
     if(fd <= 0) {
-        LOGE("Error: SC_GPIO_DRIVER_ioctl - invalid device");
+        LOGE(">>> SC_GPIO_DRIVER_ioctl: Error[%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
 
-    int ret = ioctl(fd, cmd, arg1);
+    uint8_t ret = ioctl(fd, cmd, arg1);
 //	if(ret == EINVAL) {
-    if(ret < SC_GPIO_DRIVER_SUCCESS) {
-        LOGE("Error: SC_GPIO_DRIVER_ioctl - %s", strerror(errno));
+    if(ret != SC_GPIO_DRIVER_SUCCESS) {
+        LOGE(">>> SC_GPIO_DRIVER_ioctl: Error[%s](Retrun value:%x)", strerror(errno), ret);
     } else {
-        LOGD("ioctl return value: [0x%04X]", ret);
+        LOGD(">>> SC_GPIO_DRIVER_ioctl: return value: [0x%02X]", ret);
     }
 
     return ret;
@@ -177,17 +177,17 @@ int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
     LOGI(">>> SC_GPIO_DRIVER_read: %d, %d", fd, pin);
 
     if(fd <= 0) {
-        LOGE("Error: SC_GPIO_DRIVER_read - invalid device");
+        LOGE(">>> SC_GPIO_DRIVER_read: Error[%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
 
-    uint8_t buf;
+    uint8_t buf = 0;
 
     size_t ret = read(fd, &buf, sizeof(buf));
     if(ret == SC_GPIO_DRIVER_FAIL) {
-        LOGE("Error: SC_GPIO_DRIVER_read - %s", strerror(errno));
+        LOGE(">>> SC_GPIO_DRIVER_read: Error[%s]", strerror(errno));
     } else {
-        LOGD("read value: [%d] - %d bytes read", buf, ret);
+        LOGD(">>> SC_GPIO_DRIVER_read: [%d(0x%X)] - %d bytes read", buf, buf, ret);
     }
 
     return buf;
@@ -209,15 +209,15 @@ int SC_GPIO_DRIVER_close(int fd) {
     LOGI(">>> SC_GPIO_DRIVER_close: %d", fd);
 
     if(fd <= 0) {
-        LOGE("Error: SC_GPIO_DRIVER_close - invalid device");
+        LOGE(">>> SC_GPIO_DRIVER_close: Error[%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
 
-    int	ret = close(fd);
+    int ret = close(fd);
     if(ret != SC_GPIO_DRIVER_SUCCESS) {
-        LOGE("Close failed: %s", strerror(errno));
+        LOGE(">>> SC_GPIO_DRIVER_close: Error[%s]", strerror(errno));
     } else {
-        LOGD("Gpio port[%d] closed.", fd);
+        LOGD(">>> SC_GPIO_DRIVER_close: [%d] closed.", fd);
     }
 
     return ret;

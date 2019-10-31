@@ -28,7 +28,8 @@
 #define BUFF_SIZE    256
 
 static uint8_t  _current_debug_level    = (uint8_t) HP_DEBUG_LEVEL_DEFAULT;
-static uint8_t  _current_log_depth      = 0;
+//static uint8_t  _current_log_depth      = 0;
+static uint8_t  _current_log_depth      = 6;
 
 void HP_DEBUG_printf(const char *module_id, unsigned char level, unsigned char loglevel, const char *format, ...)
 {
@@ -72,6 +73,7 @@ void HP_DEBUG_printf(const char *module_id, unsigned char level, unsigned char l
     }
 
     /* Verify if this level is enabled */
+//    LOGD("_current_log_depth = %d; loglevel = %d ", _current_log_depth, loglevel);
     if ((loglevel <= _current_log_depth) ||
         (level == HP_DBG_LEVEL_ERROR) ||
         (level & _current_debug_level))

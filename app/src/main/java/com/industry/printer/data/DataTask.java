@@ -349,7 +349,15 @@ public class DataTask {
 				continue;
 			} else if(o instanceof CounterObject)
 			{
-				String str = prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext();
+				// H.M.Wang 2019-10-27 修改。适应从串口来的打印数据
+				String str = "";
+				if(SystemConfigFile.getInstance().getParam(39) == 1) {
+					str = ((CounterObject) o).getSerialContent();
+				} else {
+					str = prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext();
+				}
+//				String str = prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext();
+				// End ------------------------------------------
 				BinInfo info = mVarBinList.get(o);
 				Debug.d(TAG, "--->object index=" + o.getIndex());
 				if (info == null) {

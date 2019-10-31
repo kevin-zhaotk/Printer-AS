@@ -1,5 +1,6 @@
 package com.industry.printer;
 
+import com.industry.printer.Serial.SerialPort;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.CrashCatcher;
 import com.industry.printer.Utils.Debug;
@@ -58,33 +59,46 @@ public class PrinterApplication extends Application {
 					os.writeBytes("chmod 777 /system/lib\n");
 					sleep(100);
 
-					Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_NGJNI_FILE);
-					os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_NGJNI_FILE);
+                    AssetManager assetManager = sInstance.getAssets();
+
+                    // 复制图片处理库
+					Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_NATIVEGRAPHIC_SO);
+					os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_NATIVEGRAPHIC_SO);
 					sleep(100);
 
-					AssetManager assetManager = sInstance.getAssets();
-					InputStream is = assetManager.open(Configs.UPGRADE_NGJNI_FILE);
+					InputStream is = assetManager.open(Configs.UPGRADE_NATIVEGRAPHIC_SO);
 
-					FileUtil.writeFile("/system/lib/" + Configs.UPGRADE_NGJNI_FILE, is);
+					FileUtil.writeFile("/system/lib/" + Configs.UPGRADE_NATIVEGRAPHIC_SO, is);
 
 					is.close();
-
-					Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_SCJNI_FILE);
-					os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_SCJNI_FILE);
+/* 暂时屏蔽2019-10-31
+                    // 复制SmartCard库
+					Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_SMARTCARD_SO);
+					os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_SMARTCARD_SO);
 					sleep(100);
 
-					is = assetManager.open(Configs.UPGRADE_SCJNI_FILE);
+					is = assetManager.open(Configs.UPGRADE_SMARTCARD_SO);
 
-					FileUtil.writeFile("/system/lib/" + Configs.UPGRADE_SCJNI_FILE, is);
+					FileUtil.writeFile("/system/lib/" + Configs.UPGRADE_SMARTCARD_SO, is);
 
 					is.close();
+*/
+                    // 复制SerialPort库
+                    Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_SERIAL_SO);
+                    os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_SERIAL_SO);
+                    sleep(100);
 
-//					Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_NGJNI_FILE);
-//					os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_NGJNI_FILE);
-					os.writeBytes("exit\n");
+                    is = assetManager.open(Configs.UPGRADE_SERIAL_SO);
 
-					NativeGraphicJni.init();
-					SmartCard.init();
+                    FileUtil.writeFile("/system/lib/" + Configs.UPGRADE_SERIAL_SO, is);
+
+                    is.close();
+
+                    os.writeBytes("exit\n");
+
+					NativeGraphicJni.loadLibrary();
+//					SmartCard.loadLibrary();
+					SerialPort.loadLibrary();
 
                 } catch (Exception e) {
 					Debug.e(TAG, "--->e: " + e.getMessage());

@@ -8,12 +8,12 @@ android {
         applicationId "com.industry.printer"
         minSdkVersion 17
         targetSdkVersion 17
-        versionCode 30022           //next: 30123
-        versionName "19081210122-Smartcard"
+        versionCode 30136           //next: 30136
+        versionName "19081210131Z"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk {
-            moduleName "NativeGraphicJni"
+            moduleName "MainJni"
             abiFilters "armeabi-v7a", "x86" //"armeabi",
         }
     }

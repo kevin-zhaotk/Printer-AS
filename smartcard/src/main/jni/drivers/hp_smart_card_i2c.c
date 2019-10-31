@@ -213,13 +213,15 @@ HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write_direct(uint8_t i2c_addr,
 
     char data_buff[1024];
     memset(data_buff, 0x00, 1024);
+    char buf[10];
 
     for (int i = 0; i < num_bytes_to_write; i++) {
         if(i == 0) {
-            sprintf(data_buff, "0x%02X", data[i]);
+            sprintf(buf, "0x%02X", data[i]);
         } else {
-            sprintf(data_buff, ",0x%02X", data[i]);
+            sprintf(buf, ",0x%02X", data[i]);
         }
+        strcat(data_buff, buf);
     }
 
     ret = SC_I2C_DRIVER_write(addr, data_buff);
