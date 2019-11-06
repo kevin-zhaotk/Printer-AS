@@ -72,51 +72,6 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init
 
     LOGD("I2C Read: %s", result);
 */
-    int fd = open("/dev/ttyS4", O_RDWR);
-    LOGD("open [/dev/ttyS4] as %d", fd);
-
-    struct termios options;
-
-    if  ( tcgetattr( fd,&options)  !=  0)
-    {
-        perror("SetupSerial 1");
-
-        return(FALSE);
-    }
-
-    options.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-    options.c_oflag &= ~OPOST;
-    options.c_cflag |= CLOCAL | CREAD;
-    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-    options.c_lflag &= (~ECHOE);
-    tcsetattr(fd,TCSAFLUSH,&options);
-
-    if(fd > 0) {
-        write(fd, "[Hello]", 7);
-        LOGD("write [Hello]");
-        char aaa;
-        char abc[16];
-
-        LOGD("reading...");
-/*        int i=0;
-        while(read(fd, &aaa, 1) > 0) {
-            abc[i++] = aaa;
-            LOGD("%02X ", aaa);
-        }
-*/
-        int ret = read(fd, abc, 16);
-        LOGD("read [%d]", ret);
-        write(fd, "[OK]", 4);
-
-        LOGD("[%02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X, %02X]",
-             abc[0], abc[1], abc[2], abc[3], abc[4], abc[5], abc[6], abc[7], abc[8], abc[9], abc[10], abc[11], abc[12], abc[13], abc[14], abc[15]);
-    } else {
-        LOGE("Serial port failed.");
-    }
-
-    close(fd);
-
-    return 0;
 
     // Register for assert callback
     LIB_HP_SMART_CARD_register_assert_callback(assert_handler);

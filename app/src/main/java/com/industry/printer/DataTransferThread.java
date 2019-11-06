@@ -309,7 +309,7 @@ public class DataTransferThread {
 	public boolean launch(Context ctx) {
 		// H.M.Wang 2019-10-23 串口发送数据支持
 		final SerialHandler serialHandler =  SerialHandler.getInstance(false);
-		if(SystemConfigFile.getInstance().getParam(39) == 1) {
+		if(SystemConfigFile.getInstance().getParam(40) == 1) {
 			ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
 			for(BaseObject baseObject: objList) {
 				if(baseObject instanceof CounterObject) {

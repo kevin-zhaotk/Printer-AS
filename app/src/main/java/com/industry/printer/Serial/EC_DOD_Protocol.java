@@ -114,7 +114,7 @@ public class EC_DOD_Protocol {
                 return ERROR_INVALID_ETX;
             }
 
-            if(msg.length < 4) {
+            if(msg.length < 8) {                // 7E AA AA XX XX ... CC CC 7F
                 return ERROR_UNKNOWN_CMD;
             }
 

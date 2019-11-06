@@ -222,6 +222,10 @@ char* toHexString(const char* buf, int len) {
     return ret_buf;
 }
 */
+
+#define MAX_RETRIVAL_BUFFER_LEN  920
+#define MAX_TEMP_BUFFER_LEN     1024
+
 /*
 * Class:     com_industry_printer_Serial_SerialPort
 * Method:    read
@@ -252,11 +256,12 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
     mKeepRunning = true;
 
     maxfd = 1;
-    timeout.tv_sec = 1;
-    timeout.tv_usec = 0;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 100;
 
-    char recv_buf[1024];
-    memset(recv_buf, 0x00, 1024);
+    char recv_buf[MAX_RETRIVAL_BUFFER_LEN];
+    memset(recv_buf, 0x00, MAX_RETRIVAL_BUFFER_LEN);
+
     int recv_num = 0;
     int timeout_count = 0;
 
@@ -267,14 +272,14 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
 //        usleep(100000);
         select(maxfd, &set, NULL, NULL, &timeout);
         if(FD_ISSET(fd, &set)) {
-            char buf[1024];
-            memset(buf, 0x00, 1024);
+            char temp_buf[MAX_TEMP_BUFFER_LEN];
+            memset(temp_buf, 0x00, MAX_TEMP_BUFFER_LEN);
 
-            int rnum = read(fd, buf, 1024);
+            int rnum = read(fd, temp_buf, MAX_TEMP_BUFFER_LEN);
 
             if(rnum > 0) {
-                rnum = ((recv_num + rnum) > 920 ? (920 - recv_num) : rnum);
-                memcpy(&recv_buf[recv_num], buf, (recv_num + rnum));
+                rnum = ((recv_num + rnum) > MAX_RETRIVAL_BUFFER_LEN ? (MAX_RETRIVAL_BUFFER_LEN - recv_num) : rnum);
+                memcpy(&recv_buf[recv_num], temp_buf, (recv_num + rnum));
                 recv_num += rnum;
                 timeout_count = 0;
             } else if(rnum < 0) {
@@ -289,7 +294,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
                     env->CallVoidMethod(object, method, ret_buf);
 
                     recv_num = 0;
-                    memset(recv_buf, 0x00, 1024);
+                    memset(recv_buf, 0x00, MAX_RETRIVAL_BUFFER_LEN);
                     timeout_count = 0;
                 }
             }

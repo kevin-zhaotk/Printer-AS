@@ -13,6 +13,9 @@ public class SerialHandler {
 
     private final String SERIAL_PORT = "/dev/ttyS4";
 
+    private final int ERROR_MASK = 0xffff0000;
+    private final int CMD_MASK = 0x0000ffff;
+
     private SerialPort mSerialPort = null;
 
     public interface OnSerialPortCommandListenner {
@@ -63,7 +66,7 @@ public class SerialHandler {
     private void dispatchProtocol(int result, byte[] data) {
         if(!isInitialized()) return;
 
-        switch(result & 0xffff0000) {
+        switch(result & ERROR_MASK) {
             case EC_DOD_Protocol.ERROR_INVALID_STX:                // 起始标识错误
                 sendCommandProcessResult(0, 1, 0, 1, "");
 //                mSerialPort.writeStringSerial( "<!-- Invalid STX -->");
@@ -73,7 +76,7 @@ public class SerialHandler {
 //                mSerialPort.writeStringSerial( "<!-- Invalid ETX -->");
                 break;
             case EC_DOD_Protocol.ERROR_CRC_FAILED:                 // CRC校验失败
-                sendCommandProcessResult(result & 0x0000ffff, 1, 0, 1, "");
+                sendCommandProcessResult(result & CMD_MASK, 1, 0, 1, "");
 //                mSerialPort.writeStringSerial("<!-- CRC Failed -->");
                 break;
             case EC_DOD_Protocol.ERROR_UNKNOWN_CMD:                     // 解析帧失败
@@ -84,7 +87,7 @@ public class SerialHandler {
 //                mSerialPort.writeStringSerial("<!-- Failed -->");
 //                break;
             case EC_DOD_Protocol.ERROR_SUCESS:
-                dispatchCommands(result & 0x0000ffff, data);
+                dispatchCommands(result & CMD_MASK, data);
                 break;
             default:
                 sendCommandProcessResult(0, 1, 0, 1, "");

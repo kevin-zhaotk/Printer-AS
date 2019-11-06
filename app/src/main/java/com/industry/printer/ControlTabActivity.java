@@ -485,7 +485,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		Querydb=new Printer_Database(mContext);
 
 		// H.M.Wang 2019-10-26 追加串口命令处理部分
-        if(SystemConfigFile.getInstance().getParam(39) == 1) {
+        if(SystemConfigFile.getInstance().getParam(40) == 1) {
 			final SerialHandler sHandler = SerialHandler.getInstance(true);
 			sHandler.setNormalCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
 				@Override
