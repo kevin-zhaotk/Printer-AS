@@ -478,10 +478,11 @@ public class BinInfo {
 			n = 128;
 
 			byte[] code = v.getBytes();
-			if(code[0] < 0x7F && code[0] >= 0) {
-				n = code[0];
-			}
-/* H.M.Wang2019-10-31 取消查表，改为直接用ASCII码访问
+//			if(code[0] < 0x7F && code[0] >= 0) {
+//				n = code[0];
+//			}
+
+// H.M.Wang2019-10-31 取消查表，改为直接用ASCII码访问
 
 
 			for(int k=0; k<SERRIAL_CODES.length; k++) {
@@ -490,7 +491,7 @@ public class BinInfo {
 					break;
 				}
 			}
-*/
+
 			// H.M.Wang 追加下列6行。为计数器清楚前置0
 			if(bClearZero && n == 0 && !bSkipThisZero && i<var.length()-1 && flagClearZero) {
 				bFillBlank = true;
