@@ -201,12 +201,13 @@ public class DataTransferThread {
 					purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
 					return;
 				}
-				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
-				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
-
 
 				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
-				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
+//				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
+//
+//
+//				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
+//				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
 				if (needRestore) {
 					launch(mContext);
 					needRestore = false;
