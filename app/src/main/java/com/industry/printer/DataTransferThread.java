@@ -453,8 +453,8 @@ public class DataTransferThread {
 		int headIndex = configFile.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
 		int heads = PrinterNozzle.getInstance(headIndex).mHeads;
 		/**如果是4合2的打印头，需要修改为4头*/
-		heads = configFile.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0 ? configFile.getParam(42) : heads;
-		for (int i = 0; i < heads; i++) {
+//		heads = configFile.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0 ? configFile.getParam(42) : heads;
+		for (int i = 0; i < heads * configFile.getHeadFactor(); i++) {
 			mScheduler.add(new RfidTask(i, mContext));
 		}
 		mScheduler.load();
@@ -556,15 +556,18 @@ public class DataTransferThread {
 		int index = isLanPrint() ? 0 : index();
 
 		int dotCount = getDotCount(mDataTask.get(index), head);
-
+		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
 // H.M.Wang2019-9-28 考虑1带多的情况
-		int one2multiple = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_ONE_MULTIPLE);
-		if( one2multiple == 2 || 		// 1带2
-			one2multiple == 3 || 		// 1带3
-			one2multiple == 4  			// 1带4
-		) {
-			dotCount = getDotCount(mDataTask.get(index), 0);		// 使用第一个头的数据
-		}
+//		int one2multiple = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_ONE_MULTIPLE);
+//		if( one2multiple == 2 || 		// 1带2
+//			one2multiple == 3 || 		// 1带3
+//			one2multiple == 4  			// 1带4
+//		) {
+//			dotCount = getDotCount(mDataTask.get(index), 0);		// 使用第一个头的数据
+//		}
+
+// Kevin.Zhao 2019-11-12 1带多用12，13，14表示1带2，1带3，1带4....
+		dotCount = getDotCount(mDataTask.get(index), config.getMainHeads(head));
 
 		// Debug.d(TAG, "--->getInkThreshold  head: " + head + "   index = " + index + " dataTask: " + mDataTask.size());
 		Debug.d(TAG, "--->dotCount: " + dotCount + "  bold=" + bold);
@@ -573,7 +576,7 @@ public class DataTransferThread {
 //			return 1;
 			return 65536 * 8;
 		}
-		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
+
 		if (config.getParam(2) <= 0) {
 			bold = 1;
 		} else {

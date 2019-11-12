@@ -9,3 +9,4 @@ systemapi/build
 systemapi/*.iml
 app/build
 app/.externalNativeBuild
+smartcard/.externalNativeBuild

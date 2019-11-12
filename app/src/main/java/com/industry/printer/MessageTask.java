@@ -1085,6 +1085,7 @@ public class MessageTask {
 		if (bmp2.exists()) {
 			previewBmp = messageFolder + MSG_PREV_IMAGE2;
 		}
+		Debug.i(TAG, "--->previewBmp: " + previewBmp);
 		return previewBmp;
 	}
 	
@@ -1095,6 +1096,7 @@ public class MessageTask {
 		if (bmp2.exists()) {
 			previewBmp = messageFolder + MSG_PREV_IMAGE2;
 		}
+		Debug.i(TAG, "--->previewBmp: " + previewBmp);
 		return previewBmp;
 	}
 	

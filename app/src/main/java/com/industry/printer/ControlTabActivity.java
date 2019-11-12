@@ -32,6 +32,7 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 
 import com.industry.printer.Constants.Constants;
 import com.industry.printer.FileFormat.DotMatrixFont;
@@ -572,11 +573,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		mTVPrinting.setText(R.string.str_state_printing);
 		mTVStopped.setText(R.string.str_state_stopped);
 		mtvInk.setText(R.string.str_state_inklevel);
-		if (mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0) {
-			heads = mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS);
-		} else {
-			heads = mSysconfig.getPNozzle().mHeads;
-		}
+
+		heads = mSysconfig.getPNozzle().mHeads * mSysconfig.getHeadFactor();
+
 		Debug.d(TAG, "--->onConfigChanged: " + heads + "   -- " + RFIDManager.TOTAL_RFID_DEVICES);
 		if (heads > RFIDManager.TOTAL_RFID_DEVICES) {
 			mRfidManager = RFIDManager.getInstance(mContext,true);
@@ -636,7 +635,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	private void switchRfid() {
 		mRfid += 1;
 
-		int heads = mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0 ? mSysconfig.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) : mSysconfig.getPNozzle().mHeads;
+		int heads = mSysconfig.getPNozzle().mHeads * mSysconfig.getHeadFactor();
 
 		if (mRfid >= RFIDManager.TOTAL_RFID_DEVICES || mRfid >= heads) {
 			mRfid = 0;
@@ -1381,6 +1380,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		int cutWidth = 0;
 		float scale = 1;
 		if (bmp == null) {
+			Debug.e(TAG, "--->dispPreview error: bmp is NULL!!!");
 			return;
 		}
 		

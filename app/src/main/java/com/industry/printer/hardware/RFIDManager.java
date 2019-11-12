@@ -151,6 +151,7 @@ public class RFIDManager implements RfidCallback{
 	
 	public RFIDManager(Context ctx) {
 		SystemConfigFile configFile = SystemConfigFile.getInstance(ctx);
+
 //		if (configFile.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0) {
 //			TOTAL_RFID_DEVICES = configFile.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS);
 //			Debug.d(TAG, "--->heads: " + TOTAL_RFID_DEVICES);
@@ -159,6 +160,10 @@ public class RFIDManager implements RfidCallback{
 //			Debug.d(TAG, "--->heads: " + TOTAL_RFID_DEVICES);
 //		}
 		TOTAL_RFID_DEVICES = configFile.getPNozzle().mHeads;
+
+		// 根据参数38调整减锁数量
+		TOTAL_RFID_DEVICES *= configFile.getHeadFactor();
+
 	}
 	
 	

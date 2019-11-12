@@ -1229,5 +1229,44 @@ public class SystemConfigFile{
 //		}
 //		return heads;
 //	}
+
+	/**
+	 * 根据参数38计算真实的解锁数
+	 * 1带多：
+	 * 	 12，13，14....,18 分别表示 1带2，1带3，... , 1带8
+	 * 2带多：
+	 * 	24，26，28 分别表示 2带4，2带6，2带8
+	 *
+	 * 1带多，要根据情况计算解锁数量。1带2解两个锁，递推。
+	 * 2带多，不变
+	 * @return
+	 */
+	public int getHeadFactor() {
+		int param = getParam(INDEX_ONE_MULTIPLE);
+		if (param/20 > 0) {		// 2带多
+			int f = (param%20)/2;
+			return (f == 0 || f > 4) ? 1 : f;
+		} else if (param/10 > 0) {
+			return param%10;
+		} else {
+			return 1;
+		}
+	}
+
+	/**
+	 * 根据参数38和喷头编号 @{head} 确定读取哪个信息的dotcount // 判断是1带多，还是2带多
+	 *
+	 * @return 1带多 返回1，2带多 返回2
+	 */
+	public int getMainHeads(int head) {
+		int param = getParam(INDEX_ONE_MULTIPLE);
+		if (param/20 > 0) {
+			return head%2;
+		} else if (param/10 > 0) {
+			return 0;
+		} else {
+			return head;
+		}
+	}
 	
 }
