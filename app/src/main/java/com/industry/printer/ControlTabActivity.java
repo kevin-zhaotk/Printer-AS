@@ -473,7 +473,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		 */
 		Debug.d(TAG, "--->loading: " + loading);
 		if (!loading) {
-			loadMessage();
+			mHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					loadMessage();
+				}
+			}, 2000);
+
 		}
 
 		FpgaGpioOperation.updateSettings(mContext, null, FpgaGpioOperation.SETTING_TYPE_NORMAL);
@@ -603,7 +609,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public void loadMessage() {
 		String f = mSysconfig.getLastMsg();
 		Debug.d(TAG, "--->load message: " + f );
-		if (f == null || f.isEmpty() || !new File(ConfigPath.getTlkDir(f)).exists()) {
+		if (f == null || f.isEmpty()) {
+			Debug.e(TAG, "--->please ensure the file name");
+			return;
+		}
+		File file = new File(ConfigPath.getTlkDir(f));
+		Debug.d(TAG, "--->load message: " + file.getAbsolutePath());
+		if (!file.exists()) {
+			Debug.e(TAG, "--->file not exist!!! quit loading");
 			return;
 		}
 		Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
