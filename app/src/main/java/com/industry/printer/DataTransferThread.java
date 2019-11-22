@@ -555,7 +555,7 @@ public class DataTransferThread {
 		int bold = 1;
 		int index = isLanPrint() ? 0 : index();
 
-		int dotCount = getDotCount(mDataTask.get(index), head);
+//		int dotCount = getDotCount(mDataTask.get(index), head);
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
 // H.M.Wang2019-9-28 考虑1带多的情况
 //		int one2multiple = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_ONE_MULTIPLE);
@@ -567,8 +567,9 @@ public class DataTransferThread {
 //		}
 
 // Kevin.Zhao 2019-11-12 1带多用12，13，14表示1带2，1带3，1带4....
-		dotCount = getDotCount(mDataTask.get(index), config.getMainHeads(head));
+		int dotCount = getDotCount(mDataTask.get(index), config.getMainHeads(head));
 
+		dotCount = dotCount/config.getHeadFactor();
 		// Debug.d(TAG, "--->getInkThreshold  head: " + head + "   index = " + index + " dataTask: " + mDataTask.size());
 		Debug.d(TAG, "--->dotCount: " + dotCount + "  bold=" + bold);
 		if (dotCount <= 0) {

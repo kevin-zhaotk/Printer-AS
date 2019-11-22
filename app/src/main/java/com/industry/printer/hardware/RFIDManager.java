@@ -341,7 +341,14 @@ public class RFIDManager implements RfidCallback{
 				} else if (mDevice.getState() == RFIDDevice.STATE_RFID_BACKUP_READY) {
 					mHandler.sendEmptyMessageDelayed(MSG_RFID_SWITCH_DEVICE, 200);
 				} else if (mDevice.getState() == RFIDDevice.STATE_RFID_UUID_READY) {
-					mHandler.sendEmptyMessageDelayed(MSG_RFID_CHECK_SWITCH_DEVICE, 200);
+//					mHandler.sendEmptyMessageDelayed(MSG_RFID_CHECK_SWITCH_DEVICE, 200);
+					if (mDevice.checkUID(data.getData())) {
+						mHandler.sendEmptyMessageDelayed(MSG_RFID_CHECK_SWITCH_DEVICE, 200);
+					} else {
+						Message msg = mHandler.obtainMessage(MSG_RFID_CHECK_COMPLETE);
+						msg.arg1 = 0;
+						msg.sendToTarget();
+					}
 				}
 				break;
 			case RFIDDevice.RFID_CMD_MIFARE_KEY_VERIFICATION:
