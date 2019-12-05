@@ -342,7 +342,9 @@ public class RFIDManager implements RfidCallback{
 					mHandler.sendEmptyMessageDelayed(MSG_RFID_SWITCH_DEVICE, 200);
 				} else if (mDevice.getState() == RFIDDevice.STATE_RFID_UUID_READY) {
 //					mHandler.sendEmptyMessageDelayed(MSG_RFID_CHECK_SWITCH_DEVICE, 200);
-					if (mDevice.checkUID(data.getData())) {
+					String b = Integer.toHexString(data.getData()[0] & 0x0ff);
+					Debug.d(TAG, "--->checkUID: " + b);
+					if (!"ff".equals(b)) {
 						mHandler.sendEmptyMessageDelayed(MSG_RFID_CHECK_SWITCH_DEVICE, 200);
 					} else {
 						Message msg = mHandler.obtainMessage(MSG_RFID_CHECK_COMPLETE);
@@ -376,7 +378,10 @@ public class RFIDManager implements RfidCallback{
 				} else if (mDevice.getState() == RFIDDevice.STATE_RFID_BACKUP_READY) {
 					mHandler.sendEmptyMessageDelayed(MSG_RFID_SWITCH_DEVICE, 200);
 				} else if (mDevice.getState() == RFIDDevice.STATE_RFID_UUID_READY) {
-					if (mDevice.checkUID(data.getData())) {
+
+					String b = Integer.toHexString(data.getData()[0] & 0x0ff);
+					Debug.d(TAG, "--->checkUID: " + b);
+					if (!"ff".equals(b)) {
 						mHandler.sendEmptyMessageDelayed(MSG_RFID_CHECK_SWITCH_DEVICE, 200);
 					} else {
 						Message msg = mHandler.obtainMessage(MSG_RFID_CHECK_COMPLETE);
