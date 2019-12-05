@@ -350,13 +350,6 @@ public class DataTask {
 			} else if(o instanceof CounterObject)
 			{
 				// H.M.Wang 2019-10-27 修改。适应从串口来的打印数据
-				String str = "";
-				if(SystemConfigFile.getInstance().getParam(40) == 1) {
-					str = ((CounterObject) o).getSerialContent();
-				} else {
-					str = prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext();
-				}
-//				String str = prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext();
 				// End ------------------------------------------
 				BinInfo info = mVarBinList.get(o);
 				Debug.d(TAG, "--->object index=" + o.getIndex());
@@ -365,7 +358,14 @@ public class DataTask {
 					mVarBinList.put(o, info);
 				}
 
-				var = info.getVarBuffer(str, true);
+				// H.M.Wang 2019-12-4 修改变量缓冲区获取方式，如果是串口，则按ASCII进行索引，如果是普通变量则按原来处理方式处理
+				if(SystemConfigFile.getInstance().getParam(40) == 1) {
+					var = info.getVarBuffer(((CounterObject) o).getSerialContent(), true, true);
+				} else {
+					var = info.getVarBuffer(prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext(), true, false);
+				}
+				// End. .......................H.M.Wang 2019-12-4
+
 				// BinCreater.saveBin("/mnt/usbhost1/" + o.getIndex() + ".bin", var, info.getCharsPerHFeed()*16);
 				// Debug.d(TAG, "--->object x=" + o.getX()/div);
 
@@ -407,7 +407,7 @@ public class DataTask {
 						info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), rtSub.getIndex()), mTask, mExtendStat);
 						mVarBinList.put(rtSub, info);
 					}
-					var = info.getVarBuffer(substr, false);
+					var = info.getVarBuffer(substr, false, false);
 					//BinCreater.saveBin("/mnt/usbhost1/v" + o.getIndex() + ".bin", var, info.mBytesPerHFeed*8);
 					BinInfo.overlap(mPrintBuffer, var, (int)(rtSub.getX()/div), info.getCharsFeed());
 					Debug.d(TAG, "--->real x=" + rtSub.getX()/div );
@@ -423,7 +423,7 @@ public class DataTask {
 					mVarBinList.put(o, varbin);
 				}
 				Debug.d(TAG, "--->real x=" + o.getX()+ ", div-x=" + o.getX()/div );
-				var = varbin.getVarBuffer(vString, false);
+				var = varbin.getVarBuffer(vString, false, false);
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), varbin.getCharsFeed());
 				
 			} else if (o instanceof ShiftObject) {
@@ -446,7 +446,7 @@ public class DataTask {
 					mVarBinList.put(o, varbin);
 				}
 				String t = ((LetterHourObject) o).getContent();
-				var = varbin.getVarBuffer(t, false);
+				var = varbin.getVarBuffer(t, false, false);
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), varbin.getCharsFeed());
 			} else if (o instanceof WeekOfYearObject) {
 				BinInfo varbin= mVarBinList.get(o);
@@ -455,7 +455,7 @@ public class DataTask {
 					mVarBinList.put(o, varbin);
 				}
 				String t = ((WeekOfYearObject) o).getContent();
-				var = varbin.getVarBuffer(t, false);
+				var = varbin.getVarBuffer(t, false, false);
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), varbin.getCharsFeed());
 			}  else if (o instanceof WeekDayObject) {
 				BinInfo varbin= mVarBinList.get(o);
@@ -464,7 +464,7 @@ public class DataTask {
 					mVarBinList.put(o, varbin);
 				}
 				String t = ((WeekDayObject) o).getContent();
-				var = varbin.getVarBuffer(t, false);
+				var = varbin.getVarBuffer(t, false, false);
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), varbin.getCharsFeed());
 			} else
 			{

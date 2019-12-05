@@ -123,6 +123,7 @@ public class EC_DOD_Protocol {
             byte[] procData = ByteArrayUtils.pickPartial(msg, 1, msg.length - 4);
 //            Debug.d(TAG, "[" + ByteArrayUtils.toHexString(procData) + "]");
 
+// 暂时取消CRC验证
 //            if(CRC16_X25.getCRCCode(procData) != recvCRC) {
 //                recvCmd |= ERROR_CRC_FAILED;
 //                // return ERROR_CRC_FAILED;
