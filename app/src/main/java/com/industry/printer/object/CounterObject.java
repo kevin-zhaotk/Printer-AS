@@ -158,13 +158,24 @@ public class CounterObject extends BaseObject {
 	private String mSerialContent = "";
 
 	public void setSerialContent(String content) {
-		mSerialContent = content;
+		// H.M.Wang 2019-12-5 将传递内容靠左设置在串口数据当中
+		StringBuilder sb = new StringBuilder();
+
+		int cntLength = 0;
+		if(null != content) {
+			cntLength = content.length();
+			sb.append(content);
+		}
+		for(int i=0; i<getBits() - cntLength; i++) {
+			sb.append(" ");
+		}
+		mSerialContent = sb.toString();
+		mSerialContent = mSerialContent.substring(0, getBits());
 	}
 
 	public String getSerialContent() {
 		return mSerialContent;
 	}
-	// End --------------------------
 
 	public String getNext()
 	{

@@ -314,12 +314,7 @@ public class DataTransferThread {
 			ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
 			for(BaseObject baseObject: objList) {
 				if(baseObject instanceof CounterObject) {
-					int bits = ((CounterObject)baseObject).getBits();
-					StringBuilder sb = new StringBuilder();
-					for(int i=0; i<bits; i++) {
-						sb.append(" ");
-					}
-					((CounterObject)baseObject).setSerialContent(sb.toString());
+					((CounterObject)baseObject).setSerialContent("");
 				}
 			}
 
@@ -327,34 +322,34 @@ public class DataTransferThread {
 				@Override
 				public void onCommandReceived(int cmd, byte[] data) {
 					if(cmd == EC_DOD_Protocol.CMD_TEXT) {                         // 发送一条文本	0x0013
-//						try {
-							String datastring = new String(data, 7, data.length - 7);
-							Debug.d(TAG, "Serial String = [" + datastring + "]");
-//							Integer.parseInt(datastring);
-							ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+						String datastring = new String(data, 7, data.length - 7);
+						Debug.d(TAG, "Serial String = [" + datastring + "]");
+						ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
 
-							int strIndex = 0;
-							boolean needUpdate = false;
+						int strIndex = 0;
+						boolean needUpdate = false;
 
-							for(BaseObject baseObject: objList) {
-								if(baseObject instanceof CounterObject) {
+						for(BaseObject baseObject: objList) {
+							if(baseObject instanceof CounterObject) {
+								try {
 									Debug.d(TAG, "Counter Bits: " + ((CounterObject)baseObject).getBits());
-									try {
-										Debug.d(TAG, datastring.substring(strIndex, strIndex + ((CounterObject)baseObject).getBits()));
-										((CounterObject)baseObject).setSerialContent(datastring.substring(strIndex, strIndex + ((CounterObject)baseObject).getBits()));
-										strIndex += ((CounterObject)baseObject).getBits();
-										needUpdate = true;
-									} catch (IndexOutOfBoundsException e) {
-										serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 0, 0, 1, "Not sufficient data bits!");
-										Debug.e(TAG, "Not sufficient data bits .");
-									}
+									// H.M.Wang 2019-12-5 串口数据长度可能长度不足，只取有效长度的数据，不能越界
+									int readLen = Math.min(((CounterObject)baseObject).getBits(), datastring.length() - strIndex);
+									Debug.d(TAG, "Counter Contents : [" + datastring.substring(strIndex, strIndex + readLen) + "]");
+									((CounterObject)baseObject).setSerialContent(datastring.substring(strIndex, strIndex + readLen));
+									strIndex += readLen;
+									needUpdate = true;
+								} catch (IndexOutOfBoundsException e) {
+									serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 0, 0, 1, "Not sufficient data bits!");
+									Debug.e(TAG, "Not sufficient data bits .");
 								}
 							}
-							mNeedUpdate = needUpdate;
-							serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 0, 0, 0, "Set Print Text Done!");
-//						} catch(NumberFormatException e) {
-//							Debug.e(TAG, "Only digital string accepted.");
-//						}
+						}
+						mNeedUpdate = needUpdate;
+						serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 0, 0, 0, "Set Print Text Done!");
+					// H.M.Wang 2019-12-7 反转命令立即生效
+					} else if(cmd == EC_DOD_Protocol.CMD_SET_REVERSE) {
+						mNeedUpdate = true;
 					}
 				}
 			});

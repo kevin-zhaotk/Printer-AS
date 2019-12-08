@@ -331,7 +331,16 @@ public class TLKFileParser  extends TlkFile{
 			} else if (BaseObject.OBJECT_TYPE_WEEKDAY.equalsIgnoreCase(attr[1])) {
 				obj = new WeekDayObject(mContext);
 			} else if (BaseObject.OBJECT_TYPE_DYN_TEXT.equalsIgnoreCase(attr[1])) {
-				obj = DynamicText.fromTlk(mContext, str);
+				// H.M.Wang 2019-12-6 PC制作的面向串口的动态文本，暂时以OBJECT_TYPE_DYN_TEXT作为标识，适用计数器类进行处理
+//				obj = DynamicText.fromTlk(mContext, str);
+				obj = new CounterObject(mContext, 0);
+				((CounterObject) obj).setBits(Integer.parseInt(attr[8]));
+				((CounterObject) obj).setSerialContent("");
+				((CounterObject) obj).setRange(0, 0);
+				((CounterObject) obj).mCounterIndex = 0;
+				((CounterObject) obj).setValue(0);
+				((CounterObject) obj).setSteplen(0);
+				// End. -----------------
 			} else {
 				Debug.d(TAG, "Unknown object type: " + attr[1]);
 				return null;

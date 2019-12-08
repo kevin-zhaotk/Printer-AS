@@ -26,7 +26,7 @@ public class WelcomeActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.welcome_layout);
 		mContext = getApplicationContext();
 		/*初始化系统配置*/
 		Configs.initConfigs(mContext);

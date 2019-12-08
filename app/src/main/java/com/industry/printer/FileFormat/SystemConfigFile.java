@@ -1081,7 +1081,7 @@ public class SystemConfigFile{
 		if (index >= mParam.length) {
 			return 0;
 		}
-		Debug.d(TAG, "getParam ==> mParam[" + index + "]" + mParam[index]);
+//		Debug.d(TAG, "getParam ==> mParam[" + index + "]" + mParam[index]);
 		return (int) mParam[index];
 	}
 

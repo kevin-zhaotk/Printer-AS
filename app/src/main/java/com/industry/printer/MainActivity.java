@@ -44,6 +44,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -110,7 +111,11 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	
 	private RelativeLayout mPgBack;
 	private RelativeLayout mPgFore;
-	
+
+	// H.M.Wang 2019-12-7 追加两个启动画面
+	private ImageView mBlack05s;
+	private ImageView mLoading1s;
+
 	private LoadingDialog mProgressDialog;
 	
 	private boolean mScreensaveMode = false;
@@ -344,7 +349,13 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mPgBack.setOnClickListener(this);
 		mPgFore = (RelativeLayout) findViewById(R.id.btn_page_forward);
 		mPgFore.setOnClickListener(this);
-		
+
+		// H.M.Wang 2019-12-7 追加两个启动画面
+		mBlack05s = (ImageView) findViewById(R.id.image05s);
+		mLoading1s = (ImageView) findViewById(R.id.image1s);
+		mHander.sendEmptyMessageDelayed(SHUT_BLACK_IMAGE, 8000);
+		// End -----------------
+
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 //		transaction.replace(R.id.tab_content, mControlTab);
 //		transaction.commit();
@@ -482,11 +493,24 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public static final int NET_DISCONNECTED = 4;
 	
 	public static final int ENTER_SCREENSAVE_MODE = 5;
-	
+
+	// H.M.Wang 2019-12-7 追加两个启动画面（一个黑屏，一个启动），相关事件定义
+	private static final int SHUT_BLACK_IMAGE = 6;
+	private static final int SHUT_LOADING_IMAGE = 7;
+	// End ----
+
 	public Handler mHander = new Handler(){
 		
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
+			// H.M.Wang 2019-12-7 追加两个画面的关闭事件响应
+			case SHUT_BLACK_IMAGE:
+				mBlack05s.setVisibility(View.GONE);
+				sendEmptyMessageDelayed(SHUT_LOADING_IMAGE, 3000);
+				break;
+			case SHUT_LOADING_IMAGE:
+				mLoading1s.setVisibility(View.GONE);
+				break;
 			case USB_STORAGE_ATTACHED:
 				Debug.d(TAG, "--->reload system settings");
 				mControlTab.loadMessage();

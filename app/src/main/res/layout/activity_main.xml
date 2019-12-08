@@ -318,4 +318,20 @@
          android:layout_below="@id/tab_group"
          >
     </RelativeLayout>
+
+	<!-- H.M.Wang 2019-12-7 追加两个启动画面 -->
+	<ImageView
+		android:id="@+id/image1s"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:scaleType="fitXY"
+		android:src="@drawable/load1s" />
+
+	<ImageView
+		android:id="@+id/image05s"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:scaleType="fitXY"
+		android:src="@drawable/black05s" />
+
 </RelativeLayout>

@@ -354,7 +354,14 @@ public class DataTask {
 				BinInfo info = mVarBinList.get(o);
 				Debug.d(TAG, "--->object index=" + o.getIndex());
 				if (info == null) {
-					info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
+					// H.M.Wang 2019-12-5 为对应串口打印时，vbin的元素个数不是传统计数器的10位，而是128位，做了区分
+					if(SystemConfigFile.getInstance().getParam(40) == 1) {
+						info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, 128, mExtendStat);
+					} else {
+						info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
+					}
+//					info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
+					// End. 2019-12-5 -----------
 					mVarBinList.put(o, info);
 				}
 
@@ -366,7 +373,8 @@ public class DataTask {
 				}
 				// End. .......................H.M.Wang 2019-12-4
 
-				// BinCreater.saveBin("/mnt/usbhost1/" + o.getIndex() + ".bin", var, info.getCharsPerHFeed()*16);
+//				BinCreater.saveBin("/sdcard/" + o.getIndex() + ".bin", var, info.getCharsPerHFeed()*16);
+
 				// Debug.d(TAG, "--->object x=" + o.getX()/div);
 
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
