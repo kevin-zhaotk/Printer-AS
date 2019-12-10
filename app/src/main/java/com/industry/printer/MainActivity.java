@@ -505,8 +505,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			switch (msg.what) {
 			// H.M.Wang 2019-12-7 追加两个画面的关闭事件响应
 			case SHUT_BLACK_IMAGE:
-				mBlack05s.setVisibility(View.GONE);
-				sendEmptyMessageDelayed(SHUT_LOADING_IMAGE, 1500);
+				if(mBlack05s.getWidth() == 0) {
+					sendEmptyMessageDelayed(SHUT_BLACK_IMAGE, 200);
+				} else {
+					mBlack05s.setVisibility(View.GONE);
+					sendEmptyMessageDelayed(SHUT_LOADING_IMAGE, 4500);
+				}
 				break;
 			case SHUT_LOADING_IMAGE:
 				mLoading1s.setVisibility(View.GONE);
