@@ -353,7 +353,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		// H.M.Wang 2019-12-7 追加两个启动画面
 		mBlack05s = (ImageView) findViewById(R.id.image05s);
 		mLoading1s = (ImageView) findViewById(R.id.image1s);
-		mHander.sendEmptyMessageDelayed(SHUT_BLACK_IMAGE, 8000);
+		mHander.sendEmptyMessageDelayed(SHUT_BLACK_IMAGE, 0);
 		// End -----------------
 
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -506,7 +506,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			// H.M.Wang 2019-12-7 追加两个画面的关闭事件响应
 			case SHUT_BLACK_IMAGE:
 				mBlack05s.setVisibility(View.GONE);
-				sendEmptyMessageDelayed(SHUT_LOADING_IMAGE, 3000);
+				sendEmptyMessageDelayed(SHUT_LOADING_IMAGE, 1500);
 				break;
 			case SHUT_LOADING_IMAGE:
 				mLoading1s.setVisibility(View.GONE);

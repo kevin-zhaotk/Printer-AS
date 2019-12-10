@@ -1093,16 +1093,23 @@ public class SystemConfigFile{
 		mParam[index] = value;
 
 		// H.M.Wang 修改一行，增加5行。发出计数器参数变化广播
-//		if (index >= INDEX_COUNT_1 && index < INDEX_COUNT_10) {
 		if (index >= INDEX_COUNT_1 && index <= INDEX_COUNT_10) {
 			RTCDevice.getInstance(mContext).write(value, index - INDEX_COUNT_1);
 
-			Intent broadcastIntent = new Intent();
-			broadcastIntent.setAction(SettingsListAdapter.ACTION_COUNTER_CHANGED);
-			broadcastIntent.putExtra(SettingsListAdapter.TAG_INDEX, index);
-			broadcastIntent.putExtra(SettingsListAdapter.TAG_COUNT, String.valueOf(value));
-			mContext.sendBroadcast(broadcastIntent);
+//			Intent broadcastIntent = new Intent();
+//			broadcastIntent.setAction(SettingsListAdapter.ACTION_COUNTER_CHANGED);
+//			broadcastIntent.putExtra(SettingsListAdapter.TAG_INDEX, index);
+//			broadcastIntent.putExtra(SettingsListAdapter.TAG_COUNT, String.valueOf(value));
+//			mContext.sendBroadcast(broadcastIntent);
 		}
+
+		// H.M.Wang 2019-12-9 将广播范围扩大到所有参数
+		Intent broadcastIntent = new Intent();
+		broadcastIntent.setAction(SettingsListAdapter.ACTION_PARAM_CHANGED);
+		broadcastIntent.putExtra(SettingsListAdapter.TAG_INDEX, index);
+		broadcastIntent.putExtra(SettingsListAdapter.TAG_VALUE, String.valueOf(value));
+		mContext.sendBroadcast(broadcastIntent);
+		// End. -----------
 	}
 
 	public PrinterNozzle getPNozzle() {

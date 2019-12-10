@@ -87,22 +87,25 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	private ItemOneLine[] mSettingItems = new ItemOneLine[64];
 
 	// H.M.Wang 增加16行。接收计数器更新值，设置到编辑区内
-	public static final String ACTION_COUNTER_CHANGED = "com.industry.printer.COUNTER_CHANGED";
+	public static final String ACTION_PARAM_CHANGED = "com.industry.printer.PARAM_CHANGED";
 	public static final String TAG_INDEX = "TagIndex";
-	public static final String TAG_COUNT = "TagCount";
+	public static final String TAG_VALUE = "TagCount";
 
 	BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if(ACTION_COUNTER_CHANGED.equals(intent.getAction())) {
+			if(ACTION_PARAM_CHANGED.equals(intent.getAction())) {
 				int index = intent.getIntExtra(TAG_INDEX, -1);
-				String count = intent.getStringExtra(SettingsListAdapter.TAG_COUNT);
+				String count = intent.getStringExtra(SettingsListAdapter.TAG_VALUE);
 
-				if( index >= SystemConfigFile.INDEX_COUNT_1 && index <= SystemConfigFile.INDEX_COUNT_10) {
+				// H.M.Wang 2019-12-9 将广播范围扩大到所有参数
+//				if( index >= SystemConfigFile.INDEX_COUNT_1 && index <= SystemConfigFile.INDEX_COUNT_10) {
 					if(null != mSettingItems[index]) {
 						mSettingItems[index].setValue(count);
+						notifyDataSetChanged();
 					}
-				}
+//				}
+				// End. -----------
 			}
 		}
 	};
@@ -279,7 +282,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 
 		// H.M.Wang 增加3行。注册广播接收器，接收计数器更新值，设置到编辑区内
 		IntentFilter iFilter = new IntentFilter();
-		iFilter.addAction(ACTION_COUNTER_CHANGED);
+		iFilter.addAction(ACTION_PARAM_CHANGED);
 		context.registerReceiver(mReceiver, iFilter);
 
 		/////////////////////////////////////////////////////////////
