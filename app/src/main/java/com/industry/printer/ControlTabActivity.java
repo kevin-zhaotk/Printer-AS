@@ -507,7 +507,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							if(data.length != 3) {
 								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_PRINT_DELAY, 1, 0, 1, "");
 							} else {
-								SystemConfigFile.getInstance().setParam(3, (0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]));
+								SystemConfigFile.getInstance().setParamBraodcast(3, (0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]));
 // H.M.Wang 2019-12-9 串口设置参数实时保存
 								SystemConfigFile.getInstance().saveConfig();
 // End. ---------
@@ -519,7 +519,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							if(data.length != 3) {
 								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_MOVE_SPEED, 1, 0, 1, "");
 							} else {
-								SystemConfigFile.getInstance().setParam(0, Math.round(3.7f * ((0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]))));
+								SystemConfigFile.getInstance().setParamBraodcast(0, Math.round(3.7f * ((0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]))));
 // H.M.Wang 2019-12-9 串口设置参数实时保存
 								SystemConfigFile.getInstance().saveConfig();
 // End. ---------
@@ -528,7 +528,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							}
 							break;
 						case EC_DOD_Protocol.CMD_SET_REVERSE:                  // 设定喷头翻转喷印	0x0010
-							SystemConfigFile.getInstance().setParam(1, (0x01 & data[1]));
+							SystemConfigFile.getInstance().setParamBraodcast(1, (0x01 & data[1]));
 // H.M.Wang 2019-12-9 串口设置参数实时保存
 							SystemConfigFile.getInstance().saveConfig();
 // End. ---------

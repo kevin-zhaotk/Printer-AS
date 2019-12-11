@@ -233,6 +233,8 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_read(int num, int reg, uint8_t *result) {
 
     close(fd);
 
+    LOGD(">>> SC_I2C_DRIVER_read: Data read [%s]", buffer);
+
     memcpy(result, buffer, rnum);
 
     memset(buffer, 0x00, 1024);
