@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+@Deprecated
 public class LinuxShell {
 	public static boolean isRoot(Runtime r, long wait)
 			throws IOException, InterruptedException {

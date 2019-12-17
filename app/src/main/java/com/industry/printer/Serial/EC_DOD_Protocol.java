@@ -94,6 +94,9 @@ public class EC_DOD_Protocol {
     public final static int ERROR_CRC_FAILED          = 0x84000000;   // CRC校验失败
     public final static int ERROR_FAILED              = 0x85000000;   // 解析帧失败
 
+    // H.M.Wang 2019-12-15 追加串口文本间隔符
+    public final static String TEXT_SEPERATOR         = ",";          // 串口接收文本的间隔符
+
     public EC_DOD_Protocol(){}
 
     public int parseFrame(ByteArrayBuffer recvMsg) {

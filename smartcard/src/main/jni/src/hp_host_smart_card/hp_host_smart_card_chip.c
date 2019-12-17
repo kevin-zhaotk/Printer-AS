@@ -128,7 +128,7 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
         {
             HP_ASSERT(cmd_rsp_p->cmd_len <= HOST_SMART_CARD_MAX_CMD_LEN);
 
-            HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
+/*            HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
                             HP_DBG_LEVEL_HSCC_TRACE, 4,
                             "Data in _send_cmd():");
 
@@ -141,6 +141,27 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
             HP_DEBUG_printf(NULL,
                             HP_DBG_LEVEL_HSCC_TRACE, 4,
                             "\n");
+*/
+
+            char buffer[1024];
+
+            memset(buffer, 0x00, 1024);
+            char s[16];
+            for(int i=0; i<cmd_rsp_p->cmd_len; i++) {
+                memset(s, 0x00, 16);
+                if(i == 0) {
+                    sprintf(s, "[0x%02X", cmd_rsp_p->cmd_p[i]);
+                } else {
+                    sprintf(s, " 0x%02X", cmd_rsp_p->cmd_p[i]);
+                }
+                strcat(buffer, s);
+            }
+            strcat(buffer, "]");
+
+            HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
+                            HP_DBG_LEVEL_HSCC_TRACE, 4,
+                            "Data to be written: %s", buffer);
+
             result = HP_SMART_CARD_i2c_write(HP_SMART_CARD_DEVICE_HOST,
                                              HOST_SMART_CARD_ADDR_CMD,
                                              cmd_rsp_p->cmd_p,
@@ -161,7 +182,12 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
 //                HP_ASSERT(0);
 //                continue;                                                                                                                                                                                                                                                                                                                 // Must reset and resend the command
             }
+        } else {
+            HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
+                            HP_DBG_LEVEL_ERROR, 0,
+                            "ERROR - HOST_SMART_CARD_CMD_LENGTH_ZERO\n");
         }
+
         if (cmd_rsp_p->rsp_p)
         {
             rsp_header[_BODY_LEN_HI]    = 0;

@@ -95,7 +95,7 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_open(int group_id, int device_address) {
         命令格式为："<起始寄存器号>,<数据1>,<数据2>,...,<数据n>"
         如："0xf80,0x00,0x01,0x02"，极为向寄存器0xf80开始的连续三个寄存器分别写入0x00,0x01,0x02
     @参数
-        reg: I2C设备内需要写入数据的其实寄存器号
+        reg: I2C设备内需要写入数据的起始寄存器号
         data: 写入的数据，格式必须为没有空格的有逗号分开的16进制数据
     @返回值
         0: 成功
@@ -237,7 +237,7 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_read(int num, int reg, uint8_t *result) {
 
     memcpy(result, buffer, rnum);
 
-    memset(buffer, 0x00, 1024);
+/*    memset(buffer, 0x00, 1024);
     char s[16];
     for(int i=0; i<rnum; i++) {
         memset(s, 0x00, 16);
@@ -250,6 +250,6 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_read(int num, int reg, uint8_t *result) {
     }
 
     LOGD(">>> SC_I2C_DRIVER_read: Data Read[%s](%d bytes)", buffer, rnum);
-
+*/
     return SC_I2C_DRIVER_RESULT_OK;
 }

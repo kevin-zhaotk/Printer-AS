@@ -30,6 +30,7 @@ import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.Serial.SerialPort;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
+import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
 
@@ -307,6 +308,41 @@ public class DataTransferThread {
 		return mRunning;
 	}
 
+// H.M.Wang 2019-12-16 将计数器和动态二维码替代部分函数化，以对应串口和网络两方面的需求
+	public void setRemoteText(String data) {
+		Debug.d(TAG, "String from Remote = [" + data + "]");
+		String[] recvStrs = data.split(EC_DOD_Protocol.TEXT_SEPERATOR);
+
+		int strIndex = 0;
+		boolean needUpdate = false;
+
+		ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+		for(BaseObject baseObject: objList) {
+			if(baseObject instanceof CounterObject) {
+// H.M.Wang 2019-12-15 支持串口文本通过间隔符分割，对于计数器的文本如果超过位数，多余部分切割功能移至计数器Object类，不在这里处理
+				if(strIndex < recvStrs.length) {
+					Debug.d(TAG, "Counter[" + strIndex + "]: " + recvStrs[strIndex]);
+					((CounterObject)baseObject).setSerialContent(recvStrs[strIndex++]);
+				}
+
+//									// H.M.Wang 2019-12-5 串口数据长度可能长度不足，只取有效长度的数据，不能越界
+//									int readLen = Math.min(((CounterObject)baseObject).getBits(), datastring.length() - strIndex);
+//									Debug.d(TAG, "Counter Contents : [" + datastring.substring(strIndex, strIndex + readLen) + "]");
+//									((CounterObject)baseObject).setSerialContent(datastring.substring(strIndex, strIndex + readLen));
+//									strIndex += readLen;
+				needUpdate = true;
+			} else if(baseObject instanceof BarcodeObject) {
+				if(((BarcodeObject)baseObject).isDynamicQRCode() && recvStrs.length >= 11) {
+					Debug.d(TAG, "Dynamic QRCode: " + recvStrs[10]);
+					((BarcodeObject)baseObject).setContent(recvStrs[10]);
+				}
+// End. -----
+			}
+		}
+		mNeedUpdate = needUpdate;
+	}
+// End. -----
+
 	public boolean launch(Context ctx) {
 		// H.M.Wang 2019-10-23 串口发送数据支持
 		final SerialHandler serialHandler =  SerialHandler.getInstance(false);
@@ -323,30 +359,10 @@ public class DataTransferThread {
 				public void onCommandReceived(int cmd, byte[] data) {
 					if(cmd == EC_DOD_Protocol.CMD_TEXT) {                         // 发送一条文本	0x0013
 						String datastring = new String(data, 7, data.length - 7);
-						Debug.d(TAG, "Serial String = [" + datastring + "]");
-						ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
-
-						int strIndex = 0;
-						boolean needUpdate = false;
-
-						for(BaseObject baseObject: objList) {
-							if(baseObject instanceof CounterObject) {
-								try {
-									Debug.d(TAG, "Counter Bits: " + ((CounterObject)baseObject).getBits());
-									// H.M.Wang 2019-12-5 串口数据长度可能长度不足，只取有效长度的数据，不能越界
-									int readLen = Math.min(((CounterObject)baseObject).getBits(), datastring.length() - strIndex);
-									Debug.d(TAG, "Counter Contents : [" + datastring.substring(strIndex, strIndex + readLen) + "]");
-									((CounterObject)baseObject).setSerialContent(datastring.substring(strIndex, strIndex + readLen));
-									strIndex += readLen;
-									needUpdate = true;
-								} catch (IndexOutOfBoundsException e) {
-									serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 0, 0, 1, "Not sufficient data bits!");
-									Debug.e(TAG, "Not sufficient data bits .");
-								}
-							}
-						}
-						mNeedUpdate = needUpdate;
-						serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 0, 0, 0, "Set Print Text Done!");
+						// H.M.Wang 2019-12-16 为了与网络设置兼容，将功能部分提取出来作为一个函数，setRemoteText()
+						setRemoteText(datastring);
+						// End. ----
+						serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 1, 0, 0, "");
 					// H.M.Wang 2019-12-7 反转命令立即生效
 					} else if(cmd == EC_DOD_Protocol.CMD_SET_REVERSE) {
 						mNeedUpdate = true;

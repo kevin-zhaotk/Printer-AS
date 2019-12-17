@@ -158,6 +158,9 @@ public class CounterObject extends BaseObject {
 	private String mSerialContent = "";
 
 	public void setSerialContent(String content) {
+		// H.M.Wang 2019-12-15 切掉超出位数部分的多余字符
+		content = content.substring(0, Math.min(getBits(), content.length()));
+
 		// H.M.Wang 2019-12-5 将传递内容靠左设置在串口数据当中
 		StringBuilder sb = new StringBuilder();
 

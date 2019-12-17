@@ -2308,6 +2308,15 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 										DataTransferThread.getInstance().resetIndex();
 										this.sendmsg(Constants.pcOk(msg));
+// H.M.Wang 2019-12-16 支持网络下发计数器和动态二维码的值
+									} else if (PCCommand.CMD_SET_COUNTER.equalsIgnoreCase(cmd.command)) {
+										if(DataTransferThread.getInstance().isRunning()) {
+											DataTransferThread.getInstance().setRemoteText(cmd.content);
+											this.sendmsg(Constants.pcOk(msg));
+										} else {
+											this.sendmsg(Constants.pcErr(msg));
+										}
+// End. -----
 									} else if(PCCommand.CMD_PRINT.equalsIgnoreCase(cmd.command)) {
 
 										File msgfile = new File(cmd.content);

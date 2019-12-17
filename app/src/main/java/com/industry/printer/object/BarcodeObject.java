@@ -151,10 +151,13 @@ public class BarcodeObject extends BaseObject {
 		return "QR".equals(mFormat);
 	}
 
+// H.M.Wang 2019-12-15 原来判断是否为二维动态二维码的逻辑可能有问题
 	// H.M.Wang 2019-9-21 二维码有两种QRCode和DynamicQRCode，只有第二种需要隐藏内容编辑窗，为此增加判断动态二维码的函数
 	public boolean isDynamicQRCode() {
-		return isQRCode() && mName.equals(mContext.getString(R.string.object_dynamic_qr));
+//		return isQRCode() && mName.equals(mContext.getString(R.string.object_dynamic_qr));
+		return is2D() && mSource;
 	}
+// End. ----
 
 	public void setShow(boolean show)
 	{

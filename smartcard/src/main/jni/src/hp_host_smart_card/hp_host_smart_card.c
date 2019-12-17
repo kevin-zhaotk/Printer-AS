@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2015 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -136,6 +136,10 @@ HP_HOST_SMART_CARD_return_t hw_smart_dev_echo(uint8_t       *input,
                          &rsp,
                          reply,
                          sizeof(reply));
+
+    HP_DEBUG_printf(HOST_SMART_CARD_DBG_ID,
+                    HP_DBG_LEVEL_HSC_TRACE, 3,
+                    "Return value from _cmd_rsp = %d\n", reply_len);
 
     if ((reply_len == input_length) &&
         (rsp == RSP_SUCCESS) &&
