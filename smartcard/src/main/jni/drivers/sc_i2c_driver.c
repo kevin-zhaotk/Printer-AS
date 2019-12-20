@@ -235,21 +235,59 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_read(int num, int reg, uint8_t *result) {
 
     LOGD(">>> SC_I2C_DRIVER_read: Data read [%s]", buffer);
 
-    memcpy(result, buffer, rnum);
+//    memcpy(result, buffer, rnum);
 
-/*    memset(buffer, 0x00, 1024);
+    strcpy(buffer, "number:3\r\nreg_addr:0x0080\r\nreg_addr           val\r\n0x0080             0x0000\r\n0x0081             0x0000\r\n0x0082             0x0000\r\n");
+
+    char *pe = buffer;
+    char *ps = NULL;
+    int cnt = 0;
+    int lines = 0;
+
+    while(pe != NULL) {
+        ps = pe;
+        pe = strstr(ps, "\r\n");
+        lines++;
+        if(pe != NULL && lines > 3) {
+            *pe = 0x00;
+            pe += 2;
+            LOGD(">>> ps = [%s]", ps);
+            ps = strstr(ps, "0x");
+            if(ps != NULL) {
+                ps += 2;
+                int aaa = 0;
+                while(*ps != 0x00) {
+                    char c = *ps++;
+                    aaa *= 16;
+                    if(c >= '0' && c <= '9') {
+                        aaa += (c - '0');
+                    } else if(c >= 'A' && c <= 'Z') {
+                        aaa += (c - 'A' + 10);
+                    } else if(c >= 'a' && c <= 'z') {
+                        aaa += (c - 'z' + 10);
+                    } else {
+
+                    }
+                }
+                LOGD(">>> result[%d] = [%02X]", cnt, aaa);
+                result[cnt++] = aaa;
+            }
+        }
+    }
+/*
+    memset(buffer, 0x00, 1024);
     char s[16];
-    for(int i=0; i<rnum; i++) {
+    for(int i=0; i<cnt; i++) {
         memset(s, 0x00, 16);
         if(i == 0) {
             sprintf(s, "%02X", result[i]);
         } else {
-            sprintf(s, " %02X", result[i]);
+            sprintf(s, ", %02X", result[i]);
         }
         strcat(buffer, s);
     }
 
-    LOGD(">>> SC_I2C_DRIVER_read: Data Read[%s](%d bytes)", buffer, rnum);
+    LOGD(">>> SC_I2C_DRIVER_read: Data Read[%s](%d bytes)", buffer, cnt);
 */
     return SC_I2C_DRIVER_RESULT_OK;
 }

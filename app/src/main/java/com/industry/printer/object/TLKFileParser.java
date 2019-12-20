@@ -335,7 +335,7 @@ public class TLKFileParser  extends TlkFile{
 //				obj = DynamicText.fromTlk(mContext, str);
 				obj = new CounterObject(mContext, 0);
 				((CounterObject) obj).setBits(Integer.parseInt(attr[8]));
-				((CounterObject) obj).setSerialContent("");
+				((CounterObject) obj).setRemoteContent("");
 				((CounterObject) obj).setRange(0, 0);
 				((CounterObject) obj).mCounterIndex = 0;
 				((CounterObject) obj).setValue(0);

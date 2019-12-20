@@ -20,6 +20,7 @@ import com.industry.printer.Rfid.RfidScheduler;
 import com.industry.printer.Rfid.RfidTask;
 import com.industry.printer.Serial.EC_DOD_Protocol;
 import com.industry.printer.Serial.SerialHandler;
+import com.industry.printer.Serial.SerialProtocol3;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.FileUtil;
@@ -121,8 +122,7 @@ public class DataTransferThread {
 	}
 
 	private boolean isLanPrint() {
-		int lan = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_LAN_PRINT);
-		return lan == 1;
+		return (SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_BIN);
 	}
 
 	public static synchronized void setLanBuffer(int index, char[] buffer) {
@@ -308,8 +308,9 @@ public class DataTransferThread {
 		return mRunning;
 	}
 
+// H.M.Wang 2019-12-19 函数名变更，处理由分隔符分开的字符串，主要满足数据源为以太网和串口协议2的情况
 // H.M.Wang 2019-12-16 将计数器和动态二维码替代部分函数化，以对应串口和网络两方面的需求
-	public void setRemoteText(String data) {
+	public void setRemoteTextSeperated(String data) {
 		Debug.d(TAG, "String from Remote = [" + data + "]");
 		String[] recvStrs = data.split(EC_DOD_Protocol.TEXT_SEPERATOR);
 
@@ -322,14 +323,9 @@ public class DataTransferThread {
 // H.M.Wang 2019-12-15 支持串口文本通过间隔符分割，对于计数器的文本如果超过位数，多余部分切割功能移至计数器Object类，不在这里处理
 				if(strIndex < recvStrs.length) {
 					Debug.d(TAG, "Counter[" + strIndex + "]: " + recvStrs[strIndex]);
-					((CounterObject)baseObject).setSerialContent(recvStrs[strIndex++]);
+					((CounterObject)baseObject).setRemoteContent(recvStrs[strIndex]);
+					strIndex++;
 				}
-
-//									// H.M.Wang 2019-12-5 串口数据长度可能长度不足，只取有效长度的数据，不能越界
-//									int readLen = Math.min(((CounterObject)baseObject).getBits(), datastring.length() - strIndex);
-//									Debug.d(TAG, "Counter Contents : [" + datastring.substring(strIndex, strIndex + readLen) + "]");
-//									((CounterObject)baseObject).setSerialContent(datastring.substring(strIndex, strIndex + readLen));
-//									strIndex += readLen;
 				needUpdate = true;
 			} else if(baseObject instanceof BarcodeObject) {
 				if(((BarcodeObject)baseObject).isDynamicQRCode() && recvStrs.length >= 11) {
@@ -343,36 +339,90 @@ public class DataTransferThread {
 	}
 // End. -----
 
-	public boolean launch(Context ctx) {
-		// H.M.Wang 2019-10-23 串口发送数据支持
-		final SerialHandler serialHandler =  SerialHandler.getInstance(false);
-		if(SystemConfigFile.getInstance().getParam(40) == 1) {
-			ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
-			for(BaseObject baseObject: objList) {
-				if(baseObject instanceof CounterObject) {
-					((CounterObject)baseObject).setSerialContent("");
-				}
-			}
+// H.M.Wang 2019-12-19 追加函数，处理未由分隔符分开的字符串，根据计数器的位数向前逐个填充计数器，数据不足时计数器内容为空，主要满足串口协议1
+	public void setRemoteTextFitCounter(String data) {
+		Debug.d(TAG, "String from Remote = [" + data + "]");
 
-			serialHandler.setPrintCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
-				@Override
-				public void onCommandReceived(int cmd, byte[] data) {
-					if(cmd == EC_DOD_Protocol.CMD_TEXT) {                         // 发送一条文本	0x0013
+		int strIndex = 0;
+		int counterIndex = 0;
+		boolean needUpdate = false;
+
+		ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+		for(BaseObject baseObject: objList) {
+			if(baseObject instanceof CounterObject) {
+				if(strIndex < data.length()) {
+					int readLen = Math.min(((CounterObject)baseObject).getBits(), data.length() - strIndex);
+					Debug.d(TAG, "Counter[" + counterIndex + "]: " + data.substring(strIndex, strIndex + readLen));
+					((CounterObject)baseObject).setRemoteContent(data.substring(strIndex, strIndex + readLen));
+					strIndex += readLen;
+					needUpdate = true;
+				} else {
+					Debug.d(TAG, "Counter[" + counterIndex + "]: ");
+				}
+				counterIndex++;
+			}
+		}
+		mNeedUpdate = needUpdate;
+	}
+// End. -----
+
+// H.M.Wang 2019-12-19 追加函数，将字符串直接付给第一个计数器，主要满足串口协议3
+	public void setRemoteTextDirect(String data) {
+		Debug.d(TAG, "String from Remote = [" + data + "]");
+
+		boolean needUpdate = false;
+
+		ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+		for(BaseObject baseObject: objList) {
+			if(baseObject instanceof CounterObject) {
+				Debug.d(TAG, "Counter[0]: " + data);
+				((CounterObject)baseObject).setRemoteContent(data);
+				needUpdate = true;
+				break;
+			}
+		}
+		mNeedUpdate = needUpdate;
+	}
+// End. -----
+
+	public boolean launch(Context ctx) {
+		// H.M.Wang 2019-12-19 支持多种串口协议的修改
+		// H.M.Wang 2019-10-23 串口发送数据支持
+		final SerialHandler serialHandler =  SerialHandler.getInstance();
+		serialHandler.setPrintCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
+			@Override
+			public void onCommandReceived(int cmd, byte[] data) {
+				if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2) {
+
+					if (cmd == EC_DOD_Protocol.CMD_TEXT) {                         // 发送一条文本	0x0013
+						ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+						for (BaseObject baseObject : objList) {
+							if (baseObject instanceof CounterObject) {
+								((CounterObject) baseObject).setRemoteContent("");
+							}
+						}
+
 						String datastring = new String(data, 7, data.length - 7);
-						// H.M.Wang 2019-12-16 为了与网络设置兼容，将功能部分提取出来作为一个函数，setRemoteText()
-						setRemoteText(datastring);
-						// End. ----
+						if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1) {
+							setRemoteTextFitCounter(datastring);
+						} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2) {
+							setRemoteTextSeperated(datastring);
+						}
 						serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 1, 0, 0, "");
-					// H.M.Wang 2019-12-7 反转命令立即生效
-					} else if(cmd == EC_DOD_Protocol.CMD_SET_REVERSE) {
+						// H.M.Wang 2019-12-7 反转命令立即生效
+					} else if (cmd == EC_DOD_Protocol.CMD_SET_REVERSE) {
 						mNeedUpdate = true;
 					}
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_3) {
+					String datastring = new String(data, 0, data.length);
+					setRemoteTextDirect(datastring);
+					serialHandler.sendCommandProcessResult(SerialProtocol3.CMD_DUMMY, 1, 0, 0, datastring + " set.");
 				}
-			});
-		} else {
-			serialHandler.setPrintCommandListener(null);
-		}
-		// End --------------------
+			}
+		});
+
+		// End of H.M.Wang 2019-12-19 支持多种串口协议的修改
 
 		mRunning = true;
 
@@ -390,7 +440,7 @@ public class DataTransferThread {
 		mRunning = false;
 
 		// H.M.Wang 2019-10-23 串口发送数据支持
-		SerialHandler serialHandler =  SerialHandler.getInstance(false);
+		SerialHandler serialHandler =  SerialHandler.getInstance();
 		serialHandler.setPrintCommandListener(null);
 		// End --------------------
 
@@ -788,6 +838,7 @@ public class DataTransferThread {
 								}
 								break;
 							}
+							Debug.i(TAG, "mIndex: " + index());
 							buffer = mDataTask.get(index()).getPrintBuffer();
 						}
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
@@ -806,6 +857,10 @@ public class DataTransferThread {
 					//在此处发生打印数据，同时
 					buffer = mDataTask.get(index()).getPrintBuffer();
 					Debug.d(TAG, "===>buffer size="+buffer.length);
+					// H.M.Wang 2019-12-20 关闭print.bin保存
+//					// H.M.Wang 2019-12-17 每次重新生成print内容后，都保存print.bin
+//					BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads);
+//					// End.
 					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
 					mHandler.sendEmptyMessageDelayed(MESSAGE_DATA_UPDATE, MESSAGE_EXCEED_TIMEOUT);
 					mNeedUpdate = false;

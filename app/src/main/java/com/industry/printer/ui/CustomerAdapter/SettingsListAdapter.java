@@ -11,6 +11,7 @@ import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.hardware.RTCDevice;
 import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
+import com.industry.printer.ui.CustomerDialog.DataSourceSelectDialog;
 import com.industry.printer.ui.CustomerDialog.HeaderSelectDialog;
 import com.industry.printer.ui.CustomerDialog.NewMessageDialog;
 import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
@@ -79,8 +80,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	private PopWindowAdapter mCntReset;
 //	private PopWindowAdapter mQRsource;
 	private PopWindowAdapter mBeep;
-	private PopWindowAdapter mLan;
-	
+	// H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用
+//	private PopWindowAdapter mLan;
+	// End of H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用
+
 	private ItemViewHolder mEncoderHolder;
 //	private HashMap<Integer, ItemViewHolder> mHoldMap;
 	
@@ -90,6 +93,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	public static final String ACTION_PARAM_CHANGED = "com.industry.printer.PARAM_CHANGED";
 	public static final String TAG_INDEX = "TagIndex";
 	public static final String TAG_VALUE = "TagCount";
+
+	// H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数
+	public static final int MSG_DATA_SOURCE_SELECTED = 38;		// 数据源选择确定事件定义
+	// End of H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数
 
 	BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
@@ -147,6 +154,14 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 				
 				notifyDataSetChanged();
 				break;
+			// H.M.Wang 2019-12-19 追加数据源选择对话窗响应
+			case MSG_DATA_SOURCE_SELECTED:
+				mSettingItems[SystemConfigFile.INDEX_DATA_SOURCE].setValue(msg.arg1);
+				mSysconfig.setParam(SystemConfigFile.INDEX_DATA_SOURCE, mSettingItems[SystemConfigFile.INDEX_DATA_SOURCE].getValue());
+
+				notifyDataSetChanged();
+				break;
+			// End of H.M.Wang 2019-12-19 追加数据源选择对话窗响应
 			}
 		}
 	};
@@ -277,7 +292,9 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mCntReset = new PopWindowAdapter(mContext, null);
 		// mQRsource = new PopWindowAdapter(mContext, null);
 		mBeep = new PopWindowAdapter(mContext, null);
-		mLan = new PopWindowAdapter(mContext, null);
+		// H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用
+		// mLan = new PopWindowAdapter(mContext, null);
+		// End of H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用
 		initAdapters();
 
 		// H.M.Wang 增加3行。注册广播接收器，接收计数器更新值，设置到编辑区内
@@ -439,9 +456,15 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[35] = new ItemOneLine(36, R.string.str_textview_param36, R.string.str_time_unit_us);
 		mSettingItems[36] = new ItemOneLine(37, R.string.str_textview_param37, R.string.str_time_unit_us);
 		mSettingItems[37] = new ItemOneLine(38, R.string.str_textview_param38, 0);
-		mSettingItems[38] = new ItemOneLine(39, R.string.str_textview_param39, R.array.switch_item_entries,	0,	ItemType.TYPE_SWITCH);
+		// H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数
+//		mSettingItems[38] = new ItemOneLine(39, R.string.str_textview_param39, R.array.switch_item_entries,	0,	ItemType.TYPE_SWITCH);
+		mSettingItems[38] = new ItemOneLine(39, R.string.str_textview_param39, R.array.strDataSourceArray,	0,	ItemType.TYPE_ARRAY);
+		// End of H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数
 		mSettingItems[39] = new ItemOneLine(40, R.string.str_textview_param40, R.array.switch_item_entries,	0,	ItemType.TYPE_SWITCH);
+		// H.M.Wang 2019-12-19 恢复原来参数41的内容
+//		mSettingItems[40] = new ItemOneLine(41, R.string.str_textview_param41, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
 		mSettingItems[40] = new ItemOneLine(41, R.string.str_textview_param41, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
+		// End of H.M.Wang 2019-12-19 恢复原来参数41的内容
 		mSettingItems[41] = new ItemOneLine(42, R.string.str_textview_param42, 0);
 		mSettingItems[42] = new ItemOneLine(43, R.string.str_textview_param43, 0);
 		mSettingItems[43] = new ItemOneLine(44, R.string.str_textview_param44, 0);
@@ -564,10 +587,12 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mBeep.addItem(items[i]);
 		}
 
-		for (int i = 0; i < items.length; i++) {
-			mLan.addItem(items[i]);
-		}
-		
+		// H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用
+//		for (int i = 0; i < items.length; i++) {
+//			mLan.addItem(items[i]);
+//		}
+		// End of H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用
+
 		items = mContext.getResources().getStringArray(R.array.pens_item_entries);
 		for (int i = 0; i < items.length; i++) {
 			mPens.addItem(items[i]);
@@ -669,7 +694,12 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		} else if (position == 31) {
 			mSpiner.setAdapter(mCntReset);
 		} else if (position == 38) {
-			mSpiner.setAdapter(mLan);
+			// H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用。改为全屏对话窗模式
+			// mSpiner.setAdapter(mLan);
+			DataSourceSelectDialog dialog = new DataSourceSelectDialog(mContext, handler, mSysconfig.getParam(38));
+			dialog.show();
+			return;
+			// End of H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用。改为全屏对话窗模式
 		} else if (position == 39) { //參數40
 			mSpiner.setAdapter(mBeep);
 		} else if (position == 40) { //鍙冩暩40

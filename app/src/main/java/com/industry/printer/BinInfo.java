@@ -82,7 +82,8 @@ public class BinInfo {
 	public int mCharsFeed;
 	
 	/**变量的每个字符所占列数**/
-	public int mColPerElement;
+	// H.M.Wang 2019-12-20 修改为浮点数
+	public float mColPerElement;
 	
 	/**bin文件的字节缓存**/
 	public byte[] mBufferBytes;
@@ -233,7 +234,8 @@ public class BinInfo {
 				mVarCount = 10;
 			}
 			Debug.d(TAG, "===>varCount: " + mVarCount);
-			mColPerElement = mColumn/mVarCount;
+			// H.M.Wang 2019-12-20 修改为浮点数
+			mColPerElement = 1.0f * mColumn/mVarCount;
 		} else {
 			mColPerElement = 0;
 		}
@@ -454,6 +456,9 @@ public class BinInfo {
 		}
 
 		ByteArrayBuffer ba = new ByteArrayBuffer(0);
+
+		Debug.d(TAG, "===>mColPerElement:" + mColPerElement + ", mBytesPerH=" + mBytesPerH + ", type=" + mType);
+
    		for(int i=0; i<var.length(); i++)
    		{
    			String v = var.substring(i, i+1);
@@ -500,9 +505,9 @@ public class BinInfo {
 			}
 			// End ----------------------------------
 
-   			Debug.d(TAG, "===>mColPerElement:" + mColPerElement + ", mBytesPerH=" + mBytesPerH + ", type=" + mType);
+//   			Debug.d(TAG, "n == " + n);
    			/* 如果每列的字节数为单数，则需要在每列尾部补齐一个字节 */
-   			for (int k = 0; k < mColPerElement; k++) {
+   			for (int k = 0; k < (int)mColPerElement; k++) {
    				for (int j = 0; j < mType; j++) {
 					// H.M.Wang 注释掉1行
 //					ba.append(mBuffer, n*mColPerElement * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
@@ -511,7 +516,8 @@ public class BinInfo {
 					if(bFillBlank) {
 						ba.append(blank, 0, mBytesPerH);
 					} else {
-						ba.append(mBuffer, n*mColPerElement * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
+						// H.M.Wang 2019-12-20 浮点运算后取整
+						ba.append(mBuffer, (int)(n*mColPerElement) * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
 					}
 
    	   	   			if (mNeedFeed) {
@@ -574,9 +580,10 @@ public class BinInfo {
     	}
     	ByteArrayBuffer ba = new ByteArrayBuffer(0);
 		/* 如果每列的字节数为单数，则需要在每列尾部补齐一个字节 */
-		for (int k = 0; k < bits * mColPerElement; k++) {
+		for (int k = 0; k < bits * (int) mColPerElement; k++) {
 			for (int j = 0; j < mType; j++) {
-   				ba.append(mBuffer, offset * mColPerElement * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
+				// H.M.Wang 2019-12-20 浮点运算后取整
+   				ba.append(mBuffer, (int)(offset * mColPerElement) * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
    	   			if (mNeedFeed) {
    					ba.append(feed, 0, 1);
    				}
@@ -615,9 +622,10 @@ public class BinInfo {
 			}
 			Debug.d(TAG, "===>mColPerElement:" + mColPerElement + ", mBytesPerH=" + mBytesPerH + ", type=" + mType);
 			/* 如果每列的字节数为单数，则需要在每列尾部补齐一个字节 */
-			for (int k = 0; k < mColPerElement; k++) {
+			for (int k = 0; k < (int)mColPerElement; k++) {
 				for (int j = 0; j < mType; j++) {
-					ba.append(mBuffer, n*mColPerElement * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
+					// H.M.Wang 2019-12-20 浮点运算后取整
+					ba.append(mBuffer, (int)(n*mColPerElement) * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
 					if (mNeedFeed) {
 						ba.append(feed, 0, 1);
 					}

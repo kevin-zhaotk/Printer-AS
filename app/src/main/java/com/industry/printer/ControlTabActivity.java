@@ -491,20 +491,22 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		SocketBegin();// Beging Socket service start;
 		Querydb=new Printer_Database(mContext);
 
+		// H.M.Wang 2019-12-19 修改支持多种协议
 		// H.M.Wang 2019-10-26 追加串口命令处理部分
-        if(SystemConfigFile.getInstance().getParam(40) == 1) {
-			final SerialHandler sHandler = SerialHandler.getInstance(true);
-			sHandler.setNormalCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
-				@Override
-				public void onCommandReceived(int cmd, byte[] data) {
+		final SerialHandler sHandler = SerialHandler.getInstance();
+		sHandler.setNormalCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
+			@Override
+			public void onCommandReceived(int cmd, byte[] data) {
+				if( SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2 ) {
 					Debug.d(TAG, "CMD = " + Integer.toHexString(cmd) + "; DATA = [" + ByteArrayUtils.toHexString(data) + "]");
-					switch(cmd) {
+					switch (cmd) {
 						case EC_DOD_Protocol.CMD_CHECK_CHANNEL:                // 检查信道	0x0001
 //							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_CHECK_CHANNEL, 0, 0, 0, "");
 							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_CHECK_CHANNEL, 1, 0, 0, "");
 							break;
 						case EC_DOD_Protocol.CMD_SET_PRINT_DELAY:              // 设定喷头喷印延时	0x0008
-							if(data.length != 3) {
+							if (data.length != 3) {
 								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_PRINT_DELAY, 1, 0, 1, "");
 							} else {
 								SystemConfigFile.getInstance().setParamBraodcast(3, (0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]));
@@ -516,7 +518,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							}
 							break;
 						case EC_DOD_Protocol.CMD_SET_MOVE_SPEED:               // 设定物体移动速度	0x000a
-							if(data.length != 3) {
+							if (data.length != 3) {
 								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_MOVE_SPEED, 1, 0, 1, "");
 							} else {
 								SystemConfigFile.getInstance().setParamBraodcast(0, Math.round(3.7f * ((0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]))));
@@ -547,8 +549,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							break;
 					}
 				}
-			});
-		}
+			}
+		});
 
 		if(SystemConfigFile.getInstance().getParam(41) == 1) {
 			Toast.makeText(mContext, "Launching Print...", Toast.LENGTH_SHORT).show();
@@ -2310,12 +2312,18 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 										this.sendmsg(Constants.pcOk(msg));
 // H.M.Wang 2019-12-16 支持网络下发计数器和动态二维码的值
 									} else if (PCCommand.CMD_SET_COUNTER.equalsIgnoreCase(cmd.command)) {
-										if(DataTransferThread.getInstance().isRunning()) {
-											DataTransferThread.getInstance().setRemoteText(cmd.content);
-											this.sendmsg(Constants.pcOk(msg));
-										} else {
-											this.sendmsg(Constants.pcErr(msg));
-										}
+    // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
+                                        if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN) {
+                                            if(DataTransferThread.getInstance().isRunning()) {
+                                                DataTransferThread.getInstance().setRemoteTextSeperated(cmd.content);
+                                                this.sendmsg(Constants.pcOk(msg));
+                                            } else {
+                                                this.sendmsg(Constants.pcErr(msg));
+                                            }
+                                        } else {
+                                            this.sendmsg(Constants.pcErr(msg));
+                                        }
+    // End.
 // End. -----
 									} else if(PCCommand.CMD_PRINT.equalsIgnoreCase(cmd.command)) {
 

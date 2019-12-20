@@ -334,6 +334,7 @@ public class BarcodeObject extends BaseObject {
 	
 	private Bitmap drawQR(String content, int w, int h) {
 		try {
+			Debug.d(TAG, "Content: " + content);
 			BitMatrix matrix = encode(content, w, h, null);
 			int tl[] = matrix.getTopLeftOnBit();
 			int width = matrix.getWidth();
@@ -373,6 +374,7 @@ public class BarcodeObject extends BaseObject {
 		BitMatrix matrix = writer.encode(content, getBarcodeFormat(mFormat), w, h);
 		int width = matrix.getWidth();
 		int height = matrix.getHeight();
+		Debug.d(TAG, "Width: " + width + "; Height: " + height);
 		int[] pixels = new int[width * height];
 
 		for (int y = 0; y < height; y++)

@@ -114,6 +114,19 @@ public class SystemConfigFile{
 // H.M.Wang 2019-9-28 增加1带多参数索引
 	public static final int INDEX_ONE_MULTIPLE = 37;
 
+	// H.M.Wang 2019-12-19 追加参数39，数据源的索引,作废原来的索引INDEX_LAN_PRINT
+	public static final int INDEX_DATA_SOURCE = 38;
+
+	public static final int DATA_SOURCE_DISABLED 	= 0;		// 数据源禁用
+	public static final int DATA_SOURCE_BIN 		= 1;		// 数据源使用BIN
+	public static final int DATA_SOURCE_FILE 		= 2;		// 数据源使用文件
+	public static final int DATA_SOURCE_LAN 		= 3;		// 数据源使用以太网数据
+	public static final int DATA_SOURCE_RS231_1 	= 4;		// 数据源使用串口协议1
+	public static final int DATA_SOURCE_RS231_2 	= 5;		// 数据源使用串口协议2
+	public static final int DATA_SOURCE_RS231_3 	= 6;		// 数据源使用串口协议3
+	public static final int DATA_SOURCE_RS231_4 	= 7;		// 数据源使用串口协议4
+	public static final int DATA_SOURCE_RS231_5 	= 8;		// 数据源使用串口协议5
+
 	/**
 	 * 参数39接收网络bin并直接打印
 	 * 1 像以前一样载入信息
@@ -121,7 +134,8 @@ public class SystemConfigFile{
 	 * 3每次下发完， 发个消息给上位机。  消息类似查询结果。
 	 * 4上位机收到消息，发下一个bin
 	 */
-	public static final int INDEX_LAN_PRINT = 38;
+//	public static final int INDEX_LAN_PRINT = 38;
+	// End of H.M.Wang 2019-12-19 追加参数39，数据源的索引,作废原来的索引INDEX_LAN_PRINT
 
 
 	

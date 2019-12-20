@@ -16,6 +16,8 @@
 
 package com.google.zxing.datamatrix;
 
+import android.util.Log;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.Writer;
@@ -29,6 +31,8 @@ import com.google.zxing.datamatrix.encoder.SymbolShapeHint;
 import com.google.zxing.qrcode.encoder.ByteMatrix;
 
 import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * This object renders a Data Matrix code as a BitMatrix 2D array of greyscale values.
@@ -88,12 +92,14 @@ public final class DataMatrixWriter implements Writer {
     //2. step: ECC generation
     String codewords = ErrorCorrection.encodeECC200(encoded, symbolInfo);
 
+//    Log.d(TAG, "symbolInfo.getSymbolDataWidth(): " + symbolInfo.getSymbolDataWidth() + "; symbolInfo.getSymbolDataHeight(): " + symbolInfo.getSymbolDataHeight());
     //3. step: Module placement in Matrix
     DefaultPlacement placement = new DefaultPlacement(codewords, symbolInfo.getSymbolDataWidth(), symbolInfo.getSymbolDataHeight());
     placement.place();
 
     //4. step: low-level encoding
     return encodeLowLevel(placement, symbolInfo, width, height);
+//    return encodeLowLevel(placement, symbolInfo, symbolInfo.getSymbolDataWidth(), symbolInfo.getSymbolDataHeight());
   }
 
   /**

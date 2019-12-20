@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+<!-- H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
+    <string-array name="strDataSourceArray">
+        <item>禁用</item>
+        <item>BIN</item>
+        <item>文件</item>
+        <item>以太網數據</item>
+        <item>串口協議1</item>
+        <item>串口協議2</item>
+        <item>串口協議3</item>
+        <item>串口協議4</item>
+        <item>串口協議5</item>
+    </string-array>
+<!-- End of H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
+
     <string-array name="strPrinterArray">
         <item>12.7 </item>
         <item>12.7X2</item>

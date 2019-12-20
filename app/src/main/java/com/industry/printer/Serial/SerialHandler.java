@@ -1,8 +1,11 @@
 package com.industry.printer.Serial;
 
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.Debug;
 
 import org.apache.http.util.ByteArrayBuffer;
+
+import java.nio.charset.Charset;
 
 /**
  * Created by hmwan on 2019/10/26.
@@ -27,10 +30,10 @@ public class SerialHandler {
 
     private static SerialHandler mSerialHandler = null;
 
-    public static SerialHandler getInstance(boolean needInit) {
+    public static SerialHandler getInstance() {
         if(null == mSerialHandler) {
             mSerialHandler = new SerialHandler();
-            if(!mSerialHandler.isInitialized() && needInit) {
+            if(!mSerialHandler.isInitialized()) {
                 mSerialHandler.init();
             }
         }
@@ -48,51 +51,69 @@ public class SerialHandler {
         mSerialPort.readSerial(new SerialPort.SerialPortDataReceiveListenner() {
             @Override
             public void onDataReceived(byte[] data) {
-                ByteArrayBuffer bab = new ByteArrayBuffer(0);
-                bab.append(data, 0, data.length);
-                EC_DOD_Protocol p = new EC_DOD_Protocol();
-                int cmd = p.parseFrame(bab);
-                dispatchProtocol(cmd, bab.toByteArray());
+                dispatchProtocol(data);
             }
         });
     }
 
     public void stop() {
-        mSerialPort.stopReading();
-        mSerialPort.closeSerial();
-        mSerialPort = null;
+        if(isInitialized()) {
+            mSerialPort.stopReading();
+            mSerialPort.closeSerial();
+            mSerialPort = null;
+            mSerialHandler = null;
+        }
     }
 
-    private void dispatchProtocol(int result, byte[] data) {
-        if(!isInitialized()) return;
+    private void dispatchProtocol(byte[] data) {
+//        if(!isInitialized()) return;
 
-        switch(result & ERROR_MASK) {
-            case EC_DOD_Protocol.ERROR_INVALID_STX:                // 起始标识错误
-                sendCommandProcessResult(0, 1, 0, 1, "");
+        ByteArrayBuffer bab = new ByteArrayBuffer(0);
+        bab.append(data, 0, data.length);
+
+        if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
+            SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2) {
+
+            EC_DOD_Protocol p = new EC_DOD_Protocol();
+            int result = p.parseFrame(bab);
+            byte[] recvData = bab.toByteArray();
+
+            switch(result & ERROR_MASK) {
+                case EC_DOD_Protocol.ERROR_INVALID_STX:                // 起始标识错误
+                    sendCommandProcessResult(0, 1, 0, 1, "");
 //                mSerialPort.writeStringSerial( "<!-- Invalid STX -->");
-                break;
-            case EC_DOD_Protocol.ERROR_INVALID_ETX:                // 终止标识错误
-                sendCommandProcessResult(0, 1, 0, 1, "");
+                    break;
+                case EC_DOD_Protocol.ERROR_INVALID_ETX:                // 终止标识错误
+                    sendCommandProcessResult(0, 1, 0, 1, "");
 //                mSerialPort.writeStringSerial( "<!-- Invalid ETX -->");
-                break;
-            case EC_DOD_Protocol.ERROR_CRC_FAILED:                 // CRC校验失败
-                sendCommandProcessResult(result & CMD_MASK, 1, 0, 1, "");
+                    break;
+                case EC_DOD_Protocol.ERROR_CRC_FAILED:                 // CRC校验失败
+                    sendCommandProcessResult(result & CMD_MASK, 1, 0, 1, "");
 //                mSerialPort.writeStringSerial("<!-- CRC Failed -->");
-                break;
-            case EC_DOD_Protocol.ERROR_UNKNOWN_CMD:                     // 解析帧失败
-                sendCommandProcessResult(0, 1, 0, 1, "");
+                    break;
+                case EC_DOD_Protocol.ERROR_UNKNOWN_CMD:                     // 解析帧失败
+                    sendCommandProcessResult(0, 1, 0, 1, "");
 //                mSerialPort.writeStringSerial("<!-- Unknown Command -->");
-                break;
-            case EC_DOD_Protocol.ERROR_FAILED:                     // 解析帧失败
+                    break;
+                case EC_DOD_Protocol.ERROR_FAILED:                     // 解析帧失败
 //                mSerialPort.writeStringSerial("<!-- Failed -->");
 //                break;
-            case EC_DOD_Protocol.ERROR_SUCESS:
-                dispatchCommands(result & CMD_MASK, data);
-                break;
-            default:
-                sendCommandProcessResult(0, 1, 0, 1, "");
+                case EC_DOD_Protocol.ERROR_SUCESS:
+                    dispatchCommands(result & CMD_MASK, recvData);
+                    break;
+                default:
+                    sendCommandProcessResult(0, 1, 0, 1, "");
 //                mSerialPort.writeStringSerial("<!-- Failed -->");
-                break;
+                    break;
+            }
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_3) {
+            SerialProtocol3 p = new SerialProtocol3();
+            int result = p.parseFrame(bab);
+            if(result == SerialProtocol3.CMD_DUMMY) {
+                byte[] recvData = bab.toByteArray();
+
+                procCommands(result, recvData);
+            }
         }
     }
 
@@ -156,10 +177,20 @@ public class SerialHandler {
 
     public void sendCommandProcessResult(int cmd, int ack, int devStatus, int cmdStatus, String message) {
         if(isInitialized()) {
-            EC_DOD_Protocol p = new EC_DOD_Protocol();
+            byte[] response;
+            if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
+                SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2) {
 
-            byte[] response = p.createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes());
-            mSerialPort.writeSerial(response);
+                EC_DOD_Protocol p = new EC_DOD_Protocol();
+                response = p.createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
+                mSerialPort.writeSerial(response);
+
+            } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_3) {
+                SerialProtocol3 p = new SerialProtocol3();
+
+                response = p.createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
+                mSerialPort.writeSerial(response);
+            }
         }
     }
 }
