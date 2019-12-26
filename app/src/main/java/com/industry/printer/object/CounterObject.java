@@ -31,7 +31,7 @@ public class CounterObject extends BaseObject {
 	// 计数器初始值对应设置里10个计数器值的编号
 	public int mCounterIndex;
 	//public int mCurVal;
-	
+
 	public CounterObject(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_CNT, x);
 		mStart=0;
@@ -151,13 +151,13 @@ public class CounterObject extends BaseObject {
 			Debug.d(TAG, "--->setContent exception: " + e.getMessage());
 		}
 		mContent = BaseObject.intToFormatString(mValue, mBits);
+
 //		Debug.d(TAG, "setContent content="+content+", value="+mValue+", mMax="+mMax);
 	}
 
-	// H.M.Wang 追加对串口设置的数据的支持
-	private String mSerialContent = "";
+	private String mRemoteContent = "";
 
-	public void setSerialContent(String content) {
+	public void setRemoteContent(String content) {
 		// H.M.Wang 2019-12-15 切掉超出位数部分的多余字符
 		content = content.substring(0, Math.min(getBits(), content.length()));
 
@@ -172,12 +172,12 @@ public class CounterObject extends BaseObject {
 		for(int i=0; i<getBits() - cntLength; i++) {
 			sb.append(" ");
 		}
-		mSerialContent = sb.toString();
-		mSerialContent = mSerialContent.substring(0, getBits());
+		mRemoteContent = sb.toString();
+		mRemoteContent = mRemoteContent.substring(0, getBits());
 	}
 
-	public String getSerialContent() {
-		return mSerialContent;
+	public String getRemoteContent() {
+		return mRemoteContent;
 	}
 
 	public String getNext()

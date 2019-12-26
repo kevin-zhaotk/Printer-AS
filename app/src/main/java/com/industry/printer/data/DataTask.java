@@ -323,22 +323,27 @@ public class DataTask {
 		//mPreBitmap = Arrays.copyOf(mBg.mBits, mBg.mBits.length);
 		for(BaseObject o:mObjList)
 		{
+			Debug.d(TAG, "Name " + o.mName);
 			if (o instanceof BarcodeObject) {
 				Debug.d(TAG, "+++++++++++++>source: " + o.getSource());
 				/* 如果二維碼從QR文件中讀 */
 				if (!o.getSource()) {
 					continue;
 				}
-				String content = "123456789";
-				if (!prev) {
+// 2019-12-18 H.M.Wang 当数据源为外部的时候，不去读取内部的QR文件。并且修改content的设置方式，原来的方式如果不从reader读数据，则可能就是“123456789”，新的方式是如果读并且读到，则设置，否则跳过
+//				String content = "123456789";
+//				if (!prev) {
+				if (!prev && SystemConfigFile.getInstance().getParam(40) == SystemConfigFile.DATA_SOURCE_FILE) {
 					QRReader reader = QRReader.getInstance(mContext);
-					content = reader.read();
+					String content = reader.read();
+
+					if (TextUtils.isEmpty(content)) {
+						isReady = false;
+						continue;
+					}
+					o.setContent(content);
 				}
-				if (TextUtils.isEmpty(content)) {
-					isReady = false;
-					continue;
-				}
-				o.setContent(content);
+// End.
 				// Bitmap bmp = o.getScaledBitmap(mContext);
 				Bitmap bmp = ((BarcodeObject)o).getPrintBitmap((int)(o.getWidth()/scaleW), mBinInfo.getBytesFeed()*8, (int)(o.getWidth()/scaleW), (int)(o.getHeight()/scaleH), (int)o.getY());
 				Debug.d(TAG,"--->cover barcode w = " + o.getWidth() + "  h = " + o.getHeight() + " total=" + (mBinInfo.getBytesFeed()*8) + " " + (o.getWidth()/scaleW) + " " + (o.getHeight()/scaleH));
@@ -349,28 +354,38 @@ public class DataTask {
 				continue;
 			} else if(o instanceof CounterObject)
 			{
+// 2019-12-17 H.M.Wang 彻底取消原来的事先保存与Object对应的BinInfo的做法，因为修改为通过useSerialContent()来判断是何种打印方式的话，每次都有可能发生变化
 				// H.M.Wang 2019-10-27 修改。适应从串口来的打印数据
 				// End ------------------------------------------
-				BinInfo info = mVarBinList.get(o);
+//				BinInfo info = mVarBinList.get(o);
+				BinInfo info = null;
 				Debug.d(TAG, "--->object index=" + o.getIndex());
-				if (info == null) {
-					// H.M.Wang 2019-12-5 为对应串口打印时，vbin的元素个数不是传统计数器的10位，而是128位，做了区分
-					if(SystemConfigFile.getInstance().getParam(40) == 1) {
+//				if (info == null) {
+				// H.M.Wang 2019-12-19 最佳多种协议支持
+				// H.M.Wang 2019-12-5 为对应串口打印时，vbin的元素个数不是传统计数器的10位，而是128位，做了区分
+					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
+						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
+						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2 ||
+						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_3 ) {
 						info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, 128, mExtendStat);
+						var = info.getVarBuffer(((CounterObject) o).getRemoteContent(), true, true);
 					} else {
 						info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
+						var = info.getVarBuffer(prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext(), true, false);
 					}
 //					info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
 					// End. 2019-12-5 -----------
-					mVarBinList.put(o, info);
-				}
+//					mVarBinList.put(o, info);
+//				}
 
 				// H.M.Wang 2019-12-4 修改变量缓冲区获取方式，如果是串口，则按ASCII进行索引，如果是普通变量则按原来处理方式处理
-				if(SystemConfigFile.getInstance().getParam(40) == 1) {
-					var = info.getVarBuffer(((CounterObject) o).getSerialContent(), true, true);
-				} else {
-					var = info.getVarBuffer(prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext(), true, false);
-				}
+				// 2019-12-17 H.M.Wang 追加对使用的数据源区分
+//				if(SystemConfigFile.getInstance().getParam(40) == 1) {
+//				if(((CounterObject) o).useSerialContent()) {
+//					var = info.getVarBuffer(((CounterObject) o).getRemoteContent(), true, true);
+//				} else {
+//					var = info.getVarBuffer(prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext(), true, false);
+//				}
 				// End. .......................H.M.Wang 2019-12-4
 
 //				BinCreater.saveBin("/sdcard/" + o.getIndex() + ".bin", var, info.getCharsPerHFeed()*16);

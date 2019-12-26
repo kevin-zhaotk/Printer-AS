@@ -326,9 +326,15 @@
 	<string name="str_textview_param36">36.Reserved</string>
 	<string name="str_textview_param37">37.Reserved</string>
 	<string name="str_textview_param38">38.Der für mehrere</string>
-	<string name="str_textview_param39">39.Reserved</string>
+	<!-- H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数 -->
+	<!--	<string name="str_textview_param39">39.Reserved</string> -->
+	<string name="str_textview_param39">39.Data Source</string>
+	<!-- End of H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数 -->
 	<string name="str_textview_param40">40.Beep</string>
+	<!-- H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
+	<!--	<string name="str_textview_param41">41.Com Print</string> -->
 	<string name="str_textview_param41">41.Reserved</string>
+	<!-- End of H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
 	<string name="str_textview_param42">42.Reserved</string>
 	<string name="str_textview_param43">43.Pens</string>
 	<string name="str_textview_param44">44.Brightness</string>

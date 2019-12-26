@@ -860,13 +860,13 @@ public class RFIDDevice implements RfidCallback{
 	}
 
 	public float getLocalInk() {
-		Debug.d(TAG, "===>curInk=" + mCurInkLevel);
+//		Debug.d(TAG, "===>curInk=" + mCurInkLevel);
 		return mCurInkLevel;
 	}
 
 	public void setLocalInk(int level) {
-		// Debug.d(TAG, "===>curInk=" + mCurInkLevel);
-		 mCurInkLevel = level;
+		 Debug.d(TAG, "===>curInk=" + mCurInkLevel);
+		mCurInkLevel = level;
 	}
 	
 	public int getMax() {

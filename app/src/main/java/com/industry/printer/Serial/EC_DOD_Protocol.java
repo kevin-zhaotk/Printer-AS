@@ -103,10 +103,12 @@ public class EC_DOD_Protocol {
         int recvCmd = 0;
 
         try {
+            cutCRLFonLineEnd(recvMsg);
+
             byte[] msg = recvMsg.toByteArray();
 //            Debug.d(TAG, "[" + ByteArrayUtils.toHexString(msg) + "]");
 
-            msg = cutCRLFonLineEnd(msg);
+//            msg = cutCRLFonLineEnd(msg);
 //            Debug.d(TAG, "[" + ByteArrayUtils.toHexString(msg) + "]");
 
             if(msg[TAG_STX_POS] != TAG_STX) {
@@ -190,6 +192,12 @@ public class EC_DOD_Protocol {
         return sendBuffer.toByteArray();
     }
 
+    private void cutCRLFonLineEnd(ByteArrayBuffer recvMsg) {
+        while(recvMsg.byteAt(recvMsg.length()-1) == 0x0a || recvMsg.byteAt(recvMsg.length()-1) == 0x0d) {
+            recvMsg.setLength(recvMsg.length()-1);
+        }
+    }
+/*
     private byte[] cutCRLFonLineEnd(byte[] msg) {
         int length = msg.length;
 
@@ -203,7 +211,7 @@ public class EC_DOD_Protocol {
 
         return ByteArrayUtils.pickPartial(msg, 0, length);
     }
-
+*/
     private byte[] replaceTransformBytes(byte[] msg, boolean isRecvData) {
         ByteArrayBuffer replace = new ByteArrayBuffer(0);
 

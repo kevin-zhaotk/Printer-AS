@@ -11,36 +11,24 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.datamatrix.DataMatrixWriter;
-//import com.google.zxing.datamatrix.DataMatrixWriter;
-import com.google.zxing.oned.EAN13Writer;
+import com.google.zxing.datamatrix.encoder.SymbolShapeHint;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.google.zxing.qrcode.encoder.ByteMatrix;
 import com.google.zxing.qrcode.encoder.Encoder;
 import com.google.zxing.qrcode.encoder.QRCode;
-import com.industry.printer.FileFormat.QRReader;
-import com.industry.printer.FileFormat.SystemConfigFile;
-import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
-import com.industry.printer.data.BinCreater;
 import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.data.BinFromBitmap;
-import com.industry.printer.object.BaseObject;
-
-import com.industry.printer.BinInfo;
-import com.industry.printer.R;																																																																								
+import com.industry.printer.R;
 					
-import android.R.bool;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.TextureView;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
@@ -334,6 +322,7 @@ public class BarcodeObject extends BaseObject {
 	
 	private Bitmap drawQR(String content, int w, int h) {
 		try {
+			Debug.d(TAG, "Content: " + content);
 			BitMatrix matrix = encode(content, w, h, null);
 			int tl[] = matrix.getTopLeftOnBit();
 			int width = matrix.getWidth();
@@ -369,8 +358,14 @@ public class BarcodeObject extends BaseObject {
 	private Bitmap drawDataMatrix(String content, int w, int h) {
 		
 		DataMatrixWriter writer = new DataMatrixWriter();
-		
-		BitMatrix matrix = writer.encode(content, getBarcodeFormat(mFormat), w, h);
+
+		// H.M.Wang 2019-12-21 修改DM生成器的调用方法，设置生成的DM码为正方形
+		HashMap<EncodeHintType,Object> hints = new HashMap<EncodeHintType, Object>();
+		hints.put(EncodeHintType.DATA_MATRIX_SHAPE, SymbolShapeHint.FORCE_SQUARE);
+		BitMatrix matrix = writer.encode(content, getBarcodeFormat(mFormat), w, h, hints);
+//		BitMatrix matrix = writer.encode(content, getBarcodeFormat(mFormat), w, h);
+		// End of 2019-12-21 修改DM生成器的调用方法，设置生成的DM码为正方形
+
 		int width = matrix.getWidth();
 		int height = matrix.getHeight();
 		int[] pixels = new int[width * height];
