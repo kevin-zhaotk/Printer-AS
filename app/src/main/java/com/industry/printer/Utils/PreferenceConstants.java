@@ -16,6 +16,12 @@ public class PreferenceConstants {
 
 	public static final String LAST_VERSION_CODE = "last_version_code";
 
+	/** 打印相关的 SP数据存放在这个文件 */
+	public static final String SP_PRINT = "printSp";
+
+	public static final String LOG_COUNT = "log_count";
+
+
 	public static String getString(Context ctx, String name) {
 		SharedPreferences sp = ctx.getSharedPreferences(LAST_VERSION_CODE, Context.MODE_PRIVATE);
 		return sp.getString(name, "");

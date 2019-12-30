@@ -31,6 +31,7 @@ import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.Serial.SerialPort;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
+import com.industry.printer.interceptor.LogIntercepter;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
@@ -748,7 +749,8 @@ public class DataTransferThread {
 
 			char[] buffer = null;
 			long last = 0;
-
+			/**  save log */
+			LogIntercepter.getInstance(mContext).execute(getCurData());
 			/*逻辑要求，必须先发数据*/
 			Debug.d(TAG, "--->print run");
 

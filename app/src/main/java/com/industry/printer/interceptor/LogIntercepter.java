@@ -5,9 +5,12 @@
 package com.industry.printer.interceptor;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.industry.printer.MessageTask;
+import com.industry.printer.Utils.PreferenceConstants;
 import com.industry.printer.data.DataTask;
 import com.industry.printer.object.BaseObject;
 
@@ -24,6 +27,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 每次打印时记录当前打印信息名称和1.tlk文件
+ * 分两个文件保存，每个文件最多1000条记录，超出之后循环覆盖
+ */
 public class LogIntercepter implements IPrintIntercepter {
 
     private final static String TAG = LogIntercepter.class.getSimpleName();
@@ -31,47 +38,32 @@ public class LogIntercepter implements IPrintIntercepter {
     private static volatile LogIntercepter instance;
 
     // 记录当前1.txt的log条数
-    File cFile;
     FileOutputStream cWriter;
-    int current;
+    int count;Context mCtx;
+
 
     // singleton
-    public static LogIntercepter getInstance() {
+    public static LogIntercepter getInstance(Context ctx) {
 
         if (instance == null) {
             synchronized (LogIntercepter.class) {
                 if (instance == null) {
-                    instance = new LogIntercepter();
+                    instance = new LogIntercepter(ctx);
                 }
             }
         }
         return instance;
     }
 
-    private LogIntercepter() {
+    private LogIntercepter(Context ctx) {
 
-        cFile = new File("/mnt/sdcard/count.txt");
-
-        try {
-            if (!cFile.exists()) {
-                cFile.createNewFile();
-            }
-
-            FileInputStream cReader = new FileInputStream(cFile);
-            if (cReader.available() == 0) {
-                current = 0;
-            } else {
-                byte[] content = new byte[cReader.available()];
-                cReader.read(content);
-                current = Integer.valueOf(new String(content));
-            }
-            cWriter = new FileOutputStream(cFile);
-
-        } catch (Exception e) {
-            Log.i(TAG, "--->failed to open count file: " + e.getMessage());
-            current = 0;
+        mCtx = ctx;
+        // save log count in sharedPreference
+        SharedPreferences sp = ctx.getSharedPreferences(PreferenceConstants.SP_PRINT, Context.MODE_PRIVATE);
+        count = sp.getInt(PreferenceConstants.LOG_COUNT, 0);
+        if (count < 1000) {
+            return;
         }
-
     }
 
 
@@ -80,8 +72,12 @@ public class LogIntercepter implements IPrintIntercepter {
         if (task == null) return;
         MessageTask msg = task.mTask;
         BufferedWriter writer = null;
+
+        if (count >= 1000) {
+            delete();
+        }
 //        "/mnt/sdcard/print.bin";
-        File log = new File("/mnt/sdcard/1.txt");
+        File log = new File("/mnt/sdcard/log1.txt");
         try {
             if(!log.exists()) {
                 log.createNewFile();
@@ -89,6 +85,18 @@ public class LogIntercepter implements IPrintIntercepter {
 
             writer = new BufferedWriter(new FileWriter(log));
 
+            List<String> tlks = readTlk(task.mTask);
+            for (String line : tlks) {
+                writer.write(line);
+                writer.write("\r\n");
+            }
+            count++;
+            SharedPreferences sp = mCtx.getSharedPreferences(PreferenceConstants.SP_PRINT, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putInt(PreferenceConstants.LOG_COUNT, count);
+            editor.commit();
+            writer.flush();
+            writer.close();
         } catch (IOException e) {
 
         } finally {
@@ -102,15 +110,16 @@ public class LogIntercepter implements IPrintIntercepter {
 
     }
 
-    private void delete(File log) {
-        if(log == null) return;
+    private void delete() {
 
-        File log2 = new File("/mnt/sdcard/2.txt");
-        if (log2.exists()) {
-            log2.delete();
+        File file2 = new File("/mnt/sdcard/log2.txt");
+        if (file2.exists()) {
+            file2.delete();
         }
-
-        log.renameTo(new File("/mnt/sdcard/2.txt"));
+        File file1 = new File("/mnt/sdcard/log1.txt");
+        if (file1.exists()) {
+            file1.renameTo(file2);
+        }
     }
 
     private List<String> readTlk(MessageTask message) {
