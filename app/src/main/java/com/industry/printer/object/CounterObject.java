@@ -202,7 +202,7 @@ public class CounterObject extends BaseObject {
 		String value =mContent;
 		setContent( BaseObject.intToFormatString(mValue, mBits));
 		Debug.d(TAG, "getNext mContent="+mContent+", mValue="+mValue);
-		SystemConfigFile.getInstance(mContext).setParamBraodcast(mCounterIndex + SystemConfigFile.INDEX_COUNT_1, Integer.valueOf(value));
+		SystemConfigFile.getInstance(mContext).setParamBroadcast(mCounterIndex + SystemConfigFile.INDEX_COUNT_1, Integer.valueOf(value));
 		RTCDevice.getInstance(mContext).write(Integer.valueOf(value), mCounterIndex);
 		return value;
 	}

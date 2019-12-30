@@ -40,6 +40,15 @@ public class PCCommand {
 
     /** 打印归零 */
     public static final String CMD_RESET_INDEX = "1200";
+
+    // H.M.Wang 2019-12-25 追加速度和清洗命令
+    /** 设置速度 */
+    public static final String CMD_SET_DOTSIZE = "dotsize";
+
+    /** 打印归零 */
+    public static final String CMD_SET_CLEAN = "Clean";
+    // End of H.M.Wang 2019-12-25 追加速度和清洗命令
+
     /** 包头 */
     public String header;
 

@@ -361,7 +361,7 @@ public class DataTask {
 				BinInfo info = null;
 				Debug.d(TAG, "--->object index=" + o.getIndex());
 //				if (info == null) {
-				// H.M.Wang 2019-12-19 最佳多种协议支持
+				// H.M.Wang 2019-12-19 追加多种协议支持
 				// H.M.Wang 2019-12-5 为对应串口打印时，vbin的元素个数不是传统计数器的10位，而是128位，做了区分
 					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
 						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||

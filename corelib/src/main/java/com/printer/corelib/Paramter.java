@@ -34,6 +34,7 @@ public class Paramter {
 		mFPGAParam[4] = 170000/(param[0]*mFPGAParam[15]);
 		if (mFPGAParam[4] > 65535) {
 			mFPGAParam[4] = 65535;
+		} else if (mFPGAParam[4] == 9) {
 		} else if (mFPGAParam[4] < 10) {
 			mFPGAParam[4] = 10;
 		}

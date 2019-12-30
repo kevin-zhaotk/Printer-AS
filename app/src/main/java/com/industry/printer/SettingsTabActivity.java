@@ -194,7 +194,14 @@ public static final String TAG="SettingsTabActivity";
 		application.registerCallback("system_config.xml", new KZFileObserver.KZFileObserverInterface() {
 			@Override
 			public void onChanged() {
-				reloadSettings();
+// H.M.Wang 2019-12-27 更改为在UI线程当中调用
+				SettingsTabActivity.this.getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						reloadSettings();
+					}
+				});
+// End of H.M.Wang 2019-12-27 更改为在UI线程当中调用
 			}
 		});
 
