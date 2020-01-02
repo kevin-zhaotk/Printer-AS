@@ -387,6 +387,10 @@ public class DataTransferThread {
 // End. -----
 
 	public boolean launch(Context ctx) {
+		// H.M.Wang 2019-12-31 设置mContext，以避免因为mContext=null而导致程序崩溃
+		mContext = ctx;
+		// End of H.M.Wang 2019-12-31 设置mContext，以避免因为mContext=null而导致程序崩溃
+
 		// H.M.Wang 2019-12-19 支持多种串口协议的修改
 		// H.M.Wang 2019-10-23 串口发送数据支持
 		final SerialHandler serialHandler =  SerialHandler.getInstance();
