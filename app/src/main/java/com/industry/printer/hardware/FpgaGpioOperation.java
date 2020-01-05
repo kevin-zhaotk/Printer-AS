@@ -209,7 +209,7 @@ public class FpgaGpioOperation {
 	
 	public static void updateSettings(Context context, DataTask task, int type ) {
 		
-		if (DataTransferThread.getInstance().isRunning()) {
+		if (DataTransferThread.getInstance(context).isRunning()) {
 			Debug.d(TAG, "===>print Thread is running now, please stop it then update settings");
 			return;
 		}

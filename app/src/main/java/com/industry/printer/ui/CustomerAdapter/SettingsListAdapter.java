@@ -67,7 +67,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	private PopWindowAdapter mPen2Invert;
 	private PopWindowAdapter mPen3Invert;
 	private PopWindowAdapter mPen4Invert;
-	private PopWindowAdapter mLogSwitch;
+//	private PopWindowAdapter mLogSwitch;
 
 	// H.M.Wang 增加1行。为计数器清楚前置0
 	private PopWindowAdapter mClearZero;
@@ -278,7 +278,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mPen2Invert = new PopWindowAdapter(mContext, null);
 		mPen3Invert = new PopWindowAdapter(mContext, null);
 		mPen4Invert = new PopWindowAdapter(mContext, null);
-		mLogSwitch = new PopWindowAdapter(mContext, null);
+//		mLogSwitch = new PopWindowAdapter(mContext, null);
 
 		// H.M.Wang 增加1行。为计数器清楚前置0
 		mClearZero = new PopWindowAdapter(mContext, null);
@@ -483,7 +483,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[56] = new ItemOneLine(57, R.string.str_textview_param57, 0);
 		mSettingItems[57] = new ItemOneLine(58, R.string.str_textview_param58, 0);
 		mSettingItems[58] = new ItemOneLine(59, R.string.str_textview_param59, 0);
-		mSettingItems[59] = new ItemOneLine(60, R.string.str_textview_param60, 0, ItemType.TYPE_SWITCH);
+		mSettingItems[59] = new ItemOneLine(60, R.string.str_textview_param60, 0);
 		mSettingItems[60] = new ItemOneLine(61, R.string.str_textview_param61, 0);
 		mSettingItems[61] = new ItemOneLine(62, R.string.str_textview_param62, 0);
 		mSettingItems[62] = new ItemOneLine(63, R.string.str_textview_param63, 0);
@@ -556,10 +556,6 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		}
 		for (int i = 0; i < items.length; i++) {
 			mPen4Invert.addItem(items[i]);
-		}
-
-		for (int i = 0; i < items.length; i++) {
-			mLogSwitch.addItem(items[i]);
 		}
 
 
@@ -704,8 +700,6 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mSpiner.setAdapter(mBeep);
 		} else if (position == 40) { //鍙冩暩40
 			mSpiner.setAdapter(mHandle);
-		} else if (position == 59) {
-			mSpiner.setAdapter(mLogSwitch);
 		}
 		mSpiner.setWidth(view.getWidth());
 		//mSpiner.showAsDropDown(view);

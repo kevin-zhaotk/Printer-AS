@@ -417,7 +417,7 @@ public static final String TAG="SettingsTabActivity";
 				break;
 
 			case R.id.btn_setting_clean:
-				DataTransferThread dThread = DataTransferThread.getInstance();
+				DataTransferThread dThread = DataTransferThread.getInstance(mContext);
 				if (dThread.isCleaning) {
 					dThread.interruptClean();
 				} else {

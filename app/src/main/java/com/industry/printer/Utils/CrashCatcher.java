@@ -47,7 +47,7 @@ public class CrashCatcher implements UncaughtExceptionHandler {
 		arg1.printStackTrace();
 		Debug.e(TAG, "***");
 		Debug.e(TAG, "*****************Exception end*********************");
-		DataTransferThread dtt = DataTransferThread.getInstance();
+		DataTransferThread dtt = DataTransferThread.getInstance(mContext);
 		if (dtt.isRunning()) {
 			SharedPreferences p = mContext.getSharedPreferences(SettingsTabActivity.PREFERENCE_NAME, Context.MODE_PRIVATE);
 			p.edit().putBoolean(PreferenceConstants.PRINTING_BEFORE_CRASH, true).commit();

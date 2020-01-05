@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 
+import com.industry.printer.Constants.Constants;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Rfid.RfidScheduler;
@@ -82,11 +83,11 @@ public class DataTransferThread {
 
 	private InkLevelListener mInkListener = null;
 
-	public static DataTransferThread getInstance() {
+	public static DataTransferThread getInstance(Context ctx) {
 		if(mInstance == null) {
 			synchronized (DataTransferThread.class) {
 				if (mInstance == null) {
-					mInstance = new DataTransferThread();
+					mInstance = new DataTransferThread(ctx);
 				}
 			}
 			Debug.d(TAG, "===>new thread");
@@ -94,7 +95,8 @@ public class DataTransferThread {
 		return mInstance;
 	}
 	
-	public DataTransferThread() {
+	public DataTransferThread(Context ctx) {
+		mContext = ctx;
 		mPurgeLock = new ReentrantLock();
 	}
 	
@@ -126,13 +128,13 @@ public class DataTransferThread {
 		return (SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_BIN);
 	}
 
-	public static synchronized void setLanBuffer(int index, char[] buffer) {
+	public static synchronized void setLanBuffer(Context context, int index, char[] buffer) {
 		if (mLanBuffer == null) {
 			mLanBuffer = new HashMap<String, char[]>();
 		}
 //		Debug.i(TAG, "--->setlanBuffer: [" + index + "," + buffer.length + "]");
 		mLanBuffer.put(String.valueOf(index), Arrays.copyOf(buffer, buffer.length));
-		if (index == DataTransferThread.getInstance().index()) {
+		if (index == DataTransferThread.getInstance(context).index()) {
 			FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
 		}
 	}
@@ -749,14 +751,12 @@ public class DataTransferThread {
 
 			char[] buffer = null;
 			long last = 0;
-			/**  save log */
-			LogIntercepter.getInstance(mContext).execute(getCurData());
 			/*逻辑要求，必须先发数据*/
 			Debug.d(TAG, "--->print run");
 
 			buffer = mDataTask.get(index()).getPrintBuffer();
 			if (isLanPrint()) {
-				setLanBuffer(index(), buffer);
+				setLanBuffer(mContext, index(), buffer);
 			} else {
 				Debug.d(TAG, "--->print buffer ready");
 //			int type = mDataTask.get(index).getHeadType();
@@ -799,6 +799,9 @@ public class DataTransferThread {
 
 				Debug.e(TAG, "--->write data");
 				FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
+
+				/**  save log */
+				LogIntercepter.getInstance(mContext).execute(getCurData());
 
 			}
 			last = SystemClock.currentThreadTimeMillis();
@@ -851,6 +854,9 @@ public class DataTransferThread {
 						if (mCallback != null) {
 							mCallback.onComplete(mIndex);
 						}
+
+						/**  save log */
+						LogIntercepter.getInstance(mContext).execute(getCurData());
 					}
 				}
 
