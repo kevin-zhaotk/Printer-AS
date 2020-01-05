@@ -4,7 +4,7 @@
 <!-- H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
     <string-array name="strDataSourceArray">
         <item>Disable</item>
-        <item>Print</item>
+        <item>Bin</item>
         <item>File</item>
         <item>Lan Data</item>
         <item>RS232-1</item>

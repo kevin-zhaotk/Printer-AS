@@ -34,6 +34,7 @@ public class Paramter {
 		mFPGAParam[4] = 170000/(param[0]*mFPGAParam[15]);
 		if (mFPGAParam[4] > 65535) {
 			mFPGAParam[4] = 65535;
+		} else if (mFPGAParam[4] == 9) {
 		} else if (mFPGAParam[4] < 10) {
 			mFPGAParam[4] = 10;
 		}
@@ -113,19 +114,27 @@ public class Paramter {
 
 		// S17
 		Debug.d(TAG, "--->heads=" + heads + ", " + (mFPGAParam[16] & 0xe7f));
-		if (heads == 1) {
-			mFPGAParam[16] = mFPGAParam[16] & 0xe7f;
-		} else if (heads == 2) {
-			mFPGAParam[16] = mFPGAParam[16] & 0xe7f;
-			mFPGAParam[16] = mFPGAParam[16] | 0x080;
-		} else if (heads == 3) {
-			mFPGAParam[16] = mFPGAParam[16] & 0xe7f;
-			mFPGAParam[16] = mFPGAParam[16] | 0x100;
-		} else if (heads == 4) {
-			mFPGAParam[16] = mFPGAParam[16] & 0xe7f;
-			mFPGAParam[16] = mFPGAParam[16] | 0x180;
+		if(param[37] / 10 == 0) {
+			if (heads == 1) {
+				mFPGAParam[16] = mFPGAParam[16] & 0xe7f;
+			} else if (heads == 2) {
+				mFPGAParam[16] = mFPGAParam[16] & 0xe7f;
+				mFPGAParam[16] = mFPGAParam[16] | 0x080;
+			} else if (heads == 3) {
+				mFPGAParam[16] = mFPGAParam[16] & 0xe7f;
+				mFPGAParam[16] = mFPGAParam[16] | 0x100;
+			} else if (heads == 4) {
+				mFPGAParam[16] = mFPGAParam[16] & 0xe7f;
+				mFPGAParam[16] = mFPGAParam[16] | 0x180;
+			}
+		} else if(param[37] / 10 == 1 || param[37] / 10 == 2) {
+			int inh = param[37] % 10;
+			inh <<= 7;
+			mFPGAParam[16] = mFPGAParam[16] & 0xc7f;
+			mFPGAParam[16] = mFPGAParam[16] | (0x0380 & inh);
 		}
 		Debug.d(TAG, "--->param[16]=" + mFPGAParam[16]);
+
 		// S23
 		if (param[22] == 0) {
 			mFPGAParam[17] = mFPGAParam[17] & 0xfb;

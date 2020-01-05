@@ -30,8 +30,8 @@ public class Configs {
 	 * set Rfid value to 370/2 if Rfid is missing;
 	 * skip UID checking after 'print' command triggered before data transfer;
 	 */
-//	public static final boolean IGNORE_RFID = true;
-	public static final boolean IGNORE_RFID = false;
+	public static final boolean IGNORE_RFID = true;
+//	public static final boolean IGNORE_RFID = false;
 
 	
 	/**

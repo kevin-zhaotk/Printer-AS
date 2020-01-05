@@ -1104,7 +1104,7 @@ public class SystemConfigFile{
 	}
 
 	// H.M.Wang 2019-12-11 追加该函数，以满足计数器即串口设置内容与参数编辑区的同步
-	public void setParamBraodcast(int index, int value) {
+	public void setParamBroadcast(int index, int value) {
 		setParam(index, value);
 
 		Intent broadcastIntent = new Intent();

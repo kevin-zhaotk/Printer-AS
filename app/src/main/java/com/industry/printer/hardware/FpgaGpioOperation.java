@@ -155,6 +155,7 @@ public class FpgaGpioOperation {
 			return -1;
 		}
 		ioctl(fd, FPGA_CMD_SETTING, type);
+		Debug.d(TAG, "FPGA_CMD_SETTING -> TYPE = " + type);
 		Debug.d(TAG, "--->writeData len=" + len);
 		int wlen = write(fd, data, len);
 		if(wlen != len) {
@@ -192,6 +193,7 @@ public class FpgaGpioOperation {
 			return;
 		}
 		ioctl(fd, FPGA_CMD_CLEAN, 0);
+		Debug.d(TAG, "FPGA_CMD_CLEAN");
 		// close(fd);
 	}
 	
@@ -208,11 +210,13 @@ public class FpgaGpioOperation {
 	 */
 	
 	public static void updateSettings(Context context, DataTask task, int type ) {
-		
-		if (DataTransferThread.getInstance(context).isRunning()) {
+
+/*
+		if (DataTransferThread.getInstance().isRunning()) {
 			Debug.d(TAG, "===>print Thread is running now, please stop it then update settings");
 			return;
 		}
+*/
 		int fd = open();
 		if(fd <= 0) {
 			return;
@@ -316,7 +320,7 @@ public class FpgaGpioOperation {
 		// ioctl(fd, FPGA_CMD_SETTING, FPGA_STATE_OUTPUT);
 		/*启动内核轮训线程*/
 		ioctl(fd, FPGA_CMD_STARTPRINT, 0);
-		
+		Debug.d(TAG, "FPGA_CMD_STARTPRINT");
 	}
 	
 	/**
@@ -328,5 +332,6 @@ public class FpgaGpioOperation {
 			return ;
 		}
 		ioctl(fd, FPGA_CMD_STOPPRINT, 0);
+		Debug.d(TAG, "FPGA_CMD_STOPPRINT");
 	}
 }

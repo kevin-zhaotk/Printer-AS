@@ -509,7 +509,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							if (data.length != 3) {
 								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_PRINT_DELAY, 1, 0, 1, "");
 							} else {
-								SystemConfigFile.getInstance().setParamBraodcast(3, (0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]));
+								SystemConfigFile.getInstance().setParamBroadcast(3, (0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]));
 // H.M.Wang 2019-12-9 串口设置参数实时保存
 								SystemConfigFile.getInstance().saveConfig();
 // End. ---------
@@ -521,16 +521,17 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							if (data.length != 3) {
 								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_MOVE_SPEED, 1, 0, 1, "");
 							} else {
-								SystemConfigFile.getInstance().setParamBraodcast(0, Math.round(3.7f * ((0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]))));
+// H.M.Wang 2019-12-29 取消3.7系数
+								SystemConfigFile.getInstance().setParamBroadcast(0, Math.round((0x00ff & data[2]) * 0x0100 + (0x00ff & data[1])));
 // H.M.Wang 2019-12-9 串口设置参数实时保存
 								SystemConfigFile.getInstance().saveConfig();
 // End. ---------
 //							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_MOVE_SPEED, 0, 0, 0, "Set Speed Done!");
-								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_MOVE_SPEED, 1, 0, 0, "");
+							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_SET_MOVE_SPEED, 1, 0, 0, "");
 							}
 							break;
 						case EC_DOD_Protocol.CMD_SET_REVERSE:                  // 设定喷头翻转喷印	0x0010
-							SystemConfigFile.getInstance().setParamBraodcast(1, (0x01 & data[1]));
+							SystemConfigFile.getInstance().setParamBroadcast(1, (0x01 & data[1]));
 // H.M.Wang 2019-12-9 串口设置参数实时保存
 							SystemConfigFile.getInstance().saveConfig();
 // End. ---------
@@ -2298,7 +2299,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 									PCCommand cmd = PCCommand.fromString(msg);
 
 // H.M.Wang 当解析命令失败时，抛弃这个命令
-									if(null == cmd) continue;
+// H.M.Wang 2019-12-30 收到空命令的时候，返回错误
+									if(null == cmd) {
+										this.sendmsg(Constants.pcErr("<Null Command>"));
+										continue;
+									}
+// End of H.M.Wang 2019-12-30 收到空命令的时候，返回错误
 
 									if (PCCommand.CMD_SEND_BIN.equalsIgnoreCase(cmd.command)) {  // LAN Printing
 
@@ -2431,27 +2437,80 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	}
 		                            }
 		                            else if(PCCommand.CMD_DEL_DIR.equalsIgnoreCase(cmd.command)) {
-		                           		//600字符串长成所需文件
-		                    			if (deleteDirectory(msg)) {
-		                            		this.sendmsg(Constants.pcOk(msg));
-		                            	} else {
-		                            		this.sendmsg(Constants.pcErr(msg));
-		                            	}
+                                        //600字符串长成所需文件
+                                        if (deleteDirectory(msg)) {
+                                            this.sendmsg(Constants.pcOk(msg));
+                                        } else {
+                                            this.sendmsg(Constants.pcErr(msg));
+                                        }
+                                    // H.M.Wang 2019-12-25 追加速度和清洗命令
+                                    } else if(PCCommand.CMD_SET_DOTSIZE.equalsIgnoreCase(cmd.command)) {
+                                        try {
+// H.M.Wang 2019-12-27 暂时取消3.7倍的系数。修改设置参数为23。取值范围0-6000。 2019-12-28 内部保存在参数33
+                                            SystemConfigFile.getInstance().setParamBroadcast(32, Math.max(0, Math.min(6000, Integer.parseInt(cmd.content))));
+//                                            SystemConfigFile.getInstance().setParamBroadcast(0, Math.round(3.7f * Integer.parseInt(cmd.content)));
+// End of H.M.Wang 2019-12-27 暂时取消3.7倍的系数。修改设置参数为23。取值范围0-6000
+                                            SystemConfigFile.getInstance().saveConfig();
+											if(null != mDTransThread && mDTransThread.isRunning()) {
+// H.M.Wang 2019-12-29 修改在打印状态下设置FPGA参数的逻辑
+												DataTask task = mDTransThread.getCurData();
+												FpgaGpioOperation.clean();
+												FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+												mDTransThread.mNeedUpdate = true;
+												while(mDTransThread.mNeedUpdate) {
+													Thread.sleep(10);
+												}
+												FpgaGpioOperation.init();
+// End of H.M.Wang 2019-12-29 修改在打印状态下设置FPGA参数的逻辑
+											}
+											this.sendmsg(Constants.pcOk(msg));
+                                        } catch (NumberFormatException e) {
+                                            Debug.e(TAG, e.getMessage());
+                                        }
+                                    } else if(PCCommand.CMD_SET_CLEAN.equalsIgnoreCase(cmd.command)) {
+										if(null != mDTransThread && mDTransThread.isRunning()) {
+											DataTask task = mDTransThread.getCurData();
+
+											int param0 = SystemConfigFile.getInstance().getParam(0);
+// H.M.Wang 2019-12-27 修改取值，以达到下发FPGA时参数4的值为9
+											SystemConfigFile.getInstance().setParam(0, 18888);
+// End of H.M.Wang 2019-12-27 修改取值，以达到下发FPGA时参数4的值为9
+											FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+// H.M.Wang 2019-12-27 间隔时间修改为10ms
+											Thread.sleep(10);
+// End of H.M.Wang 2019-12-27 间隔时间修改为10ms
+											SystemConfigFile.getInstance().setParam(0, param0);
+											FpgaGpioOperation.clean();
+											FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+// H.M.Wang 2019-12-27 重新启动打印
+											mDTransThread.mNeedUpdate = true;
+											while(mDTransThread.mNeedUpdate) {
+												Thread.sleep(10);
+											}
+											FpgaGpioOperation.init();
+// End of H.M.Wang 2019-12-27 重新启动打印
+										}
+                                    // End of H.M.Wang 2019-12-25 追加速度和清洗命令
+                                        this.sendmsg(Constants.pcOk(msg));
 		                            } else {
 		                            	this.sendmsg(Constants.pcErr(msg));
 		                            }
 		                                          
 								}
-		                 } catch (SocketTimeoutException e) {
+                             } catch (SocketTimeoutException e) {
 
-						 }catch (IOException e) {
-		                        Debug.i(TAG, "--->socketE: " + e.getMessage());
-		                        kk=false;  
-		                        this.sendmsg(Constants.pcErr(msg + e.getMessage()));
-		                        return;
-		                    }  
-		                     
-		                 }  
+                             }catch (IOException e) {
+                                 Debug.i(TAG, "--->socketE: " + e.getMessage());
+                                 kk=false;
+                                 this.sendmsg(Constants.pcErr(msg + e.getMessage()));
+                                 return;
+                             // H.M.Wang 2019-12-25 追击异常处理
+                             } catch (Exception e) {
+                                 Debug.e(TAG, e.getMessage());
+                             // End of H.M.Wang 2019-12-25 追击异常处理
+                             }
+
+		                 }
 					     Debug.d(TAG, "--->thread " + Thread.currentThread().getName() + " stop");
 		             
 		         }  

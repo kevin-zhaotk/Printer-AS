@@ -389,6 +389,10 @@ public class DataTransferThread {
 // End. -----
 
 	public boolean launch(Context ctx) {
+		// H.M.Wang 2019-12-31 设置mContext，以避免因为mContext=null而导致程序崩溃
+		mContext = ctx;
+		// End of H.M.Wang 2019-12-31 设置mContext，以避免因为mContext=null而导致程序崩溃
+
 		// H.M.Wang 2019-12-19 支持多种串口协议的修改
 		// H.M.Wang 2019-10-23 串口发送数据支持
 		final SerialHandler serialHandler =  SerialHandler.getInstance();
@@ -834,7 +838,6 @@ public class DataTransferThread {
 						if (isLanPrint()) {
 							buffer = getLanBuffer(index());
 							Debug.i(TAG, "--->buffer.length: " + buffer.length);
-
 						} else {
 							if (!mDataTask.get(index()).isReady) {
 								mRunning = false;
@@ -863,7 +866,13 @@ public class DataTransferThread {
 				if(mNeedUpdate == true) {
 					mHandler.removeMessages(MESSAGE_DATA_UPDATE);
 					//在此处发生打印数据，同时
-					buffer = mDataTask.get(index()).getPrintBuffer();
+// H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素
+					if (isLanPrint()) {
+						buffer = getLanBuffer(index());
+					} else {
+						buffer = mDataTask.get(index()).getPrintBuffer();
+					}
+// End of H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素
 					Debug.d(TAG, "===>buffer size="+buffer.length);
 					// H.M.Wang 2019-12-20 关闭print.bin保存
 //					// H.M.Wang 2019-12-17 每次重新生成print内容后，都保存print.bin
