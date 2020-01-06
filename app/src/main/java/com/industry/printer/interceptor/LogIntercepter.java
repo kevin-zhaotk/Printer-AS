@@ -9,7 +9,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.industry.printer.Constants.Constants;
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.MessageTask;
+import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PreferenceConstants;
 import com.industry.printer.data.DataTask;
 import com.industry.printer.object.BaseObject;
@@ -22,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,9 +73,14 @@ public class LogIntercepter implements IPrintIntercepter {
 
     @Override
     public void execute(DataTask task) {
+        Debug.d(TAG, "--->execute: " + task);
         if (task == null) return;
-        MessageTask msg = task.mTask;
-        BufferedWriter writer = null;
+
+        int logEnable = SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_LOG_ENABLE);
+        // 要输入1234 才写log
+        if (logEnable != Constants.LOG_ENABLE) return;
+
+        RandomAccessFile randomFile = null;
 
         if (count >= 1000) {
             delete();
@@ -79,31 +88,35 @@ public class LogIntercepter implements IPrintIntercepter {
 //        "/mnt/sdcard/print.bin";
         File log = new File("/mnt/sdcard/log1.txt");
         try {
+
             if(!log.exists()) {
                 log.createNewFile();
             }
+            randomFile = new RandomAccessFile(log, "rw");
+            // 文件长度，字节数
+            long fileLength = randomFile.length();
 
-            writer = new BufferedWriter(new FileWriter(log));
-
+            randomFile.seek(fileLength);
             List<String> tlks = readTlk(task.mTask);
             for (String line : tlks) {
-                writer.write(line);
-                writer.write("\r\n");
+                randomFile.writeUTF(line);
+                randomFile.writeUTF("\r\n");
             }
+            randomFile.close();
             count++;
             SharedPreferences sp = mCtx.getSharedPreferences(PreferenceConstants.SP_PRINT, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putInt(PreferenceConstants.LOG_COUNT, count);
             editor.commit();
-            writer.flush();
-            writer.close();
+
+
         } catch (IOException e) {
 
         } finally {
 
-            if (writer!= null) {
+            if (randomFile!= null) {
                 try {
-                    writer.close();
+                    randomFile.close();
                 } catch (Exception e) {}
             }
         }
@@ -125,7 +138,7 @@ public class LogIntercepter implements IPrintIntercepter {
     private List<String> readTlk(MessageTask message) {
         List<BaseObject> objects = message.getObjects();
         List<String> lines = new ArrayList<String>(objects.size() + 1);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy:MM:dd:HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
         Date date = new Date();
         lines.add(format.format(date));
         for (BaseObject obj : objects) {

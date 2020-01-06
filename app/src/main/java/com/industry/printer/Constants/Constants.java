@@ -24,5 +24,6 @@ public class Constants {
     /************************ PC ********************************/
 
 
+    public static final int LOG_ENABLE = 1234;
 
 }

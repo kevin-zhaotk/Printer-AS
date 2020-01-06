@@ -117,6 +117,10 @@ public class SystemConfigFile{
 	// H.M.Wang 2019-12-19 追加参数39，数据源的索引,作废原来的索引INDEX_LAN_PRINT
 	public static final int INDEX_DATA_SOURCE = 38;
 
+	// Kevin-zhao
+	public static final int INDEX_LOG_ENABLE = 59;
+
+
 	public static final int DATA_SOURCE_DISABLED 	= 0;		// 数据源禁用
 	public static final int DATA_SOURCE_BIN 		= 1;		// 数据源使用BIN
 	public static final int DATA_SOURCE_FILE 		= 2;		// 数据源使用文件

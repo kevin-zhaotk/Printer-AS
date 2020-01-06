@@ -1497,7 +1497,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		if (mDTransThread == null) {
 			Debug.d(TAG, "--->Print thread ready");
-			mDTransThread = DataTransferThread.getInstance();
+			mDTransThread = DataTransferThread.getInstance(mContext);
 			mDTransThread.setCallback(this);
 		}
 		Debug.d(TAG, "--->init");
@@ -1814,7 +1814,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				break;
 			/*娓呮礂鎵撳嵃澶达紙涓�涓壒娈婄殑鎵撳嵃浠诲姟锛夛紝闇�瑕佸崟鐙殑璁剧疆锛氬弬鏁�2蹇呴』涓� 4锛屽弬鏁�4涓�200锛� 鍙傛暟5涓�20锛�*/
 			case R.id.btnFlush:
-				DataTransferThread thread = DataTransferThread.getInstance();
+				DataTransferThread thread = DataTransferThread.getInstance(mContext);
 				thread.purge(mContext);
 				break;
 			case R.id.btnBinfile:
@@ -2314,14 +2314,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                        	    DataTransferThread.deleteLanBuffer(Integer.valueOf(cmd.content));
 									} else if (PCCommand.CMD_RESET_INDEX.equalsIgnoreCase(cmd.command)) {
 
-										DataTransferThread.getInstance().resetIndex();
+										DataTransferThread.getInstance(mContext).resetIndex();
 										this.sendmsg(Constants.pcOk(msg));
 // H.M.Wang 2019-12-16 支持网络下发计数器和动态二维码的值
 									} else if (PCCommand.CMD_SET_COUNTER.equalsIgnoreCase(cmd.command)) {
     // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
                                         if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN) {
-                                            if(DataTransferThread.getInstance().isRunning()) {
-                                                DataTransferThread.getInstance().setRemoteTextSeperated(cmd.content);
+                                            if(DataTransferThread.getInstance(mContext).isRunning()) {
+                                                DataTransferThread.getInstance(mContext).setRemoteTextSeperated(cmd.content);
                                                 this.sendmsg(Constants.pcOk(msg));
                                             } else {
                                                 this.sendmsg(Constants.pcErr(msg));
@@ -2360,7 +2360,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            else if(PCCommand.CMD_CLEAN.equalsIgnoreCase(cmd.command)) {
 		                            	//200是清洗
 										CleanFlag=1;
-		                            	DataTransferThread thread = DataTransferThread.getInstance();
+		                            	DataTransferThread thread = DataTransferThread.getInstance(mContext);
 		                				thread.purge(mContext);
 		                				this.sendmsg(Constants.pcOk(msg));
 		                            }
@@ -2377,7 +2377,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	//400取计数器
 		                            	for(int i=0;i<7;i++)
 		                            	{
-		                            	sendmsg("counter:" + mCounter+" |ink:" + mRfidManager.getLocalInk(i) + "|state:" + DataTransferThread.getInstance().isRunning());
+		                            	sendmsg("counter:" + mCounter+" |ink:" + mRfidManager.getLocalInk(i) + "|state:" + DataTransferThread.getInstance(mContext).isRunning());
 		                            	//获取INK无显示问题，赵工这地方改好，前面注示去掉就OK了
 		                            	this.sendmsg(Constants.pcOk(msg));
 		                            	}
@@ -2569,7 +2569,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				remoteBin[i] = (char) ((char)(buffer[2 * i + 16 + 1] << 8) + (char)(buffer[2 * i + 16] & 0x0ff));
 				remoteBin[i] = (char)(remoteBin[i] & 0x0ffff);
 			}
-			DataTransferThread.setLanBuffer(Integer.valueOf(cmd.content), remoteBin);
+			DataTransferThread.setLanBuffer(mContext, Integer.valueOf(cmd.content), remoteBin);
 
 			this.sendMsg(Constants.pcOk(message));
 		}
