@@ -442,6 +442,8 @@ public class BinInfo {
     	int n;
 		byte[] feed = {0};
 
+		Debug.d(TAG, "===>String: " + var);
+
 		// H.M.Wang 追加下列11行。为计数器清楚前置0
 		byte[] blank = new byte[mBytesPerH];
 		for(int i=0; i<mBytesPerH; i++) {
@@ -768,7 +770,7 @@ public class BinInfo {
     	}
     }
 
-
+//	public static int pcount = 0;
 	/**
 	 * 1 to multi function
 	 */
@@ -780,8 +782,10 @@ public class BinInfo {
     	if (scale == 1) {
     		return;
 		}
-    	// BinCreater.saveBin("/mnt/sdcard/print_var.bin", mBufferChars, mCharsPerHFeed * 16);
-    	Debug.d(TAG, "--->expend scale : " + scale + " length: " + mBufferChars.length);
+
+//		BinCreater.saveBin("/mnt/sdcard/print_var_" + pcount + "_org.bin", mBufferChars, mCharsFeed * 16);
+
+		Debug.d(TAG, "--->expend scale : " + scale + " length: " + mBufferChars.length);
 		char[] buffer = mBufferChars;
     	mBufferChars = new char[buffer.length * scale];
     	
@@ -797,7 +801,10 @@ public class BinInfo {
 				reader.mark(0);
 				Debug.d(TAG, "--->j = " + j + "  column = " + column);
 				for (int i = 0; i < column; i++) {
-					reader.read(mBufferChars, (i*scale + j) * mCharsPerHFeed, mCharsPerHFeed);
+// H.M.Wang 2020-1-3 解决1带多情况计算不准确的问题
+//					reader.read(mBufferChars, (i*scale + j) * mCharsPerHFeed, mCharsPerHFeed);
+					reader.read(mBufferChars, (i*scale + j) * mCharsFeed, mCharsFeed);
+// End of H.M.Wang 2020-1-3 解决1带多情况计算不准确的问题
 				}
 				reader.reset();
 			}
@@ -813,7 +820,8 @@ public class BinInfo {
     		mCharsPerHFeed *= scale;
     		mBytesPerHFeed *= scale;
 		}
-//		BinCreater.saveBin("/mnt/sdcard/print_bg1.bin", mBufferChars, mCharsPerHFeed * scale * 16);
+
+//		BinCreater.saveBin("/mnt/sdcard/print_var_" + pcount++ + "_dst.bin", mBufferChars, mCharsFeed * scale * 16);
 	}
 
 

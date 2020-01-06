@@ -799,8 +799,6 @@ public class DataTransferThread {
 				sb.append("]");
 				Debug.d(TAG, sb.toString());
 
-				int n = 0;
-
 				Debug.e(TAG, "--->write data");
 				FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
 

@@ -36,6 +36,7 @@ public class RealtimeMinute extends BaseObject {
 		Time t = new Time();
 		t.set(System.currentTimeMillis());
 		setContent(BaseObject.intToFormatString(t.minute, 2));
+		Debug.d(TAG, ">>getContent: " + mContent);
 		return mContent;
 	}
 
