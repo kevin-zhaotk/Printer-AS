@@ -700,6 +700,8 @@ public class DataTransferThread {
 		public void onComplete(int index);
 
 		void onPrinted(int index);
+
+        void onPrint(int index);
 	}
 	
 	public static final int CODE_BARFILE_END = 1;
@@ -802,6 +804,12 @@ public class DataTransferThread {
 				Debug.e(TAG, "--->write data");
 				FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
 
+// H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+                if(mDataTask.size() > 1) {
+					mCallback.onPrint(mIndex);
+                }
+// End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+
 				/**  save log */
 				LogIntercepter.getInstance(mContext).execute(getCurData());
 
@@ -848,6 +856,13 @@ public class DataTransferThread {
 							buffer = mDataTask.get(index()).getPrintBuffer();
 						}
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
+
+// H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+                        if(mCallback != null && mDataTask.size() > 1) {
+							mCallback.onPrint(mIndex);
+                        }
+// End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+
 						last = SystemClock.currentThreadTimeMillis();
 						countDown();
 						mInkListener.onCountChanged();

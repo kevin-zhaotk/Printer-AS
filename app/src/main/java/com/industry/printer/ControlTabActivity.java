@@ -145,6 +145,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public HorizontalScrollView mScrollView;
 	public TextView mMsgFile;
 	private TextView tvMsg;
+
+// H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+    public TextView mGroupIndex;
+// End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+
 	// public EditText mMsgPreview;
 	public TextView mMsgPreview;
 	public ImageView mMsgPreImg;
@@ -385,7 +390,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		
 		mMsgFile = (TextView) getView().findViewById(R.id.opened_msg_name);
 		tvMsg = (TextView) getView().findViewById(R.id.tv_msg_name);
-		
+
+// H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+        mGroupIndex = (TextView) getView().findViewById(R.id.group_index);
+// End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+
 		mPreview = (PreviewScrollView ) getView().findViewById(R.id.sv_preview);
 		
 		mBtnStart = (RelativeLayout) getView().findViewById(R.id.StartPrint);
@@ -1811,6 +1820,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			case R.id.StopPrint:
 				// mHandler.removeMessages(MESSAGE_PAOMADENG_TEST);
 				mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
+// H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+                mGroupIndex.setVisibility(View.GONE);
+// End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 				break;
 			/*娓呮礂鎵撳嵃澶达紙涓�涓壒娈婄殑鎵撳嵃浠诲姟锛夛紝闇�瑕佸崟鐙殑璁剧疆锛氬弬鏁�2蹇呴』涓� 4锛屽弬鏁�4涓�200锛� 鍙傛暟5涓�20锛�*/
 			case R.id.btnFlush:
@@ -2170,8 +2182,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			             return null; 
 			 }
 
-			
-			   
+			// H.M.Wang 2020-1-8 增加网络命令ID，在向PC报告打印状态的时候用来识别命令
+			private String mPCCmdId = "";
+			// End of H.M.Wang 2020-1-8 增加网络命令ID，在向PC报告打印状态的时候用来识别命令
+
 			//Server服务
 		    class ServerThread extends Thread {  
 		          
@@ -2297,6 +2311,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                          //	msg= toStringHex(msg); 
 		                        	Debug.d(TAG, "--->fromPc: " + msg);
 									PCCommand cmd = PCCommand.fromString(msg);
+
+									// End of H.M.Wang 2020-1-8 提取命令ID
+									mPCCmdId = cmd.check;
+									// End of H.M.Wang 2020-1-8 提取命令ID
 
 // H.M.Wang 当解析命令失败时，抛弃这个命令
 // H.M.Wang 2019-12-30 收到空命令的时候，返回错误
@@ -2897,7 +2915,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			String msg=mCounter+" \r\nink"+mRfidManager.getLocalInk(0)+"\r\n"+mObjPath+"\r\n";
 			Debug.d(TAG, "--->onComplete: msg = " + msg);
 			PrintWriter pout = null;
-			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|0000|0D0A");
+			// H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
+			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0001|" + mPCCmdId + "|0D0A");
+//			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|0000|0D0A");
+			// End of H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
 //	        try {
 //	            pout = new PrintWriter(new BufferedWriter(  
 //	                   new OutputStreamWriter(Gsocket.getOutputStream())),true);  
@@ -2907,9 +2928,24 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //	         }  
 		}
 		public void onPrinted(int index) {
-	    	this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|0000|0D0A");
+			// H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
+	    	this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|" + mPCCmdId + "|0D0A");
+//			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|0000|0D0A");
+			// End of H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
 		}
 
+// H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+        public void onPrint(final int index) {
+			Debug.d(TAG, "Index of Group: " + index);
+			mGroupIndex.post(new Runnable() {
+				@Override
+				public void run() {
+					mGroupIndex.setText("No. " + (index + 1));
+					mGroupIndex.setVisibility(View.VISIBLE);
+				}
+			});
+        }
+// End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 	static char[] sRemoteBin;
 	//Socket________________________________________________________________________________________________________________________________
 	
