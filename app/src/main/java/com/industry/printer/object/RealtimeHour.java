@@ -36,6 +36,7 @@ public class RealtimeHour extends BaseObject {
 		Time t = new Time();
 		t.set(System.currentTimeMillis());
 		setContent(BaseObject.intToFormatString(t.hour, 2));
+		Debug.d(TAG, ">>getContent: " + mContent);
 		return mContent;
 	}
 

@@ -61,6 +61,7 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.Utils.KZFileObserver;
 import com.industry.printer.Utils.PlatformInfo;
+import com.industry.printer.Utils.SystemFs;
 import com.industry.printer.Utils.SystemPropertiesProxy;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.Utils.ZipUtil;
@@ -251,6 +252,146 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 //						ExtGpio.playClick();
 //						SmartCard.open();
 //					}
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD1);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2b");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					String out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD1 I2C(0x2b) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD2);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2b");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD2 I2C(0x2b) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD3);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2b");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD3 I2C(0x2b) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD4);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2b");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD4 I2C(0x2b) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD5);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2b");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD5 I2C(0x2b) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD6);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2b");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD6 I2C(0x2b) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD7);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2b");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD7 I2C(0x2b) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD8);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2b");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD8 I2C(0x2b) read： " + out);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD1);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2a");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD1 I2C(0x2a) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD2);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2a");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD2 I2C(0x2a) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD3);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2a");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD3 I2C(0x2a) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD4);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2a");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD4 I2C(0x2a) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD5);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2a");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD5 I2C(0x2a) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD6);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2a");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD6 I2C(0x2a) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD7);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2a");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD7 I2C(0x2a) read： " + out);
+
+					Thread.sleep(3000);
+
+					ExtGpio.rfidSwitch(ExtGpio.RFID_CARD8);
+					Thread.sleep(200);
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/device", "1,0x2a");
+					SystemFs.writeSysfs("/sys/class/device_of_i2c/read", "2,0x7e");
+					out = SystemFs.readSysfs("/sys/class/device_of_i2c/read");
+					Debug.d(TAG, "RFID_CARD8 I2C(0x2a) read： " + out);
 				} catch (Exception e) {
 					Debug.e(TAG, e.getMessage());
 				}

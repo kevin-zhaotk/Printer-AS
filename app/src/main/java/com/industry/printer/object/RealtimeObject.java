@@ -289,8 +289,10 @@ public class RealtimeObject extends BaseObject {
 		{
 			// o.setX(x);
 			o.setHeight(size);
-			o.resizeByHeight();
-			
+// H.M.Wang 2020-1-6 调整高度的时候，不主动按比例调整宽度
+//			o.resizeByHeight();
+// End of H.M.Wang 2020-1-6 调整高度的时候，不主动按比例调整宽度
+
 			// x = o.getXEnd();
 		}
 		// setWidth(x - getX());

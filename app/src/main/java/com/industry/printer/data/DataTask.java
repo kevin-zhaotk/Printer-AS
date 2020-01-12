@@ -436,6 +436,7 @@ public class DataTask {
 					BinInfo.overlap(mPrintBuffer, var, (int)(rtSub.getX()/div), info.getCharsFeed() * stat.getScale());
 // End of H.M.Wang 2020-1-2 添加 * stat.getScale()以调整1带多时的高度，info.getCharsFeed()只是取一个头的高
 					Debug.d(TAG, "--->real x=" + rtSub.getX()/div );
+//					BinCreater.saveBin("/sdcard/" + o.getIndex() + substr + ".bin", var, info.getCharsFeed() * stat.getScale() * 16);
 				}
 				
 			}

@@ -137,6 +137,21 @@
 	        android:textSize="@dimen/ctrlButtonsTextsize"
             android:textColor="#000000"
             />
+<!-- H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的任务的序号 -->
+		<TextView
+			android:id="@+id/group_index"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerHorizontal="true"
+			android:layout_centerVertical="true"
+			android:background="#436EEE"
+			android:paddingLeft="15dp"
+			android:paddingRight="15dp"
+			android:visibility="gone"
+			android:textSize="@dimen/ctrlButtonsTextsize"
+			android:textColor="#000000"
+			/>
+<!-- End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的任务的序号 -->
     </RelativeLayout>
     
     

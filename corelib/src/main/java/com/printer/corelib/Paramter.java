@@ -114,6 +114,7 @@ public class Paramter {
 
 		// S17
 		Debug.d(TAG, "--->heads=" + heads + ", " + (mFPGAParam[16] & 0xe7f));
+// H.M.Wang 2019-12-31 修改参数17的设置，根据系统参数38(n带m)的取值设置
 		if(param[37] / 10 == 0) {
 			if (heads == 1) {
 				mFPGAParam[16] = mFPGAParam[16] & 0xe7f;
@@ -128,11 +129,12 @@ public class Paramter {
 				mFPGAParam[16] = mFPGAParam[16] | 0x180;
 			}
 		} else if(param[37] / 10 == 1 || param[37] / 10 == 2) {
-			int inh = param[37] % 10;
+			int inh = Math.max(0, param[37] % 10 - 1);
 			inh <<= 7;
 			mFPGAParam[16] = mFPGAParam[16] & 0xc7f;
 			mFPGAParam[16] = mFPGAParam[16] | (0x0380 & inh);
 		}
+// End of H.M.Wang 2019-12-31 修改参数17的设置，根据系统参数38(n带m)的取值设置
 		Debug.d(TAG, "--->param[16]=" + mFPGAParam[16]);
 
 		// S23

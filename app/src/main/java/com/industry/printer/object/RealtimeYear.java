@@ -81,7 +81,7 @@ public class RealtimeYear extends BaseObject {
 			setContent(BaseObject.intToFormatString(t.year%100, 2));
 		else if(mFormat.length()==4)
 			setContent(BaseObject.intToFormatString(t.year, 4));
-		Debug.d(TAG, ">>getContent, "+mContent);
+		Debug.d(TAG, ">>getContent: "+mContent);
 		return mContent;
 	}
 
