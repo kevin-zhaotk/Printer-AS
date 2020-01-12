@@ -7,11 +7,13 @@ package com.industry.printer.interceptor;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.industry.printer.Constants.Constants;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.MessageTask;
+import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PreferenceConstants;
 import com.industry.printer.data.DataTask;
@@ -86,7 +88,7 @@ public class LogIntercepter implements IPrintIntercepter {
             delete();
         }
 //        "/mnt/sdcard/print.bin";
-        File log = new File("/mnt/sdcard/log1.txt");
+        File log = new File(Configs.LOG_1);
         try {
 
             if(!log.exists()) {
@@ -125,14 +127,15 @@ public class LogIntercepter implements IPrintIntercepter {
 
     private void delete() {
 
-        File file2 = new File("/mnt/sdcard/log2.txt");
+        File file2 = new File(Configs.LOG_2);
         if (file2.exists()) {
             file2.delete();
         }
-        File file1 = new File("/mnt/sdcard/log1.txt");
+        File file1 = new File(Configs.LOG_1);
         if (file1.exists()) {
             file1.renameTo(file2);
         }
+        count = 0;
     }
 
     private List<String> readTlk(MessageTask message) {

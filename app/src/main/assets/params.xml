@@ -219,10 +219,4 @@
 		<default>50</default>
 	</param>
 
-	<param>
-		<id>60</id>
-		<min>0</min>
-		<max>1</max>
-		<default>0</default>
-	</param>
 </Params>

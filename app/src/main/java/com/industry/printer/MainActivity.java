@@ -910,7 +910,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		}
 		
 		mProgressDialog = LoadingDialog.show(this, R.string.strCopying);
-		Observable.just(Configs.SYSTEM_CONFIG_MSG_PATH, Configs.PICTURE_SUB_PATH, Configs.SYSTEM_CONFIG_DIR, "print.bin")
+		Observable.just(Configs.SYSTEM_CONFIG_MSG_PATH, Configs.PICTURE_SUB_PATH, Configs.SYSTEM_CONFIG_DIR, "print.bin", Configs.LOG_1, Configs.LOG_2)
 		.flatMap(new Func1<String, Observable<Map<String, String>>>() {
 
 			@Override
@@ -931,6 +931,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 					src.put("source", Configs.CONFIG_PATH_FLASH + Configs.SYSTEM_CONFIG_DIR);
 					src.put("dest", usbs.get(0) + arg0);
 					src.put("tips", MainActivity.this.getString(R.string.tips_export_sysconf));
+				} else if (Configs.LOG_1.equals(Configs.LOG_1)) {
+					src.put("source", Configs.LOG_1);
+					src.put("dest", usbs.get(0) + "/log1.txt");
+				} else if (Configs.LOG_1.equals(Configs.LOG_2)) {
+					src.put("source", Configs.LOG_2);
+					src.put("dest", usbs.get(0) + "/log2.txt");
 				} else {
 					FileUtil.deleteFolder(usbs.get(0) + "/print.bin");
 					src.put("source", "/mnt/sdcard/print.bin");
