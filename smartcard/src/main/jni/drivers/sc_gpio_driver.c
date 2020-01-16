@@ -222,3 +222,130 @@ int SC_GPIO_DRIVER_close(int fd) {
 
     return ret;
 }
+
+/*********************************************************************************
+    SP_GPIO_DRIVER_set_value
+----------------------------------------------------------------------------------
+    @描述
+        向一个GPIO端口设置值。
+    @参数
+        port: GPIO端口号；
+        value: 值；0：低电平；1：高电平
+    @返回值
+        SC_GPIO_DRIVER_SUCCESS(0): 关闭成功
+        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
+**********************************************************************************/
+
+int SP_GPIO_DRIVER_set_value(int port, int value) {
+    LOGI(">>> SP_GPIO_DRIVER_set_value to port [%d]: %d", port, value);
+
+    FILE *fp;
+    char buffer[10];
+    char s[50]="";
+    char s1[50]="";
+
+/*    system("su");
+    if(chmod("/sys/class/gpio/export", 777) == -1) {
+        LOGE(">>> Error: SP_GPIO_DRIVER_set_value chmod. %s", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+*/
+    if((fp = fopen("/sys/class/gpio/export", "w")) == NULL) {
+        LOGE(">>> Error: SP_GPIO_DRIVER_set_value export. %s", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    fprintf(fp, "%d", port);
+    fclose(fp);
+
+    sprintf(s, "/sys/class/gpio/gpio%d/direction", port);
+
+    if((fp = fopen(s, "rb+")) == NULL) {
+        LOGE(">>> Error: SP_GPIO_DRIVER_set_value port [%d] direction. %s", port, strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+    fprintf(fp, "out");
+    fclose(fp);
+
+    sprintf(s1, "/sys/class/gpio/gpio%d/value", port);
+    if((fp = fopen(s1, "rb+")) == NULL) {
+        LOGE(">>> Error: SP_GPIO_DRIVER_set_value port [%d] value. %s", port, strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    fprintf(fp, "%d", value);
+    fclose(fp);
+
+    if((fp = fopen("/sys/class/gpio/unexport", "w")) == NULL) {
+        LOGE(">>> Error: SP_GPIO_DRIVER_set_value unexport. %s", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    fprintf(fp, "%d", port);
+    fclose(fp);
+
+    LOGD("SP_GPIO_DRIVER_set_value [%d] to port [%d]", value, port);
+
+    return SC_GPIO_DRIVER_SUCCESS;
+}
+
+/*********************************************************************************
+    SP_GPIO_DRIVER_get_value
+----------------------------------------------------------------------------------
+    @描述
+        向一个GPIO端口设置值。
+    @参数
+        port: GPIO端口号；
+    @返回值
+        value: 值；0：低电平；1：高电平
+        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
+**********************************************************************************/
+
+int SP_GPIO_DRIVER_get_value(int port) {
+    LOGI(">>> SP_GPIO_DRIVER_get_value from port [%d]", port);
+
+    int value;
+
+    FILE *fp;
+    char buffer[10];
+    char s[50]="";
+    char s1[50]="";
+
+    if((fp = fopen("/sys/class/gpio/export", "w")) == NULL) {
+        LOGE(">>> Error: SP_GPIO_DRIVER_get_value export. %s", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    fprintf(fp, "%d", port);
+    fclose(fp);
+
+    sprintf(s, "/sys/class/gpio/gpio%d/direction", port);
+    if((fp = fopen(s, "rb+")) == NULL) {
+        LOGE(">>> Error: SP_GPIO_DRIVER_get_value port [%d] direction. %s", port, strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+    fprintf(fp, "in");
+    fclose(fp);
+
+    sprintf(s1, "/sys/class/gpio/gpio%d/value", port);
+    if((fp = fopen(s1, "rb+")) == NULL) {
+        LOGE(">>> Error: SP_GPIO_DRIVER_get_value port [%d] value. %s", port, strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+
+    int8_t buf = 0;
+    size_t ret = read(fp, &buf, sizeof(buf));
+
+    if((fp = fopen("/sys/class/gpio/unexport", "w")) == NULL) {
+        LOGE(">>> Error: SP_GPIO_DRIVER_get_value unexport. %s", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    fprintf(fp, "%d", port);
+    fclose(fp);
+
+    LOGD("SP_GPIO_DRIVER_get_value: %d", buf);
+    return (ret == 0 ? SC_GPIO_DRIVER_FAIL : buf);
+}
+

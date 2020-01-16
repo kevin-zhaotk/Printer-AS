@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2015 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -133,7 +133,7 @@ static int _send_cmd(hw_smart_card_xpt_t *xpt_p,
     {
         memcpy(pkt + PROTO_OFFS_BODY, body, body_len);
     }
-
+/*
     HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
                     HP_DBG_LEVEL_SCP_TRACE, 4,
                     "Data in _send_cmd():");
@@ -147,6 +147,10 @@ static int _send_cmd(hw_smart_card_xpt_t *xpt_p,
     HP_DEBUG_printf(NULL,
                     HP_DBG_LEVEL_SCP_TRACE, 4,
                     "\n");
+*/
+    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                    HP_DBG_LEVEL_HSCC_TRACE, 4,
+                    "Data in _send_cmd():", toHexString(pkt, body_len));
 
     result = IFC_CALL(xpt_p, write)(xpt_p, PROTO_CMD_ADDR, pkt, PROTO_LEN_HDR + body_len);
 
@@ -259,7 +263,7 @@ static HW_SMART_CARD_status_t _recv_rsp(hw_smart_card_xpt_t *xpt_p,
             }
         }
     }
-
+/*
     HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
                     HP_DBG_LEVEL_SCP_TRACE, 4,
                     "Data in rcv_buf (%d):", rsp_len);
@@ -272,6 +276,10 @@ static HW_SMART_CARD_status_t _recv_rsp(hw_smart_card_xpt_t *xpt_p,
     HP_DEBUG_printf(NULL,
                     HP_DBG_LEVEL_SCP_TRACE, 4,
                     "\n");
+*/
+    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                    HP_DBG_LEVEL_HSCC_TRACE, 4,
+                    "Data in rcv_buf (%d): [%s]", rsp_len, toHexString(rcv_buf, rsp_len));
 
     HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
                     HP_DBG_LEVEL_SCP_TRACE, 3,

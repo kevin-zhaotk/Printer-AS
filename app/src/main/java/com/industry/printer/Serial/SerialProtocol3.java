@@ -13,8 +13,7 @@ public class SerialProtocol3 {
     public static String TAG = SerialProtocol3.class.getSimpleName();
 
     public final static int ERROR_FAILED = 0x85000000;   // 解析帧失败
-
-    public final static int CMD_DUMMY = 0x0000;       // 无命令
+    public final static int ERROR_SUCESS = 0x00000000;   // 无错误
 
     public int parseFrame(ByteArrayBuffer recvMsg) {
         int recvCmd = ERROR_FAILED;
@@ -22,7 +21,7 @@ public class SerialProtocol3 {
             for (int i=recvMsg.length()-1; i>=0; i--) {
                 if (recvMsg.byteAt(i) == 0x0A) {
                     recvMsg.setLength(i);
-                    recvCmd = CMD_DUMMY;
+                    recvCmd = ERROR_SUCESS;
                     break;
                 }
             }

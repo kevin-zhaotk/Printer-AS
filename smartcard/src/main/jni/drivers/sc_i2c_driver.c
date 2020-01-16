@@ -68,17 +68,17 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_open(int group_id, int device_address) {
     int fd = open(I2C_DEVICE, O_RDWR);
 
     if(fd < 0) {
-        LOGE(">>> SC_I2C_DRIVER_open: Error[File open error]");
+        LOGE(">>> SC_I2C_DRIVER_open: Open [%s] failed. %s", I2C_DEVICE, strerror(errno));
         return SC_I2C_DRIVER_RESULT_FAILED_OPEN_FILE;
     } else {
-        LOGD(">>> SC_I2C_DRIVER_open: Device management file [%s] opened", I2C_DEVICE);
+        LOGD(">>> SC_I2C_DRIVER_open: [%s] opened", I2C_DEVICE);
     }
 
     // 传送打开设备命令
     if(write(fd, cmd, strlen(cmd)) > 0) {
         LOGD(">>> SC_I2C_DRIVER_open: Command sent [%s]", cmd);
     } else {
-        LOGE(">>> SC_I2C_DRIVER_open: Error[Send command error]");
+        LOGE(">>> SC_I2C_DRIVER_open: Write command to [%s] failed. %s", I2C_DEVICE, strerror(errno));
         return SC_I2C_DRIVER_RESULT_FAILED_OPEN_DEVICE;
     }
 
@@ -103,7 +103,7 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_open(int group_id, int device_address) {
 **********************************************************************************/
 
 SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_write(int reg, char* data) {
-    LOGI(">>> SC_I2C_DRIVER_write: 0x%02X, %s", reg, data);
+    LOGI(">>> SC_I2C_DRIVER_write: 0x%02X,%s", reg, data);
 
     // 检查参数
     if(reg < 0) {
@@ -119,7 +119,7 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_write(int reg, char* data) {
     char cmd[256];
 
     // 构建写入数据命令
-    sprintf(cmd, "0x%X,%s", reg, data);
+    sprintf(cmd, "0x%02X,%s", reg, data);
 
 //    LOGD("Write Command: %s", cmd);
 
@@ -127,17 +127,17 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_write(int reg, char* data) {
 
     // 打开对应设备写入文件
     if(fd < 0) {
-        LOGE(">>> SC_I2C_DRIVER_write: Error[File open error]");
+        LOGE(">>> SC_I2C_DRIVER_write: Open [%s] failed. %s", I2C_WRITE, strerror(errno));
         return SC_I2C_DRIVER_RESULT_FAILED_OPEN_FILE;
     } else {
-        LOGD(">>> SC_I2C_DRIVER_write: Writing file [%s] opened", I2C_WRITE);
+        LOGD(">>> SC_I2C_DRIVER_write: [%s] opened", I2C_WRITE);
     }
 
     // 传送写入数据命令
     if(write(fd, cmd, strlen(cmd)) > 0) {
         LOGD(">>> SC_I2C_DRIVER_write: Command sent [%s]", cmd);
     } else {
-        LOGE(">>> SC_I2C_DRIVER_write: Error[Send command error]");
+        LOGE(">>> SC_I2C_DRIVER_write: Write command to [%s] failed. %s", I2C_WRITE, strerror(errno));
         return SC_I2C_DRIVER_RESULT_FAILED_SEND_WRITE_COMMAND;
     }
 
@@ -191,17 +191,17 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_read(int num, int reg, uint8_t *result) {
 
     // 打开对应设备写入文件
     if(fd < 0) {
-        LOGE(">>> SC_I2C_DRIVER_read: Error[File open error]");
+        LOGE(">>> SC_I2C_DRIVER_read: Open [%s] failed. %s", I2C_READ, strerror(errno));
         return SC_I2C_DRIVER_RESULT_FAILED_OPEN_FILE;
     } else {
-        LOGD(">>> SC_I2C_DRIVER_read: Reading command file [%s] opened", I2C_READ);
+        LOGD(">>> SC_I2C_DRIVER_read: [%s] opened", I2C_READ);
     }
 
     // 传送读取数据命令
     if(write(fd, cmd, strlen(cmd)) > 0) {
         LOGD(">>> SC_I2C_DRIVER_read: Command sent [%s]", cmd);
     } else {
-        LOGE(">>> SC_I2C_DRIVER_read: Error[Send command error]");
+        LOGE(">>> SC_I2C_DRIVER_read: Write command to [%s] failed. %s", I2C_READ, strerror(errno));
         return SC_I2C_DRIVER_RESULT_FAILED_SEND_READ_COMMAND;
     }
 
@@ -210,10 +210,10 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_read(int num, int reg, uint8_t *result) {
     fd = open(I2C_READ, O_RDWR);
 
     if(fd < 0) {
-        LOGE(">>> SC_I2C_DRIVER_read: Error[File open error]");
+        LOGE(">>> SC_I2C_DRIVER_read: Open [%s] failed. %s", I2C_READ, strerror(errno));
         return SC_I2C_DRIVER_RESULT_FAILED_OPEN_FILE;
     } else {
-        LOGD(">>> SC_I2C_DRIVER_read: Reading data file [%s] opened", I2C_READ);
+        LOGD(">>> SC_I2C_DRIVER_read: [%s] opened", I2C_READ);
     }
 
     int rnum = 0;
@@ -233,25 +233,26 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_read(int num, int reg, uint8_t *result) {
 
     close(fd);
 
-    LOGD(">>> SC_I2C_DRIVER_read: Data read [%s]", buffer);
-
-//    memcpy(result, buffer, rnum);
-
-    strcpy(buffer, "number:3\r\nreg_addr:0x0080\r\nreg_addr           val\r\n0x0080             0x0000\r\n0x0081             0x0000\r\n0x0082             0x0000\r\n");
+    LOGD(">>> SC_I2C_DRIVER_read: Data read \n[%s](%d bytes)", buffer, strlen(buffer));
 
     char *pe = buffer;
+    int bSize = strlen(buffer);
     char *ps = NULL;
     int cnt = 0;
-    int lines = 0;
+//    int lines = 0;
 
-    while(pe != NULL) {
+    while(pe < buffer + bSize) {
         ps = pe;
-        pe = strstr(ps, "\r\n");
-        lines++;
-        if(pe != NULL && lines > 3) {
+        pe = strstr(ps, "\n");
+
+        if(NULL != pe) {
             *pe = 0x00;
-            pe += 2;
-            LOGD(">>> ps = [%s]", ps);
+            pe++;
+        }
+
+//        LOGD(">>> line = [%s]", ps);
+        if(strncmp(ps, "0x", 2) == 0) {
+            ps += 2;
             ps = strstr(ps, "0x");
             if(ps != NULL) {
                 ps += 2;
@@ -264,12 +265,10 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_read(int num, int reg, uint8_t *result) {
                     } else if(c >= 'A' && c <= 'Z') {
                         aaa += (c - 'A' + 10);
                     } else if(c >= 'a' && c <= 'z') {
-                        aaa += (c - 'z' + 10);
-                    } else {
-
+                        aaa += (c - 'a' + 10);
                     }
                 }
-                LOGD(">>> result[%d] = [%02X]", cnt, aaa);
+                LOGD(">>> result[%d] = [%04X]", cnt, aaa);
                 result[cnt++] = aaa;
             }
         }
