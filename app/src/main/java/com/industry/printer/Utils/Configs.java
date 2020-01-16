@@ -190,6 +190,13 @@ public class Configs {
 	 * picture path
 	 */
 	public static final String PICTURE_SUB_PATH = "/pictures";
+
+
+	/**
+	 * 日志输出文件
+	 */
+	public static final String LOG_1 = CONFIG_PATH_FLASH + "/log1.txt";
+	public static final String LOG_2 = CONFIG_PATH_FLASH + "/log2.txt";
 	
 	
 	/**
