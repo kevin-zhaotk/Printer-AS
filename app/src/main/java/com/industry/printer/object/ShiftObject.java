@@ -5,10 +5,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
+import com.industry.printer.PHeader.PrinterNozzle;
+import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.cache.FontCache;
+import com.industry.printer.data.BinFileMaker;
+import com.industry.printer.data.BinFromBitmap;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
 public class ShiftObject extends BaseObject {
 	public final String TAG="ShiftObject";
@@ -18,13 +28,15 @@ public class ShiftObject extends BaseObject {
 	public int mBits;
 	public int mShifts[];
 	public String mValues[];
+
 	public ShiftObject(Context context, float x) {
 		super( context, BaseObject.OBJECT_TYPE_SHIFT, x);
-		mBits = 1;
+		mIndex = 0;
+		setBits(1);
 		mShifts = new int[SHIFT_MAX];
-		mShifts[0]=800;
-		mShifts[1]=1400;
-		mShifts[2]=2200;
+		mShifts[0]=0000;
+		mShifts[1]=600;
+		mShifts[2]=1200;
 		mShifts[3]=1800;
 		mValues = new String[SHIFT_MAX];
 		mValues[0] = "1";
@@ -81,6 +93,8 @@ public class ShiftObject extends BaseObject {
 	
 	public void setBits(int bits ) {
 		mBits = bits;
+		String tStr =  BaseObject.intToFormatString(0, mBits);
+		setWidth(mPaint.measureText(tStr));
 	}
 	
 	public int getBits() {
@@ -122,12 +136,70 @@ public class ShiftObject extends BaseObject {
 		Debug.d(TAG, "--->shift Value: " + getValue(i));
 		return getValue(i);
 	}
-	
+
+// H.M.Wang 2020-1-21 追加预览图生成函数
+	@Override
+	public Bitmap getpreviewbmp()
+	{
+		Bitmap bitmap;
+		mPaint.setTextSize(getfeed());
+		mPaint.setAntiAlias(true); //
+		mPaint.setFilterBitmap(true); //
+
+		boolean isCorrect = false;
+		// Debug.d(TAG,"--->getBitmap font = " + mFont);
+		for (String font : mFonts) {
+			if (font.equals(mFont)) {
+				isCorrect = true;
+				break;
+			}
+		}
+		if (!isCorrect) {
+			mFont = DEFAULT_FONT;
+		}
+
+		try {
+			mPaint.setTypeface(FontCache.get(mContext, mFont));
+		} catch (Exception e) {
+			Debug.e(TAG, e.getMessage());
+		}
+
+		int width = (int)mPaint.measureText(getContent());
+
+		Debug.d(TAG, "--->content: " + getContent() + "  width=" + width);
+		if (mWidth == 0) {
+			setWidth(width);
+		}
+
+		bitmap = Bitmap.createBitmap(width , (int)mHeight, Configs.BITMAP_PRE_CONFIG);
+		Debug.d(TAG,"--->getBitmap width="+mWidth+", mHeight="+mHeight);
+
+		mCan = new Canvas(bitmap);
+		Paint.FontMetrics fm = mPaint.getFontMetrics();
+		mPaint.setColor(Color.BLUE);
+
+		StringBuilder sb = new StringBuilder();
+		for(int i=0; i<mBits; i++) {
+			sb.append('S');
+		}
+
+		mCan.drawText(sb.toString() , 0, mHeight-fm.descent, mPaint);
+
+		Bitmap result = Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+		if(result != bitmap) {
+			BinFromBitmap.recyleBitmap(bitmap);
+		}
+
+		return result;
+	}
+// End of H.M.Wang 2020-1-21 追加预览图生成函数
+
+// H.M.Wang 2020-2-6 修改生成Shift的位图
 	@Override
 	public Bitmap getScaledBitmap(Context context)
 	{
 		int i=0,index=0;
-		Debug.d(TAG,"getScaledBitmap  mWidth="+mWidth+", mHeight="+mHeight);
+		Debug.d(TAG,"getScaledBitmap  mWidth = " + mWidth + ", mHeight = " + mHeight);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HHmm");
 		int date = 0;
 		try {
@@ -152,14 +224,110 @@ public class ShiftObject extends BaseObject {
 			else
 				continue;
 		}
-		Debug.d(TAG, "index="+index);
+		Debug.d(TAG, "index = " + index);
+
 		if(index>4 || index<0)
 			index=0;
+
 		setContent(mValues[index]);
-		return Bitmap.createScaledBitmap(getBitmap(context), (int)mWidth, (int)mHeight, true);
+
+		mBitmap = super.getScaledBitmap(context);
+		isNeedRedraw = false;
+
+		return mBitmap;
 	}
-	
-	public String toString()
+// End of H.M.Wang 2020-2-6 修改生成Shift的位图
+
+// H.M.Wang 2020-2-5 追加Shift生成Vbin
+    @Override
+    public int makeVarBin(Context ctx, float scaleW, float scaleH, int dstH) {
+		int dots[] = new int[1];
+		int singleW;
+		Paint paint = new Paint();
+		int height = Math.round(mHeight * scaleH);
+		paint.setTextSize(height);
+		paint.setAntiAlias(true); //去除锯齿
+		paint.setFilterBitmap(true); //对位图进行滤波处理
+
+		try {
+			paint.setTypeface(FontCache.get(ctx, mFont));
+		} catch (Exception e) {
+
+		}
+
+//		Debug.d(TAG, "SaveTime: - Start makeVarBin : " + System.currentTimeMillis());
+		int width = Math.round(paint.measureText("8"));
+		Paint.FontMetrics fm = paint.getFontMetrics();
+
+		/*draw Bitmap of single digit*/
+		Bitmap bmp = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
+		Canvas can = new Canvas(bmp);
+
+		PrinterNozzle head = mTask.getNozzle();
+
+		// H.M.Wang 修改下列两行
+//		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			singleW = width;
+		} else {
+			singleW = Math.round(mWidth * scaleW/mContent.length());
+		}
+
+		/*draw 0-9 totally 10 digits Bitmap*/
+
+		/** if message isn`t high resolution, divid by 2 because the buffer bitmap is halfed, so the variable buffer should be half too*/
+		MessageObject msgObj = mTask.getMsgObject();
+		if (!msgObj.getResolution() ) {
+			singleW = singleW / msgObj.getPNozzle().getFactorScale();
+		}
+
+		Debug.d(TAG, "--->singleW=" + singleW);
+
+		/* 最終生成v.bin使用的bitmap */
+		Bitmap gBmp = Bitmap.createBitmap(singleW * mBits * 5, dstH, Configs.BITMAP_CONFIG);
+		Canvas gCan = new Canvas(gBmp);
+
+		gCan.drawColor(Color.WHITE);	/*white background*/
+		for(int i=0; i<4; i++) {
+			for(int j=0; j<mBits; j++) {
+				can.drawColor(Color.WHITE);
+				can.drawText(mValues[i].substring(j,j+1), 0, height - fm.descent, paint);
+				// H.M.Wang 修改 20190905
+//			gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, height, false), i*singleW, (int)getY() * scaleH, paint);
+				gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, height, false), (i*mBits+j)*singleW, Math.round(getY() * scaleH), paint);
+			}
+		}
+
+		BinFromBitmap.recyleBitmap(bmp);
+
+		BinFileMaker maker = new BinFileMaker(mContext);
+
+		// H.M.Wang 追加一个是否移位的参数。修改喷头数
+		dots = maker.extract(Bitmap.createScaledBitmap(gBmp, gBmp.getWidth(), dstH, false), head.mHeads,
+				(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
+						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
+						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
+						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR));
+
+		Debug.d(TAG, "--->id: " + mId + " index:  " + mIndex);
+		maker.save(ConfigPath.getVBinAbsolute(mTask.getName(), mIndex));
+		//
+		BinFromBitmap.recyleBitmap(gBmp);
+		/*根據變量內容的實際長度計算點數*/
+		dots[0] = (dots[0]* getContent().length()/10) + 1;
+
+//		Debug.d(TAG, "SaveTime: - End makeVarBin : " + System.currentTimeMillis());
+		return dots[0];
+    }
+
+    private String to3bitsString(String src) {
+		String str = "000" + src;
+		return str.substring(str.length() - 3);
+	}
+
+// End of H.M.Wang 2020-2-5 追加Shift生成Vbin
+
+    public String toString()
 	{
 		float prop = getProportion();
 		String str="";
@@ -173,8 +341,8 @@ public class ShiftObject extends BaseObject {
 		str += BaseObject.intToFormatString(0, 1)+"^";
 		str += BaseObject.boolToFormatString(mDragable, 3)+"^";
 		str += BaseObject.intToFormatString(mBits, 3)+"^";
-		str += mValues[0]+"^"+mValues[1]+"^"+mValues[2]+"^"+mValues[3]+"^";
-		str += mShifts[0]+"^"+mShifts[1]+"^"+mShifts[2]+"^"+mShifts[3]+"^"+"00000^150" + "^";
+		str += to3bitsString(mValues[0])+"^"+to3bitsString(mValues[1])+"^"+to3bitsString(mValues[2])+"^"+to3bitsString(mValues[3])+"^";
+		str += BaseObject.intToFormatString(mShifts[0],8)+"^"+BaseObject.intToFormatString(mShifts[1],8)+"^"+BaseObject.intToFormatString(mShifts[2],8)+"^"+BaseObject.intToFormatString(mShifts[3],8)+"^"+"00000^150" + "^";
 		str += mFont+"^" + "000" + "^" + "1";
 		Debug.d(TAG,"counter string ["+str+"]");
 		return str;
@@ -200,21 +368,21 @@ public class ShiftObject extends BaseObject {
 			return false;
 	}
 	
-	public boolean isValidShift(int i)
+	public boolean isValidShift(int idx)
 	{
-		if(i<0 || i >= SHIFT_MAX)
+		if(idx<0 || idx >= SHIFT_MAX)
 		{
-			Debug.d(TAG, "invalide i="+i);
+			Debug.e(TAG, "Invalid i = " + idx);
 			return false;
 		}
-		else if(i==0 && mShifts[i]>=0 && mShifts[i] <= 2400)
+		else if(idx==0 && mShifts[idx]>=0 && mShifts[idx] <= 2400)
 		{
-			Debug.d(TAG, "valide i="+i);
+			Debug.d(TAG, "Valid i = " + idx);
 			return true;
 		}
-		else if(i < SHIFT_MAX && mShifts[i]>=0 && mShifts[i] <= 2400 && (mShifts[i] > mShifts[i-1]))
+		else if(idx < SHIFT_MAX && mShifts[idx]>=0 && mShifts[idx] <= 2400 && (mShifts[idx] > mShifts[idx-1]))
 		{
-			Debug.d(TAG, "valide i="+i);
+			Debug.d(TAG, "Valid i = " + idx);
 			return true;
 		}			
 		else

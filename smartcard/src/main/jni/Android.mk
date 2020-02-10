@@ -13,6 +13,8 @@ LOCAL_SRC_FILES := com_smartcard.c \
                     drivers/sc_i2c_driver.c \
                     drivers/hp_smart_card_gpio.c \
                     drivers/hp_smart_card_i2c.c \
+                    drivers/i2c_tools/smfuncs.c \
+                    drivers/i2c_tools/smbus.c \
                     infrastructure/assert/hp_assert.c \
                     infrastructure/debug_log/hp_debug_log.c \
                     infrastructure/debug_log/hp_utils.c \
@@ -31,6 +33,7 @@ LOCAL_SRC_FILES := com_smartcard.c \
 
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/ifc \
+                    $(LOCAL_PATH)/drivers/i2c_tools \
                     $(LOCAL_PATH)/internal_ifc \
                     $(LOCAL_PATH)/infrastructure/internal_ifc \
                     $(LOCAL_PATH)/os/internal_ifc \

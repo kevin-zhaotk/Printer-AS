@@ -23,5 +23,5 @@ void HP_DEBUG_printf(const char *module_id, unsigned char level, unsigned char l
 HP_SMART_CARD_bool_t IS_LITTLE_ENDIAN();
 void shift_right(unsigned char *object, size_t size_of_object, size_t num_bits_to_shift);
 void shift_left(unsigned char *object, size_t size_of_object, size_t num_bits_to_shift);
-char *toHexString(char *src, int len);
+int toHexString(const uint8_t *src, char *dst, int len, char div);
 #endif /* _HP_DEBUG_LOG_INTERNAL_H_ */

@@ -248,7 +248,7 @@ public class RFIDManager implements RfidCallback{
 			return 0;
 		}
 		int max = device.getMax();
-		if (max <= 0 && Configs.IGNORE_RFID) {
+		if (max <= 0 && Configs.READING) {
 			max = 370;
 		}
 		float ink = device.getLocalInk();
@@ -283,7 +283,7 @@ public class RFIDManager implements RfidCallback{
 		if (dev >= mRfidDevices.size()) {
 			return false;
 		}
-		if (Configs.IGNORE_RFID) {
+		if (Configs.READING) {
 			return true;
 		}
 		RFIDDevice device = mRfidDevices.get(dev);

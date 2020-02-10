@@ -31,8 +31,10 @@ public class CRC16_X25 {
             }
         }
 
-        Debug.d(TAG, "crcCode = " + Integer.toHexString((crcCode ^ 0xFFFF) & 0x0000FFFF));
+        crcCode ^= 0xFFFF;
 
-        return (short)((crcCode ^ 0xFFFF) & 0x0000FFFF);
+        Debug.d(TAG, "crcCode = " + Integer.toHexString(crcCode & 0x0000FFFF));
+
+        return (short)(crcCode & 0x0000FFFF);
     }
 }

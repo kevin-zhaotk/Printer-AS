@@ -116,6 +116,10 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	public EditText mLineWidth;
 	public TextView mPicture; // 圖片路徑
 	public EditText mOffset;
+// H.M.Wang 2020-2-4 添加Shift控件的位数项目
+	public TextView mShiftBits;
+// End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
+
 	public EditText mShift1;
 	public EditText mShiftVal1;
 	public EditText mShift2;
@@ -151,6 +155,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	
 	private PopWindowSpiner  mSpiner;
 	private PopWindowAdapter mFontAdapter;
+// H.M.Wang 2020-2-4 添加Shift控件的位数项目
+    private PopWindowAdapter mShiftBitsAdapter;
+// End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
 	private PopWindowAdapter mFormatAdapter;
 	private PopWindowAdapter mTypeAdapter;
 	private PopWindowAdapter mLineAdapter;
@@ -177,9 +184,20 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				if (size.equalsIgnoreCase(MessageObject.mDotSizes[0])) {
 					mFont.setText("4");
 					mFont.setClickable(false);
+// H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体
 				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[1])) {
+					mFont.setText("10");
+					mFont.setClickable(false);
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[2])) {
+					mFont.setText("12");
+					mFont.setClickable(false);
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[3])) {
+					mFont.setText("14");
+					mFont.setClickable(false);
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[4])) {
 					mFont.setText("7");
 					mFont.setClickable(false);
+// End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体
 				} else {
 					mFont.setClickable(true);
 				}
@@ -363,7 +381,11 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				mContent.setVisibility(View.GONE);
 			}
 	 	}
-	     
+
+// H.M.Wang 2020-2-4 添加Shift控件的位数项目
+         mShiftBits = (TextView)findViewById(R.id.shiftBitSpin);
+// End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
+
 	     mShift1 = (EditText) findViewById(R.id.edit_shift1);
 	     mShiftVal1 = (EditText) findViewById(R.id.edit_shiftValue1);
 	     mShift2 = (EditText) findViewById(R.id.edit_shift2);
@@ -450,6 +472,14 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						}
 						else if(mObject instanceof ShiftObject)
 						{
+// H.M.Wang 2020-2-4 添加Shift控件的位数项目
+							String[] shiftBits = mContext.getResources().getStringArray(R.array.strShiftBitsArray);
+							if(mShiftBits.getText().toString().equals(shiftBits[1])) {
+								((ShiftObject) mObject).setBits(2);
+							} else {
+								((ShiftObject) mObject).setBits(1);
+							}
+// End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
 							((ShiftObject) mObject).setShift(0, mShift1.getText().toString());
 							((ShiftObject) mObject).setValue(0, mShiftVal1.getText().toString());
 							((ShiftObject) mObject).setShift(1, mShift2.getText().toString());
@@ -613,6 +643,15 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				}
 				else if(mObject instanceof ShiftObject)
 				{
+// H.M.Wang 2020-2-4 添加Shift控件的位数项目
+					mShiftBits.setOnClickListener(this);
+					String[] shiftBits = mContext.getResources().getStringArray(R.array.strShiftBitsArray);
+					if(((ShiftObject)mObject).getBits() == 2) {
+						mShiftBits.setText(shiftBits[1]);
+					} else {
+						mShiftBits.setText(shiftBits[0]);
+					}
+// End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
 					mShift1.setText( String.valueOf(((ShiftObject)mObject).getShift(0)));
 					mShiftVal1.setText(((ShiftObject)mObject).getValue(0));
 					mShift2.setText( String.valueOf(((ShiftObject)mObject).getShift(1)));
@@ -698,6 +737,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		mSpiner.setOnItemClickListener(this);
 		
 		mFontAdapter = new PopWindowAdapter(mContext, null);
+// H.M.Wang 2020-2-4 添加Shift控件的位数项目
+         mShiftBitsAdapter = new PopWindowAdapter(mContext, null);
+// End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
 		mFormatAdapter = new PopWindowAdapter(mContext, null);
 		mTypeAdapter = new PopWindowAdapter(mContext, null);
 		mLineAdapter = new PopWindowAdapter(mContext, null);
@@ -716,12 +758,20 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			}
 			
 		}
-		
+
+// H.M.Wang 2020-2-4 添加Shift控件的位数项目
+         String[] shiftBits = mContext.getResources().getStringArray(R.array.strShiftBitsArray);
+         for (String shiftBit : shiftBits) {
+             mShiftBitsAdapter.addItem(shiftBit);
+         }
+// End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
+
 		String[] fonts = mContext.getResources().getStringArray(R.array.strFontArray);
 		for (String font : fonts) {
 			mFontAdapter.addItem(font);
 		}
-		
+
+
 		String[] formats = mContext.getResources().getStringArray(R.array.strTimeFormat);
 		for (String format : formats) {
 			mFormatAdapter.addItem(format);
@@ -783,6 +833,12 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			FontSelectDialog dialog1 = new FontSelectDialog(mContext, mHandler);
 			dialog1.show();
 			break;
+// H.M.Wang 2020-2-4 添加Shift控件的位数项目
+        case R.id.shiftBitSpin:
+            mSpiner.setAdapter(mShiftBitsAdapter);
+            mSpiner.showAsDropUp(v);
+            break;
+// End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
 		case R.id.rtFormat:
 			mSpiner.setAdapter(mFormatAdapter);
 			mSpiner.showAsDropUp(v);
@@ -850,6 +906,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			view.setText((String)mTypeAdapter.getItem(index));
 		} else if (view == mFont) {
 			view.setText((String)mFontAdapter.getItem(index));
+        } else if (view == mShiftBits) {
+            view.setText((String)mShiftBitsAdapter.getItem(index));
 		} else if (view == mRtFormat) {
 
 			// H.M.Wang追加下列5行，实时根据新的时间格式变更内容区域的显示内容

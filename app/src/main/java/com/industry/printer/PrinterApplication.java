@@ -109,7 +109,7 @@ public class PrinterApplication extends Application {
                     os.writeBytes("exit\n");
 
 					NativeGraphicJni.loadLibrary();
-//					SmartCard.loadLibrary();
+					SmartCard.loadLibrary();
 					SerialPort.loadLibrary();
 
                 } catch (Exception e) {
@@ -154,6 +154,10 @@ public class PrinterApplication extends Application {
 
 	private void asyncInit() {
 		long version = PreferenceConstants.getLong(this, PreferenceConstants.LAST_VERSION_CODE);
+
+		Debug.d(TAG, "BuildConfig.VERSION_CODE: " + BuildConfig.VERSION_CODE);
+		Debug.d(TAG, "version: " + version);
+
 		if (BuildConfig.VERSION_CODE == version) {
 			return;
 		}

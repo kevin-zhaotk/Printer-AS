@@ -42,7 +42,7 @@ extern "C" {
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
 
-//int SC_GPIO_DRIVER_open(char *dev);
+int SC_GPIO_DRIVER_open(char *dev);
 
 /*********************************************************************************
     SC_GPIO_DRIVER_write
@@ -58,7 +58,7 @@ extern "C" {
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
 
-//int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count);
+int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count);
 
 /*********************************************************************************
     SC_GPIO_DRIVER_ioctl
@@ -74,7 +74,7 @@ extern "C" {
         SC_GPIO_DRIVER_FAIL(<=-1)：失败，及失败原因
 **********************************************************************************/
 
-//int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1);
+int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1);
 
 /*********************************************************************************
     SC_GPIO_DRIVER_read
@@ -89,7 +89,7 @@ extern "C" {
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
 
-//int SC_GPIO_DRIVER_read(int fd, uint8_t pin);
+int SC_GPIO_DRIVER_read(int fd, uint8_t pin);
 
 /*********************************************************************************
     SC_GPIO_DRIVER_close
@@ -103,36 +103,7 @@ extern "C" {
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
 
-//int SC_GPIO_DRIVER_close(int fd);
-
-/*********************************************************************************
-    SP_GPIO_DRIVER_set_value
-----------------------------------------------------------------------------------
-    @描述
-        向一个GPIO端口设置值。
-    @参数
-        port: GPIO端口号；
-        value: 值；0：低电平；1：高电平
-    @返回值
-        SC_GPIO_DRIVER_SUCCESS(0): 关闭成功
-        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
-**********************************************************************************/
-
-int SP_GPIO_DRIVER_set_value(int port, int value);
-
-/*********************************************************************************
-    SP_GPIO_DRIVER_get_value
-----------------------------------------------------------------------------------
-    @描述
-        向一个GPIO端口设置值。
-    @参数
-        port: GPIO端口号；
-    @返回值
-        value: 值；0：低电平；1：高电平
-        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
-**********************************************************************************/
-
-int SP_GPIO_DRIVER_get_value(int port);
+int SC_GPIO_DRIVER_close(int fd);
 
 #ifdef __cplusplus
 }

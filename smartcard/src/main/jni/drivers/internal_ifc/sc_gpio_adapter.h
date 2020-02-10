@@ -80,7 +80,7 @@ extern "C" {
         -1：失败
 **********************************************************************************/
 
-int8_t SC_GPIO_ADAPTER_set_value(HP_SMART_CARD_gpio_line_t line, int value);
+uint8_t SC_GPIO_ADAPTER_set_value(HP_SMART_CARD_gpio_line_t line, int value);
 
 /*********************************************************************************
     SC_GPIO_DRIVER_read
@@ -94,7 +94,7 @@ int8_t SC_GPIO_ADAPTER_set_value(HP_SMART_CARD_gpio_line_t line, int value);
         -1：失败
 **********************************************************************************/
 
-int8_t SC_GPIO_ADAPTER_read_value(HP_SMART_CARD_gpio_line_t line);
+uint8_t SC_GPIO_ADAPTER_read_value(HP_SMART_CARD_gpio_line_t line);
 
 /*********************************************************************************
     SC_GPIO_ADAPTER_select_38_xlater
@@ -111,7 +111,7 @@ int8_t SC_GPIO_ADAPTER_read_value(HP_SMART_CARD_gpio_line_t line);
         -1：失败
 **********************************************************************************/
 
-int8_t SC_GPIO_ADAPTER_select_38_xlater(int pg5, int pg8, int pg9);
+uint8_t SC_GPIO_ADAPTER_select_38_xlater(int pg5, int pg8, int pg9);
 
 
 #ifdef __cplusplus

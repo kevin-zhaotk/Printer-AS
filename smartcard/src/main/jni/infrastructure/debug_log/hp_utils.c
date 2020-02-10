@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2015 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -81,4 +81,24 @@ void shift_left(unsigned char *object, size_t size_of_object, size_t num_bits_to
     {
         leftShift(object, size_of_object);
     }
+}
+
+// Added by H.M.Wang 2020-1-21
+int toHexString(const uint8_t *src, char *dst, int len, char div) {
+    if(!src) return -1;
+    if(!dst) return -1;
+
+    memset(dst, 0x00, sizeof(dst));
+
+    char s[16];
+    for(int i=0; i<len; i++) {
+        memset(s, 0x00, 16);
+        if(i == 0) {
+            sprintf(s, "0x%02X", src[i]);
+        } else {
+            sprintf(s, "%c0x%02X", div, src[i]);
+        }
+        strcat(dst, s);
+    }
+    return 0;
 }

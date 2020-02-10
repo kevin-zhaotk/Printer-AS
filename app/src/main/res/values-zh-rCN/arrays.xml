@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+<!-- H.M.Wang 2020-2-4 追加班次(Shift)位数数组 -->
+    <string-array name="strShiftBitsArray">
+        <item>1位</item>
+        <item>2位</item>
+    </string-array>
+<!-- End of H.M.Wang 2020-2-4 追加班次(Shift)位数数组 -->
+
 <!-- H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
     <string-array name="strDataSourceArray">
         <item>禁用</item>

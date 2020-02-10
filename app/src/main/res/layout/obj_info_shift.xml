@@ -19,8 +19,8 @@
 	<ScrollView android:id="@+id/viewInfo"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
-	    android:layout_marginTop="10dp"
-	    android:layout_above="@+id/buttons">
+		android:layout_marginTop="10dp"
+		android:layout_above="@+id/buttons">
 	        	    
 	    <RelativeLayout
 	        android:id="@+id/objectInfoTable"
@@ -29,13 +29,42 @@
 	        >
 	        
 	        <include android:id="@+id/base_info_shift" layout="@layout/obj_info_base"/>
-	       
+
+
+
+<!-- H.M.Wang 2020-2-4 添加Shift控件的位数项目 -->
+			<TextView
+				android:id="@+id/shiftBitSpin"
+				android:layout_marginTop="5dp"
+				android:layout_marginBottom="5dp"
+				android:layout_width="@dimen/settingsItemLength"
+				android:layout_height="wrap_content"
+				android:layout_below="@id/base_info_shift"
+				android:layout_marginLeft="150dp"
+				android:gravity="center_vertical"
+				android:drawableRight="@drawable/spiner_down_btn"
+				android:textSize="@dimen/objinfoTextsize"
+				android:textColor="#000000"
+				android:background="#ffffff"
+				/>
+			<TextView android:id="@+id/shiftBitCaption"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_below="@id/base_info_shift"
+				android:layout_marginLeft="10dp"
+				android:layout_alignBaseline="@id/shiftBitSpin"
+				android:textSize="30sp"
+				android:text="@string/strBits"
+				android:textColor="#000000"
+				/>
+<!-- End of H.M.Wang 2020-2-4 添加Shift控件的位数项目 -->
+
 	       <EditText
 	           android:id="@+id/edit_shift1"
 	           android:layout_marginLeft="150dp"
 	           android:layout_width="100dp"
 	           android:layout_height="wrap_content"
-	           android:layout_below="@id/base_info_shift"
+	           android:layout_below="@id/shiftBitSpin"
 	           android:imeOptions="flagNoExtractUi|actionDone"
 	           android:hint="@string/strDefault"
 	            />
@@ -44,7 +73,7 @@
 	           android:id="@+id/edit_shiftValue1"
 	           android:layout_width="100dp"
 	           android:layout_height="wrap_content"
-	           android:layout_below="@id/base_info_shift"
+	           android:layout_below="@id/shiftBitSpin"
 	           android:layout_toRightOf="@id/edit_shift1"
 	           android:layout_marginLeft="10dp"
 	           android:imeOptions="flagNoExtractUi|actionDone"

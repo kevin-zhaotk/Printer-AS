@@ -116,20 +116,3 @@ void LIB_HP_SMART_CARD_set_log_depth(uint8_t depth)
     _current_log_depth = depth;
 }
 
-char *toHexString(char *src, int len) {
-    char buffer[1024];
-
-    memset(buffer, 0x00, 1024);
-    char s[16];
-    for(int i=0; i<len; i++) {
-        memset(s, 0x00, 16);
-        if(i == 0) {
-            sprintf(s, "0x%02X", src[i]);
-        } else {
-            sprintf(s, " 0x%02X", src[i]);
-        }
-        strcat(buffer, s);
-    }
-    return buffer;
-}
-

@@ -49,6 +49,7 @@ import com.industry.printer.object.LineObject;
 import com.industry.printer.object.MessageObject;
 import com.industry.printer.object.RealtimeObject;
 import com.industry.printer.object.RectObject;
+import com.industry.printer.object.ShiftObject;
 import com.industry.printer.object.TextObject;
 import com.industry.printer.object.WeekDayObject;
 import com.industry.printer.object.WeekOfYearObject;
@@ -662,6 +663,12 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 						WeekDayObject lh = new WeekDayObject(mContext, cur[0]);
 						lh.setY(cur[1]);
 						onInsertObject(lh);
+// H.M.Wang 2020-1-21 追加shift控件
+					} else if (BaseObject.OBJECT_TYPE_SHIFT.equalsIgnoreCase(type)) {
+						ShiftObject shift = new ShiftObject(mContext, cur[0]);
+						shift.setY(cur[1]);
+						onInsertObject(shift);
+// End of H.M.Wang 2020-1-21 追加shift控件
 					}
             		
             		break;

@@ -894,7 +894,7 @@ public class DataTransferThread {
 					Debug.d(TAG, "===>buffer size="+buffer.length);
 					// H.M.Wang 2019-12-20 关闭print.bin保存
 //					// H.M.Wang 2019-12-17 每次重新生成print内容后，都保存print.bin
-					BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads);
+//					BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads);
 //					// End.
 					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
 					mHandler.sendEmptyMessageDelayed(MESSAGE_DATA_UPDATE, MESSAGE_EXCEED_TIMEOUT);

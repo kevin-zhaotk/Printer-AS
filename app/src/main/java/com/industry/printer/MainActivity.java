@@ -250,7 +250,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 //					while(true) {
 //						Thread.sleep(5000);
 //						ExtGpio.playClick();
-//						SmartCard.open();
+						SmartCard.open();
 /*
 						ExtGpio.rfidSwitch(ExtGpio.RFID_CARD1);
 						Thread.sleep(200);
