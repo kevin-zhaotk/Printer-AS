@@ -422,6 +422,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	@Override
 	public void onResume() {
 		super.onResume();
+		mHander.removeMessages(ENTER_SCREENSAVE_MODE);
+		mHander.sendEmptyMessageDelayed(ENTER_SCREENSAVE_MODE, 10*1000);
 	}
 	
 	public void drawObjects()
