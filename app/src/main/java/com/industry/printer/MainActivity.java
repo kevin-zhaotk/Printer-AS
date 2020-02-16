@@ -19,6 +19,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -26,12 +27,15 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -74,6 +78,7 @@ import com.industry.printer.ui.CustomerDialog.DialogListener;
 import com.industry.printer.ui.CustomerDialog.ImportDialog;
 import com.industry.printer.ui.CustomerDialog.ImportDialog.IListener;
 import com.industry.printer.ui.CustomerDialog.LoadingDialog;
+import com.industry.printer.ui.CustomerDialog.ScreenSaveDialog;
 
 public class MainActivity extends Activity implements OnCheckedChangeListener, OnTouchListener, OnClickListener {
 
@@ -120,6 +125,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	private LoadingDialog mProgressDialog;
 	
 	private boolean mScreensaveMode = false;
+	private Dialog screenSaver;
 	
 	private TextView IP_address;// localhost ip
 	static {
@@ -1170,6 +1176,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			mHander.sendEmptyMessageDelayed(ENTER_SCREENSAVE_MODE, 10 * 1000);
 		} else {
 			mHander.removeMessages(ENTER_SCREENSAVE_MODE);
+			screenSaver = new ScreenSaveDialog(this, getActivityBitmap(this));
+			screenSaver.show();
 		}
 		if (mScreensaveMode == save) {
 			return;
@@ -1183,6 +1191,29 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		float f = brightness / 255.0f;
 		localLP.screenBrightness = f;
 		window.setAttributes(localLP);
+	}
+
+
+	public Bitmap getActivityBitmap(Activity activity) {
+		// 获取windows中最顶层的view
+		View view = activity.getWindow().getDecorView();
+		view.buildDrawingCache();
+		// 获取状态栏高度
+		Rect rect = new Rect();
+		view.getWindowVisibleDisplayFrame(rect);
+		int statusBarHeights = rect.top;
+		Display display = activity.getWindowManager().getDefaultDisplay();
+		// 获取屏幕宽和高
+		int widths = display.getWidth();
+		int heights = display.getHeight();
+		// 允许当前窗口保存缓存信息
+		view.setDrawingCacheEnabled(true);
+		// 去掉状态栏
+		Bitmap bmp = Bitmap.createBitmap(view.getDrawingCache(), 0,
+		statusBarHeights, widths, heights - statusBarHeights);
+		// 销毁缓存信息
+		view.destroyDrawingCache();
+		return bmp;
 	}
 	// locahost ip
 	public static String getLocalIpAddress() {  

@@ -894,6 +894,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						ToastUtil.show(mContext, R.string.str_toast_no_message);
 						break;
 					}
+					Debug.d(TAG, "--->Print open message");
 					// End -------------------------------
 					if (!printNext && !messageNew ) {
 						mHandler.sendEmptyMessage(MESSAGE_OPEN_MSG_SUCCESS);
@@ -986,7 +987,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					break;
 				case MESSAGE_OPEN_MSG_SUCCESS:
 
-
+					Debug.d(TAG, "--->Print open message success");
 					if (mPreBitmap != null) {
 						BinFromBitmap.recyleBitmap(mPreBitmap);
 					}
@@ -1068,7 +1069,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mHandler.sendEmptyMessageDelayed(MESSAGE_PAOMADENG_TEST, 1000);
 					break;
 				case MESSAGE_PRINT_CHECK_UID:
-
+					Debug.d(TAG, "--->Print check UUID");
 					if (mDTransThread != null && mDTransThread.isRunning()) {
 						Debug.d(TAG, "--->printing...");
 						handleError(R.string.str_print_printing, pcMsg);
@@ -1098,12 +1099,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mRfidManager.checkUID(heads);
 					break;
 				case RFIDManager.MSG_RFID_CHECK_FAIL:
+					Debug.d(TAG, "--->Print check UUID fail");
 					handleError(R.string.toast_rfid_changed, pcMsg);
 					break;
 				case RFIDManager.MSG_RFID_CHECK_SUCCESS:
 				case MESSAGE_PRINT_START:
 
-					Debug.d(TAG, "--->print start");
+					Debug.d(TAG, "--->Print check success");
 					if (mDTransThread != null && mDTransThread.isRunning()) {
 						// H.M.Wang注释掉一行
 //						handleError(R.string.str_print_printing, pcMsg);

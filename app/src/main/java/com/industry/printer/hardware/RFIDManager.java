@@ -97,7 +97,7 @@ public class RFIDManager implements RfidCallback{
 				mCurrent++;
 				if (mCurrent >= mLiveHeads) {
 					Debug.d(TAG, "--->rfid check success");
-					mCallback.sendEmptyMessageDelayed(MSG_RFID_CHECK_SUCCESS, 100);
+					mCallback.sendEmptyMessage(MSG_RFID_CHECK_SUCCESS);
 					break;
 				}
 				if (mCurrent >= mRfidDevices.size()) {
@@ -231,7 +231,7 @@ public class RFIDManager implements RfidCallback{
 				Debug.e(TAG, "--->switch");
 				ExtGpio.rfidSwitch(i);
 				try {
-					Thread.sleep(500);
+					Thread.sleep(200);
 				} catch (Exception e) {
 				}
 				
@@ -400,9 +400,9 @@ public class RFIDManager implements RfidCallback{
 		mLiveHeads = heads;
 		mCurrent = 0;
 		ExtGpio.rfidSwitch(mCurrent);
-
+		Debug.d(TAG, "--->Print execute check UUID");
 		try {
-			Thread.sleep(500);
+			Thread.sleep(200);
 		} catch (Exception e) {
 		}
 		mDevice = mRfidDevices.get(mCurrent);
