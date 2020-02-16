@@ -26,6 +26,7 @@
 
 #include "hp_smart_card.h"
 #include "hp_debug_log_internal.h"
+#include "common_log.h"
 
 // Removed by H.M.Wang 2019-10-17
 // #include "bcm2835.h"
@@ -69,19 +70,19 @@ uint8_t DeviceIDtoAddr(HP_SMART_CARD_device_id_t device_id)
 /* Added by H.M.Wang 2019-10-17 */
 static uint8_t DeviceIDtoAddr(HP_SMART_CARD_device_id_t device_id) {
     if (device_id == HP_SMART_CARD_DEVICE_HOST) {
-        return (0xF0);
+        return (0xF0 >> 1);
     } else if (device_id == HP_SMART_CARD_DEVICE_ID_0) {
         SC_GPIO_ADAPTER_select_38_xlater(SELECT_CARD_1);               // select Card 0
-        return (0x42);
+        return (0x42 >> 1);
     } else if (device_id == HP_SMART_CARD_DEVICE_ID_1) {
         SC_GPIO_ADAPTER_select_38_xlater(SELECT_CARD_2);               // select Pen 1
-        return (0x42);
+        return (0x42 >> 1);
     } else if (device_id == HP_SMART_CARD_DEVICE_ID_2) {
 //        HP_SMART_CARD_gpio_select(SELECT_CARD_3);               // select Pen 2
-//        return (0x42);
+//        return (0x42 >> 1);
     } else if (device_id == HP_SMART_CARD_DEVICE_ID_3) {
 //        HP_SMART_CARD_gpio_select(SELECT_CARD_4);               // select Pen 3
-//        return (0x42);
+//        return (0x42 >> 1);
     }
     return 0;
 }
@@ -125,26 +126,31 @@ HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read(HP_SMART_CARD_device_id_t devi
     return HP_SMART_CARD_i2c_read_direct(DeviceIDtoAddr(device_id), addr, data, num_bytes_to_read);
 }
 
-HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read_direct(uint8_t i2c_addr,
+static HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read_direct(uint8_t i2c_addr,
                                                   uint8_t addr,
                                                   uint8_t *data,
                                                   size_t num_bytes_to_read) {
-    if(i2c_addr == 0)
+
+    int fd;
+    int read_length;
+
+    fd = SC_I2C_DRIVER_open(0x01, i2c_addr);
+
+    if(fd < 0) {
         return HP_SMART_CARD_I2C_FAILED;
-
-    SC_I2C_DRIVER_RESULT ret = SC_I2C_DRIVER_open(0x01, i2c_addr);
-
-    if(ret != SC_I2C_DRIVER_RESULT_OK)
-        return HP_SMART_CARD_I2C_FAILED;
-
-    if(data == NULL || sizeof(data) == 0) {
-        data = malloc(num_bytes_to_read);
     }
 
-    ret = SC_I2C_DRIVER_read(num_bytes_to_read, addr, data);
-
-    if(ret != SC_I2C_DRIVER_RESULT_OK)
+    if(data == NULL || sizeof(data) < num_bytes_to_read) {
         return HP_SMART_CARD_I2C_FAILED;
+    }
+
+    read_length = SC_I2C_DRIVER_read(fd, addr, data, num_bytes_to_read);
+
+    SC_I2C_DRIVER_close(fd);
+
+    if(read_length < 0) {
+        return HP_SMART_CARD_I2C_FAILED;
+    }
 
     return HP_SMART_CARD_I2C_SUCCESS;
 }
@@ -196,38 +202,30 @@ HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write(HP_SMART_CARD_device_id_t dev
     return HP_SMART_CARD_i2c_write_direct(DeviceIDtoAddr(device_id), addr, data, num_bytes_to_write);
 }
 
-HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write_direct(uint8_t i2c_addr,
+static HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write_direct(uint8_t i2c_addr,
                                                    uint8_t addr,
                                                    uint8_t *data,
                                                    size_t num_bytes_to_write) {
-    if (i2c_addr == 0)
+    int fd;
+    int ret;
+
+    fd = SC_I2C_DRIVER_open(0x01, i2c_addr);
+
+    if(fd < 0) {
         return HP_SMART_CARD_I2C_FAILED;
-
-    if (num_bytes_to_write > MAX_DATA_SIZE)
-        return HP_SMART_CARD_I2C_FAILED;
-
-    SC_I2C_DRIVER_RESULT ret = SC_I2C_DRIVER_open(0x01, i2c_addr);
-
-    if (ret != SC_I2C_DRIVER_RESULT_OK)
-        return HP_SMART_CARD_I2C_FAILED;
-
-    char data_buff[1024];
-    memset(data_buff, 0x00, 1024);
-    char buf[10];
-
-    for (int i = 0; i < num_bytes_to_write; i++) {
-        if(i == 0) {
-            sprintf(buf, "0x%02X", data[i]);
-        } else {
-            sprintf(buf, ",0x%02X", data[i]);
-        }
-        strcat(data_buff, buf);
     }
 
-    ret = SC_I2C_DRIVER_write(addr, data_buff);
-
-    if(ret != SC_I2C_DRIVER_RESULT_OK)
+    if(data == NULL) {
         return HP_SMART_CARD_I2C_FAILED;
+    }
+
+    ret = SC_I2C_DRIVER_write(fd, addr, data, num_bytes_to_write);
+
+    SC_I2C_DRIVER_close(fd);
+
+    if(ret < 0) {
+        return HP_SMART_CARD_I2C_FAILED;
+    }
 
     return HP_SMART_CARD_I2C_SUCCESS;
 }

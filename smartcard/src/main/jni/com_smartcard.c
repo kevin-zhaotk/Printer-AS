@@ -3,29 +3,19 @@
 //
 
 #include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <errno.h>
-#include <string.h>
 #include <jni.h>
-
+#include <sys/ioctl.h>
+#include <asm/fcntl.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <drivers/internal_ifc/sc_i2c_driver.h>
 #include "hp_smart_card.h"
-#include "hp_debug_log_internal.h"
-#include "hp_assert.h"
-#include "hp_generic_macros.h"
 
-#include "hp_host_smart_card_ifc.h"
 #include "hp_host_smart_card.h"
 #include "drivers/internal_ifc/hp_smart_card_gpio_ifc.h"
-#include "drivers/internal_ifc/hp_smart_card_i2c_ifc.h"
 #include "common_log.h"
 #include "com_smartcard.h"
 #include "drivers/internal_ifc/sc_gpio_adapter.h"
-#include "drivers/internal_ifc/sc_i2c_driver.h"
 
 void print_returns(HP_SMART_CARD_result_t result)
 {
@@ -61,6 +51,167 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init
     HP_SMART_CARD_i2c_init();
 
     LOGI("Initializing smart card library....\n");
+
+    system("su");
+
+    LOGI("\n----- reading counter -----\n");
+    int fd = SC_I2C_DRIVER_open(0x02, 0x68);
+    if(fd > 0) {
+        uint8_t buf[4];
+        SC_I2C_DRIVER_read(fd, 0x10, buf, 4);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    int file = open("/dev/ext-gpio", O_RDWR);
+    if(file < 0) {
+        LOGE("Open /dev/ext-gpio failed. %s\n", strerror(errno));
+    }
+
+    LOGI("\n----- reading level 7e at RFID-1 -----\n");
+    if(ioctl(file, 3, 0) < 0) {
+        LOGE("Error: Could not switch RFID-1. %s\n", strerror(errno));
+    }
+    fd = SC_I2C_DRIVER_open(0x01, 0x2a);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    fd = SC_I2C_DRIVER_open(0x01, 0x2b);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    LOGI("\n----- reading level 7e at RFID-2 -----\n");
+    if(ioctl(file, 4, 0) < 0) {
+        LOGE("Error: Could not switch RFID-2. %s\n", strerror(errno));
+    }
+    fd = SC_I2C_DRIVER_open(0x01, 0x2a);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    fd = SC_I2C_DRIVER_open(0x01, 0x2b);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    LOGI("\n----- reading level 7e at RFID-3 -----\n");
+    if(ioctl(file, 5, 0) < 0) {
+        LOGE("Error: Could not switch RFID-3. %s\n", strerror(errno));
+    }
+    fd = SC_I2C_DRIVER_open(0x01, 0x2a);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    fd = SC_I2C_DRIVER_open(0x01, 0x2b);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    LOGI("\n----- reading level 7e at RFID-4 -----\n");
+    if(ioctl(file, 6, 0) < 0) {
+        LOGE("Error: Could not switch RFID-4. %s\n", strerror(errno));
+    }
+    fd = SC_I2C_DRIVER_open(0x01, 0x2a);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    fd = SC_I2C_DRIVER_open(0x01, 0x2b);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    LOGI("\n----- reading level 7e at RFID-5 -----\n");
+    if(ioctl(file, 7, 0) < 0) {
+        LOGE("Error: Could not switch RFID-5. %s\n", strerror(errno));
+    }
+    fd = SC_I2C_DRIVER_open(0x01, 0x2a);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    fd = SC_I2C_DRIVER_open(0x01, 0x2b);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    LOGI("\n----- reading level 7e at RFID-6 -----\n");
+    if(ioctl(file, 8, 0) < 0) {
+        LOGE("Error: Could not switch RFID-6. %s\n", strerror(errno));
+    }
+    fd = SC_I2C_DRIVER_open(0x01, 0x2a);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    fd = SC_I2C_DRIVER_open(0x01, 0x2b);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    LOGI("\n----- reading level 7e at RFID-7 -----\n");
+    if(ioctl(file, 9, 0) < 0) {
+        LOGE("Error: Could not switch RFID-7. %s\n", strerror(errno));
+    }
+    fd = SC_I2C_DRIVER_open(0x01, 0x2a);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    fd = SC_I2C_DRIVER_open(0x01, 0x2b);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    LOGI("\n----- reading level 7e at RFID-8 -----\n");
+    if(ioctl(file, 10, 0) < 0) {
+        LOGE("Error: Could not switch RFID-8. %s\n", strerror(errno));
+    }
+    fd = SC_I2C_DRIVER_open(0x01, 0x2a);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+
+    fd = SC_I2C_DRIVER_open(0x01, 0x2b);
+    if(fd > 0) {
+        uint8_t buf[2];
+        SC_I2C_DRIVER_read(fd, 0x7e, buf, 2);
+    }
+    SC_I2C_DRIVER_close(fd);
+    LOGI("\n----- test over -----\n");
+
 
 /*
 // 测试I2C访问是否能够正常实施
@@ -145,7 +296,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_getLevelData
 //            _gpio_select(SELECT_LEVEL_4);
             break;
     }
-
+/*
     SC_I2C_DRIVER_RESULT ret = SC_I2C_DRIVER_open(0x01, 0x2b);
 
     if(ret != SC_I2C_DRIVER_RESULT_OK) return 0;
@@ -158,6 +309,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_getLevelData
     } else {
         return 0;
     }
+*/
+    return 0;
 }
 
 /* Added by H.M.Wang 2019-10-19 */
@@ -1734,7 +1887,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     JNIEnv* env = NULL;
     jint result = -1;
 
-    LOGI("SmartCard.so 1.0.38 Loaded.");
+    LOGI("SmartCard.so 1.0.89 Loaded.");
 
     if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
         //__android_log_print(ANDROID_LOG_INFO, JNI_TAG,"ERROR: GetEnv failed\n");

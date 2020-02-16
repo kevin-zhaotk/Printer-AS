@@ -143,24 +143,11 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
                             "\n");
 */
 
-            char buffer[1024];
-
-            memset(buffer, 0x00, 1024);
-            char s[16];
-            for(int i=0; i<cmd_rsp_p->cmd_len; i++) {
-                memset(s, 0x00, 16);
-                if(i == 0) {
-                    sprintf(s, "[0x%02X", cmd_rsp_p->cmd_p[i]);
-                } else {
-                    sprintf(s, " 0x%02X", cmd_rsp_p->cmd_p[i]);
-                }
-                strcat(buffer, s);
-            }
-            strcat(buffer, "]");
-
+            char buf[1024];
+            toHexString(cmd_rsp_p->cmd_p, buf, cmd_rsp_p->cmd_len, ',');
             HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
                             HP_DBG_LEVEL_HSCC_TRACE, 4,
-                            "Data to be written: %s", buffer);
+                            "Data in _send_cmd(): [%s]", buf);
 
             result = HP_SMART_CARD_i2c_write(HP_SMART_CARD_DEVICE_HOST,
                                              HOST_SMART_CARD_ADDR_CMD,
@@ -204,7 +191,7 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
 
             HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
                             HP_DBG_LEVEL_HSCC_TRACE, 4,
-                            "Data in rsp_header(): 0x%02x 0x%02x 0x%02x\n",
+                            "Data in rsp_header(): [_RESPONSE]=0x%02x; [_BODY_LEN_LO]=0x%02x; [_BODY_LEN_HI]=0x%02x\n",
                             rsp_header[0], rsp_header[1], rsp_header[2]);
             if ((HP_HOST_SMART_CARD_rsp_t) rsp_header[_RESPONSE] == RSP_SUCCESS)
             {
@@ -236,7 +223,7 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
                     HP_ASSERT(0);                                                                                                                                                                                                                                                                                                                                                                                               // What caused the lack of response?
                     continue;                                                                                                                                                                                                                                                                                                                                                                                                   // Must resend the command
                 }
-                HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
+/*                HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
                                 HP_DBG_LEVEL_HSCC_TRACE, 4,
                                 "Data in response body_p():");
 
@@ -249,6 +236,13 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
                 HP_DEBUG_printf(NULL,
                                 HP_DBG_LEVEL_HSCC_TRACE, 4,
                                 "\n");
+*/
+                char buf[1024];
+                toHexString(cmd_rsp_p->body_p, buf, body_len, ',');
+                HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
+                                HP_DBG_LEVEL_HSCC_TRACE, 4,
+                                "Data in response body_p(): [%s]", buf);
+
             }
             *cmd_rsp_p->body_len = body_len;
         }

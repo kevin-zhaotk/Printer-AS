@@ -115,3 +115,4 @@ void LIB_HP_SMART_CARD_set_log_depth(uint8_t depth)
 {
     _current_log_depth = depth;
 }
+

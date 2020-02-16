@@ -13,7 +13,7 @@
         android:background="@drawable/style_editbtn"
         android:button="@null"
 	    android:layout_gravity="center"
-	    android:layout_margin="10dp"
+	    android:layout_margin="0dp"
 	    android:text="@string/object_text"
 	    android:textSize="40sp"
 	    android:textColor="#000000"
@@ -108,7 +108,18 @@
             android:button="@null"
 	        android:layout_gravity="center"
             />
-<!--        
+<!-- H.M.Wang 2020-1-21 追加Shift控件 -->
+	<Button
+            android:id="@+id/objinsert_shift"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/style_shift"
+            android:button="@null"
+	        android:layout_gravity="center"
+            />
+<!-- End of H.M.Wang 2020-1-21 追加Shift控件 -->
+<!--
     <Button
             android:id="@+id/objinsert_line"
             android:layout_width="130dp"

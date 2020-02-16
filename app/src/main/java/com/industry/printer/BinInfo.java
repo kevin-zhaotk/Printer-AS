@@ -473,7 +473,7 @@ public class BinInfo {
 				try {
 					n = Integer.parseInt(v);
 
-					// H.M.Wang 追加下列6行。为计数器清楚前置0
+					// H.M.Wang 追加下列6行。为计数器清除前置0
 					if (bClearZero && n == 0 && !bSkipThisZero && i < var.length() - 1 && flagClearZero) {
 						bFillBlank = true;
 					} else {

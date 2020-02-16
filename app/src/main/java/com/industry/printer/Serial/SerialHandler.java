@@ -1,6 +1,7 @@
 package com.industry.printer.Serial;
 
 import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Debug;
 
 import org.apache.http.util.ByteArrayBuffer;
@@ -109,10 +110,25 @@ public class SerialHandler {
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_3) {
             SerialProtocol3 p = new SerialProtocol3();
             int result = p.parseFrame(bab);
-            if(result == SerialProtocol3.CMD_DUMMY) {
+            if(result == SerialProtocol3.ERROR_SUCESS) {
                 byte[] recvData = bab.toByteArray();
 
                 procCommands(result, recvData);
+            }
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_4) {
+            XK3190_A30_Protocol p = new XK3190_A30_Protocol();
+
+            int result = p.parseFrame(bab);
+            if((result & ERROR_MASK) == XK3190_A30_Protocol.ERROR_SUCESS) {
+                String value = Integer.toString(result & CMD_MASK);
+
+                if(null == mPrintCmdListeners) {
+                    sendCommandProcessResult(0, 1, 0, 1, "PRINTER_NOT_READY");
+                } else {
+                    procCommands(result, value.getBytes());
+                }
+            } else {
+                sendCommandProcessResult(0, 1, 0, 1, p.createErrorMessage(result & ERROR_MASK));
             }
         }
     }
@@ -187,6 +203,12 @@ public class SerialHandler {
 
             } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_3) {
                 SerialProtocol3 p = new SerialProtocol3();
+
+                response = p.createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
+                mSerialPort.writeSerial(response);
+
+            } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_4) {
+                XK3190_A30_Protocol p = new XK3190_A30_Protocol();
 
                 response = p.createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
                 mSerialPort.writeSerial(response);

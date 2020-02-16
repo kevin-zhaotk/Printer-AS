@@ -729,7 +729,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		} else if (ink <= 0f && mInkZero == false) {
 			mInkZero = true;
 			mHandler.removeMessages(MESSAGE_RFID_LOW);
-			if (!Configs.IGNORE_RFID) {
+			if (!Configs.READING) {
 				mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_ZERO, 2000);
 			}
 			
@@ -1006,7 +1006,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mSysconfig.saveLastMsg(mObjPath);
 //					dismissProgressDialog();
 
-					if (Configs.IGNORE_RFID) {
+					if (Configs.READING) {
 					// H.M.Wang 2019-09-13 RGNORE_RFID的时候将原来的网络命令传递下去
 //						mHandler.sendEmptyMessage(MESSAGE_PRINT_START);
 						msg = mHandler.obtainMessage(MESSAGE_PRINT_START);
@@ -1208,8 +1208,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				case MESSAGE_INKLEVEL_CHANGE:
 					int devIndex = msg.arg1;
 					// for (int i = 0; i < mSysconfig.getHeads(); i++) {
-					// H.M.Wang 2019-09-12 修改在Configs.IGNORE_RFID = true时，跳过减记操作
-					if(!Configs.IGNORE_RFID) {
+					// H.M.Wang 2019-09-12 修改在Configs.READING = true时，跳过减记操作
+					if(!Configs.READING) {
 						mRfidManager.downLocal(devIndex);
 					}
 					// }
@@ -1251,8 +1251,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						}
 					}
 
-					if (Configs.IGNORE_RFID) {
-						// H.M.Wang 2019-09-12 修改在Configs.IGNORE_RFID = true时，直接显示缺省值，而不是在尝试10此后显示
+					if (Configs.READING) {
+						// H.M.Wang 2019-09-12 修改在Configs.READING = true时，直接显示缺省值，而不是在尝试10此后显示
 						mRfidManager.defaultInkForIgnoreRfid();
 
 //						if (repeatTimes <= 0) {
@@ -1352,7 +1352,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	private boolean checkRfid() {
 		boolean ready = true;
-		if (Configs.IGNORE_RFID) {
+		if (Configs.READING) {
 			return true;
 		}
 		if (mDTransThread == null) {

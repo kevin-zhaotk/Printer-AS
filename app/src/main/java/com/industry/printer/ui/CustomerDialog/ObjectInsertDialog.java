@@ -35,7 +35,10 @@ public class ObjectInsertDialog extends Dialog implements android.view.View.OnCl
 	public Button 	mHour;
 	public Button 	mWoy;
 	public Button 	mWday;
-	
+// H.M.Wang 2020-1-21 追加shift控件
+	public Button 	mShift;
+// End of H.M.Wang 2020-1-21 追加shift控件
+
 	public Message		mDismissMsg;
 	
 	public ObjectInsertDialog(Context context) {
@@ -89,7 +92,12 @@ public class ObjectInsertDialog extends Dialog implements android.view.View.OnCl
 
 		mWday = (Button) findViewById(R.id.objinsert_week_day);
 		mWday.setOnClickListener(this);
-		
+
+// H.M.Wang 2020-1-21 追加shift控件
+		mShift = (Button) findViewById(R.id.objinsert_shift);
+		mShift.setOnClickListener(this);
+// End of H.M.Wang 2020-1-21 追加shift控件
+
 	}
 
 	@Override
@@ -139,8 +147,14 @@ public class ObjectInsertDialog extends Dialog implements android.view.View.OnCl
 			case R.id.objinsert_week_day:
 				bundle.putString(OBJECT_TYPE, BaseObject.OBJECT_TYPE_WEEKDAY);
 				mDismissMsg.setData(bundle);
-				
 				break;
+// H.M.Wang 2020-1-21 追加shift控件
+			case R.id.objinsert_shift:
+				bundle.putString(OBJECT_TYPE, BaseObject.OBJECT_TYPE_SHIFT);
+				mDismissMsg.setData(bundle);
+				break;
+// End of H.M.Wang 2020-1-21 追加shift控件
+
 /*
 			case R.id.objinsert_line:
 				bundle.putString(OBJECT_TYPE, BaseObject.OBJECT_TYPE_LINE);

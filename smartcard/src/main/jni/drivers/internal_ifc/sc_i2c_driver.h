@@ -24,20 +24,6 @@
 extern "C" {
 #endif
 
-typedef enum {
-    SC_I2C_DRIVER_RESULT_OK                           = 0,            /* Success */
-    SC_I2C_DRIVER_RESULT_FAILED                       = 1,            /* Failure */
-    SC_I2C_DRIVER_RESULT_FAILED_INVALID_GROUPID       = 10000,        /* Invalid group id */
-    SC_I2C_DRIVER_RESULT_FAILED_INVALID_ADDRESS       = 10001,        /* Invalid address */
-    SC_I2C_DRIVER_RESULT_FAILED_DATA_EMPTY            = 10002,        /* Empty data */
-    SC_I2C_DRIVER_RESULT_FAILED_OPEN_FILE             = 10003,        /* Opening file failed */
-    SC_I2C_DRIVER_RESULT_FAILED_OPEN_DEVICE           = 10004,        /* Opening device failed */
-    SC_I2C_DRIVER_RESULT_FAILED_SEND_WRITE_COMMAND    = 10005,        /* Write command failed */
-    SC_I2C_DRIVER_RESULT_FAILED_INVALID_NUMBER        = 10006,        /* Invalid number to recerve */
-    SC_I2C_DRIVER_RESULT_FAILED_NULL_BUFFER           = 10007,        /* Null buffer */
-    SC_I2C_DRIVER_RESULT_FAILED_SEND_READ_COMMAND     = 10008         /* Read command failed */
-} SC_I2C_DRIVER_RESULT;
-
 //-----------------------------------------------------------------------------
 // Function Prototypes
 
@@ -53,11 +39,11 @@ typedef enum {
         device_address: I2C设备的地址
 
     @返回值
-        0: 成功
-        其它值：失败
+        >0: 文件描述符
+        -1：失败
 **********************************************************************************/
 
-SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_open(int group_id, int device_address);
+int SC_I2C_DRIVER_open(int group_id, int device_address);
 
 /*********************************************************************************
     SC_I2C_DRIVER_write
@@ -73,10 +59,10 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_open(int group_id, int device_address);
 
     @返回值
         0: 成功
-        其它值：失败
+        -1：失败
 **********************************************************************************/
 
-SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_write(int reg, char* data);
+int SC_I2C_DRIVER_write(int fd, int reg, uint8_t *data, int length);
 
 /*********************************************************************************
     SC_I2C_DRIVER_read
@@ -95,7 +81,9 @@ SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_write(int reg, char* data);
         其它值：失败
 **********************************************************************************/
 
-SC_I2C_DRIVER_RESULT SC_I2C_DRIVER_read(int num, int reg, uint8_t *result);
+int SC_I2C_DRIVER_read(int fd, int reg, uint8_t *result, int length);
+
+int SC_I2C_DRIVER_close(int fd);
 
 #ifdef __cplusplus
 }

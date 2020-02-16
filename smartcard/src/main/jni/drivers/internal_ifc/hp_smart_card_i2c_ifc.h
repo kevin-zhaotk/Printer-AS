@@ -80,7 +80,7 @@ HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read(HP_SMART_CARD_device_id_t devi
 //  HP_SMART_CARD_I2C_FAILED: failed
 //
 //*****************************************************************************
-HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read_direct(uint8_t i2c_addr,
+static HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read_direct(uint8_t i2c_addr,
                                                          uint8_t addr,
                                                          uint8_t *data,
                                                          size_t num_bytes_to_read);
@@ -118,7 +118,7 @@ HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write(HP_SMART_CARD_device_id_t dev
 //  HP_SMART_CARD_I2C_FAILED: failed
 //
 //*****************************************************************************
-HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write_direct(uint8_t i2c_addr,
+static HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write_direct(uint8_t i2c_addr,
                                                           uint8_t addr,
                                                           uint8_t *data,
                                                           size_t num_bytes_to_write);

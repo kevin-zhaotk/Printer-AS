@@ -118,7 +118,7 @@ int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count) {
 int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
     LOGI(">>> SC_GPIO_DRIVER_ioctl: 0x%02X[0x%04X] -> %d", cmd, arg1, fd);
 
-    if(fd <= 0) {
+    if(fd < 0) {
         LOGE(">>> SC_GPIO_DRIVER_ioctl: Error[%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
@@ -126,9 +126,7 @@ int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
     uint8_t ret = ioctl(fd, cmd, arg1);
 //	if(ret == EINVAL) {
     if(ret != SC_GPIO_DRIVER_SUCCESS) {
-        LOGE(">>> SC_GPIO_DRIVER_ioctl: Error[%s](Retrun value:%x)", strerror(errno), ret);
-    } else {
-        LOGD(">>> SC_GPIO_DRIVER_ioctl: return value: [0x%02X]", ret);
+        LOGE(">>> SC_GPIO_DRIVER_ioctl: %s(Return value: 0x%02X)", strerror(errno), ret);
     }
 
     return ret;

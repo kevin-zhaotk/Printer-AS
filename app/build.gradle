@@ -8,13 +8,13 @@ android {
         applicationId "com.industry.printer"
         minSdkVersion 17
         targetSdkVersion 17
-        versionCode 30187           //next: 30186
-        versionName "2001070102-z"
+        versionCode 30100           //next: 30207
+        versionName "1911150207"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk {
             moduleName "MainJni"
-            abiFilters "armeabi-v7a", "x86" //"armeabi",
+            abiFilters "armeabi-v7a"//, "x86" "armeabi",
         }
     }
 
@@ -41,6 +41,7 @@ android {
             path file("src/main/jni/Android.mk")
         }
     }
+    sourceSets { main { jni.srcDirs = ['src/main/jni'] } }
 }
 
 dependencies {
@@ -49,7 +50,7 @@ dependencies {
     provided files('libs/systemapi.jar')
 
     compile project(':hardware');
-//    compile project(':smartcard');
+    compile project(':smartcard');
     compile 'com.android.support:support-v4:25.3.0'
     compile 'io.reactivex:rxjava:1.1.0'
     compile project(':zxingcore')

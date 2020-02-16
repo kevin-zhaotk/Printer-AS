@@ -1,23 +1,9 @@
 #include "com_industry_printer_Serial_SerialPort.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#include <assert.h>
 #include <termios.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
-#include <pthread.h>
 #include <fcntl.h>
-#include <sys/ioctl.h>
-#include <linux/fs.h>
-#include <linux/hdreg.h>
-#include <errno.h>
-#include <sys/vfs.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 #ifdef __cplusplus
 extern "C"
