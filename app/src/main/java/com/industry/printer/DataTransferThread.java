@@ -17,8 +17,8 @@ import android.os.SystemClock;
 import com.industry.printer.Constants.Constants;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
-import com.industry.printer.Rfid.RfidScheduler;
-import com.industry.printer.Rfid.RfidTask;
+import com.industry.printer.Rfid.IInkScheduler;
+import com.industry.printer.Rfid.InkSchedulerFactory;
 import com.industry.printer.Serial.EC_DOD_Protocol;
 import com.industry.printer.Serial.SerialHandler;
 import com.industry.printer.Serial.SerialProtocol3;
@@ -67,7 +67,7 @@ public class DataTransferThread {
 	public List<DataTask> mDataTask;
 	/* task index currently printing */
 	private int mIndex;
-	RfidScheduler	mScheduler;
+	IInkScheduler mScheduler;
 	private static long mInterval = 0;
 	private int mThreshold;
 
@@ -518,19 +518,17 @@ public class DataTransferThread {
 		}
 
 		if (mScheduler == null) {
-			mScheduler = new RfidScheduler(mContext);
+			mScheduler = InkSchedulerFactory.getScheduler(mContext);
 		}
 
 		SystemConfigFile configFile = SystemConfigFile.getInstance(context);
-		mScheduler.init();
+
 		int headIndex = configFile.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
 		int heads = PrinterNozzle.getInstance(headIndex).mHeads;
 		/**如果是4合2的打印头，需要修改为4头*/
+		mScheduler.init(heads * configFile.getHeadFactor());
 //		heads = configFile.getParam(SystemConfigFile.INDEX_SPECIFY_HEADS) > 0 ? configFile.getParam(42) : heads;
-		for (int i = 0; i < heads * configFile.getHeadFactor(); i++) {
-			mScheduler.add(new RfidTask(i, mContext));
-		}
-		mScheduler.load();
+
 	}
 
 

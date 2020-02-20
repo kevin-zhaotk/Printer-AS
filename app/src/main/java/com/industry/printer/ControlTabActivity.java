@@ -59,6 +59,8 @@ import com.industry.printer.data.BinFromBitmap;
 import com.industry.printer.data.DataTask;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
+import com.industry.printer.hardware.IInkDevice;
+import com.industry.printer.hardware.InkManagerFactory;
 import com.industry.printer.hardware.LRADCBattery;
 import com.industry.printer.hardware.RFIDDevice;
 import com.industry.printer.hardware.RFIDManager;
@@ -213,7 +215,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public String mSerialdev;
 	
 	private RFIDDevice mRfidDevice;
-	private RFIDManager mRfidManager;
+	private IInkDevice mInkManager;
 	/**
 	 * current tlk path opened
 	 */
@@ -493,7 +495,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 		FpgaGpioOperation.updateSettings(mContext, null, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 		/****鍒濆鍖朢FID****/
-		mRfidManager = RFIDManager.getInstance(mContext);
+		mInkManager = InkManagerFactory.inkManager(mContext);
 		mHandler.sendEmptyMessageDelayed(RFIDManager.MSG_RFID_INIT, 1000);
 		
 		refreshCount();
@@ -605,7 +607,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 		Debug.d(TAG, "--->onConfigChanged: " + heads + "   -- " + RFIDManager.TOTAL_RFID_DEVICES);
 		if (heads > RFIDManager.TOTAL_RFID_DEVICES) {
-			mRfidManager = RFIDManager.getInstance(mContext,true);
+			mInkManager = InkManagerFactory.reInstance(mContext);
 			mHandler.sendEmptyMessageDelayed(RFIDManager.MSG_RFID_INIT, 1000);
 		}
 		onConfigChange();
@@ -690,11 +692,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	private void refreshInk() {
 		
-		float ink = mRfidManager.getLocalInk(mRfid);
+		float ink = mInkManager.getLocalInk(mRfid);
 //		Debug.d(TAG, "--->refresh ink: " + mRfid + " = " + ink);
 		String level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");
 		
-		if (!mRfidManager.isValid(mRfid)) {
+		if (!mInkManager.isValid(mRfid)) {
 			mInkLevel.setBackgroundColor(Color.RED);
 			mInkLevel.setText(String.valueOf(mRfid + 1) + "--");
 
@@ -745,9 +747,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		// String cFormat = getResources().getString(R.string.str_print_count);
 		// ((MainActivity)getActivity()).mCtrlTitle.setText(String.format(cFormat, mCounter));
 
-		RFIDDevice device = mRfidManager.getDevice(mRfid);
-		if (device != null && mDTransThread != null) {
-			count = device.getLocalInk() - 1;
+		count = mInkManager.getLocalInk(mRfid) - 1;
+		if (mDTransThread != null) {
 			Debug.d(TAG, "--->count: " + count);
 			count = count * mDTransThread.getInkThreshold(0) + mDTransThread.getCount();
 		}
@@ -806,7 +807,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	 */
 	private void refreshVoltage() {
 		boolean auto = false;
-		if (mRfidManager == null) {
+		if (mInkManager == null) {
 			auto = false;
 		} else {
 			int vol = mSysconfig.getParam(24);
@@ -816,8 +817,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		
 		if (auto) {
-			RFIDDevice device = mRfidManager.getDevice(0);
-			int vol = device.getFeature(4);
+			int vol = mInkManager.getFeature(0, 4);
 			mPowerV.setText(String.valueOf(vol));
 		} else {
 			mPowerV.setText(String.valueOf(mSysconfig.getParam(25)));
@@ -830,7 +830,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	 */
 	private void refreshPulse() {
 		boolean auto = false;
-		if (mRfidManager == null) {
+		if (mInkManager == null) {
 			auto = false;
 		} else {
 			int p = mSysconfig.getParam(26);
@@ -839,8 +839,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			}
 		}
 		if (auto) {
-			RFIDDevice device = mRfidManager.getDevice(0);
-			int pulse = device.getFeature(5);
+			int pulse = mInkManager.getFeature(0, 5);
 //			Debug.d(TAG, "--->pulse: " + pulse);
 			mTime.setText(String.valueOf(pulse));
 		} else {
@@ -1096,7 +1095,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					if (dt != null && dt.size() > 0) {
 						heads = dt.get(0).getPNozzle().mHeads;
 					}
-					mRfidManager.checkUID(heads);
+					mInkManager.checkUID(heads);
 					break;
 				case RFIDManager.MSG_RFID_CHECK_FAIL:
 					Debug.d(TAG, "--->Print check UUID fail");
@@ -1210,12 +1209,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					// for (int i = 0; i < mSysconfig.getHeads(); i++) {
 					// H.M.Wang 2019-09-12 修改在Configs.READING = true时，跳过减记操作
 					if(!Configs.READING) {
-						mRfidManager.downLocal(devIndex);
+						mInkManager.downLocal(devIndex);
 					}
 					// }
 					/*鎵撳嵃鏅備笉鍐嶅鏅傛洿鏂板ⅷ姘撮噺*/
 					// refreshInk();
-					// mRfidManager.write(mHandler);
+					// mInkManager.write(mHandler);
 					break;
 				case MESSAGE_COUNT_CHANGE:
 					mCounter++;
@@ -1232,20 +1231,17 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					switchRfid();
 					break;
 				case RFIDManager.MSG_RFID_INIT:
-					mRfidManager.init(mHandler);
+					mInkManager.init(mHandler);
 					break;
 				case RFIDManager.MSG_RFID_INIT_SUCCESS:
-					// mRfidManager.read(mHandler);
+					// mInkManager.read(mHandler);
 					break;
 				case RFIDManager.MSG_RFID_READ_SUCCESS:
 					boolean ready = true;
 					Bundle bd = (Bundle) msg.getData();
 					for (int i=0; i < mSysconfig.getPNozzle().mHeads; i++) {
-						RFIDDevice dev = mRfidManager.getDevice(i);
-						if (dev == null) {
-							break;
-						}
-						if (dev.getLocalInk() <= 0) {
+
+						if (mInkManager.getLocalInk(i) <= 0) {
 							ready = false;
 							break;
 						}
@@ -1253,10 +1249,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 					if (Configs.READING) {
 						// H.M.Wang 2019-09-12 修改在Configs.READING = true时，直接显示缺省值，而不是在尝试10此后显示
-						mRfidManager.defaultInkForIgnoreRfid();
+						mInkManager.defaultInkForIgnoreRfid();
 
 //						if (repeatTimes <= 0) {
-//							mRfidManager.defaultInkForIgnoreRfid();
+//							mInkManager.defaultInkForIgnoreRfid();
 //							ready = true;
 //						} else {
 //							repeatTimes--;
@@ -1279,7 +1275,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					ExtGpio.writeGpio('h', 7, 0);
 					break;
 				case RFIDManager.MSG_RFID_WRITE_SUCCESS:
-					float ink = mRfidManager.getLocalInk(0);
+					float ink = mInkManager.getLocalInk(0);
 					refreshInk();
 					break;
 				case MESSAGE_RFID_LOW:
@@ -1362,7 +1358,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		int heads = SystemConfigFile.getInstance(mContext).getPNozzle().mHeads;// task.getHeads();
 		for (int i = 0; i < heads; i++) {
 			Debug.d(TAG, "Checking Rfid of Head = " + i);
-			float ink = mRfidManager.getLocalInk(i);
+			float ink = mInkManager.getLocalInk(i);
 			if (ink <= 0) {
 				ready = false;
 			}
@@ -1815,8 +1811,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		// ExtGpio.playClick();
 		switch (v.getId()) {
 			case R.id.StartPrint:
-//	死机			mRfidManager.checkRfid();
-//	拔出墨盒仍然返回有效数值56643			mRfidManager.getLocalInk(0);
+//	死机			mInkManager.checkRfid();
+//	拔出墨盒仍然返回有效数值56643			mInkManager.getLocalInk(0);
 				mHandler.sendEmptyMessage(MESSAGE_OPEN_TLKFILE);
 				break;
 			case R.id.StopPrint:
@@ -2397,7 +2393,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	//400取计数器
 		                            	for(int i=0;i<7;i++)
 		                            	{
-		                            	sendmsg("counter:" + mCounter+" |ink:" + mRfidManager.getLocalInk(i) + "|state:" + DataTransferThread.getInstance(mContext).isRunning());
+		                            	sendmsg("counter:" + mCounter+" |ink:" + mInkManager.getLocalInk(i) + "|state:" + DataTransferThread.getInstance(mContext).isRunning());
 		                            	//获取INK无显示问题，赵工这地方改好，前面注示去掉就OK了
 		                            	this.sendmsg(Constants.pcOk(msg));
 		                            	}
@@ -2914,7 +2910,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 
 	    public void onComplete(int index) {
-			String msg=mCounter+" \r\nink"+mRfidManager.getLocalInk(0)+"\r\n"+mObjPath+"\r\n";
+			String msg=mCounter+" \r\nink"+mInkManager.getLocalInk(0)+"\r\n"+mObjPath+"\r\n";
 			Debug.d(TAG, "--->onComplete: msg = " + msg);
 			PrintWriter pout = null;
 			// H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID

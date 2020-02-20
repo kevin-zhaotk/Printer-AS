@@ -2,21 +2,16 @@ package com.industry.printer.Rfid;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import com.industry.printer.DataTransferThread;
-import com.industry.printer.ThreadPoolManager;
 import com.industry.printer.Utils.Debug;
-import com.industry.printer.hardware.ExtGpio;
-import com.industry.printer.hardware.RFIDDevice;
+import com.industry.printer.hardware.InkManagerFactory;
 import com.industry.printer.hardware.RFIDManager;
 
-import android.app.AlarmManager;
 import android.content.Context;
 import android.os.SystemClock;
-import android.provider.AlarmClock;
 
-public class RfidScheduler {
+public class RfidScheduler implements IInkScheduler {
 	
 	private String TAG = RfidScheduler.class.getSimpleName();
 	
@@ -43,10 +38,12 @@ public class RfidScheduler {
 	public RfidScheduler(Context ctx) {
 		mContext = ctx;
 		mRfidTasks = new ArrayList<RfidTask>();
-		mManager = RFIDManager.getInstance(mContext);
+
+		mManager = (RFIDManager) InkManagerFactory.inkManager(mContext);
 	}
-	
-	public void init() {
+
+	@Override
+	public void init(int heads) {
 		running = false;
 		if (mAfter != null) {
 			mAfter.interrupt();
@@ -55,23 +52,32 @@ public class RfidScheduler {
 		removeAll();
 		mCurrent = -1;
 		// mManager.switchRfid(mCurrent);
+		initTasks(heads);
+		load();
+	}
+
+	private void initTasks(int heads) {
+		for (int i = 0; i < heads; i++) {
+			add(new RfidTask(i, mContext));
+		}
 	}
 	
-	public void add(RfidTask task) {
+	private void add(RfidTask task) {
 		if (mRfidTasks == null) {
 			mRfidTasks = new ArrayList<RfidTask>();
 		}
 		mRfidTasks.add(task);
 	}
-	
+
+	@Override
 	public int count() {
 		if (mRfidTasks == null) {
 			return 0;
 		}
 		return mRfidTasks.size();
 	}
-	
-	public void load() {
+
+	private void load() {
 		mCurrent = 0;
 		mManager.switchRfid(mCurrent);
 		if (mRfidTasks.size() <= 0) {
@@ -90,6 +96,7 @@ public class RfidScheduler {
 	 *  打印間隔200~500ms（每秒鐘打印 > 20次），爲高速打印，每個打印間隔只執行4步操作
 	 *  打印間隔500~1000ms（每秒鐘打印 > 20次），爲高速打印，每個打印間隔只執行8步操作
 	 */
+	@Override
 	public void schedule() {
 		long time = SystemClock.elapsedRealtime();
 		RfidTask task = null;
@@ -126,6 +133,7 @@ public class RfidScheduler {
 	/**
 	 * 停止打印後需要把所有的鎖值同步一遍
 	 */
+	@Override
 	public void doAfterPrint() {
 		running = true;
 		mAfter = new Thread(){
