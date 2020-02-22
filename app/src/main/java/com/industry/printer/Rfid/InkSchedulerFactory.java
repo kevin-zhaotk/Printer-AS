@@ -2,6 +2,7 @@ package com.industry.printer.Rfid;
 
 import android.content.Context;
 
+import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.hardware.InkManagerFactory;
 
 public class InkSchedulerFactory {
@@ -20,10 +21,12 @@ public class InkSchedulerFactory {
     }
 
     private static IInkScheduler create(Context ctx) {
-        if (true) {
-            return new RfidScheduler(ctx);
-        } else {
+        String inkDev = PlatformInfo.getInkDevice();
+
+        if (inkDev == PlatformInfo.DEVICE_SMARTCARD) {
             return new SmardCardScheduler(ctx);
+        } else {
+            return new RfidScheduler(ctx);
         }
     }
 }

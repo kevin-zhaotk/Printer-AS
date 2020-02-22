@@ -2,6 +2,8 @@ package com.industry.printer.hardware;
 
 import android.content.Context;
 
+import com.industry.printer.Utils.PlatformInfo;
+
 /**
  * factory for ink device manager: RFID, SmartCard
  */
@@ -27,10 +29,13 @@ public class InkManagerFactory {
     }
 
     private static IInkDevice getManager(Context ctx) {
-        if (true) {
-            return new RFIDManager(ctx);
-        } else {
+
+        String inkDev = PlatformInfo.getInkDevice();
+
+        if (inkDev == PlatformInfo.DEVICE_SMARTCARD) {
             return new SmartCardManager(ctx);
+        } else {
+            return new RFIDManager(ctx);
         }
     }
 }
