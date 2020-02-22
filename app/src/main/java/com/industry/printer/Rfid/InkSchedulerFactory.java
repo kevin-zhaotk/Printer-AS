@@ -23,7 +23,7 @@ public class InkSchedulerFactory {
     private static IInkScheduler create(Context ctx) {
         String inkDev = PlatformInfo.getInkDevice();
 
-        if (inkDev == PlatformInfo.DEVICE_SMARTCARD) {
+        if (PlatformInfo.DEVICE_SMARTCARD.equals(inkDev)) {
             return new SmardCardScheduler(ctx);
         } else {
             return new RfidScheduler(ctx);
