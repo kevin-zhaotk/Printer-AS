@@ -249,7 +249,10 @@ public class RFIDManager implements RfidCallback{
 		}
 		int max = device.getMax();
 		if (max <= 0 && Configs.READING) {
-			max = 370;
+// H.M.Wang 2020-2-25 修改max值
+//            max = 370;
+            max = 2000;
+// End of H.M.Wang 2020-2-25 修改max值
 		}
 		float ink = device.getLocalInk();
 		if (max <= 0) {

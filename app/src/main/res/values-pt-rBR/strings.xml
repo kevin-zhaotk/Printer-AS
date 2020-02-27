@@ -88,7 +88,11 @@
 	<string name="strNativeBtn">Cancelar</string>
 	<string name="strRtFmt">Formato</string>
 	<string name="strOffset">Offset</string>
-	
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">Frame</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
 	<!-- object list -->
 	<string name="objectListName">Exibir lista</string>
 	<string name="objectInfoName">Exibir texto</string>
@@ -104,6 +108,9 @@
 	<string name="object_ellipse">Elipse</string>
 	<string name="object_shift">Shift</string>
 	<string name="object_second">Segundo</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">Hypertext</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
 	<string name="object_msg_name">Assunto</string>
 	<!-- Settings frame -->
 	<string name="strParam0">00.Reservado</string>
@@ -264,6 +271,9 @@
 	<string name="str_toast_emptycontent">A mensagem selecionada está vazia!!!</string>
 	<string name="str_toast_no_message">Por favor selecione o arquivo de mensagem primeiro!!!</string>
 	<string name="str_toast_no_ink">Pouca tinta!!!</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">Ink Error!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
 	<string name="str_rfid_initfail_notify">Falha de inicialização do RFID!</string>
 	<string name="str_page_forward"> « </string>
 	<string name="str_page_backward"> » </string>

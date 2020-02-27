@@ -8,6 +8,7 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
 
 public class MessageObject extends BaseObject {
+	private static final String TAG = MessageObject.class.getSimpleName();
 
 	public int mDots = 0;
 	public int[] mDotPer = new int[8];
@@ -195,7 +196,9 @@ public class MessageObject extends BaseObject {
 				.append("^0000^000^")
 				.append(mContent);
 		}
-		
+
+		Debug.d(TAG, "toString = [" + builder.toString() + "]");
+
 		return builder.toString();
 	}
 	

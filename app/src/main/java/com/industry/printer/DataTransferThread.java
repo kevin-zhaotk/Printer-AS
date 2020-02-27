@@ -314,7 +314,7 @@ public class DataTransferThread {
 
 // H.M.Wang 2019-12-19 函数名变更，处理由分隔符分开的字符串，主要满足数据源为以太网和串口协议2的情况
 // H.M.Wang 2019-12-16 将计数器和动态二维码替代部分函数化，以对应串口和网络两方面的需求
-	public void setRemoteTextSeperated(String data) {
+	public void setRemoteTextSeparated(String data) {
 		Debug.d(TAG, "String from Remote = [" + data + "]");
 		String[] recvStrs = data.split(EC_DOD_Protocol.TEXT_SEPERATOR);
 
@@ -329,12 +329,13 @@ public class DataTransferThread {
 					Debug.d(TAG, "Counter[" + strIndex + "]: " + recvStrs[strIndex]);
 					((CounterObject)baseObject).setRemoteContent(recvStrs[strIndex]);
 					strIndex++;
+					needUpdate = true;
 				}
-				needUpdate = true;
 			} else if(baseObject instanceof BarcodeObject) {
 				if(((BarcodeObject)baseObject).isDynamicQRCode() && recvStrs.length >= 11) {
 					Debug.d(TAG, "Dynamic QRCode: " + recvStrs[10]);
 					((BarcodeObject)baseObject).setContent(recvStrs[10]);
+					needUpdate = true;
 				}
 // End. -----
 			}
@@ -415,7 +416,7 @@ public class DataTransferThread {
 						if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1) {
 							setRemoteTextFitCounter(datastring);
 						} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2) {
-							setRemoteTextSeperated(datastring);
+							setRemoteTextSeparated(datastring);
 						}
 						serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 1, 0, 0, "");
 						// H.M.Wang 2019-12-7 反转命令立即生效

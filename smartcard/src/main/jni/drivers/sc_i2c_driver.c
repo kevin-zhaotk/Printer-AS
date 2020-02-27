@@ -47,7 +47,7 @@
 **********************************************************************************/
 
 int SC_I2C_DRIVER_open(int group_id, int address) {
-    LOGI(">>> SC_I2C_DRIVER_open: %d, 0x%02X", group_id, address);
+    LOGI(">>> SC_I2C_DRIVER_open: Group_id: %d, Address: 0x%02X", group_id, address);
 
     // 检查参数
     if(group_id < 0) {
@@ -72,7 +72,7 @@ int SC_I2C_DRIVER_open(int group_id, int address) {
         LOGE(">>> SC_I2C_DRIVER_open: Open [%s] failed. %s", device, strerror(errno));
         return -1;
     } else {
-        LOGD(">>> SC_I2C_DRIVER_open: [%s] opened as [%d]", device, fd);
+//        LOGD(">>> SC_I2C_DRIVER_open: [%s] opened as [%d]", device, fd);
     }
 
     // 传送打开寄存器地址
@@ -80,7 +80,7 @@ int SC_I2C_DRIVER_open(int group_id, int address) {
         LOGE(">>> SC_I2C_DRIVER_open: Could not set address to [0x%02X]. %s", address, strerror(errno));
         return -1;
     } else {
-        LOGD(">>> SC_I2C_DRIVER_open: Set address to [0x%02X].", address);
+//        LOGD(">>> SC_I2C_DRIVER_open: Set address to [0x%02X].", address);
     }
 
     return fd;

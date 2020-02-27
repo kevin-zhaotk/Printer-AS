@@ -1,14 +1,10 @@
 package com.industry.printer;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Vector;
 
+import com.industry.printer.object.HyperTextObject;
+import com.industry.printer.object.RealtimeSecond;
 import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListener;
 import com.industry.printer.ui.CustomerDialog.CustomerDialogBase;
 import com.industry.printer.ui.CustomerDialog.LoadingDialog;
@@ -16,7 +12,6 @@ import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog;
 import com.industry.printer.ui.CustomerDialog.MessageSaveDialog;
 import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
 import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog.OnPositiveBtnListener;
-import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.hardware.ExtGpio;
 //import com.industry.printer.hardware.PWMAudio;
@@ -28,7 +23,6 @@ import com.industry.printer.object.GraphicObject;
 import com.industry.printer.object.JulianDayObject;
 import com.industry.printer.object.LineObject;
 import com.industry.printer.object.MessageObject;
-import com.industry.printer.object.RTSecondObject;
 import com.industry.printer.object.RealtimeObject;
 import com.industry.printer.object.RectObject;
 import com.industry.printer.object.ShiftObject;
@@ -37,47 +31,24 @@ import com.industry.printer.ui.MessageDisplayManager;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
-import android.content.DialogInterface.OnKeyListener;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 public class EditMultiTabActivity extends Fragment implements OnClickListener, OnTouchListener {
 	public static final String TAG="EditMultiTabActivity";
@@ -346,7 +317,7 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 						mNameAdapter.add(mContext.getString(R.string.object_ellipse));
 					else if(o instanceof ShiftObject)
 						mNameAdapter.add(mContext.getString(R.string.object_shift));
-					else if(o instanceof RTSecondObject)
+					else if(o instanceof RealtimeSecond)
 						mNameAdapter.add(mContext.getString(R.string.object_second));
 					else
 						System.out.println("Unknown Object type");
@@ -739,6 +710,11 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 			case R.id.btn_second:
 				onInsertSecond();
 				break;
+// H.M.Wang 2020-2-17 追加HyperText控件
+			case R.id.btn_hypertext:
+				onInsertHypertext();
+				break;
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 			default:
 				break;
 		}
@@ -873,6 +849,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setX(obj.getX() - 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setX(obj.getX() - 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setX(obj.getX() - 4);
@@ -902,6 +882,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setX(obj.getX() + 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setX(obj.getX() + 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setX(obj.getX() + 4);
@@ -930,6 +914,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setY(obj.getY() - 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setX(obj.getY() - 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setY(obj.getY() - 4);
@@ -955,9 +943,12 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		BaseObject obj = getCurObj();
 		if(obj == null)
 			return;
-		if(obj instanceof RealtimeObject)
-		{
-			((RealtimeObject)obj).setY(obj.getY() + 4);
+		if(obj instanceof RealtimeObject) {
+			((RealtimeObject) obj).setY(obj.getY() + 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+				((HyperTextObject)obj).setY(obj.getY() + 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setY(obj.getY() + 4);
@@ -986,6 +977,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setWidth(obj.getWidth() + 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setWidth(obj.getWidth() + 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setWidth(obj.getWidth() + 4);
@@ -1013,6 +1008,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setWidth(obj.getWidth() - 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setWidth(obj.getWidth() - 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setWidth(obj.getWidth() - 4);
@@ -1039,6 +1038,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setHeight(obj.getHeight() + 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setHeight(obj.getHeight() + 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setHeight(obj.getHeight() + 4);
@@ -1065,6 +1068,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setHeight(obj.getHeight() - 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setHeight(obj.getHeight() - 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setHeight(obj.getHeight() - 4);
@@ -1107,7 +1114,13 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 	private void onInsertTime() {
 		onInsertObject(new RealtimeObject(mContext, getNextXcor()));
 	}
-	
+
+// H.M.Wang 2020-2-17 追加HyperText控件
+	private void onInsertHypertext() {
+		onInsertObject(new HyperTextObject(mContext, getNextXcor()));
+	}
+// End of H.M.Wang 2020-2-16 追加HyperText控件
+
 	private void onInsertLine() {
 		onInsertObject(new LineObject(mContext, getNextXcor()));
 	}
@@ -1126,7 +1139,7 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 	}
 	
 	private void onInsertSecond() {
-		onInsertObject(new RTSecondObject(mContext, getNextXcor()));
+		onInsertObject(new RealtimeSecond(mContext, getNextXcor()));
 	}
 	
 	private void onInsertObject(BaseObject object) {

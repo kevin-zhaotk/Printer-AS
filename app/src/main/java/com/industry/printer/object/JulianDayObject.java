@@ -14,6 +14,7 @@ import android.graphics.Paint.FontMetrics;
 import android.text.format.Time;
 
 public class JulianDayObject extends BaseObject {
+	private static final String TAG = JulianDayObject.class.getSimpleName();
 
 	public JulianDayObject(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_JULIAN, x);
@@ -60,7 +61,10 @@ public class JulianDayObject extends BaseObject {
 //		str += BaseObject.intToFormatString(0, 1)+"^";
 //		str += BaseObject.boolToFormatString(mDragable, 3)+"^";
 //		str += "000^000^000^000^000^00000000^00000000^00000000^00000000^0000^0000^" + mFont + "^000^000";
-		System.out.println("Julian-day string ["+str+"]");
+
+		Debug.d(TAG, "toString = [" + str + "]");
+
+//		System.out.println("Julian-day string ["+str+"]");
 		return str;
 	}
 	

@@ -20,16 +20,16 @@
 	    android:layout_height="fill_parent"
 	    android:layout_marginTop="10dp"
 	    android:layout_above="@+id/buttons">
-	        	    
+
 	    <RelativeLayout
 	        android:id="@+id/objectInfoTable"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
 	        >
-	        
+
 	        <include android:id="@+id/base_info_bar" layout="@layout/obj_info_base"/>
-	        
-	        
+
+
 	        <TextView
 		    	android:id="@+id/spinCode"
 		        android:layout_width="@dimen/settingsItemLength"
@@ -43,7 +43,7 @@
 		        android:textColor="#000000"
 		        android:background="#ffffff"
 		        />
-	        
+
 	        <TextView android:id="@+id/viewCode"
 	            android:layout_marginLeft="10dp"
 	            android:layout_width="wrap_content"
@@ -53,17 +53,41 @@
 	            android:text="@string/strCode"
 	            android:textColor="#000000"
 	            />
-	        
-	        <CheckBox android:id="@+id/check_Num_show"
+<!-- H.M.Wang 2020-2-25 追加ITF_14边框有无的设置 -->
+			<CheckBox android:id="@+id/checkFrame"
+				android:layout_alignLeft="@id/spinCode"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_below="@id/spinCode"
+				android:paddingLeft="15dp"
+				android:paddingRight="15dp"
+				android:visibility="gone"
+				style="@style/CheckboxTheme"
+				android:checked="false"/>
+
+
+			<TextView android:id="@+id/captionFrame"
+				android:layout_marginLeft="10dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBaseline="@id/checkFrame"
+				android:visibility="gone"
+				android:textSize="30sp"
+				android:text="@string/strFrame"
+				android:textColor="#000000"
+				/>
+<!-- End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置 -->
+
+			<CheckBox android:id="@+id/check_Num_show"
 	            android:layout_alignLeft="@id/spinCode"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:layout_below="@id/spinCode"
+	            android:layout_below="@id/checkFrame"
 				android:paddingLeft="15dp"
 				android:paddingRight="15dp"
 				style="@style/CheckboxTheme"
 	            android:checked="false"/>
-	        
+
 	        <TextView android:id="@+id/view_num_show"
 	            android:layout_alignLeft="@id/viewCode"
 	            android:layout_width="wrap_content"
@@ -72,9 +96,9 @@
 	            android:textSize="30sp"
 	            android:text="@string/strShow"
 	            android:textColor="#000000"/>
-	        
+
 	        <EditText
-	            android:id="@+id/et_text_size" 
+	            android:id="@+id/et_text_size"
 	            android:layout_alignLeft="@id/spinCode"
 	            android:layout_width="@dimen/settingsItemLength"
 	            android:layout_height="wrap_content"
@@ -83,7 +107,7 @@
 	            android:layout_below="@id/check_Num_show"
 				android:layout_marginTop="20dp"
 	            />
-	        
+
 	        <TextView android:id="@+id/view_text_size"
 	            android:layout_alignLeft="@id/viewCode"
 	            android:layout_width="wrap_content"
@@ -92,8 +116,8 @@
 	            android:textSize="30sp"
 	            android:text="@string/strFontsize"
 	            android:textColor="#000000"/>
-	        
+
 	    </RelativeLayout>
 	</ScrollView>
-	    
+
 </RelativeLayout>

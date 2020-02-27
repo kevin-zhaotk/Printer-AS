@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/background"
+    >
+    
+    <include layout="@layout/obj_info_button"
+        android:id="@+id/buttons"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_alignParentBottom="true"
+	    	android:layout_marginTop="10dp"
+	    	/>
+    
+    
+	<ScrollView android:id="@+id/viewInfo"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+		android:layout_marginTop="10dp"
+		android:layout_above="@+id/buttons">
+	        	    
+	    <RelativeLayout
+	        android:id="@+id/objectInfoTable"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        >
+	        
+	        <include android:id="@+id/base_info_shift" layout="@layout/obj_info_base"/>
+
+<!-- H.M.Wang 2020-2-4 添加Shift控件的位数项目 -->
+			<EditText android:id="@+id/et_start"
+				android:layout_marginTop="5dp"
+				android:layout_marginLeft="150dp"
+				android:layout_width="200dp"
+				android:layout_height="wrap_content"
+				android:layout_below="@id/base_info_shift"
+				android:imeOptions="flagNoExtractUi|actionDone"
+				android:textSize="30sp"
+				android:inputType="number"
+				android:hint="@string/strDefault"/>
+
+			<TextView android:id="@+id/tv_start"
+				android:layout_marginLeft="10dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBaseline="@id/et_start"
+				android:textSize="30sp"
+				android:text="@string/str_cnt_min"
+				android:textColor="#000000"
+				/>
+
+			<EditText android:id="@+id/et_end"
+				android:layout_marginLeft="150dp"
+				android:layout_width="200dp"
+				android:layout_height="wrap_content"
+				android:layout_below="@id/et_start"
+				android:imeOptions="flagNoExtractUi|actionDone"
+				android:textSize="30sp"
+				android:inputType="number"
+				android:hint="@string/strDefault"/>
+
+			<TextView android:id="@+id/tv_end"
+				android:layout_marginLeft="10dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBaseline="@id/et_end"
+				android:textSize="30sp"
+				android:text="@string/str_cnt_max"
+				android:textColor="#000000"
+				/>
+
+			<EditText
+				android:id="@+id/et_cnt_index"
+				android:layout_width="200dp"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="150dp"
+				android:layout_below="@id/et_end"
+				android:imeOptions="flagNoExtractUi|actionDone"
+				android:textSize="30sp"
+				android:inputType="number"
+				android:hint="@string/strDefault"
+				/>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="10dp"
+				android:layout_alignBaseline="@id/et_cnt_index"
+				android:textSize="30sp"
+				android:text="@string/str_cnt_index"
+				android:textColor="#000000"
+				/>
+
+	       <EditText
+	           android:id="@+id/edit_shift1"
+	           android:layout_marginLeft="150dp"
+	           android:layout_width="100dp"
+	           android:layout_height="wrap_content"
+	           android:layout_below="@id/et_cnt_index"
+			   android:textSize="30sp"
+	           android:imeOptions="flagNoExtractUi|actionDone"
+	           android:hint="@string/strDefault"
+	            />
+	        
+	       <EditText
+	           android:id="@+id/edit_shiftValue1"
+	           android:layout_width="100dp"
+	           android:layout_height="wrap_content"
+	           android:layout_below="@id/et_cnt_index"
+	           android:layout_toRightOf="@id/edit_shift1"
+	           android:layout_marginLeft="10dp"
+			   android:textSize="30sp"
+	           android:imeOptions="flagNoExtractUi|actionDone"
+	           android:hint="@string/strDefault"
+	           />
+	        
+	        <TextView
+	            android:id="@+id/view_shift1"
+	            android:layout_marginLeft="10dp"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignBaseline="@id/edit_shift1"
+	            android:textSize="30sp"
+	            android:text="@string/strShift1"
+	            android:textColor="#000000"
+	            />
+	        
+	        <EditText
+	            android:id="@+id/edit_shift2"
+	            android:layout_width="100dp"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/edit_shift1"
+	            android:layout_alignLeft="@id/edit_shift1"
+				android:textSize="30sp"
+	            android:imeOptions="flagNoExtractUi|actionDone"
+	            android:clickable="false"
+	           android:hint="@string/strDefault"
+	            />
+	        
+	       <EditText
+	           android:id="@+id/edit_shiftValue2"
+	           android:layout_width="100dp"
+	           android:layout_height="wrap_content"
+	           android:layout_below="@id/edit_shift1"
+	           android:layout_toRightOf="@id/edit_shift2"
+	           android:layout_marginLeft="10dp"
+			   android:textSize="30sp"
+	           android:imeOptions="flagNoExtractUi|actionDone"
+	           android:clickable="false"
+	           android:hint="@string/strDefault"
+	           />
+	        
+	        <TextView
+	            android:id="@+id/view_shift2"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignLeft="@id/view_shift1"
+	            android:layout_alignBaseline="@id/edit_shift2"
+	            android:textSize="30sp"
+	            android:text="@string/strShift2"
+	            android:textColor="#000000"
+	            />
+	        
+	        <EditText
+	            android:id="@+id/edit_shift3"
+	            android:layout_width="100dp"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/edit_shift2"
+	            android:layout_alignLeft="@id/edit_shift1"
+				android:textSize="30sp"
+	            android:imeOptions="flagNoExtractUi|actionDone"
+	            android:clickable="false"
+	           android:hint="@string/strDefault"
+	            />
+	        
+	       <EditText
+	           android:id="@+id/edit_shiftValue3"
+	           android:layout_width="100dp"
+	           android:layout_height="wrap_content"
+	           android:layout_below="@id/edit_shift2"
+	           android:layout_toRightOf="@id/edit_shift3"
+	           android:layout_marginLeft="10dp"
+			   android:textSize="30sp"
+	           android:imeOptions="flagNoExtractUi|actionDone"
+	           android:clickable="false"
+	           android:hint="@string/strDefault"
+	           />
+	        
+	        <TextView
+	            android:id="@+id/view_shift3"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignLeft="@id/view_shift1"
+	            android:layout_alignBaseline="@id/edit_shift3"
+	            android:textSize="30sp"
+	            android:text="@string/strShift3"
+	            android:textColor="#000000"
+	            />
+	        
+	        <EditText
+	            android:id="@+id/edit_shift4"
+	            android:layout_width="100dp"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/edit_shift3"
+	            android:layout_alignLeft="@id/edit_shift1"
+				android:textSize="30sp"
+	            android:imeOptions="flagNoExtractUi|actionDone"
+	            android:clickable="false"
+	           android:hint="@string/strDefault"
+	            />
+	        
+	       <EditText
+	           android:id="@+id/edit_shiftValue4"
+	           android:layout_width="100dp"
+	           android:layout_height="wrap_content"
+	           android:layout_below="@id/edit_shift3"
+	           android:layout_toRightOf="@id/edit_shift4"
+	           android:layout_marginLeft="10dp"
+			   android:textSize="30sp"
+	           android:imeOptions="flagNoExtractUi|actionDone"
+	           android:clickable="false"
+	           android:hint="@string/strDefault"
+	           />
+	        
+	        <TextView
+	            android:id="@+id/view_shift4"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignLeft="@id/view_shift1"
+	            android:layout_alignBaseline="@id/edit_shift4"
+	            android:textSize="30sp"
+	            android:text="@string/strShift4"
+	            android:textColor="#000000"
+	            />
+
+			<EditText android:id="@+id/et_offset"
+				android:layout_marginLeft="150dp"
+				android:layout_width="@dimen/settingsItemLength"
+				android:layout_height="wrap_content"
+				android:layout_below="@id/edit_shiftValue4"
+				android:textSize="30sp"
+				android:inputType="number"
+				/>
+
+			<TextView android:id="@+id/tv_offset"
+				android:layout_marginLeft="10dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBaseline="@id/et_offset"
+				android:text="@string/strOffset"
+				android:textSize="30sp"
+				android:textColor="#000000"/>
+
+		</RelativeLayout>
+	</ScrollView>	
+    
+</RelativeLayout>

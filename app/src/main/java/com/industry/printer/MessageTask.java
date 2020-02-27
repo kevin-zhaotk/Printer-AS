@@ -39,6 +39,7 @@ import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
 import com.industry.printer.object.GraphicObject;
+import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.object.JulianDayObject;
 import com.industry.printer.object.LetterHourObject;
 import com.industry.printer.object.MessageObject;
@@ -275,6 +276,10 @@ public class MessageTask {
         		objString = item.getContent();
         	} else if (item instanceof RealtimeObject) {
 				objString = item.getContent();
+// H.M.Wang 2020-2-17 追加HyperText控件
+			} else if(item instanceof HyperTextObject) {
+				objString = item.getContent();
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 			} else if (item instanceof CounterObject) {
 				objString = item.getContent();
 			} else {
@@ -333,6 +338,9 @@ public class MessageTask {
 		for (BaseObject object : mObjects) {
 			if((object instanceof CounterObject) || (object instanceof RealtimeObject) ||
 					(object instanceof JulianDayObject) || (object instanceof ShiftObject)
+// H.M.Wang 2020-2-16 追加HyperText控件
+					|| (object instanceof HyperTextObject)
+// End of H.M.Wang 2020-2-16 追加HyperText控件
 					|| (object instanceof WeekOfYearObject)
 					|| (object instanceof WeekDayObject))
 			{
@@ -459,6 +467,12 @@ public class MessageTask {
 				Bitmap t = ((RealtimeObject)o).getBgBitmap(mContext, 1, 1);
 				can.drawBitmap(t, o.getX(), o.getY(), p);
 				BinFromBitmap.recyleBitmap(t);
+// H.M.Wang 2020-2-17 追加HyperText控件
+			} else if(o instanceof HyperTextObject) {
+				Bitmap t = ((HyperTextObject)o).getBgBitmap(mContext, 1, 1);
+				can.drawBitmap(t, o.getX(), o.getY(), p);
+				BinFromBitmap.recyleBitmap(t);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 			} else if(o instanceof JulianDayObject) {
 				// o.drawVarBitmap();
 			} else if (o instanceof BarcodeObject && o.getSource()) {
@@ -624,15 +638,22 @@ public class MessageTask {
 				// o.drawVarBitmap();
 			}
 			else if(o instanceof RealtimeObject) {
-				Bitmap t = ((RealtimeObject)o).getBgBitmap(mContext, scaleW, scaleH);
+				Bitmap t = ((RealtimeObject) o).getBgBitmap(mContext, scaleW, scaleH);
 
 				// H.M.Wang 修改1行
 				can.drawBitmap(t, Math.round((o.getX() * scaleW)), Math.round(o.getY() * scaleH), p);
 //				can.drawBitmap(t, (int)(o.getX() * scaleW), o.getY() * scaleH, p);
+//				Debug.d(TAG, "drawBitmap: x=" + Math.round((o.getX() * scaleW)) + "; y=" + Math.round(o.getY() * scaleH) + "; w= " + t.getWidth() + "; h= " + t.getHeight());
 
 				// H.M.Wang 增加1行。注释掉1行
 				t.recycle();
 //				BinFromBitmap.recyleBitmap(t);
+// H.M.Wang 2020-2-16 追加HyperText控件
+			} else if(o instanceof HyperTextObject) {
+				Bitmap t = ((HyperTextObject) o).getBgBitmap(mContext, scaleW, scaleH);
+				can.drawBitmap(t, Math.round((o.getX() * scaleW)), Math.round(o.getY() * scaleH), p);
+				t.recycle();
+// End of H.M.Wang 2020-2-16 追加HyperText控件
 			} else if (o instanceof BarcodeObject) {
 				// Bitmap t = ((BarcodeObject) o).getScaledBitmap(mContext);
 				Debug.d(TAG, "--->save height=" + o.getHeight() + " scaleH = " + scaleH);
@@ -753,6 +774,13 @@ public class MessageTask {
 				content += o.getContent();
 				Debug.d(TAG, "--->realtime: " + content);
 			}
+// H.M.Wang 2020-2-16 追加HyperText控件
+			else if(o instanceof HyperTextObject)
+			{
+				content += o.getContent();
+				Debug.d(TAG, "--->hypertext: " + content);
+			}
+// End of H.M.Wang 2020-2-16 追加HyperText控件
 			else if(o instanceof JulianDayObject)
 			{
 				content += o.getContent();
@@ -1040,6 +1068,10 @@ public class MessageTask {
 			o.setIndex(i + 1);
 			if (o instanceof RealtimeObject) {
 				i = o.getIndex() + ((RealtimeObject) o).getSubObjs().size();
+// H.M.Wang 2020-2-17 追加HyperText控件
+			} else if(o instanceof HyperTextObject) {
+				i = o.getIndex() + ((HyperTextObject) o).getSubObjs().size();
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 			} else {
 				i = o.getIndex();
 			}
@@ -1092,10 +1124,12 @@ public class MessageTask {
 	public static String getPreview(String name) {
 		String messageFolder = ConfigPath.getTlkDir(name);
 		String previewBmp = messageFolder + MSG_PREV_IMAGE ;
-		File bmp2 = new File(messageFolder, MSG_PREV_IMAGE2);
-		if (bmp2.exists()) {
-			previewBmp = messageFolder + MSG_PREV_IMAGE2;
-		}
+// H.M.Wang 2020-2-27 不参照2.bmp
+//		File bmp2 = new File(messageFolder, MSG_PREV_IMAGE2);
+//		if (bmp2.exists()) {
+//			previewBmp = messageFolder + MSG_PREV_IMAGE2;
+//		}
+// End of H.M.Wang 2020-2-27 不参照2.bmp
 		Debug.i(TAG, "--->previewBmp: " + previewBmp);
 		return previewBmp;
 	}

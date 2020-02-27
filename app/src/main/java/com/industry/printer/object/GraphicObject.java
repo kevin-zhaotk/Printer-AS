@@ -193,7 +193,10 @@ public class GraphicObject  extends BaseObject{
 //		str += "000^000^000^";
 //		str += mContent + "^00000000^00000000^00000000^00000000^0000^0000^0000^000^000";
 		String str = builder.toString();
-		System.out.println("file string ["+str+"]");
+
+		Debug.d(TAG, "toString = [" + str + "]");
+
+//		System.out.println("file string ["+str+"]");
 		return str;
 	}
 }

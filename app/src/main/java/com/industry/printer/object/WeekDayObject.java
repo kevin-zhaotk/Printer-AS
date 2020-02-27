@@ -16,18 +16,49 @@ import android.graphics.Paint.FontMetrics;
 import android.provider.ContactsContract.Contacts.Data;
 
 public class WeekDayObject extends BaseObject {
+	private static final String TAG = WeekDayObject.class.getSimpleName();
+
+	public int mBits;
 
 	public WeekDayObject(Context context, float x) {
 		super(context, OBJECT_TYPE_WEEKDAY, x);
 		Calendar c = Calendar.getInstance();
 		int dat = c.get(Calendar.DAY_OF_WEEK);
+		mBits = 1;
 		setContent(String.valueOf(dat));
 	}
 
 	public WeekDayObject(Context context) {
 		this(context, 0);
 	}
-	
+
+	public WeekDayObject(Context context, BaseObject parent, float x) {
+		this(context, x);
+		mParent = parent;
+	}
+
+	public void setBits(int bits ) {
+		if(bits != 1 && bits != 2) return;
+
+		if(mBits != bits) {
+			mBits = bits;
+
+			String cnt = getContent();
+			setWidth(mPaint.measureText(cnt));
+			setContent(mContent);
+		}
+	}
+
+	@Override
+	public String getMeatureString() {
+		return (mBits == 2 ? "00" : "0");
+	}
+
+	@Override
+	public void setContent(String content) {
+		super.setContent(("0" + content).substring(Math.max(content.length()+1-mBits,0)));
+	}
+
 	@Override
 	public String getContent() {
 		Calendar c = Calendar.getInstance();
@@ -37,8 +68,9 @@ public class WeekDayObject extends BaseObject {
 		} else {
 			dat = dat - 1;
 		}
-		mContent = String.valueOf(dat);
-		return mContent;
+
+		setContent("" + dat);
+		return super.getContent();
 	}
 	
 	
@@ -106,7 +138,8 @@ public class WeekDayObject extends BaseObject {
 				.append("^")
 				.append(BaseObject.boolToFormatString(mDragable, 3))
 				.append("^")
-				.append("000^000^000^000^000^00000000^00000000^00000000^00000000^0000^0000^")
+				.append("000^000^000^000^000^00000000^00000000^00000000^00000000^" + (mParent == null ? "0000" : String.format("%03d", mParent.mIndex)) + "^0000^")
+//				.append("000^000^000^000^000^00000000^00000000^00000000^00000000^0000^0000^")
 				.append(mFont)
 				.append("^000^000");
 				
@@ -121,7 +154,8 @@ public class WeekDayObject extends BaseObject {
 //		str += BaseObject.intToFormatString(0, 1)+"^";
 //		str += BaseObject.boolToFormatString(mDragable, 3)+"^";
 //		str += "000^000^000^000^000^00000000^00000000^00000000^00000000^0000^0000^0000^000^000";
-		Debug.d(TAG,"file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		Debug.d(TAG,"file string ["+str+"]");
 		return str;
 	}
 	

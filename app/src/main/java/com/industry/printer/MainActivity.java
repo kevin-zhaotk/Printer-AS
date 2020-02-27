@@ -69,6 +69,7 @@ import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.Serial.SerialPort;
 import com.industry.printer.hardware.SmartCard;
+import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
 import com.industry.printer.ui.CustomerDialog.DialogListener;
 import com.industry.printer.ui.CustomerDialog.ImportDialog;
@@ -251,6 +252,23 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 //						Thread.sleep(5000);
 //						ExtGpio.playClick();
 						SmartCard.open();
+/*					HyperTextObject obj = new HyperTextObject(MainActivity.this);
+
+					obj.parseContent("1234@Y-@M-@D5678 @3C");
+					obj.getScaledBitmap(MainActivity.this);
+					obj.getpreviewbmp();
+					obj.parseContent("A@YB@MC@DD@HE@mF@sG@SH@wI@WJ@2K@3CL@4CCM@5CCC --- @ --- A@YB@MC@DD@HE@mF@sG@SH@wI@WJ@2K@3CL@4CCM@5CCC");
+					obj.getScaledBitmap(MainActivity.this);
+					obj.getpreviewbmp();
+					obj.parseContent("A@YB@MC@DD@HE@mF@sG@SH@wI@WJ@2K@3CL@4CCM@5CCC@");
+					obj.getScaledBitmap(MainActivity.this);
+					obj.getpreviewbmp();
+					obj.parseContent("A@Y@WB@MC@DD@HE@mF@sG@SH@wI@WJ@2K@3CL@4CCM@5CCCA");
+					obj.getScaledBitmap(MainActivity.this);
+					obj.getpreviewbmp();
+*/
+
+
 /*
 						ExtGpio.rfidSwitch(ExtGpio.RFID_CARD1);
 						Thread.sleep(200);
@@ -1073,12 +1091,16 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 					src.put("source", Configs.CONFIG_PATH_FLASH + Configs.SYSTEM_CONFIG_DIR);
 					src.put("dest", usbs.get(0) + arg0);
 					src.put("tips", MainActivity.this.getString(R.string.tips_export_sysconf));
-				} else if (Configs.LOG_1.equals(Configs.LOG_1)) {
+// H.M.Wang 2020-2-19 修改导出错误
+				} else if (Configs.LOG_1.equals(arg0)) {
+//				} else if (Configs.LOG_1.equals(Configs.LOG_1)) {
 					src.put("source", Configs.LOG_1);
 					src.put("dest", usbs.get(0) + "/log1.txt");
-				} else if (Configs.LOG_1.equals(Configs.LOG_2)) {
+				} else if (Configs.LOG_2.equals(arg0)) {
+//				} else if (Configs.LOG_1.equals(Configs.LOG_2)) {
 					src.put("source", Configs.LOG_2);
 					src.put("dest", usbs.get(0) + "/log2.txt");
+// End of H.M.Wang 2020-2-19 修改导出错误
 				} else {
 					FileUtil.deleteFolder(usbs.get(0) + "/print.bin");
 					src.put("source", "/mnt/sdcard/print.bin");

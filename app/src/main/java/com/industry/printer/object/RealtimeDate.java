@@ -21,18 +21,18 @@ public class RealtimeDate extends BaseObject {
 	private static final String TAG = RealtimeDate.class.getSimpleName();
 
 	public int mOffset;
-	public RealtimeObject mParent;
+//	public BaseObject mParent;
 	
 	public RealtimeDate(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_DL_DATE, x);
 		Time t = new Time();
 		t.set(System.currentTimeMillis());
 		mOffset = 0;
-		mParent = null;
+//		mParent = null;
 		setContent(BaseObject.intToFormatString(t.monthDay, 2));
 	}
 
-	public RealtimeDate(Context context, RealtimeObject parent, float x) {
+	public RealtimeDate(Context context, BaseObject parent, float x) {
 		this(context, x);
 		mParent = parent;
 	}
@@ -98,7 +98,8 @@ public class RealtimeDate extends BaseObject {
 //		str += "000^000^000^000^000^";
 //		str += mParent == null? "00000":BaseObject.intToFormatString(mParent.getOffset(), 5);
 //		str += "^00000000^00000000^00000000^0000^0000^" + mFont + "^000^000";
-		System.out.println("file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		System.out.println("file string ["+str+"]");
 		return str;
 	}
 	

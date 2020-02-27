@@ -43,6 +43,7 @@ import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
 import com.industry.printer.object.EllipseObject;
 import com.industry.printer.object.GraphicObject;
+import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.object.JulianDayObject;
 import com.industry.printer.object.LetterHourObject;
 import com.industry.printer.object.LineObject;
@@ -669,6 +670,12 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 						shift.setY(cur[1]);
 						onInsertObject(shift);
 // End of H.M.Wang 2020-1-21 追加shift控件
+// H.M.Wang 2020-2-16 追加HyperText控件
+					} else if (BaseObject.OBJECT_TYPE_HYPERTEXT.equalsIgnoreCase(type)) {
+						HyperTextObject hypertext = new HyperTextObject(mContext, cur[0]);
+						hypertext.setY(cur[1]);
+						onInsertObject(hypertext);
+// End of H.M.Wang 2020-2-16 追加HyperText控件
 					}
             		
             		break;
@@ -1028,6 +1035,10 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setX(obj.getX() - 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setX(obj.getX() - 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setX(obj.getX() - 4);
@@ -1062,6 +1073,10 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setX(obj.getX() + 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setX(obj.getX() + 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setX(obj.getX() + 4);
@@ -1099,6 +1114,10 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setY(obj.getY() - 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setY(obj.getY() - 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setY(obj.getY() - 4);
@@ -1133,6 +1152,10 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		if(obj instanceof RealtimeObject)
 		{
 			((RealtimeObject)obj).setY(obj.getY() + 4);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		} else if(obj instanceof HyperTextObject) {
+			((HyperTextObject)obj).setY(obj.getY() + 4);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		}
 		else
 			obj.setY(obj.getY() + 4);

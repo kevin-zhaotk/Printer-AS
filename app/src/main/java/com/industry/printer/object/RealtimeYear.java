@@ -40,13 +40,13 @@ public class RealtimeYear extends BaseObject {
 
 	public static final String TAG="RealtimeYear";
 	public String mFormat;
-	public int mOffset;
-	public RealtimeObject mParent;
+//	public int mOffset;
+//	public BaseObject mParent;
 	
 	public RealtimeYear(Context context, float x, boolean f) {
 		super(context, BaseObject.OBJECT_TYPE_DL_YEAR, x);
 		mOffset = 0;
-		mParent = null;
+//		mParent = null;
 		Time t = new Time();
 		t.set(System.currentTimeMillis());
 		if(!f)
@@ -59,10 +59,10 @@ public class RealtimeYear extends BaseObject {
 			mFormat="YYYY";
 			setContent(BaseObject.intToFormatString(t.year, 4));
 		}
-		Debug.d(TAG, ">>getContent, "+mFormat);
+		Debug.d(TAG, ">>Format, "+mFormat);
 	}
 	
-	public RealtimeYear(Context context, RealtimeObject parent, float x, boolean f) {
+	public RealtimeYear(Context context, BaseObject parent, float x, boolean f) {
 		this(context, x ,f);
 		mParent = parent;
 	}
@@ -129,7 +129,8 @@ public class RealtimeYear extends BaseObject {
 //		str += "000^000^000^000^000^";
 //		str += mParent == null? "00000":BaseObject.intToFormatString(mParent.getOffset(), 5);
 //		str += "^00000000^00000000^00000000^0000^0000^" + mFont + "^000^000";
-		Debug.d(TAG, "file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		Debug.d(TAG, "file string ["+str+"]");
 		return str;
 	}
 //////addbylk 

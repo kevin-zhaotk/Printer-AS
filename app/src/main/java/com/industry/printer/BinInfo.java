@@ -95,6 +95,7 @@ public class BinInfo {
 	public ByteArrayInputStream mCacheStream;
 
 	public int mVarCount;
+	private byte[] feed;
 
 
 	public BinInfo(String file) {

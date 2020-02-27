@@ -95,7 +95,11 @@
 	<string name="strRtFmt">書式</string>
 
 	<string name="strOffset">オフセット</string>
-	
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">Frame</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
 	<!-- object list -->
 	<string name="objectListName">リストを見る</string>
 	<string name="objectInfoName">テキストを見る</string>
@@ -111,6 +115,9 @@
 	<string name="object_ellipse">円形</string>
 	<string name="object_shift">シフト</string>
 	<string name="object_second">Second</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">Hypertext</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
 	<string name="object_msg_name">Subject</string>
 	<!-- Settings frame -->
 	<string name="strParam0">00.Reserved</string>
@@ -278,6 +285,9 @@
 	<string name="str_toast_emptycontent">選択されたメッセージは空です!!!</string>
 	<string name="str_toast_no_message">初めにメッセージファイルを選択してください!!!</string>
 	<string name="str_toast_no_ink">インク残量が少なくなりました!!!</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">Ink Error!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
 	<string name="str_rfid_initfail_notify">RFID 初期化失敗！</string>
 	<string name="str_page_forward"> 《 </string>
 	<string name="str_page_backward"> 》 </string>

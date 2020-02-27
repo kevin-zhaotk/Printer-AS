@@ -2,8 +2,10 @@ package com.industry.printer.object;
 
 import android.content.Context;
 
-public class DynamicText extends BaseObject {
+import com.industry.printer.Utils.Debug;
 
+public class DynamicText extends BaseObject {
+    private static final String TAG = DynamicText.class.getSimpleName();
 
     public int start;
     public int count;
@@ -68,6 +70,9 @@ public class DynamicText extends BaseObject {
 
 
         String str = builder.toString();
+
+        Debug.d(TAG, "toString = [" + str + "]");
+
         return str;
     }
 }

@@ -14,18 +14,20 @@ import android.graphics.Paint.FontMetrics;
 import android.text.format.Time;
 
 public class RealtimeMinute extends BaseObject {
+	private static final String TAG = RealtimeMinute.class.getSimpleName();
+
 	// H.M.Wang 追加时间对象的所属信息
-	public RealtimeObject mParent;
+//	public BaseObject mParent;
 
 	public RealtimeMinute(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_RT_MIN, x);
 		Time t = new Time();
 		t.set(System.currentTimeMillis());
 		setContent(BaseObject.intToFormatString(t.minute, 2));
-		mParent = null;
+//		mParent = null;
 	}
 
-	public RealtimeMinute(Context context, RealtimeObject parent, float x) {
+	public RealtimeMinute(Context context, BaseObject parent, float x) {
 		this(context, x);
 		mParent = parent;
 	}
@@ -136,7 +138,8 @@ public class RealtimeMinute extends BaseObject {
 //		str += BaseObject.boolToFormatString(mDragable, 3)+"^";
 //		//str += BaseObject.intToFormatString(mContent.length(), 3)+"^";
 //		str += "000^000^000^000^000^00000000^00000000^00000000^00000000^0000^0000^" + mFont + "^000^000";
-		System.out.println("file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		System.out.println("file string ["+str+"]");
 		return str;
 	}
 	

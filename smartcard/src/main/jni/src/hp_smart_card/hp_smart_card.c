@@ -2872,7 +2872,8 @@ static HP_SMART_CARD_result_t smart_card_raw_present(HP_SMART_CARD_id_t device)
     HW_SMART_CARD_status_t  status;
     uint8_t                 *data_p = (uint8_t *) "deadbeef";
 
-    status  = HW_SMART_CARD_echo(&hw_smart_card_device[device], data_p, 8);
+//    status  = HW_SMART_CARD_echo(&hw_smart_card_device[device], data_p, 8);
+    status  = HW_SMART_CARD_echo(&hw_smart_card_device[device], data_p, sizeof("deadbeef"));
     result  = _xlat_hw_result(status, HP_SMART_CARD_DEVICE_ABSENT);
     return(result);
 }

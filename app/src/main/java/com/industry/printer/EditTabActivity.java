@@ -23,6 +23,7 @@ import com.industry.printer.hardware.HardwareJni;
 import com.industry.printer.hardware.RFIDDevice;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
+import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.object.TLKFileParser;
 import com.industry.printer.object.GraphicObject;
 import com.industry.printer.object.JulianDayObject;
@@ -295,6 +296,10 @@ public class EditTabActivity extends Fragment implements OnClickListener, OnLong
 					} else if (object instanceof RealtimeObject) {
 						// obj = "#T#" + ((RealtimeObject)object).getContent();
 						obj = ObjectsFromString.REALTIME_FLAG + ((RealtimeObject)object).getFormat();
+// H.M.Wang 2020-2-17 追加HyperText控件
+					} else if(object instanceof HyperTextObject) {
+						obj = ObjectsFromString.HYPERTEXT_FLAG + ((HyperTextObject)object).getContent();
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 					} else if (object instanceof CounterObject) {
 						obj = ObjectsFromString.COUNTER_FLAG + ((CounterObject)object).getContent();
 					} else {

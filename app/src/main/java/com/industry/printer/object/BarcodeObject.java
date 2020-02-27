@@ -38,6 +38,7 @@ import org.w3c.dom.Text;
 
 
 public class BarcodeObject extends BaseObject {
+	private static final String TAG = BarcodeObject.class.getSimpleName();
 
 	private static final int QUIET_ZONE_SIZE = 4;
 	private static final int STROKE_WIDTH = 3;
@@ -46,7 +47,11 @@ public class BarcodeObject extends BaseObject {
 	public int mCode;
 	public boolean mShow;
 	public int mTextSize;
-	
+
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+	private boolean mWithFrame;
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+
 //	public Bitmap mBinmap;
 	
 	private Map<String, Integer> code_format;
@@ -58,6 +63,9 @@ public class BarcodeObject extends BaseObject {
 		mShow = true;
 		mCode = 3;
 		mTextSize = 20;
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+		mWithFrame = true;
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
 		mFormat="CODE_128";
 		if (mSource == true) {
 			setContent("123456789");
@@ -155,7 +163,18 @@ public class BarcodeObject extends BaseObject {
 	{
 		return mShow;
 	}
-	
+
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+	public void setWithFrame(boolean withFrame)
+{
+	mWithFrame = withFrame;
+}
+	public boolean getWithFrame()
+	{
+		return mWithFrame;
+	}
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+
 	public void setTextsize(int size) {
 		if (size == mTextSize) {
 			return;
@@ -446,14 +465,17 @@ public class BarcodeObject extends BaseObject {
 			/* 条码/二维码的四个边缘空出20像素作为白边 */
 			Bitmap bitmap = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
 			bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-			
-			if ("ITF_14".equals(mFormat)) {
+
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+			if ("ITF_14".equals(mFormat) && mWithFrame) {
+//			if ("ITF_14".equals(mFormat)) {
 				Canvas cvs = new Canvas(bitmap);
 				paint.setStrokeWidth(STROKE_WIDTH * 2);
 				cvs.drawLine(/* top */  0, STROKE_WIDTH, bitmap.getWidth(), STROKE_WIDTH, paint);
 				cvs.drawLine(/* left */ STROKE_WIDTH, 0, STROKE_WIDTH, bitmap.getHeight(), paint);
 				cvs.drawLine(/* right */bitmap.getWidth() - STROKE_WIDTH, 0, bitmap.getWidth() - STROKE_WIDTH, bitmap.getHeight(), paint);
 				cvs.drawLine(/* bottom*/0, bitmap.getHeight() - STROKE_WIDTH,bitmap.getWidth(), bitmap.getHeight() - STROKE_WIDTH, paint);
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
 			}
 			if(mShow)
 			{
@@ -917,7 +939,7 @@ public class BarcodeObject extends BaseObject {
 		int dots = 152;//SystemConfigFile.getInstance(mContext).getParam(39);
 		float prop = dots/Configs.gDots;
 		
-		StringBuilder builder = new StringBuilder(mId);
+		StringBuilder builder = new StringBuilder(mId);							// Tag 1    对象编号
 		if (BaseObject.OBJECT_TYPE_QR.equalsIgnoreCase(mId)) {
 			builder.append("^")
 				.append(BaseObject.floatToFormatString(getX()*2*prop, 5))
@@ -945,35 +967,40 @@ public class BarcodeObject extends BaseObject {
 				.append(mContent);
 		} else {
 			builder.append("^")
-			.append(BaseObject.floatToFormatString(getX()*2*prop, 5))
+			.append(BaseObject.floatToFormatString(getX()*2*prop, 5))			// Tag 2    X开始坐标
 			.append("^")
-			.append(BaseObject.floatToFormatString(getY()*2*prop, 5))
+			.append(BaseObject.floatToFormatString(getY()*2*prop, 5))			// Tag 3    Y开始坐标
 			.append("^")
-			.append(BaseObject.floatToFormatString(getXEnd()*2*prop, 5))
+			.append(BaseObject.floatToFormatString(getXEnd()*2*prop, 5))		// Tag 4    X终止坐标
 			.append("^")
-			.append(BaseObject.floatToFormatString(getYEnd()*2*prop, 5))
+			.append(BaseObject.floatToFormatString(getYEnd()*2*prop, 5))		// Tag 5    Y终止坐标
 			.append("^")
-			.append(BaseObject.intToFormatString(0, 1))
+			.append(BaseObject.intToFormatString(0, 1))							// Tag 6    字符大小
 			.append("^")
-			.append(BaseObject.boolToFormatString(mDragable, 3))
+			.append(BaseObject.boolToFormatString(mDragable, 3))				// Tag 7    支持拖拉标识
 			.append("^")
-			.append(BaseObject.floatToFormatString(mContent.length(), 3))
+			.append(BaseObject.floatToFormatString(mContent.length(), 3))		// Tag 8    条码字符长度
 			.append("^")
-			.append(mCode)
+			.append(mCode)														// Tag 9    条码类型
 			.append("^")
-			.append("000^")
-			.append(BaseObject.boolToFormatString(mShow, 3))
+			.append("000^")														// Tag 10   字符字体大小
+			.append(BaseObject.boolToFormatString(mShow, 3))					// Tag 11   是否显示字符
 			.append("^")
-			.append(mContent)
+			.append(mContent)													// Tag 12   条码字符内容
 			.append("^")
-			.append(BaseObject.boolToFormatString(mSource, 8))
+			.append(BaseObject.boolToFormatString(mSource, 8))					// Tag 13   什么源？
 			.append("^")
-			.append("00000000^00000000^00000000^0000^0000^")
-			.append(mFont)
-			.append("^000^")
-			.append(BaseObject.intToFormatString(mTextSize, 3));
+			.append("00000000^00000000^00000000^0000^0000^")					// Tag 14-18
+			.append(mFont)														// Tag 19   字体
+//			.append("^000^")													// Tag 20
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+			.append("^")														// Tag 20   (新)边框有无
+			.append(BaseObject.boolToFormatString(mWithFrame, 3))				// Tag 20   (新)边框有无
+			.append("^")														// Tag 20   (新)边框有无
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+			.append(BaseObject.intToFormatString(mTextSize, 3));				// Tag 21   文本大小？
 		}
-		
+
 		String str = builder.toString();
 		//str += BaseObject.intToFormatString(mIndex, 3)+"^";
 //		if (BaseObject.OBJECT_TYPE_QR.equalsIgnoreCase(mId)) {
@@ -1005,7 +1032,8 @@ public class BarcodeObject extends BaseObject {
 //			str += "00000000^00000000^00000000^0000^0000^" + mFont + "^000" + "^";
 //			str += BaseObject.intToFormatString(mTextSize, 3);
 //		}
-		System.out.println("file string ["+str+"]");
+//		System.out.println("file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
 		return str;
 	}
 }

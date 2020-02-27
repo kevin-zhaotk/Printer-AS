@@ -100,7 +100,11 @@
 	<string name="strNativeBtn">取消</string>
 	<string name="strRtFmt">時間格式</string>
 	<string name="strOffset">偏移</string>
-	
+
+	<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">邊框</string>
+	<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
 	<!-- object list -->
 	<string name="objectListName">Show List</string>
 	<string name="objectInfoName">顯示對象信息</string>
@@ -116,6 +120,9 @@
 	<string name="object_ellipse">橢圓對象</string>
 	<string name="object_shift">班次對象</string>
 	<string name="object_second">實時時間秒</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">超文本</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
 	<string name="object_weekofyear">周數對象</string>
 	<string name="object_weekday">星期</string>
 	<string name="object_charHour">字符小時</string>
@@ -283,6 +290,9 @@
 	<string name="str_toast_emptycontent">打印對象內容不能爲空!!!</string>
 	<string name="str_toast_no_message">請選擇一个打印對象!!!</string>
 	<string name="str_toast_no_ink">墨水量低</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">墨盒異常!!!</string>
+<!-- H.M.Wang End of 2020-2-25 增加墨盒错误提示 -->
 	<string name="str_toast_no_bin">沒有可供打印的bin文件</string>
 	<string name="str_message_no_content">无法生成预览</string>
 	<string name="str_page_forward">前翻</string>
