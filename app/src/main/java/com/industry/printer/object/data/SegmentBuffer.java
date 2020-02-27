@@ -32,7 +32,7 @@ public class SegmentBuffer {
 	public CharArrayBuffer mBuffer;
 	private Context mContext;
 	
-	private RFIDDevice mRfid;
+//	private RFIDDevice mRfid;
 	/**
 	 * 从BinInfo中提取指定打印头的buffer数据，比如该TLK支持3头打印，从中取出第二个打印头的buffer数据
 	 * @param info 从bin文件生成的BinInfo对象
@@ -97,7 +97,7 @@ public class SegmentBuffer {
 // 旋转功能已废弃
 //		rotate(rotate);
 
-		mRfid = RFIDManager.getInstance(mContext).getDevice(mType);
+//		mRfid = RFIDManager.getInstance(mContext).getDevice(mType);
 	}
 
 

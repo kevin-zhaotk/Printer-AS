@@ -2,6 +2,8 @@ package com.industry.printer.Rfid;
 
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.RFIDAsyncTask.RfidCallback;
+import com.industry.printer.hardware.IInkDevice;
+import com.industry.printer.hardware.InkManagerFactory;
 import com.printer.corelib.RFIDData;
 import com.industry.printer.hardware.RFIDDevice;
 import com.industry.printer.hardware.RFIDManager;
@@ -43,16 +45,22 @@ public class RfidTask implements RfidCallback{
 	
 	public synchronized void onLoad() {
 		clearStat();
-		RFIDManager manager = RFIDManager.getInstance(mContext);
-		RFIDDevice dev = manager.getDevice(mIndex);
+		IInkDevice manager = InkManagerFactory.inkManager(mContext);
+		if (!(manager instanceof RFIDManager)) {
+			return;
+		}
+		RFIDDevice dev = ((RFIDManager) manager).getDevice(mIndex);
 		if (dev != null) {
 			dev.addLisetener(this);
 		}
 	}
 	
 	public synchronized void onUnload() {
-		RFIDManager manager = RFIDManager.getInstance(mContext);
-		RFIDDevice dev = manager.getDevice(mIndex);
+		IInkDevice manager = InkManagerFactory.inkManager(mContext);
+		if (!(manager instanceof RFIDManager)) {
+			return;
+		}
+		RFIDDevice dev = ((RFIDManager) manager).getDevice(mIndex);
 		if (dev != null) {
 			dev.removeListener(this);
 		}
@@ -63,8 +71,11 @@ public class RfidTask implements RfidCallback{
 	public void clearStat() {
 		mTimeStamp = SystemClock.elapsedRealtime();
 		mState = STATE_IDLE;
-		RFIDManager manager = RFIDManager.getInstance(mContext);
-		RFIDDevice dev = manager.getDevice(mIndex);
+		IInkDevice manager = InkManagerFactory.inkManager(mContext);
+		if (!(manager instanceof RFIDManager)) {
+			return;
+		}
+		RFIDDevice dev = ((RFIDManager) manager).getDevice(mIndex);
 		if (dev != null) {
 			dev.setState(RFIDDevice.STATE_RFID_CONNECTED);
 		}
@@ -84,9 +95,12 @@ public class RfidTask implements RfidCallback{
 	
 	public void execute() {
 		Debug.d(TAG, "--->execute index=" + mIndex + "  state=" + mState);
-		RFIDManager manager = RFIDManager.getInstance(mContext);
-		RFIDDevice dev = manager.getDevice(mIndex);
-		
+		IInkDevice manager = InkManagerFactory.inkManager(mContext);
+		if (!(manager instanceof RFIDManager)) {
+			return;
+		}
+		RFIDDevice dev = ((RFIDManager) manager).getDevice(mIndex);
+
 		mState = STATE_PROCESSING;
 		Debug.d(TAG, "--->dev.state= " + (dev == null ? "" : dev.getState()));
 		if (dev == null) {
@@ -139,8 +153,12 @@ public class RfidTask implements RfidCallback{
 	@Override
 	public void onFinish(RFIDData data) {
 		byte[] rfid;
-		RFIDManager manager = RFIDManager.getInstance(mContext);
-		RFIDDevice dev = manager.getDevice(mIndex);
+		IInkDevice manager = InkManagerFactory.inkManager(mContext);
+		if (!(manager instanceof RFIDManager)) {
+			return;
+		}
+		RFIDDevice dev = ((RFIDManager) manager).getDevice(mIndex);
+
 		if (data == null) {
 			mState = STATE_SYNCED;
 			dev.setState(RFIDDevice.STATE_RFID_CONNECTED);

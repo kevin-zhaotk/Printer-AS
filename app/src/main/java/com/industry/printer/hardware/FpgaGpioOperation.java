@@ -77,8 +77,6 @@ public class FpgaGpioOperation {
 	/**
 	 * 向GPIO写入数据
 	 * @param fd	设备句柄
-	 * @param buffer	要写到GPIO的数据buffer
-	 * @param count	写入数据长度，单位 sizeof（char）
 	 * @return
 	 */
 	static public native int ioctl(int fd, int cmd, long arg);
@@ -224,14 +222,16 @@ public class FpgaGpioOperation {
 		char data[] = new char[Configs.gParams];
 		SystemConfigFile config = SystemConfigFile.getInstance(context);
 //		config.paramTrans();
-		RFIDManager manager = RFIDManager.getInstance(context);
-		RFIDDevice device = manager.getDevice(0);
+ //		RFIDManager manager = RFIDManager.getInstance(context);
+//		RFIDDevice device = manager.getDevice(0);
+
+		IInkDevice device = InkManagerFactory.inkManager(context);
 		Paramter paramter = Paramter.getInstance();
 		int feature4 = 0;
 		int feature5 = 0;
-		if (device != null && device.mFeature!= null && device.mFeature.length >= 5) {
-			feature4 = device.mFeature[4];
-			feature5 = device.mFeature[5];
+		if (device != null) {
+			feature4 = device.getFeature(0, 4);
+			feature5 = device.getFeature(0, 5);
 		}
 		paramter.paramTrans(config.mParam, feature4, feature5, config.getPNozzle().mHeads);
 		for (int i = 0; i < 24; i++) {

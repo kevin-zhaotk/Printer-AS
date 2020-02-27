@@ -19,7 +19,7 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.RFIDAsyncTask.RfidCallback;
 import com.printer.corelib.RFIDData;
 
-public class RFIDManager implements RfidCallback{
+public class RFIDManager implements RfidCallback, IInkDevice {
 	
 	private static final String TAG = RFIDManager.class.getSimpleName();
 	
@@ -97,7 +97,7 @@ public class RFIDManager implements RfidCallback{
 				mCurrent++;
 				if (mCurrent >= mLiveHeads) {
 					Debug.d(TAG, "--->rfid check success");
-					mCallback.sendEmptyMessageDelayed(MSG_RFID_CHECK_SUCCESS, 100);
+					mCallback.sendEmptyMessage(MSG_RFID_CHECK_SUCCESS);
 					break;
 				}
 				if (mCurrent >= mRfidDevices.size()) {
@@ -165,8 +165,9 @@ public class RFIDManager implements RfidCallback{
 		TOTAL_RFID_DEVICES *= configFile.getHeadFactor();
 
 	}
-	
-	
+
+	/** implement IInkDevice*/
+	@Override
 	public void init(final Handler callback) {
 		mCallback = callback;
 		Debug.d(TAG, "--->init");
@@ -220,7 +221,9 @@ public class RFIDManager implements RfidCallback{
 	
 	public void checkRfid() {
 	}
-	
+
+	/** implement IInkDevice*/
+	@Override
 	public void switchRfid(final int i) {
 		final RFIDDevice device = mRfidDevices.get(i);
 		device.setReady(false);
@@ -231,14 +234,16 @@ public class RFIDManager implements RfidCallback{
 				Debug.e(TAG, "--->switch");
 				ExtGpio.rfidSwitch(i);
 				try {
-					Thread.sleep(500);
+					Thread.sleep(200);
 				} catch (Exception e) {
 				}
 				
 			}
 		});
 	}
-	
+
+	/** implement IInkDevice*/
+	@Override
 	public float getLocalInk(int dev) {
 		if (dev >= mRfidDevices.size()) {
 			return 0;
@@ -262,7 +267,9 @@ public class RFIDManager implements RfidCallback{
 		}
 		return (ink*100/max);
 	}
-	
+
+	/** implement IInkDevice*/
+	@Override
 	public void downLocal(int dev) {
 		if (dev >= mRfidDevices.size()) {
 			return ;
@@ -281,7 +288,9 @@ public class RFIDManager implements RfidCallback{
 		RFIDDevice device = mRfidDevices.get(dev);
 		return device.isReady();
 	}
-	
+
+	/** implement IInkDevice*/
+	@Override
 	public boolean isValid(int dev) {
 		if (dev >= mRfidDevices.size()) {
 			return false;
@@ -398,14 +407,16 @@ public class RFIDManager implements RfidCallback{
 				break;
 		}
 	}
-	
+
+	/** implement IInkDevice*/
+	@Override
 	public boolean checkUID(int heads) {
 		mLiveHeads = heads;
 		mCurrent = 0;
 		ExtGpio.rfidSwitch(mCurrent);
-
+		Debug.d(TAG, "--->Print execute check UUID");
 		try {
-			Thread.sleep(500);
+			Thread.sleep(200);
 		} catch (Exception e) {
 		}
 		mDevice = mRfidDevices.get(mCurrent);
@@ -416,6 +427,8 @@ public class RFIDManager implements RfidCallback{
 	}
 
 
+	/** implement IInkDevice*/
+	@Override
 	public void defaultInkForIgnoreRfid() {
 		for (int i=0; i < mRfidDevices.size(); i++) {
 			RFIDDevice dev = getDevice(i);
@@ -429,5 +442,18 @@ public class RFIDManager implements RfidCallback{
 				dev.setLocalInk(185);
 			}
 		}
+	}
+
+	/**
+	 * 获取设备Feature信息
+	 * @param device
+	 * @param index
+	 * @return
+	 */
+	public int getFeature(int device, int index) {
+		RFIDDevice dev = getDevice(device);
+		if (dev == null) return 0;
+		int vol = dev.getFeature(index);
+		return vol;
 	}
 }
