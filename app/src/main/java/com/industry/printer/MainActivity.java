@@ -86,6 +86,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public static final String ACTION_USB_PERMISSION="com.industry.printer.USB_PERMISSION";
 	
 	public Context mContext;
+	private Activity mActivity;
 	private String mLanguage;
 	
 	TabHost mTab;
@@ -145,6 +146,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		IP_address=(TextView)findViewById(R.id.IP_address);
 		boolean isroot=false;
 		mContext = getApplicationContext();
+		mActivity = this;
 		mLanguage = getResources().getConfiguration().locale.getLanguage();
 		
 		IP_address.setText(getLocalIpAddress());
@@ -422,8 +424,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	@Override
 	public void onResume() {
 		super.onResume();
-		mHander.removeMessages(ENTER_SCREENSAVE_MODE);
-		mHander.sendEmptyMessageDelayed(ENTER_SCREENSAVE_MODE, 10*1000);
+		mHander.removeMessages(ENTER_LOWLIGHT_MODE);
+		mHander.sendEmptyMessageDelayed(ENTER_LOWLIGHT_MODE, 10*1000);
 	}
 	
 	public void drawObjects()
@@ -641,9 +643,16 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	
 	public static final int NET_CONNECTED = 3;
 	public static final int NET_DISCONNECTED = 4;
-	
-	public static final int ENTER_SCREENSAVE_MODE = 5;
 
+	/** 低亮度模式 */
+	public static final int ENTER_LOWLIGHT_MODE = 5;
+	/** 低亮度模式 */
+	public static final int QUIT_LOWLIGHT_MODE = 9;
+
+	/** 屏保模式 */
+	public static final int ENTER_SCREENSAVE_MODE = 8;
+	/** 屏保模式 */
+	public static final int QUIT_SCREENSAVE_MODE = 10;
 	// H.M.Wang 2019-12-7 追加两个启动画面（一个黑屏，一个启动），相关事件定义
 	private static final int SHUT_BLACK_IMAGE = 6;
 	private static final int SHUT_LOADING_IMAGE = 7;
@@ -696,8 +705,17 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			case NET_DISCONNECTED:
 				IP_address.setText("");
 				break;
-			case ENTER_SCREENSAVE_MODE:
+			case ENTER_LOWLIGHT_MODE:
 				setScreenBrightness(true);
+				break;
+			case ENTER_SCREENSAVE_MODE:
+				screenSaver = new ScreenSaveDialog(mActivity, getActivityBitmap(mActivity));
+				screenSaver.show();
+				break;
+			case QUIT_LOWLIGHT_MODE:
+				mHander.removeMessages(ENTER_LOWLIGHT_MODE);
+				mHander.sendEmptyMessageDelayed(ENTER_LOWLIGHT_MODE, 10 * 1000);
+				break;
 			default:
 				break;
 			}
@@ -1175,12 +1193,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	
 	private void setScreenBrightness(boolean save) {
 		if (save == false) {
-			mHander.removeMessages(ENTER_SCREENSAVE_MODE);
-			mHander.sendEmptyMessageDelayed(ENTER_SCREENSAVE_MODE, 10 * 1000);
+			mHander.removeMessages(ENTER_LOWLIGHT_MODE);
+//			mHander.removeMessages(ENTER_SCREENSAVE_MODE);
+			mHander.sendEmptyMessageDelayed(ENTER_LOWLIGHT_MODE, 10 * 1000);
 		} else {
-			mHander.removeMessages(ENTER_SCREENSAVE_MODE);
-			screenSaver = new ScreenSaveDialog(this, getActivityBitmap(this));
-			screenSaver.show();
+			mHander.removeMessages(ENTER_LOWLIGHT_MODE);
+//			mHander.sendEmptyMessageDelayed(ENTER_SCREENSAVE_MODE, 10 * 6 * 1000);
 		}
 		if (mScreensaveMode == save) {
 			return;
