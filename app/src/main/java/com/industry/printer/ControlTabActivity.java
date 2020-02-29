@@ -2337,7 +2337,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
     // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
                                         if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN) {
                                             if(DataTransferThread.getInstance(mContext).isRunning()) {
-                                                DataTransferThread.getInstance(mContext).setRemoteTextSeperated(cmd.content);
+                                                DataTransferThread.getInstance(mContext).setRemoteTextSeparated(cmd.content);
                                                 this.sendmsg(Constants.pcOk(msg));
                                             } else {
                                                 this.sendmsg(Constants.pcErr(msg));
