@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 
+@Deprecated
 public class Set_Ip_Activity extends Activity {
 	private Server_Socket_Database Db;
 	private Cursor Cr;

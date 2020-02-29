@@ -3,6 +3,7 @@ package com.industry.printer.object;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.industry.printer.R;
 import com.industry.printer.Utils.Debug;
 
 import android.R.integer;
@@ -31,6 +32,9 @@ public class ObjectsFromString {
 	public static final String SPLITOR = "@#@";
 	public static final String COUNTER_FLAG = "#N#";
 	public static final String REALTIME_FLAG = "#T#";
+	// H.M.Wang 2020-2-17 追加HyperText控件
+	public static final String HYPERTEXT_FLAG = "#H#";
+	// End of H.M.Wang 2020-2-17 追加HyperText控件
 	public static final String IMAGE_FLAG = "#P#";
 	
 	public static ArrayList<BaseObject> makeObjs(Context context, String str) {
@@ -70,6 +74,15 @@ public class ObjectsFromString {
 				object.setIndex(index++);
 				objList.add(object);
 				xcor += format.length() * 16;
+// H.M.Wang 2020-2-17 追加HyperText控件
+			} else if(s.startsWith(HYPERTEXT_FLAG)) {
+				HyperTextObject object = new HyperTextObject(context, xcor);
+				String content = s.substring(3);
+				object.setContent(content);
+				object.setIndex(index++);
+				objList.add(object);
+				xcor += content.length() * 16;
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 			} else {	//文本对象
 				if (s==null || s.isEmpty()) {
 					continue;

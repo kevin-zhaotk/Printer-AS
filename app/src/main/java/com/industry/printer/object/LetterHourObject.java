@@ -219,7 +219,10 @@ public class LetterHourObject extends BaseObject {
 //		str += BaseObject.boolToFormatString(mDragable, 3)+"^";
 //		str += "000"+"^";
 //		str += "000^000^000^000^00000000^00000000^00000000^00000000^0000^0000^" + mFont + "^000^"+mContent;
-		System.out.println("file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+
+//		System.out.println("file string ["+str+"]");
+
 		return str;
 	}
 	

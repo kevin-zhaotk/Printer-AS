@@ -97,7 +97,11 @@
 	<string name="strNativeBtn">Zrušit</string>
 	<string name="strRtFmt">Formát</string>
 	<string name="strOffset">Offset</string>
-	
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">Frame</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
 	<!-- object list -->
 	<string name="objectListName">Zobrazit seznam</string>
 	<string name="objectInfoName">Zobrazit TEXT</string>
@@ -113,6 +117,9 @@
 	<string name="object_ellipse">Elipsa</string>
 	<string name="object_shift">Směna</string>
 	<string name="object_second">Sekunda</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">Hypertext</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
 	<string name="object_msg_name">Předmět</string>
 	<!-- Settings frame -->
 	<string name="strParam0">00.Vyhrazeno</string>
@@ -283,6 +290,9 @@
 	<string name="str_toast_emptycontent">Zvolená zpráva je prázdná!!!</string>
 	<string name="str_toast_no_message">Nejprve, prosím, vyberte soubor se zprávou!!!</string>
 	<string name="str_toast_no_ink">Nízká hladina inkoustu!!!</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">Ink Error!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
 	<string name="str_rfid_initfail_notify">Chyba iniclaizace RFID！</string>
 	<string name="str_page_forward"> 《 </string>
 	<string name="str_page_backward"> 》 </string>

@@ -121,7 +121,11 @@
 	<string name="strNativeBtn">Cancel</string>
 	<string name="strRtFmt">Format</string>
 	<string name="strOffset">Offset</string>
-	
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">Frame</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
 	<!-- object list -->
 	<string name="objectListName">Show List</string>
 	<string name="objectInfoName">Show TEXT</string>
@@ -137,6 +141,9 @@
 	<string name="object_ellipse">Ellipse</string>
 	<string name="object_shift">Shift</string>
 	<string name="object_second">Second</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">Hypertext</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
 	<string name="object_weekofyear">WeekOfYear</string>
 	<string name="object_weekday">WeekDay</string>
 	<string name="object_charHour">AlphaHour</string>
@@ -315,6 +322,9 @@
 	<string name="str_toast_emptycontent">The message you selected is empty!!!</string>
 	<string name="str_toast_no_message">Please select a message file first!!!</string>
 	<string name="str_toast_no_ink">Ink low!!!</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">Ink Error!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
 	<string name="str_rfid_initfail_notify">RFID initiallize fail！</string>
 	<string name="str_page_forward"> 《 </string>
 	<string name="str_page_backward"> 》 </string>
@@ -342,7 +352,6 @@
 	<string name="str_textview_param16">16.Pen2 Invert</string>
 	<string name="str_textview_param17">17.Date delay</string>
 
-	// H.M.Wang 修改1行。为计数器清楚前置0
 <!--	<string name="str_textview_param18">18.Reserved</string>-->
 	<string name="str_textview_param18">18.Clear Zero</string>
 

@@ -133,26 +133,12 @@ static int _send_cmd(hw_smart_card_xpt_t *xpt_p,
     {
         memcpy(pkt + PROTO_OFFS_BODY, body, body_len);
     }
-/*
-    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
-                    HP_DBG_LEVEL_SCP_TRACE, 4,
-                    "Data in _send_cmd():");
 
-    for (i = 0; i < body_len + 2; i++)
-    {
-        HP_DEBUG_printf(NULL,
-                        HP_DBG_LEVEL_SCP_TRACE, 4,
-                        " 0x%02x", pkt[i]);
-    }
-    HP_DEBUG_printf(NULL,
-                    HP_DBG_LEVEL_SCP_TRACE, 4,
-                    "\n");
-*/
     char buf[1024];
     toHexString(pkt, buf, body_len + 2, ',');
     HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
                     HP_DBG_LEVEL_HSCC_TRACE, 4,
-                    "Data in _send_cmd():", buf);
+                    "Data to be written:", buf);
 
     result = IFC_CALL(xpt_p, write)(xpt_p, PROTO_CMD_ADDR, pkt, PROTO_LEN_HDR + body_len);
 
@@ -265,25 +251,12 @@ static HW_SMART_CARD_status_t _recv_rsp(hw_smart_card_xpt_t *xpt_p,
             }
         }
     }
-/*
-    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
-                    HP_DBG_LEVEL_SCP_TRACE, 4,
-                    "Data in rcv_buf (%d):", rsp_len);
-    for (i = 0; i < rsp_len + 2; i++)
-    {
-        HP_DEBUG_printf(NULL,
-                        HP_DBG_LEVEL_SCP_TRACE, 4,
-                        " 0x%02x", rcv_buf[i]);
-    }
-    HP_DEBUG_printf(NULL,
-                    HP_DBG_LEVEL_SCP_TRACE, 4,
-                    "\n");
-*/
+
     char buf[1024];
     toHexString(rcv_buf, buf, rsp_len + 2, ',');
     HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
                     HP_DBG_LEVEL_HSCC_TRACE, 4,
-                    "Data in rcv_buf (%d): [%s]", rsp_len, buf);
+                    "Data read: [%s]", buf);
 
     HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
                     HP_DBG_LEVEL_SCP_TRACE, 3,

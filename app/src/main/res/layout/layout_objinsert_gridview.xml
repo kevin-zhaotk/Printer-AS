@@ -119,6 +119,19 @@
 	        android:layout_gravity="center"
             />
 <!-- End of H.M.Wang 2020-1-21 追加Shift控件 -->
+
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<Button
+		android:id="@+id/objinsert_hypertext"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/style_hypertext"
+		android:button="@null"
+		android:layout_gravity="center"
+		/>
+<!-- End of H.M.Wang 2020-2-16 追加HyperText控件 -->
+
 <!--
     <Button
             android:id="@+id/objinsert_line"

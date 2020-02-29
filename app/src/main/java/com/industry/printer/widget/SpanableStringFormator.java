@@ -5,6 +5,7 @@ import java.util.List;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
+import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.object.ObjectsFromString;
 import com.industry.printer.object.RealtimeObject;
 import com.industry.printer.object.TextObject;
@@ -121,6 +122,10 @@ public class SpanableStringFormator extends SpannableStringBuilder {
 		for (BaseObject object : objlist) {
 			if (object instanceof RealtimeObject || object instanceof CounterObject) {
 				contentType = new ContentType(start, start + object.getContent().length(), object.getContent(), true);
+// H.M.Wang 2020-2-17 追加HyperText控件
+			} else if (object instanceof HyperTextObject) {
+				contentType = new ContentType(start, start + object.getContent().length(), object.getContent(), true);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 			} else if (object instanceof TextObject) {
 				contentType = new ContentType(start, start + object.getContent().length(), object.getContent(), false);
 			} else {

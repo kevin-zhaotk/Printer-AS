@@ -29,7 +29,6 @@ public class RealtimeObject extends BaseObject {
 	public static final long MS_PER_MINUTE = 60*1000;
 	public String mFormat; /* yyyy-mm-dd hh:nn for example*/
 	public Vector<BaseObject> mSubObjs;
-	public int mOffset;
 
 	public RealtimeObject(Context context,  float x) {
 		super(context, BaseObject.OBJECT_TYPE_RT, x);
@@ -149,6 +148,7 @@ public class RealtimeObject extends BaseObject {
 			}
 			str = str.substring(i);
 			i=0;
+			Debug.d(TAG, "parseFormat -> str:" + str +"; x="+x);
 		}
 		mXcor_end = x;
 		setWidth(mXcor_end - getX());
@@ -162,14 +162,6 @@ public class RealtimeObject extends BaseObject {
 		}
 	}
 	
-	public void setOffset(int offset) {
-		mOffset = offset;
-	}
-	
-	public int getOffset() {
-		return mOffset;
-	}
-	 
 	@Override
 	public Bitmap getScaledBitmap(Context context)
 	{
@@ -189,10 +181,10 @@ public class RealtimeObject extends BaseObject {
 		
 //		mBitmap = Bitmap.createBitmap((int)(mXcor_end - mXcor) , (int)mHeight, Configs.BITMAP_CONFIG);
 //		mCan = new Canvas(mBitmap);
-//		Log.d(TAG, "++++>" + getX() + "   " + getXEnd() + "  width=" + mBitmap.getWidth());
+//		Debug.d(TAG, "++++>" + getX() + "   " + getXEnd() + "  width=" + mBitmap.getWidth());
 		for(BaseObject o : mSubObjs)
 		{
-			Log.d(TAG, "++++>id:" + o.mId + ", x=" + (o.getX() - getX()));
+			Debug.d(TAG, "++++>id:" + o.mId + ", x=" + (o.getX() - getX()));
 			//Bitmap b = o.getScaledBitmap(context);
 			//mCan.drawBitmap(b, o.getX()-getX(), 0, mPaint);
 			mContent += o.getContent();
@@ -205,23 +197,25 @@ public class RealtimeObject extends BaseObject {
 	
 	public Bitmap getBgBitmap(Context context, float scaleW, float scaleH)
 	{
-		Debug.d(TAG, "getBitmap width="+(mXcor_end - mXcor)+", mHeight="+mHeight);
+		Debug.d(TAG, "getBgBitmap scaleW="+scaleW+", scaleH="+scaleH);
+		Debug.d(TAG, "getBgBitmap width="+Math.round(mXcor_end * scaleW - mXcor * scaleW)+", mHeight="+Math.round(mHeight * scaleH));
 		// meature();
-		Bitmap bmp = Bitmap.createBitmap((int)(mXcor_end * scaleW - mXcor * scaleW) , (int)(mHeight * scaleH), Configs.BITMAP_CONFIG);
+		Bitmap bmp = Bitmap.createBitmap(Math.round(mXcor_end * scaleW - mXcor * scaleW) , Math.round(mHeight * scaleH), Configs.BITMAP_CONFIG);
 		//System.out.println("getBitmap width="+width+", height="+height+ ", mHeight="+mHeight);
 		mCan = new Canvas(bmp);
 		mCan.drawColor(Color.WHITE);
 		for(BaseObject o : mSubObjs)
 		{
-			Debug.d(TAG, "--->obj: " + o.mId);
-			//constant 
+			Debug.d(TAG, "--->obj: " + o.mId + "; o,x: " + o.getX() + "; x: " + getX());
+			//constant
 			if(o instanceof TextObject)
 			{
-				Bitmap b = o.makeBinBitmap(context, o.getContent(), (int)(o.getWidth() * scaleW), (int)(o.getHeight() * scaleH), o.getFont());
+				Bitmap b = o.makeBinBitmap(context, o.getContent(), Math.round(o.getWidth() * scaleW), Math.round(o.getHeight() * scaleH), o.getFont());
 				if (b == null) {
 					continue;
 				}
-				mCan.drawBitmap(b, (int)(o.getX() * scaleW - getX() * scaleW), 0, mPaint);
+				mCan.drawBitmap(b, Math.round(o.getX() * scaleW - getX() * scaleW), 0, mPaint);
+				Debug.d(TAG, "drawBitmap: x=" + Math.round((o.getX() * scaleW)) + "; y=" + Math.round(o.getY() * scaleH) + "; w= " + b.getWidth() + "; h= " + b.getHeight());
 			}
 			else	//variable
 			{
@@ -419,7 +413,7 @@ public class RealtimeObject extends BaseObject {
 			o.setFont(font);
 		}
 		isNeedRedraw = true;
-		// meature();
+		meature();
 	}
 	
 	@Override
@@ -471,7 +465,8 @@ public class RealtimeObject extends BaseObject {
 		//str += BaseObject.intToFormatString(mContent.length(), 3)+"^";
 		str += "000^000^000^000^000^";
 		str += BaseObject.intToFormatString(mOffset, 5) + "^00000000^00000000^00000000^0000^0000^" + mFont + "^000^"+mFormat;
-		System.out.println("file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		System.out.println("file string ["+str+"]");
 		return str;
 	}
 	
@@ -495,7 +490,7 @@ public class RealtimeObject extends BaseObject {
 		
 		bitmap = Bitmap.createBitmap((int)(mXcor_end - mXcor) , (int)mHeight, Configs.BITMAP_PRE_CONFIG);
 		mCan = new Canvas(bitmap);
-		Log.d(TAG, "++++>x: " + getX() + "   " + getXEnd() + "  width=" + bitmap.getWidth());
+		Debug.d(TAG, "++++>x: " + getX() + "   " + getXEnd() + "  width=" + bitmap.getWidth());
 		for(BaseObject o : mSubObjs)
 		{
 			Bitmap b = o.getpreviewbmp();

@@ -31,8 +31,8 @@ import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.data.BinFromBitmap;
 
 public class BaseObject{
-	public static final String TAG="BaseObject";
-	
+	private static final String TAG = BaseObject.class.getSimpleName();
+
 	public static final String OBJECT_TYPE_TEXT		="001";
 	public static final String OBJECT_TYPE_CNT		="002";
 	public static final String OBJECT_TYPE_RT_YEAR	="003";
@@ -61,8 +61,11 @@ public class BaseObject{
 	public static final String OBJECT_TYPE_DYN_TEXT ="040";
 	
 	public static final String OBJECT_TYPE_WEEKOFYEAR = "041";
-	
-	
+
+// H.M.Wang 2020-2-12 追加超文本对象
+	public static final String OBJECT_TYPE_HYPERTEXT = "043";
+// End of H.M.Wang 2020-2-12 追加超文本对象
+
 	public Context mContext;
 	
 	public String mId;
@@ -86,7 +89,10 @@ public class BaseObject{
 	public int mDotsPerClm;
 	/*内容来源 是否U盤*/
 	public boolean mSource;
-	
+
+	public int mOffset;
+	public BaseObject mParent;
+
 	protected boolean mReverse;
 	/* 
 	 * 是否需要重新绘制bitmap 
@@ -133,6 +139,8 @@ public class BaseObject{
 		mReverse = false;
 		// 參數40：列高
 		mDotsPerClm = 152;//SystemConfigFile.getInstance(mContext).getParam(39);
+
+		mParent = null;
 
 // H.M.Wang 2019-9-26 直接设置高，因为setHeight里面做了很多事情，不适合初始化的时候调用
 //		setHeight(Configs.gDots);
@@ -195,8 +203,12 @@ public class BaseObject{
 			mName = mContext.getString(R.string.object_ellipse);
 		else if(this instanceof ShiftObject)
 			mName = mContext.getString(R.string.object_shift);
-		else if(this instanceof RTSecondObject)
+		else if(this instanceof RealtimeSecond)
 			mName = mContext.getString(R.string.object_second);
+// H.M.Wang 2020-2-17 追加HyperText控件
+		else if(this instanceof HyperTextObject)
+			mName = mContext.getString(R.string.object_hypertext);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 		else if (this instanceof LetterHourObject)
 			mName = mContext.getString(R.string.object_charHour);
 		else if (this instanceof WeekOfYearObject) {
@@ -320,7 +332,7 @@ public class BaseObject{
 		}
 
 		// H.M.Wang 修改，一对应文本的放大缩小倍率
-		int width = Math.round(mPaint.measureText(getContent()));
+		int width = Math.round(mPaint.measureText(getMeatureString()));
 // H.M.Wang2019-9-26 去掉画图时对倍率的调整
 // H.M.Wang2019-9-27 恢复该调整
 		float ratio;
@@ -952,6 +964,8 @@ public class BaseObject{
 
 	public void setContent(String content)
 	{
+		Debug.d(TAG, "setContent: [" + content + "]");
+
 		if(mContent!=null && mContent.equals(content))
 			return;
 		mContent = content;
@@ -1095,7 +1109,15 @@ public class BaseObject{
 	{
 		return mIndex;
 	}
-	
+
+	public void setOffset(int offset) {
+		mOffset = offset;
+	}
+
+	public int getOffset() {
+		return mOffset;
+	}
+
 	protected String getBinFileName() {
 		return "/1.bin";
 	}
@@ -1340,7 +1362,7 @@ public class BaseObject{
 				(this instanceof WeekDayObject) ||
 				(this instanceof WeekOfYearObject) ||
 				(this instanceof WeeksObject) ||
-				(this instanceof RTSecondObject) ||
+				(this instanceof RealtimeSecond) ||
 				(this instanceof LetterHourObject)) {
 			return true;
 		} else {

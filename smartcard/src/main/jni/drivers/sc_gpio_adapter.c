@@ -99,7 +99,7 @@ uint8_t SC_GPIO_ADAPTER_set_value(HP_SMART_CARD_gpio_line_t line, int value) {
 
     SC_GPIO_DRIVER_close(fd);
 
-    LOGI(">>> SC_GPIO_ADAPTER_set_value return : %d", lev);
+//    LOGD(">>> SC_GPIO_ADAPTER_set_value return : %d", lev);
 
     return ((lev < SC_GPIO_DRIVER_SUCCESS) ? SC_GPIO_ADAPTER_FAIL : SC_GPIO_ADAPTER_SUCCESS);
 }
@@ -129,7 +129,7 @@ uint8_t SC_GPIO_ADAPTER_read_value(HP_SMART_CARD_gpio_line_t line) {
 
 	SC_GPIO_DRIVER_close(fd);
 
-    LOGI(">>> SC_GPIO_ADAPTER_read_value return : %d", lev);
+//    LOGD(">>> SC_GPIO_ADAPTER_read_value return : %d", lev);
 
 	return lev;
 }
@@ -177,7 +177,7 @@ uint8_t SC_GPIO_ADAPTER_select_38_xlater(int pg5, int pg8, int pg9) {
 
     SC_GPIO_DRIVER_close(fd);
 
-    LOGI(">>> SC_GPIO_ADAPTER_select_38_xlater return : %d, %d, %d", ret1, ret2, ret3);
+//    LOGD(">>> SC_GPIO_ADAPTER_select_38_xlater return : %d, %d, %d", ret1, ret2, ret3);
 
     return ((ret1 == -1 || ret2 == -1 || ret3 == -1) ? SC_GPIO_ADAPTER_FAIL : SC_GPIO_ADAPTER_SUCCESS);
 }

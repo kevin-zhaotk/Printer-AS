@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint.Style;
 
 public class RectObject extends BaseObject {
+	private static final String TAG = RectObject.class.getSimpleName();
 
 	public int mLineType;
 	public RectObject(Context context, float x) {
@@ -101,7 +102,8 @@ public class RectObject extends BaseObject {
 //		str += BaseObject.floatToFormatString(getLineWidth(), 3)+"^";
 //		str += BaseObject.intToFormatString(getLineType(), 3)+"^";
 //		str += "000^000^000^00000000^00000000^00000000^00000000^0000^0000^0000^000^000";
-		Debug.d(TAG,"file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		Debug.d(TAG,"file string ["+str+"]");
 		return str;
 	}
 }

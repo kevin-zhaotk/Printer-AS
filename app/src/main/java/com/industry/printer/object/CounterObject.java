@@ -19,8 +19,7 @@ import android.util.Log;
 import com.industry.printer.hardware.RTCDevice;
 
 public class CounterObject extends BaseObject {
-
-	private static final String TAG_STRING = CounterObject.class.getSimpleName();
+	private static final String TAG = CounterObject.class.getSimpleName();
 	
 	public int mBits;
 	public boolean mDirection;
@@ -38,6 +37,11 @@ public class CounterObject extends BaseObject {
 		mStepLen=1;
 		mDirection = true;
 		setBits(5);
+	}
+
+	public CounterObject(Context context, BaseObject parent, float x) {
+		this(context, x);
+		mParent = parent;
 	}
 
 	public void setBits(int n)
@@ -64,6 +68,10 @@ public class CounterObject extends BaseObject {
 	public void setStart(int begin)
 	{
 		mStart = begin;
+// H.M.Wang 2020-2-20 增加计数器边界设置后越界数值的调整
+		mValue = mDirection ? Math.max(mValue, mStart) : Math.min(mValue, mStart);
+		mContent = BaseObject.intToFormatString(mValue, mBits);
+// End of H.M.Wang 2020-2-20 增加计数器边界设置后越界数值的调整
 	}
 	
 	public int getStart()
@@ -74,6 +82,10 @@ public class CounterObject extends BaseObject {
 	public void setEnd(int end)
 	{
 		mEnd = end;
+// H.M.Wang 2020-2-20 增加计数器边界设置后越界数值的调整
+		mValue = mDirection ? Math.min(mValue, mEnd) : Math.max(mValue, mEnd);
+		mContent = BaseObject.intToFormatString(mValue, mBits);
+// End of H.M.Wang 2020-2-20 增加计数器边界设置后越界数值的调整
 	}
 	
 	public int getEnd()
@@ -182,7 +194,7 @@ public class CounterObject extends BaseObject {
 
 	public String getNext()
 	{
-		Debug.d(TAG, "--->getNext mContent="+mContent+", mValue="+mValue+", mSteplen=" + mStepLen + " direction=" + mDirection);
+		Debug.d(TAG, "--->getNext mContent="+mContent+", mValue="+mValue+", mStart="+mStart+", mEnd="+mEnd+", mSteplen=" + mStepLen + " direction=" + mDirection);
 
 		if(mDirection)	//increase
 		{
@@ -261,11 +273,11 @@ public class CounterObject extends BaseObject {
 				.append("^")
 				.append(mCounterIndex)
 				.append("^")
-				.append("0000^0000^")
+				.append((mParent == null ? "0000" : String.format("%03d", mParent.mIndex)) + "^0000^")
+//				.append("0000^0000^")
 				.append(mFont)
 				.append("^000^000");
-				
-				
+
 		String str = builder.toString();
 		//str += BaseObject.intToFormatString(mIndex, 3)+"^";
 //		str += mId+"^";
@@ -281,7 +293,10 @@ public class CounterObject extends BaseObject {
 //		str += BaseObject.intToFormatString(mMin, 8)+"^";
 //		str += BaseObject.intToFormatString(Integer.parseInt(mContent) , 8)+"^";
 //		str += "00000000^0000^0000^" + mFont + "^000^000";
-		System.out.println("counter string ["+str+"]");
+
+		Debug.d(TAG, "toString = [" + str + "]");
+
+//		System.out.println("counter string ["+str+"]");
 		return str;
 	}
 //////add by lk 

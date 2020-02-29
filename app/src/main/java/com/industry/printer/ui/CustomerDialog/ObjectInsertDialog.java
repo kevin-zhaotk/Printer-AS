@@ -39,6 +39,10 @@ public class ObjectInsertDialog extends Dialog implements android.view.View.OnCl
 	public Button 	mShift;
 // End of H.M.Wang 2020-1-21 追加shift控件
 
+// H.M.Wang 2020-2-16 追加HyperText控件
+	public Button 	mHyperText;
+// End of H.M.Wang 2020-2-16 追加HyperText控件
+
 	public Message		mDismissMsg;
 	
 	public ObjectInsertDialog(Context context) {
@@ -98,6 +102,10 @@ public class ObjectInsertDialog extends Dialog implements android.view.View.OnCl
 		mShift.setOnClickListener(this);
 // End of H.M.Wang 2020-1-21 追加shift控件
 
+// H.M.Wang 2020-2-16 追加HyperText控件
+		mHyperText = (Button) findViewById(R.id.objinsert_hypertext);
+		mHyperText.setOnClickListener(this);
+// End of H.M.Wang 2020-2-16 追加HyperText控件
 	}
 
 	@Override
@@ -154,6 +162,12 @@ public class ObjectInsertDialog extends Dialog implements android.view.View.OnCl
 				mDismissMsg.setData(bundle);
 				break;
 // End of H.M.Wang 2020-1-21 追加shift控件
+// H.M.Wang 2020-2-16 追加HyperText控件
+			case R.id.objinsert_hypertext:
+				bundle.putString(OBJECT_TYPE, BaseObject.OBJECT_TYPE_HYPERTEXT);
+				mDismissMsg.setData(bundle);
+				break;
+// End of H.M.Wang 2020-2-16 追加HyperText控件
 
 /*
 			case R.id.objinsert_line:

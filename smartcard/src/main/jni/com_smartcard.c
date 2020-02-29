@@ -4,11 +4,6 @@
 
 #include <stdlib.h>
 #include <jni.h>
-#include <sys/ioctl.h>
-#include <asm/fcntl.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <drivers/internal_ifc/sc_i2c_driver.h>
 #include "hp_smart_card.h"
 
 #include "hp_host_smart_card.h"
@@ -52,8 +47,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init
 
     LOGI("Initializing smart card library....\n");
 
+/*
     system("su");
-
     LOGI("\n----- reading counter -----\n");
     int fd = SC_I2C_DRIVER_open(0x02, 0x68);
     if(fd > 0) {
@@ -211,7 +206,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init
     }
     SC_I2C_DRIVER_close(fd);
     LOGI("\n----- test over -----\n");
-
+*/
 
 /*
 // 测试I2C访问是否能够正常实施
@@ -1887,7 +1882,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     JNIEnv* env = NULL;
     jint result = -1;
 
-    LOGI("SmartCard.so 1.0.89 Loaded.");
+    LOGI("SmartCard.so 1.0.105 Loaded.");
 
     if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
         //__android_log_print(ANDROID_LOG_INFO, JNI_TAG,"ERROR: GetEnv failed\n");

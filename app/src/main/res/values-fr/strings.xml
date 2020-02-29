@@ -98,7 +98,11 @@
 	<string name="strNativeBtn">Annuler</string>
 	<string name="strRtFmt">Format</string>
 	<string name="strOffset">Décalage</string>
-	
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">Frame</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
 	<!-- object list -->
 	<string name="objectListName">Afficher la liste</string>
 	<string name="objectInfoName">Afficher le texte</string>
@@ -114,6 +118,9 @@
 	<string name="object_ellipse">Ellipse</string>
 	<string name="object_shift">Décalage</string>
 	<string name="object_second">Seconde</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">Hypertext</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
 	<string name="object_weekofyear">Semaine</string>
 	<string name="object_weekday">Semaine</string>
 	<string name="object_charHour">AlphaHour</string>
@@ -279,6 +286,9 @@
 	<string name="str_toast_emptycontent">Le message est vide!!</string>
 	<string name="str_toast_no_message">Choisir un message avant !!!</string>
 	<string name="str_toast_no_ink">Encre faible!!!</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">Ink Error!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
 	<string name="str_rfid_initfail_notify">RFID initiallize fail</string>
 	<string name="str_page_forward"> 《 </string>
 	<string name="str_page_backward"> 》 </string>

@@ -134,13 +134,19 @@ static HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read_direct(uint8_t i2c_addr
     int fd;
     int read_length;
 
-    fd = SC_I2C_DRIVER_open(0x01, i2c_addr);
-
-    if(fd < 0) {
+    if(data == NULL) {
+        LOGE(">>> HP_SMART_CARD_i2c_read_direct: data buffer null!");
         return HP_SMART_CARD_I2C_FAILED;
     }
 
-    if(data == NULL || sizeof(data) < num_bytes_to_read) {
+//    if(sizeof(data) < num_bytes_to_read) {
+//        LOGE(">>> HP_SMART_CARD_i2c_read_direct: data buffer sufficient space[%d < %d]!", sizeof(data), num_bytes_to_read);
+//        return HP_SMART_CARD_I2C_FAILED;
+//    }
+
+    fd = SC_I2C_DRIVER_open(0x01, i2c_addr);
+
+    if(fd < 0) {
         return HP_SMART_CARD_I2C_FAILED;
     }
 

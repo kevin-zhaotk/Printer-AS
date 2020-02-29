@@ -51,6 +51,9 @@
 	<string name="str_multi_select">Group</string>
 	<string name="str_btn_shift">Сдвиг</string>
 	<string name="str_btn_second">Второй</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">Hypertext</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
 	<string name="str_btn_upgrade">Обновить</string>
 	<string name="str_btn_setDate">Задать дату</string>
 	<string name="str_btn_setTime">Задать время</string>
@@ -95,7 +98,11 @@
 	<string name="strNativeBtn">Отмена</string>
 	<string name="strRtFmt">Формат даты</string>
 	<string name="strOffset">Сдвиг</string>
-	
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">Frame</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
 	<!-- object list -->
 	<string name="objectListName">Показ.список</string>
 	<string name="objectInfoName">Показ.текст</string>
@@ -279,6 +286,9 @@
 	<string name="str_toast_emptycontent">Выбранное сообщение пустое!!!</string>
 	<string name="str_toast_no_message">Сперва выберите сообщение!!!</string>
 	<string name="str_toast_no_ink">Мало чернил!!!</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">Ink Error!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
 	<string name="str_rfid_initfail_notify">Ошибка инициализации чипа</string>
 	<string name="str_page_forward"> Вперед </string>
 	<string name="str_page_backward">Назад </string>

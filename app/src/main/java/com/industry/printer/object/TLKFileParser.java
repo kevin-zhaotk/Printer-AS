@@ -152,19 +152,30 @@ public class TLKFileParser  extends TlkFile{
                      }
                      objlist.add(pObj);
                      Debug.d(TAG, "--->objlist size= " + objlist.size());
-                     if(pObj instanceof RealtimeObject)
-                     {
-                    	 i = ((RealtimeObject) pObj).mSubObjs.size();
-                    	 for(int j=0; j<i ; j++)
-                    	 {
-                    		 line = buffreader.readLine();
-                    		 while(StringUtil.isEmpty(line)) {
-								line = buffreader.readLine();
-							}
-                    		 // Debug.d(TAG, "line="+line);
-                    		 BaseObject obj =  ((RealtimeObject) pObj).mSubObjs.get(j);
-                    		 parseSubObject(obj, line);
-                    	 }
+                     if(pObj instanceof RealtimeObject) {
+						 i = ((RealtimeObject) pObj).mSubObjs.size();
+						 for (int j = 0; j < i; j++) {
+							 line = buffreader.readLine();
+							 while (StringUtil.isEmpty(line)) {
+								 line = buffreader.readLine();
+							 }
+							 // Debug.d(TAG, "line="+line);
+							 BaseObject obj = ((RealtimeObject) pObj).mSubObjs.get(j);
+							 parseSubObject(obj, line);
+						 }
+// H.M.Wang 2020-2-17 追加HyperText控件
+					 } else if(pObj instanceof HyperTextObject) {
+						 int num = ((HyperTextObject) pObj).mSubObjs.size();
+						 for(int j=0; j<num ; j++) {
+							 line = buffreader.readLine();
+							 while(StringUtil.isEmpty(line)) {
+								 line = buffreader.readLine();
+							 }
+							 // Debug.d(TAG, "line="+line);
+							 BaseObject obj =  ((HyperTextObject) pObj).mSubObjs.get(j);
+							 parseSubObject(obj, line);
+						 }
+// End of H.M.Wang 2020-2-17 追加HyperText控件
                      }
                  }
                  instream.close();
@@ -257,6 +268,10 @@ public class TLKFileParser  extends TlkFile{
 				int source = Integer.parseInt(attr[13]);
 				Debug.d(TAG, "--->source = " + source);
 				obj.setSource(source == 1);
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+				int withFrame = Integer.parseInt(attr[20]);
+				((BarcodeObject) obj).setWithFrame(withFrame == 0 ? false : true);
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
 			} else if (BaseObject.OBJECT_TYPE_CNT.equals(attr[1]))        //cnt
 			{
 				obj = new CounterObject(mContext, 0);
@@ -302,6 +317,24 @@ public class TLKFileParser  extends TlkFile{
 				obj = new RealtimeObject(mContext, 0);
 				((RealtimeObject) obj).setFormat(attr[21]);
 				((RealtimeObject) obj).setOffset(Integer.parseInt(attr[13]));
+// H.M.Wang 2020-2-17 追加HyperText控件
+			} else if (BaseObject.OBJECT_TYPE_HYPERTEXT.equals(attr[1])) {               //hypertext
+				Debug.d(TAG, "Hypertext object");
+				obj = new HyperTextObject(mContext, 0);
+				((HyperTextObject) obj).setContent(attr[21]);
+				((HyperTextObject) obj).setCounterIndex(attr[8]);
+				((HyperTextObject) obj).setShiftValue(0, attr[9]);
+				((HyperTextObject) obj).setShiftValue(1, attr[10]);
+				((HyperTextObject) obj).setShiftValue(2, attr[11]);
+				((HyperTextObject) obj).setShiftValue(3, attr[12]);
+				((HyperTextObject) obj).setShiftTime(0, attr[13]);
+				((HyperTextObject) obj).setShiftTime(1, attr[14]);
+				((HyperTextObject) obj).setShiftTime(2, attr[15]);
+				((HyperTextObject) obj).setShiftTime(3, attr[16]);
+				((HyperTextObject) obj).setCounterStart(attr[17]);
+				((HyperTextObject) obj).setCounterEnd(attr[18]);
+				((HyperTextObject) obj).setDateOffset(attr[20]);
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 			} else if (BaseObject.OBJECT_TYPE_TEXT.equals(attr[1]))            //text
 			{
 				obj = new TextObject(mContext, 0);
@@ -311,7 +344,7 @@ public class TLKFileParser  extends TlkFile{
 					e.printStackTrace();
 				}
 			} else if (BaseObject.OBJECT_TYPE_RT_SECOND.equals(attr[1])) {
-				obj = new RTSecondObject(mContext, 0);
+				obj = new RealtimeSecond(mContext, 0);
 			} else if (BaseObject.OBJECT_TYPE_SHIFT.equals(attr[1])) {
 				Debug.d(TAG, "--->shift object");
 				obj = new ShiftObject(mContext, 0);
@@ -435,6 +468,14 @@ public class TLKFileParser  extends TlkFile{
 						for (int i = 0; i <lines; i++) {
 							buffreader.readLine();
 						}
+// H.M.Wang 2020-2-17 追加HyperText控件
+					} else if (pObj instanceof HyperTextObject) {
+						objString = pObj.getContent();
+						int lines = ((HyperTextObject) pObj).getSubObjs().size();
+						for (int i = 0; i <lines; i++) {
+							buffreader.readLine();
+						}
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 					} else if (pObj instanceof CounterObject) {
 						objString = pObj.getContent();
 					} else {

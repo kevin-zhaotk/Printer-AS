@@ -51,6 +51,9 @@
     <string name="str_multi_select">Group</string>
     <string name="str_btn_shift">Vardiya</string>
     <string name="str_btn_second">Dakika</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+    <string name="object_hypertext">Hypertext</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
     <string name="str_btn_upgrade">Yükselt</string>
     <string name="str_btn_setDate">Tarih Ayarı</string>
     <string name="str_btn_setTime">Zaman Ayarı</string>
@@ -99,6 +102,10 @@
     <string name="strNativeBtn">İptal etmek</string>
     <string name="strRtFmt">Biçim</string>
     <string name="strOffset">Offset</string>
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+    <string name="strFrame">Frame</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
 
     <!-- object list -->
     <string name="objectListName">Listeyi Göster</string>
@@ -279,6 +286,9 @@
     <string name="str_toast_emptycontent">Seçilen mesaj boş!!!</string>
     <string name="str_toast_no_message">Lütfen mesaj dosyası seçin!!!</string>
     <string name="str_toast_no_ink">Mürekkep Az!!!</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+    <string name="str_toast_ink_error">Ink Error!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
     <string name="str_rfid_initfail_notify">RFID başlatma hatası！</string>
     <string name="str_page_forward"> 《 </string>
     <string name="str_page_backward"> 》 </string>

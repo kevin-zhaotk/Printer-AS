@@ -21,36 +21,40 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class ShiftObject extends BaseObject {
-	public final String TAG="ShiftObject";
-	
+	private static final String TAG = ShiftObject.class.getSimpleName();
+
 	private static final int SHIFT_MAX = 4;
-	
+
 	public int mBits;
 	public int mShifts[];
 	public String mValues[];
 
 	public ShiftObject(Context context, float x) {
-		super( context, BaseObject.OBJECT_TYPE_SHIFT, x);
+		super(context, BaseObject.OBJECT_TYPE_SHIFT, x);
 		mIndex = 0;
-		setBits(1);
 		mShifts = new int[SHIFT_MAX];
-		mShifts[0]=0000;
-		mShifts[1]=600;
-		mShifts[2]=1200;
-		mShifts[3]=1800;
+		mShifts[0] = 0000;
+		mShifts[1] = 600;
+		mShifts[2] = 1200;
+		mShifts[3] = 1800;
 		mValues = new String[SHIFT_MAX];
 		mValues[0] = "1";
 		mValues[1] = "2";
 		mValues[2] = "3";
-		mValues[3] = "4";		
+		mValues[3] = "4";
+		mBits = 1;
 	}
-	
-	public void setShift(int shift, String time)
-	{
-		if(shift >=SHIFT_MAX || 
-				shift<0 || 
-				time==null || 
-				!checkNum(time) )
+
+	public ShiftObject(Context context, BaseObject parent, float x) {
+		this(context, x);
+		mParent = parent;
+	}
+
+	public void setShift(int shift, String time) {
+		if (shift >= SHIFT_MAX ||
+				shift < 0 ||
+				time == null ||
+				!checkNum(time))
 			return;
 		try {
 			int i = Integer.parseInt(time);
@@ -62,27 +66,25 @@ public class ShiftObject extends BaseObject {
 		}
 		Debug.d(TAG, "--->shift: " + shift + "---time: " + time);
 	}
-	
-	public int getShift(int shift)
-	{
-		if(shift < 0 || shift >= SHIFT_MAX)
+
+	public int getShift(int shift) {
+		if (shift < 0 || shift >= SHIFT_MAX)
 			return 0;
 		return mShifts[shift];
 	}
-	
-	
-	public void setValue(int shift, String val)
-	{
+
+
+	public void setValue(int shift, String val) {
 		Debug.d(TAG, "===>setValue shift: " + shift + "  val: " + val + "  bit: " + mBits);
-		if(shift >= SHIFT_MAX || shift<0 || val==null || !checkNumandLetter(val))
+		if (shift >= SHIFT_MAX || shift < 0 || val == null/* || !checkNumandLetter(val)*/)
 			return;
-		
+
 		if (val.length() > mBits) {
-			mValues[shift]  = val.substring(val.length() - mBits);
+			mValues[shift] = val.substring(val.length() - mBits);
 		} else if (val.length() < mBits) {
 			mValues[shift] = "";
 			for (int i = 0; i < mBits - val.length(); i++) {
-				mValues[shift] += "0";
+				mValues[shift] += " ";
 			}
 			mValues[shift] += val;
 		} else {
@@ -90,51 +92,66 @@ public class ShiftObject extends BaseObject {
 		}
 		Debug.d(TAG, "===>shift: " + shift + "  value: " + mValues[shift]);
 	}
-	
-	public void setBits(int bits ) {
+
+	public void setBits(int bits) {
 		mBits = bits;
-		String tStr =  BaseObject.intToFormatString(0, mBits);
+		String tStr = BaseObject.intToFormatString(0, mBits);
 		setWidth(mPaint.measureText(tStr));
+		for(int i=0; i<4; i++) {
+			mValues[i] = ((" " + mValues[i]).substring(Math.max(mValues[i].length() + 1 - mBits, 0)));
+		}
 	}
-	
+
 	public int getBits() {
 		return mBits;
 	}
-	
-	public String getValue(int shift)
-	{
-		if(shift >= SHIFT_MAX || shift<0)
+
+	public String getValue(int shift) {
+		if (shift >= SHIFT_MAX || shift < 0)
 			return null;
 		Debug.d(TAG, "===>value: " + mValues[shift]);
 		return mValues[shift];
 	}
-	
+
 	public int getShiftIndex() {
 		int i = 0;
 		Calendar c = Calendar.getInstance();
 		int hour = c.get(Calendar.HOUR_OF_DAY) * 100;
-		
-		for (i = 0; i < SHIFT_MAX-1; i++) {
-			if (hour >= mShifts[i] && hour < mShifts[i+1]) {
+
+		for (i = 0; i < SHIFT_MAX - 1; i++) {
+			if (hour >= mShifts[i] && hour < mShifts[i + 1]) {
 				break;
 			}
 		}
 		Debug.d(TAG, "===>index: " + i);
 		return i;
 	}
-	
+
+	@Override
+	public String getMeatureString() {
+		return (mBits == 2 ? "SS" : "S");
+	}
+
+	@Override
+	public void setContent(String content) {
+		super.setContent((" " + content).substring(Math.max(content.length()+1-mBits,0)));
+	}
+
 	@Override
 	public String getContent() {
 		int i=0;
 		Calendar c = Calendar.getInstance();
 		int hour = c.get(Calendar.HOUR_OF_DAY) * 100;
-		for (i = 0; i < 4; i++) {
+		for (i = 0; i < 3; i++) {
 			if (hour >= mShifts[i] && hour < mShifts[i+1]) {
 				break;
 			}
 		}
 		Debug.d(TAG, "--->shift Value: " + getValue(i));
-		return getValue(i);
+		String value = getValue(i);
+
+		setContent(value);
+		return super.getContent();
 	}
 
 // H.M.Wang 2020-1-21 追加预览图生成函数
@@ -145,7 +162,7 @@ public class ShiftObject extends BaseObject {
 		mPaint.setTextSize(getfeed());
 		mPaint.setAntiAlias(true); //
 		mPaint.setFilterBitmap(true); //
-
+/*
 		boolean isCorrect = false;
 		// Debug.d(TAG,"--->getBitmap font = " + mFont);
 		for (String font : mFonts) {
@@ -164,14 +181,14 @@ public class ShiftObject extends BaseObject {
 			Debug.e(TAG, e.getMessage());
 		}
 
-		int width = (int)mPaint.measureText(getContent());
+		int width = (int)mPaint.measureText(getMeatureString());
 
 		Debug.d(TAG, "--->content: " + getContent() + "  width=" + width);
 		if (mWidth == 0) {
 			setWidth(width);
 		}
-
-		bitmap = Bitmap.createBitmap(width , (int)mHeight, Configs.BITMAP_PRE_CONFIG);
+*/
+		bitmap = Bitmap.createBitmap((int)mWidth, (int)mHeight, Configs.BITMAP_PRE_CONFIG);
 		Debug.d(TAG,"--->getBitmap width="+mWidth+", mHeight="+mHeight);
 
 		mCan = new Canvas(bitmap);
@@ -183,7 +200,7 @@ public class ShiftObject extends BaseObject {
 			sb.append('S');
 		}
 
-		mCan.drawText(sb.toString() , 0, mHeight-fm.descent, mPaint);
+		mCan.drawText(sb.toString(), 0, mHeight-fm.descent, mPaint);
 
 		Bitmap result = Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
 		if(result != bitmap) {
@@ -208,7 +225,7 @@ public class ShiftObject extends BaseObject {
 			Debug.e(TAG, "--->" + e.getMessage());
 		}
 		Debug.d(TAG, "date="+date);
-		for(i=0; i<5; i++)
+		for(i=0; i<4; i++)
 		{
 			if(!isValidShift(i))
 			{
@@ -216,7 +233,7 @@ public class ShiftObject extends BaseObject {
 				break;
 			}
 			//Debug.d(TAG, "mShifts["+i+"]="+mShifts[i]+", mShifts[i+1]="+mShifts[i+1]+", isValidShift(i+1)="+ isValidShift(i+1));
-			if(date > mShifts[i] && isValidShift(i+1) && date<mShifts[i+1])
+			if(date > mShifts[i] && isValidShift(i+1) && date < mShifts[i+1])
 			{
 				index =i;
 				break;
@@ -259,10 +276,6 @@ public class ShiftObject extends BaseObject {
 		int width = Math.round(paint.measureText("8"));
 		Paint.FontMetrics fm = paint.getFontMetrics();
 
-		/*draw Bitmap of single digit*/
-		Bitmap bmp = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
-		Canvas can = new Canvas(bmp);
-
 		PrinterNozzle head = mTask.getNozzle();
 
 		// H.M.Wang 修改下列两行
@@ -284,18 +297,26 @@ public class ShiftObject extends BaseObject {
 		Debug.d(TAG, "--->singleW=" + singleW);
 
 		/* 最終生成v.bin使用的bitmap */
-		Bitmap gBmp = Bitmap.createBitmap(singleW * mBits * 5, dstH, Configs.BITMAP_CONFIG);
+		Bitmap gBmp = Bitmap.createBitmap(singleW * 2 * 5, dstH, Configs.BITMAP_CONFIG);
 		Canvas gCan = new Canvas(gBmp);
-
 		gCan.drawColor(Color.WHITE);	/*white background*/
+
+		/*draw Bitmap of single digit*/
+		Bitmap bmp = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
+		Canvas can = new Canvas(bmp);
+
 		for(int i=0; i<4; i++) {
-			for(int j=0; j<mBits; j++) {
-				can.drawColor(Color.WHITE);
-				can.drawText(mValues[i].substring(j,j+1), 0, height - fm.descent, paint);
-				// H.M.Wang 修改 20190905
-//			gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, height, false), i*singleW, (int)getY() * scaleH, paint);
-				gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, height, false), (i*mBits+j)*singleW, Math.round(getY() * scaleH), paint);
+			can.drawColor(Color.WHITE);
+			if(mBits == 1) {
+//				can.drawText("0", 0, height - fm.descent, paint);
+			} else {
+				can.drawText(mValues[i].substring(0,1), 0, height - fm.descent, paint);
 			}
+			gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, height, false), (i * 2) * singleW, Math.round(getY() * scaleH), paint);
+
+			can.drawColor(Color.WHITE);
+			can.drawText(mValues[i].substring(mBits-1, mBits), 0, height - fm.descent, paint);
+			gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, height, false), (i * 2 + 1) * singleW, Math.round(getY() * scaleH), paint);
 		}
 
 		BinFromBitmap.recyleBitmap(bmp);
@@ -342,9 +363,12 @@ public class ShiftObject extends BaseObject {
 		str += BaseObject.boolToFormatString(mDragable, 3)+"^";
 		str += BaseObject.intToFormatString(mBits, 3)+"^";
 		str += to3bitsString(mValues[0])+"^"+to3bitsString(mValues[1])+"^"+to3bitsString(mValues[2])+"^"+to3bitsString(mValues[3])+"^";
-		str += BaseObject.intToFormatString(mShifts[0],8)+"^"+BaseObject.intToFormatString(mShifts[1],8)+"^"+BaseObject.intToFormatString(mShifts[2],8)+"^"+BaseObject.intToFormatString(mShifts[3],8)+"^"+"00000^150" + "^";
+//		str += BaseObject.intToFormatString(mShifts[0],8)+"^"+BaseObject.intToFormatString(mShifts[1],8)+"^"+BaseObject.intToFormatString(mShifts[2],8)+"^"+BaseObject.intToFormatString(mShifts[3],8)+"^"+"00000^150" + "^";
+		str += BaseObject.intToFormatString(mShifts[0],8)+"^"+BaseObject.intToFormatString(mShifts[1],8)+"^"+BaseObject.intToFormatString(mShifts[2],8)+"^"+BaseObject.intToFormatString(mShifts[3],8)+"^";
+		str += (mParent == null ? "0000" : String.format("%03d", mParent.mIndex)) + "^150" + "^";
 		str += mFont+"^" + "000" + "^" + "1";
-		Debug.d(TAG,"counter string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		Debug.d(TAG,"shift string ["+str+"]");
 		return str;
 	}
 	

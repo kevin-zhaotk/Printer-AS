@@ -21,18 +21,18 @@ public class RealtimeMonth extends BaseObject {
 
 	public static final String TAG="RealtimeMonth";
 	public int mOffset;
-	public RealtimeObject mParent;
+//	public BaseObject mParent;
 	
 	public RealtimeMonth(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_DL_MON, x);
 		Time t = new Time();
 		mOffset = 0;
-		mParent = null;
+//		mParent = null;
 		t.set(System.currentTimeMillis());
 		setContent(BaseObject.intToFormatString(t.month+1, 2));
 	}
 	
-	public RealtimeMonth(Context context, RealtimeObject parent, float x) {
+	public RealtimeMonth(Context context, BaseObject parent, float x) {
 		this(context, x);
 		mParent = parent;
 	}
@@ -96,7 +96,8 @@ public class RealtimeMonth extends BaseObject {
 //		str += "000^000^000^000^000^";
 //		str += mParent == null? "00000":BaseObject.intToFormatString(mParent.getOffset(), 5);
 //		str += "^00000000^00000000^00000000^0000^0000^" + mFont + "^000^000";
-		System.out.println("file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		System.out.println("file string ["+str+"]");
 		return str;
 	}
 //////addbylk 

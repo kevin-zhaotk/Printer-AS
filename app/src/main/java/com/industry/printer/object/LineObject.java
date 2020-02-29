@@ -3,12 +3,14 @@ package com.industry.printer.object;
 import com.industry.printer.R;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.Configs;
+import com.industry.printer.Utils.Debug;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class LineObject extends BaseObject {
+	private static final String TAG = LineObject.class.getSimpleName();
 
 	public int mLineType;
 	public LineObject(Context context, float x) {
@@ -108,7 +110,8 @@ public class LineObject extends BaseObject {
 //		str += BaseObject.floatToFormatString(getLineWidth(), 3)+"^";
 //		str += BaseObject.intToFormatString(getLineType(), 3)+"^";
 //		str += "000^000^000^00000000^00000000^00000000^00000000^0000^0000^0000^000^000";
-		System.out.println("file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		System.out.println("file string ["+str+"]");
 		return str;
 	}
 }

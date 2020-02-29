@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+@Deprecated
 public class SerialService extends Service {
 
 	private static final String TAG = SerialService.class.getSimpleName();

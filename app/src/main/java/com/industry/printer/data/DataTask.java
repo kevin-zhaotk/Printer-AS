@@ -1,9 +1,6 @@
 package com.industry.printer.data;
 
 import java.io.CharArrayReader;
-import java.io.CharArrayWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,13 +9,8 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.lang.System;
 
-import android.R.bool;
-import android.R.integer;
 import android.content.Context;
-import android.database.CharArrayBuffer;
 import android.graphics.Bitmap;
-import android.os.Environment;
-import android.os.Message;
 import android.text.TextUtils;
 
 import com.industry.printer.BinInfo;
@@ -29,12 +21,12 @@ import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
-import com.industry.printer.data.BinCreater;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
+import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.object.JulianDayObject;
 import com.industry.printer.object.LetterHourObject;
 import com.industry.printer.object.MessageObject;
@@ -43,6 +35,7 @@ import com.industry.printer.object.RealtimeHour;
 import com.industry.printer.object.RealtimeMinute;
 import com.industry.printer.object.RealtimeMonth;
 import com.industry.printer.object.RealtimeObject;
+import com.industry.printer.object.RealtimeSecond;
 import com.industry.printer.object.RealtimeYear;
 import com.industry.printer.object.ShiftObject;
 import com.industry.printer.object.TLKFileParser;
@@ -397,36 +390,24 @@ public class DataTask {
 
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
 			}
-			else if(o instanceof RealtimeObject)
-			{
-				
+			else if(o instanceof RealtimeObject) {
+
 				Vector<BaseObject> rt = ((RealtimeObject) o).getSubObjs();
-				
-				for(BaseObject rtSub : rt)
-				{
-					if(rtSub instanceof RealtimeYear)
-					{
-						substr = ((RealtimeYear)rtSub).getContent();
-					}
-					else if(rtSub instanceof RealtimeMonth)
-					{
-						substr = ((RealtimeMonth)rtSub).getContent();
+
+				for (BaseObject rtSub : rt) {
+					if (rtSub instanceof RealtimeYear) {
+						substr = ((RealtimeYear) rtSub).getContent();
+					} else if (rtSub instanceof RealtimeMonth) {
+						substr = ((RealtimeMonth) rtSub).getContent();
 						//continue;
-					}
-					else if(rtSub instanceof RealtimeDate)
-					{
-						substr = ((RealtimeDate)rtSub).getContent();
+					} else if (rtSub instanceof RealtimeDate) {
+						substr = ((RealtimeDate) rtSub).getContent();
 						//continue;
-					} 
-					else if(rtSub instanceof RealtimeHour)
-					{
-						substr = ((RealtimeHour)rtSub).getContent();
-					} 
-					else if(rtSub instanceof RealtimeMinute)
-					{
-						substr = ((RealtimeMinute)rtSub).getContent();
-					}
-					else
+					} else if (rtSub instanceof RealtimeHour) {
+						substr = ((RealtimeHour) rtSub).getContent();
+					} else if (rtSub instanceof RealtimeMinute) {
+						substr = ((RealtimeMinute) rtSub).getContent();
+					} else
 						continue;
 					BinInfo info = mVarBinList.get(rtSub);
 					if (info == null) {
@@ -436,12 +417,60 @@ public class DataTask {
 					var = info.getVarBuffer(substr, false, false);
 					//BinCreater.saveBin("/mnt/usbhost1/v" + o.getIndex() + ".bin", var, info.mBytesPerHFeed*8);
 // H.M.Wang 2020-1-2 添加 * stat.getScale()以调整1带多时的高度，info.getCharsFeed()只是取一个头的高
-					BinInfo.overlap(mPrintBuffer, var, (int)(rtSub.getX()/div), info.getCharsFeed() * stat.getScale());
+					BinInfo.overlap(mPrintBuffer, var, (int) (rtSub.getX() / div), info.getCharsFeed() * stat.getScale());
 // End of H.M.Wang 2020-1-2 添加 * stat.getScale()以调整1带多时的高度，info.getCharsFeed()只是取一个头的高
-					Debug.d(TAG, "--->real x=" + rtSub.getX()/div );
+					Debug.d(TAG, "--->real x=" + rtSub.getX() / div);
 //					BinCreater.saveBin("/sdcard/" + o.getIndex() + substr + ".bin", var, info.getCharsFeed() * stat.getScale() * 16);
 				}
-				
+// H.M.Wang 2020-2-17 追加HyperText控件
+			} else if(o instanceof HyperTextObject) {
+				Vector<BaseObject> htObjs = ((HyperTextObject) o).getSubObjs();
+
+				for (BaseObject htObj : htObjs) {
+					if (htObj instanceof RealtimeYear) {
+						substr = ((RealtimeYear) htObj).getContent();
+					} else if (htObj instanceof RealtimeMonth) {
+						substr = ((RealtimeMonth) htObj).getContent();
+					} else if (htObj instanceof RealtimeDate) {
+						substr = ((RealtimeDate) htObj).getContent();
+					} else if (htObj instanceof RealtimeHour) {
+						substr = ((RealtimeHour) htObj).getContent();
+					} else if (htObj instanceof RealtimeMinute) {
+						substr = ((RealtimeMinute) htObj).getContent();
+					} else if (htObj instanceof RealtimeSecond) {
+						substr = ((RealtimeSecond) htObj).getContent();
+					} else if (htObj instanceof ShiftObject) {
+// H.M.Wang 2020-2-24 超文本班次打印崩溃问题解决
+//						substr = ((ShiftObject) htObj).getContent();
+// End of H.M.Wang 2020-2-24 超文本班次打印崩溃问题解决
+					} else if (htObj instanceof WeekDayObject) {
+						substr = ((WeekDayObject) htObj).getContent();
+					} else if (htObj instanceof WeekOfYearObject) {
+						substr = ((WeekOfYearObject) htObj).getContent();
+					} else if (htObj instanceof CounterObject) {
+						substr = ((CounterObject) htObj).getNext();
+					} else
+						continue;
+					BinInfo info = mVarBinList.get(htObj);
+					if (info == null) {
+						info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), htObj.getIndex()), mTask, mExtendStat);
+						mVarBinList.put(htObj, info);
+					}
+// H.M.Wang 2020-2-24 超文本班次打印崩溃问题解决
+					if (htObj instanceof ShiftObject) {
+						var = info.getVarBuffer(((ShiftObject)htObj).getShiftIndex(), ((ShiftObject)htObj).getBits());
+					} else {
+						var = info.getVarBuffer(substr, false, false);
+					}
+// End of H.M.Wang 2020-2-24 超文本班次打印崩溃问题解决
+					//BinCreater.saveBin("/mnt/usbhost1/v" + o.getIndex() + ".bin", var, info.mBytesPerHFeed*8);
+// H.M.Wang 2020-1-2 添加 * stat.getScale()以调整1带多时的高度，info.getCharsFeed()只是取一个头的高
+					BinInfo.overlap(mPrintBuffer, var, (int) (htObj.getX() / div), info.getCharsFeed() * stat.getScale());
+// End of H.M.Wang 2020-1-2 添加 * stat.getScale()以调整1带多时的高度，info.getCharsFeed()只是取一个头的高
+					Debug.d(TAG, "--->real x=" + htObj.getX() / div);
+//					BinCreater.saveBin("/sdcard/" + o.getIndex() + substr + ".bin", var, info.getCharsFeed() * stat.getScale() * 16);
+				}
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 			}
 			else if(o instanceof JulianDayObject)
 			{
@@ -562,6 +591,9 @@ public class DataTask {
 		{
 			if((o instanceof CounterObject)
 					|| (o instanceof RealtimeObject)
+// H.M.Wang 2020-2-16 追加HyperText控件
+					|| (o instanceof HyperTextObject)
+// End of H.M.Wang 2020-2-16 追加HyperText控件
 					|| (o instanceof JulianDayObject)
 					|| (o instanceof ShiftObject)
 					|| (o instanceof LetterHourObject)

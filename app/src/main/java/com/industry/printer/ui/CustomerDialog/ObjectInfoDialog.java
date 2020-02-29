@@ -1,35 +1,26 @@
 package com.industry.printer.ui.CustomerDialog;
 
-import java.util.zip.Inflater;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.ChecksumException;
-import com.google.zxing.common.StringUtils;
-import com.google.zxing.maxicode.MaxiCodeReader;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.R;
-import com.industry.printer.R.array;
 import com.industry.printer.R.id;
-import com.industry.printer.R.layout;
 import com.industry.printer.R.string;
 import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.Utils.StringUtil;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
 import com.industry.printer.object.EllipseObject;
+import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.object.JulianDayObject;
 import com.industry.printer.object.LetterHourObject;
 import com.industry.printer.object.LineObject;
 import com.industry.printer.object.MessageObject;
 import com.industry.printer.object.RealtimeObject;
+import com.industry.printer.object.RealtimeSecond;
 import com.industry.printer.object.RectObject;
 import com.industry.printer.object.TextObject;
 import com.industry.printer.object.GraphicObject;
-import com.industry.printer.object.JulianDayObject;
-import com.industry.printer.object.RTSecondObject;
 import com.industry.printer.object.ShiftObject;
 import com.industry.printer.object.WeekDayObject;
 import com.industry.printer.object.WeekOfYearObject;
@@ -40,12 +31,9 @@ import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListe
 import com.industry.printer.ui.Items.PictureItem;
 import com.industry.printer.widget.PopWindowSpiner;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -57,17 +45,12 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.MimeTypeMap;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 public class ObjectInfoDialog extends Dialog implements android.view.View.OnClickListener, IOnItemClickListener, OnCheckedChangeListener
@@ -110,6 +93,11 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	public EditText mDigits;
 	public TextView mDir;
 	public TextView mCode;
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+	public TextView mITF14FrameCaption;
+	public CheckBox mITF14Frame;
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+
 //	private EditText mHeight_O;
 	private CheckBox mHeightType;
 	public CheckBox mShow;
@@ -244,7 +232,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	    	 this.setContentView(R.layout.obj_info_realtime);
 	     }
 	     else if(mObject instanceof JulianDayObject ||
-	    		 mObject instanceof RTSecondObject)
+	    		 mObject instanceof RealtimeSecond)
 	     {
 	    	 this.setContentView(R.layout.obj_info_julian);
 	     }
@@ -254,9 +242,15 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	     }
 	     else if(mObject instanceof ShiftObject)
 	     {
-	    	 Debug.d(TAG, "ShiftObject");
 	    	 this.setContentView(R.layout.obj_info_shift);
 	     }
+// H.M.Wang 2020-2-16 追加HyperText控件
+		 else if(mObject instanceof HyperTextObject)
+		 {
+			 Debug.d(TAG, "HyperTextObject");
+			 this.setContentView(R.layout.obj_info_hypertext);
+		 }
+// End of H.M.Wang 2020-2-16 追加HyperText控件
 	     else if(mObject instanceof MessageObject)
 	     {
 	    	 this.setContentView(R.layout.msg_info);
@@ -339,6 +333,10 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		    if (mObject instanceof BarcodeObject) {
 			    mCode = (TextView) findViewById(R.id.spinCode);
 			    mCode.setOnClickListener(this);
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+				mITF14FrameCaption = (TextView) findViewById(id.captionFrame);
+				mITF14Frame = (CheckBox) findViewById(id.checkFrame);
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
 			    mShow = (CheckBox) findViewById(R.id.check_Num_show);
 		    	//mContent.setEnabled(false);
 			    mTextsize = (EditText) findViewById(R.id.et_text_size);
@@ -380,20 +378,41 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				mContentView.setVisibility(View.GONE);
 				mContent.setVisibility(View.GONE);
 			}
-	 	}
 
 // H.M.Wang 2020-2-4 添加Shift控件的位数项目
-         mShiftBits = (TextView)findViewById(R.id.shiftBitSpin);
-// End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
+			if (mObject instanceof ShiftObject) {
+				mShiftBits = (TextView)findViewById(R.id.shiftBitSpin);
 
-	     mShift1 = (EditText) findViewById(R.id.edit_shift1);
-	     mShiftVal1 = (EditText) findViewById(R.id.edit_shiftValue1);
-	     mShift2 = (EditText) findViewById(R.id.edit_shift2);
-	     mShiftVal2 = (EditText) findViewById(R.id.edit_shiftValue2);
-	     mShift3 = (EditText) findViewById(R.id.edit_shift3);
-	     mShiftVal3 = (EditText) findViewById(R.id.edit_shiftValue3);
-	     mShift4 = (EditText) findViewById(R.id.edit_shift4);
-	     mShiftVal4 = (EditText) findViewById(R.id.edit_shiftValue4);
+				mShift1 = (EditText) findViewById(R.id.edit_shift1);
+				mShiftVal1 = (EditText) findViewById(R.id.edit_shiftValue1);
+				mShift2 = (EditText) findViewById(R.id.edit_shift2);
+				mShiftVal2 = (EditText) findViewById(R.id.edit_shiftValue2);
+				mShift3 = (EditText) findViewById(R.id.edit_shift3);
+				mShiftVal3 = (EditText) findViewById(R.id.edit_shiftValue3);
+				mShift4 = (EditText) findViewById(R.id.edit_shift4);
+				mShiftVal4 = (EditText) findViewById(R.id.edit_shiftValue4);
+			}
+// End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
+// H.M.Wang 2020-2-19 追加HyperText控件
+			if (mObject instanceof HyperTextObject) {
+				mMin = (EditText) findViewById(R.id.et_start);
+				mMax = (EditText) findViewById(R.id.et_end);
+				mCntIndex = (EditText) findViewById(R.id.et_cnt_index);
+
+				mShift1 = (EditText) findViewById(R.id.edit_shift1);
+				mShiftVal1 = (EditText) findViewById(R.id.edit_shiftValue1);
+				mShift2 = (EditText) findViewById(R.id.edit_shift2);
+				mShiftVal2 = (EditText) findViewById(R.id.edit_shiftValue2);
+				mShift3 = (EditText) findViewById(R.id.edit_shift3);
+				mShiftVal3 = (EditText) findViewById(R.id.edit_shiftValue3);
+				mShift4 = (EditText) findViewById(R.id.edit_shift4);
+				mShiftVal4 = (EditText) findViewById(R.id.edit_shiftValue4);
+
+				mOffset = (EditText) findViewById(R.id.et_offset);
+			}
+// End of H.M.Wang 2020-2-19 追加HyperText控件
+	 	}
+
 	     mOk = (Button) findViewById(R.id.btn_confirm);
 	     mCancel = (Button) findViewById(R.id.btn_objinfo_cnl);
 	     fillObjInfo();
@@ -427,9 +446,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 							mObject.setContent(mContent.getText().toString());
 							Debug.d(TAG, "--->redraw: " + mObject.isNeedDraw());
 						}
-						else if(mObject instanceof RealtimeObject)
-						{
-							((RealtimeObject) mObject).setFormat((String)mRtFormat.getText());
+						else if(mObject instanceof RealtimeObject) {
+							((RealtimeObject) mObject).setFormat((String) mRtFormat.getText());
 							((RealtimeObject) mObject).setOffset(Integer.parseInt(mOffset.getText().toString()));
 							// ((RealtimeObject)mObject).setWidth(Float.parseFloat(mWidthEdit.getText().toString()));
 						}
@@ -452,6 +470,10 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 							}
 							
 							((BarcodeObject) mObject).setCode(mCode.getText().toString());
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+							((BarcodeObject) mObject).setWithFrame(mITF14Frame.isChecked());
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+
 							((BarcodeObject) mObject).setShow(mShow.isChecked());
 							((BarcodeObject) mObject).setTextsize(Integer.parseInt(mTextsize.getText().toString()));
 						}
@@ -488,8 +510,25 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 							((ShiftObject) mObject).setValue(2, mShiftVal3.getText().toString());
 							((ShiftObject) mObject).setShift(3, mShift4.getText().toString());
 							((ShiftObject) mObject).setValue(3, mShiftVal4.getText().toString());
+// H.M.Wang 2020-2-19 追加HyperText控件
+						} else if (mObject instanceof HyperTextObject) {
+							((HyperTextObject) mObject).setContent(mContent.getText().toString());
+//							((HyperTextObject) mObject).setContent("A@YB@MC@DD@HE@mF@sG@SH@wI@WJ@2K@3CL@4CCM@5CCC --- @ --- A@YB@MC@DD@HE@mF@sG@SH@wI@WJ@2K@3CL@4CCM@5CCC");
+							((HyperTextObject) mObject).setCounterIndex(mCntIndex.getText().toString());
+							((HyperTextObject) mObject).setCounterStart(mMin.getText().toString());
+							((HyperTextObject) mObject).setCounterEnd(mMax.getText().toString());
+							((HyperTextObject) mObject).setShiftTime(0, mShift1.getText().toString());
+							((HyperTextObject) mObject).setShiftValue(0, mShiftVal1.getText().toString());
+							((HyperTextObject) mObject).setShiftTime(1, mShift2.getText().toString());
+							((HyperTextObject) mObject).setShiftValue(1, mShiftVal2.getText().toString());
+							((HyperTextObject) mObject).setShiftTime(2, mShift3.getText().toString());
+							((HyperTextObject) mObject).setShiftValue(2, mShiftVal3.getText().toString());
+							((HyperTextObject) mObject).setShiftTime(3, mShift4.getText().toString());
+							((HyperTextObject) mObject).setShiftValue(3, mShiftVal4.getText().toString());
+							((HyperTextObject) mObject).setDateOffset(mOffset.getText().toString());
+// End of H.M.Wang 2020-2-19 追加HyperText控件
 						} else if (mObject instanceof GraphicObject) {
-							
+
 						}
 						// mObject.setWidth(Float.parseFloat(mWidthEdit.getText().toString()));
 						// mObject.setHeight(Float.parseFloat(mHighEdit.getText().toString()));
@@ -625,6 +664,21 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				{
 					mRtFormat.setText(((RealtimeObject) mObject).getFormat());
 					mOffset.setText(String.valueOf(((RealtimeObject) mObject).getOffset()));
+// H.M.Wang 2020-2-17 追加HyperText控件
+				} else if(mObject instanceof HyperTextObject) {
+					mMin.setText(String.valueOf(((HyperTextObject) mObject).getCounterStart()));
+					mMax.setText(String.valueOf(((HyperTextObject) mObject).getCounterEnd()));
+					mCntIndex.setText(String.valueOf(((HyperTextObject)mObject).getCounterIndex()));
+					mShift1.setText( String.valueOf(((HyperTextObject)mObject).getShiftTime(0)));
+					mShiftVal1.setText(((HyperTextObject)mObject).getShiftValue(0));
+					mShift2.setText( String.valueOf(((HyperTextObject)mObject).getShiftTime(1)));
+					mShiftVal2.setText(((HyperTextObject)mObject).getShiftValue(1));
+					mShift3.setText(String.valueOf(((HyperTextObject)mObject).getShiftTime(2)));
+					mShiftVal3.setText(((HyperTextObject)mObject).getShiftValue(2));
+					mShift4.setText(String.valueOf(((HyperTextObject)mObject).getShiftTime(3)));
+					mShiftVal4.setText(((HyperTextObject)mObject).getShiftValue(3));
+					mOffset.setText(String.valueOf(((HyperTextObject) mObject).getOffset()));
+// End of H.M.Wang 2020-2-17 追加HyperText控件
 				}
 				else if(mObject instanceof CounterObject)
 				{
@@ -638,6 +692,16 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				else if(mObject instanceof BarcodeObject)
 				{
 					mCode.setText(((BarcodeObject) mObject).getCode());
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+					mITF14Frame.setChecked(((BarcodeObject) mObject).getWithFrame());
+					if("ITF_14".equals(((BarcodeObject) mObject).getCode())) {
+						mITF14FrameCaption.setVisibility(View.VISIBLE);
+						mITF14Frame.setVisibility(View.VISIBLE);
+					} else {
+						mITF14FrameCaption.setVisibility(View.GONE);
+						mITF14Frame.setVisibility(View.GONE);
+					}
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
 					mShow.setChecked(((BarcodeObject) mObject).getShow());
 					mTextsize.setText(String.valueOf(((BarcodeObject) mObject).getTextsize()));
 				}
@@ -688,7 +752,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		
 		if(mObject instanceof RealtimeObject ||
 				 mObject instanceof GraphicObject ||
-				 mObject instanceof RTSecondObject ||
+				 mObject instanceof RealtimeSecond ||
 				 mObject instanceof ShiftObject ||
 				 mObject instanceof EllipseObject ||
 				 mObject instanceof RectObject ||
@@ -927,6 +991,15 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			view.setText(height);
 		} else if (view == mCode) {
 			view.setText((String)mBarFormatAdapter.getItem(index));
+// H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+			if("ITF_14".equals(view.getText())) {
+				mITF14FrameCaption.setVisibility(View.VISIBLE);
+				mITF14Frame.setVisibility(View.VISIBLE);
+			} else {
+				mITF14FrameCaption.setVisibility(View.GONE);
+				mITF14Frame.setVisibility(View.GONE);
+			}
+// End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
 		} else {
 			Debug.d(TAG, "--->unknow view");
 		}

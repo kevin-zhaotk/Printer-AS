@@ -12,15 +12,17 @@ import android.graphics.Typeface;
 import android.graphics.Paint.FontMetrics;
 
 public class TextObject extends BaseObject {
+	private static final String TAG = TextObject.class.getSimpleName();
+
 	// H.M.Wang 追加时间对象的所属信息
-	public RealtimeObject mParent;
+//	public BaseObject mParent;
 
 	public TextObject(Context context, float x) {
 		super( context, BaseObject.OBJECT_TYPE_TEXT, x);
-		mParent = null;
+//		mParent = null;
 	}
 
-	public TextObject(Context context, RealtimeObject parent, float x) {
+	public TextObject(Context context, BaseObject parent, float x) {
 		this(context, x);
 		mParent = parent;
 	}
@@ -91,7 +93,8 @@ public class TextObject extends BaseObject {
 //		str += BaseObject.boolToFormatString(mDragable, 3)+"^";
 //		str += BaseObject.intToFormatString(mContent.length(), 3)+"^";
 //		str += "000^000^000^000^00000000^00000000^00000000^00000000^0000^0000^" + mFont + "^000^"+mContent;
-		System.out.println("file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		System.out.println("file string ["+str+"]");
 		return str;
 	}
 //////addbylk 

@@ -16,9 +16,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 
 public class WeekOfYearObject extends BaseObject{
+	private static final String TAG = WeekOfYearObject.class.getSimpleName();
 
-	public static String TAG="GraphicObject";
-	
 	public WeekOfYearObject(Context ctx) {
 		this(ctx, 0);
 		init();
@@ -27,14 +26,24 @@ public class WeekOfYearObject extends BaseObject{
 	public WeekOfYearObject(Context ctx, float x) {
 		super(ctx, BaseObject.OBJECT_TYPE_WEEKOFYEAR, x);
 	}
-	
+
+	public WeekOfYearObject(Context context, BaseObject parent, float x) {
+		this(context, x);
+		mParent = parent;
+	}
+
 	private void init() {
 		Calendar calendar = Calendar.getInstance();
 		int week = calendar.get(Calendar.WEEK_OF_YEAR);
 		setContent(BaseObject.intToFormatString(week, 2));
 		Debug.d(TAG, "--->week of year: " + week);
 	}
-	
+
+	@Override
+	public String getMeatureString() {
+		return "00";
+	}
+
 	@Override
 	public String getContent() {
 		Calendar calendar = Calendar.getInstance();
@@ -105,13 +114,15 @@ public class WeekOfYearObject extends BaseObject{
 				.append("^")
 				.append(BaseObject.boolToFormatString(mDragable, 3))
 				.append("^")
-				.append("000^000^000^000^000^000")
-				.append("^00000000^00000000^00000000^0000^0000^")
+				.append("000^000^000^000^000^00000000^00000000^00000000^00000000^" + (mParent == null ? "0000" : String.format("%03d", mParent.mIndex)) + "^0000^")
+//				.append("000^000^000^000^000^000")
+//				.append("^00000000^00000000^00000000^0000^0000^")
 				.append(mFont)
 				.append("^000^000");
 		
 		String str = builder.toString();
-		Debug.d(TAG, "file string ["+str+"]");
+		Debug.d(TAG, "toString = [" + str + "]");
+//		Debug.d(TAG, "file string ["+str+"]");
 		return str;
 	}
 }
