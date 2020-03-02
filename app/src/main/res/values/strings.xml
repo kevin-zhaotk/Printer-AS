@@ -144,6 +144,12 @@
 <!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
 	<string name="object_hypertext">Hypertext</string>
 <!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+<!-- H.M.Wang 2020-2-27 追加HyperText控件说明信息 -->
+	<string name="object_hypertext_hint1"><u>@Y</u>:Year <u>@M</u>:Month <u>@D</u>:Date</string>
+	<string name="object_hypertext_hint2"><u>@H</u>:Hour <u>@N</u>:Minute <u>@S</u>:Second</string>
+	<string name="object_hypertext_hint3"><u>@T</u>:Shift <u>@A</u>:Day <u>@W</u>:Week No.</string>
+	<string name="object_hypertext_hint4"><u>@2</u>,<u>@3C</u>,<u>@4CC</u>,<u>@5CCC</u>:Counters</string>
+<!-- H.M.Wang 2020-2-27 追加HyperText控件说明信息 -->
 	<string name="object_weekofyear">WeekOfYear</string>
 	<string name="object_weekday">WeekDay</string>
 	<string name="object_charHour">AlphaHour</string>

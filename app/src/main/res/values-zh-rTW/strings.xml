@@ -123,6 +123,12 @@
 <!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
 	<string name="object_hypertext">超文本</string>
 <!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+<!-- H.M.Wang 2020-2-27 追加HyperText控件说明信息 -->
+	<string name="object_hypertext_hint1"><u>@Y</u>:年 <u>@M</u>:月 <u>@D</u>:日</string>
+	<string name="object_hypertext_hint2"><u>@H</u>:時 <u>@N</u>:分 <u>@S</u>:秒</string>
+	<string name="object_hypertext_hint3"><u>@T</u>:班次 <u>@A</u>:周數 <u>@W</u>:年周數</string>
+	<string name="object_hypertext_hint4"><u>@2</u>,<u>@3C</u>,<u>@4CC</u>,<u>@5CCC</u>:計數器</string>
+<!-- H.M.Wang 2020-2-27 追加HyperText控件说明信息 -->
 	<string name="object_weekofyear">周數對象</string>
 	<string name="object_weekday">星期</string>
 	<string name="object_charHour">字符小時</string>

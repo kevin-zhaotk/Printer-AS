@@ -206,7 +206,7 @@ public class RealtimeObject extends BaseObject {
 		mCan.drawColor(Color.WHITE);
 		for(BaseObject o : mSubObjs)
 		{
-			Debug.d(TAG, "--->obj: " + o.mId + "; o,x: " + o.getX() + "; x: " + getX());
+			Debug.d(TAG, "--->obj: " + o.mId + "; o.x: " + o.getX() + "; x: " + getX());
 			//constant
 			if(o instanceof TextObject)
 			{

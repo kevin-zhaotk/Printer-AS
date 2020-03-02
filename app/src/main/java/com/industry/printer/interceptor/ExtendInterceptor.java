@@ -13,7 +13,9 @@ public class ExtendInterceptor {
 	
 	private final static String TAG = ExtendInterceptor.class.getSimpleName();
 
-    private static final int EXTEND_PARAM = 37;
+// H.M.Wang 2020-2-28 取消该定义，与SystemConfigFile.INDEX_ONE_MULTIPLE重复，这个定义才是本源
+//    private static final int EXTEND_PARAM = 37;
+// End of H.M.Wang 2020-2-28 取消该定义，与SystemConfigFile.INDEX_ONE_MULTIPLE重复，这个定义才是本源
     private Context mContext;
 
     public ExtendInterceptor(Context ctx) {
@@ -23,7 +25,10 @@ public class ExtendInterceptor {
 
     public ExtendStat getExtend() {
         SystemConfigFile config = SystemConfigFile.getInstance(mContext);
-        int extend = config.getParam(EXTEND_PARAM);
+// H.M.Wang 2020-2-28 取消该定义，与SystemConfigFile.INDEX_ONE_MULTIPLE重复，这个定义才是本源
+//        int extend = config.getParam(EXTEND_PARAM);
+        int extend = config.getParam(SystemConfigFile.INDEX_ONE_MULTIPLE);
+// End of H.M.Wang 2020-2-28 取消该定义，与SystemConfigFile.INDEX_ONE_MULTIPLE重复，这个定义才是本源
 
         int base = extend/10;
         int ext = extend%10;

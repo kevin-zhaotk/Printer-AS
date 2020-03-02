@@ -628,9 +628,9 @@ public class DataTask {
 		}
 		/*分头处理*/
 		int heads = 1;
-		if (object != null) {
+//		if (object != null) {
 			heads = mTask.getHeads();
-		}
+//		}
 
 		ExtendInterceptor interceptor = new ExtendInterceptor(mContext);
 		if (interceptor.getExtend() != ExtendStat.NONE) {
@@ -638,14 +638,19 @@ public class DataTask {
 		}
 		Debug.d(TAG, "--->type=" + heads);
 
+// H.M.Wang 2020-3-2 修改32点，16点的时候
+		if(object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+			heads = 4;
+		}
+
 		for (int i = 0; i < heads; i++) {
 			/**
 			 * for 'Nova' header, shift & mirror is forbiden; 
 			 */
-			int revert = 0x00;
+//			int revert = 0x00;
 			int shift = object.getPNozzle().shiftEnable ? Configs.getMessageShift(i) : 0;
 			int mirror = object.getPNozzle().mirrorEnable ? Configs.getMessageDir(i) : SegmentBuffer.DIRECTION_NORMAL;
-			SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
+/*			SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
 			if (object.getPNozzle().reverseEnable) {
 
 				if (sysconf.getParam(14) > 0) {
@@ -661,7 +666,9 @@ public class DataTask {
 					revert |= 0x08;
 				}
 			}
+
 			int rotate = sysconf.getParam(35);
+*/
 //			if (object.getPNozzle().shiftEnable) {
 //				buffers.add(new SegmentBuffer(mContext, mPrintBuffer, i, heads, mBinInfo.getCharsFeed(), SegmentBuffer.DIRECTION_NORMAL, 0));
 //			} else {
@@ -673,8 +680,10 @@ public class DataTask {
 					.ch(mBinInfo.getCharsFeed())
 					.direction(mirror)
 					.shift(shift)
-					.revert(revert)
-					.rotate(rotate)
+					.revert(0)
+					.rotate(0)
+//					.revert(revert)
+//					.rotate(rotate)
 					.build());
 		}
 		
@@ -693,7 +702,38 @@ public class DataTask {
 				buffer.readColumn(mBuffer, j, j*hight + buffer.mHight * buffer.mType);
 			}
 		}
-		
+
+		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
+
+		int revert = 0x00;
+		if (object.getPNozzle().reverseEnable) {
+			if (sysconf.getParam(14) > 0) {
+				revert |= 0x01;
+			}
+			if (sysconf.getParam(15) > 0) {
+				revert |= 0x02;
+			}
+			if (sysconf.getParam(22) > 0) {
+				revert |= 0x04;
+			}
+			if (sysconf.getParam(23) > 0) {
+				revert |= 0x08;
+			}
+		}
+		int rotate = sysconf.getParam(35);
+
+		SegmentBuffer buffer = new SegmentBuffer.Builder(mContext, mBuffer)
+				.type(0)
+				.heads(1)
+				.ch(mBinInfo.getCharsFeed())
+				.direction(SegmentBuffer.DIRECTION_NORMAL)
+				.shift(0)
+				.revert(revert)
+				.rotate(rotate)
+				.build();
+
+		mBuffer = buffer.getBuffer();
+
 		int slant = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_SLANT);
 		Debug.d(TAG, "--->slant: " + slant);
 		expendColumn(mBuffer, columns, slant);

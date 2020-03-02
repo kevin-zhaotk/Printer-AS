@@ -54,15 +54,22 @@ public enum PrinterNozzle {
         switch (mType) {
             case NozzleType.NOZZLE_TYPE_16_DOT:
             case NozzleType.NOZZLE_TYPE_32_DOT://大字机
-
-            // H.M.Wang 追加下列一行
-            case NozzleType.NOZZLE_TYPE_64_DOT:
-
+// H.M.Wang 2020-3-2 修改64点头，不支持反转和镜像
                 reverseEnable = true;
                 shiftEnable = true;
                 mirrorEnable = true;
                 rotateAble = true;
                 break;
+            // H.M.Wang 追加下列一行
+            case NozzleType.NOZZLE_TYPE_64_DOT:
+                reverseEnable = false;
+//                reverseEnable = true;
+                shiftEnable = true;
+                mirrorEnable = false;
+//                mirrorEnable = true;
+                rotateAble = true;
+                break;
+// End of H.M.Wang 2020-3-2 修改64点头，不支持反转和镜像
             /**
              * for 'Nova' header, shift & mirror is forbiden;
              */

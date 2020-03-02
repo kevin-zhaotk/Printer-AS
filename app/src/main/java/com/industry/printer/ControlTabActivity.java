@@ -1099,7 +1099,21 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					break;
 				case RFIDManager.MSG_RFID_CHECK_FAIL:
 					Debug.d(TAG, "--->Print check UUID fail");
-					handleError(R.string.toast_rfid_changed, pcMsg);
+					handleError(R.string.str_toast_ink_error, pcMsg);
+					new Thread() {
+						@Override
+						public void run() {
+							try{
+								ExtGpio.playClick();
+								sleep(50);
+								ExtGpio.playClick();
+								sleep(50);
+								ExtGpio.playClick();
+							} catch (Exception e) {
+								Debug.e(TAG, e.getMessage());
+							}
+						}
+					}.start();
 					break;
 				case RFIDManager.MSG_RFID_CHECK_SUCCESS:
 				case MESSAGE_PRINT_START:
@@ -2337,7 +2351,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
     // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
                                         if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN) {
                                             if(DataTransferThread.getInstance(mContext).isRunning()) {
-                                                DataTransferThread.getInstance(mContext).setRemoteTextSeperated(cmd.content);
+                                                DataTransferThread.getInstance(mContext).setRemoteTextSeparated(cmd.content);
                                                 this.sendmsg(Constants.pcOk(msg));
                                             } else {
                                                 this.sendmsg(Constants.pcErr(msg));
@@ -2866,7 +2880,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			String sdcard_path = null;
 			String sd_default = Environment.getExternalStorageDirectory()
 					.getAbsolutePath();
-			Log.d("text", sd_default);
+			Debug.d("text", sd_default);
 			if (sd_default.endsWith("/")) {
 				sd_default = sd_default.substring(0, sd_default.length() - 1);
 			}
@@ -2905,7 +2919,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Log.d("text", sdcard_path);
+			Debug.d("text", sdcard_path);
 			return sdcard_path;
 		}
 

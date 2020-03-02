@@ -8,16 +8,13 @@ import org.apache.http.util.ByteArrayBuffer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Rect;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.industry.printer.BinInfo;
 import com.industry.printer.MessageTask;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.PrinterApplication;

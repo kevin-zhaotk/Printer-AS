@@ -68,7 +68,7 @@ public class SegmentBuffer {
 		char feed = 0x0;
 		mContext = ctx;
 		/*计算info的总列数*/
-		mColumns = info.length/ch;	
+		mColumns = info.length/ch;
 		/*计算每个打印头的高度*/
 		mHight = ch/heads;
 		Debug.d(TAG, "--->mHight=" + mHight + ",  columns=" + mColumns );
@@ -78,7 +78,7 @@ public class SegmentBuffer {
 		
 		/*打印起始位平移shift列*/
 		for (int j = 0; j < mHight * shift; j++) {
-			mBuffer.append(feed);
+			mBuffer.append(0x00);
 		}
 		Debug.d(TAG, "--->mBuffer.length=" + mBuffer.length() );
 		for (int i = 0; i < mColumns; i++) {
@@ -129,8 +129,12 @@ public class SegmentBuffer {
 		// 4头整体反转
 		if (pattern == 0x0f) {
 			for (int i = 0; i < realLen/2; i++) {
-				int source = buffer[2 * i] | buffer[2*i +1];
-				mBuffer.append(source);
+// H.M.Wang 2020-3-2 修改1234头一起反转的问题
+//				int source = buffer[2 * i] | buffer[2*i +1];
+//				mBuffer.append(source);
+				mBuffer.append(revert(buffer[2*i+1]));
+				mBuffer.append(revert(buffer[2*i]));
+// End of H.M.Wang 2020-3-2 修改1234头一起反转的问题
 			}
 			return;
 		}
@@ -166,6 +170,7 @@ public class SegmentBuffer {
 					byte low = (byte)(buffer[i] & 0x0ff);
 					char output = (char)(buffer[i] & 0x0ff00);
 					output |= revert(low) & 0x0ff;
+					Debug.d(TAG, "--->input: 0x" + Integer.toHexString(buffer[i]) +  "   output: 0x" + Integer.toHexString(output));
 					mBuffer.append(output);
 				} else if ((pattern & 0x0C) == 0x08) {		//仅4头反转
 					byte high = (byte) ((buffer[i] & 0x0ff00) >> 8);
@@ -327,7 +332,11 @@ public class SegmentBuffer {
 			
 		}
 	}
-	
+
+	public char[] getBuffer() {
+		return mBuffer.buffer();
+	}
+
 	public int getColumns() {
 		if (mHight <= 0) {
 			return 0;
