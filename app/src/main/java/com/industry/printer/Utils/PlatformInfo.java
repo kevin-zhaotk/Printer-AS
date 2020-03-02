@@ -27,7 +27,9 @@ public class PlatformInfo {
 	private static final String TAG = PlatformInfo.class.getSimpleName();
 	
 	private static final String PROPERTY_PRODUCT = "ro.build.product";
-	
+	private static final String PROPERTY_INK_DEVICE = "ro.product.inkdevice";
+
+	public static final String DEVICE_SMARTCARD = "smartcard";
 	public static final String PRODUCT_SMFY_SUPER3 = "smfy_super3";
 	public static final String PRODUCT_3INCH = "3inch";
 	public static final String PRODUCT_7INCH = "7inch";
@@ -64,7 +66,9 @@ public class PlatformInfo {
 	
 	/* 通过该常量来区分硬件平台 */
 	private static String mProduct = PRODUCT_SMFY_SUPER3;
-	
+
+	private static String mInkDevice = null;
+
 	public static void init() {
 		// mProduct = getProduct();
 	}
@@ -96,7 +100,28 @@ public class PlatformInfo {
 		Debug.d(TAG, "===>product: " + mProduct);
 		return mProduct;
 	}
-	
+
+	/**
+	 * read system property
+	 * @return
+	 */
+	public static String getInkDevice() {
+		// return SystemProperties.get(PROPERTY_PRODUCT);
+		//String product = null;
+		if(!StringUtil.isEmpty(mInkDevice)) {
+			return mInkDevice;
+		}
+		try {
+			Class<?> mClassType = Class.forName("android.os.SystemProperties");
+			Method mGetMethod = mClassType.getDeclaredMethod("get", String.class);
+			mInkDevice = (String) mGetMethod.invoke(mClassType, PROPERTY_INK_DEVICE);
+		} catch (Exception e) {
+			Debug.d(TAG, "Exception: " + e.getMessage());
+		}
+		Debug.d(TAG, "===>InkDevice: " + mInkDevice);
+		return mInkDevice;
+	}
+
 	public static boolean isFriendlyProduct() {
 		
 		if (PRODUCT_FRIENDLY_4412.equalsIgnoreCase(mProduct)) {
