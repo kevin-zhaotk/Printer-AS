@@ -60,12 +60,13 @@ public class BufferRebuilder {
             }
 
             int bytesPerColumn = mByteBuffer.length / mColNum;        // 每列的字节数
+            int bytesPerBlock = bytesPerColumn / mBlockNum;
             int newColNum = mColNum + addedCols;
             byte[] newBuf = new byte[newColNum * bytesPerColumn];
 
             for(int i=0; i<mColNum; i++) {
                 for(int j=0; j<mBlockNum; j++) {
-                    System.arraycopy(mByteBuffer, i * bytesPerColumn + j * bytesPerColumn, newBuf, (i + shifts[j]) * bytesPerColumn + j * bytesPerColumn,  bytesPerColumn);
+                    System.arraycopy(mByteBuffer, i * bytesPerColumn + j * bytesPerBlock, newBuf, (i + shifts[j]) * bytesPerColumn + j * bytesPerBlock,  bytesPerBlock);
                 }
             }
 
@@ -98,7 +99,7 @@ public class BufferRebuilder {
             }
 
             int bytesPerColumn = mByteBuffer.length / mColNum;        // 每列的字节数
-            int  bytesPerBlock = bytesPerColumn / mBlockNum;
+            int bytesPerBlock = bytesPerColumn / mBlockNum;
 
             byte[] newBuf = new byte[mByteBuffer.length];
 
