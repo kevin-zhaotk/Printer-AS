@@ -15,6 +15,7 @@ import com.industry.printer.data.BinCreater;
 import com.industry.printer.hardware.RFIDDevice;
 import com.industry.printer.hardware.RFIDManager;
 
+@Deprecated
 public class SegmentBuffer {
 	
 	public static final String TAG = SegmentBuffer.class.getSimpleName();
@@ -75,10 +76,10 @@ public class SegmentBuffer {
 		Debug.d(TAG, "--->ch=" + ch + ", direction=" + direction + ", shift=" + shift);
 		/*计算当前打印头的起始*/
 		int start = mHight * type;
-		
+
 		/*打印起始位平移shift列*/
 		for (int j = 0; j < mHight * shift; j++) {
-			mBuffer.append(0x00);
+			mBuffer.append(feed);
 		}
 		Debug.d(TAG, "--->mBuffer.length=" + mBuffer.length() );
 		for (int i = 0; i < mColumns; i++) {

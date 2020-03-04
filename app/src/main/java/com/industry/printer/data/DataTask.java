@@ -201,8 +201,8 @@ public class DataTask {
 			if (shift > 0 ) {
 				return true;
 			}
-			int mirror = nozzle.mirrorEnable ? Configs.getMessageDir(i) : SegmentBuffer.DIRECTION_NORMAL;
-			if (mirror == SegmentBuffer.DIRECTION_REVERS) {
+			int mirror = nozzle.mirrorEnable ? Configs.getMessageDir(i) : SystemConfigFile.DIRECTION_NORMAL;
+			if (mirror == SystemConfigFile.DIRECTION_REVERS) {
 				return true;
 			}
 
@@ -616,7 +616,7 @@ public class DataTask {
 			mBuffer = mPrintBuffer;
 		}
 		MessageObject object = mTask.getMsgObject();;
-		ArrayList<SegmentBuffer> buffers = new ArrayList<SegmentBuffer>();
+//		ArrayList<SegmentBuffer> buffers = new ArrayList<SegmentBuffer>();
 //		for (BaseObject msg : mTask.getObjects()) {
 //			if (msg instanceof MessageObject) {
 //				object = msg;
@@ -631,26 +631,19 @@ public class DataTask {
 //		if (object != null) {
 			heads = mTask.getHeads();
 //		}
-
 		ExtendInterceptor interceptor = new ExtendInterceptor(mContext);
 		if (interceptor.getExtend() != ExtendStat.NONE) {
 			heads = interceptor.getExtend().activeNozzleCount();
 		}
 		Debug.d(TAG, "--->type=" + heads);
 
-// H.M.Wang 2020-3-2 修改32点，16点的时候
-		if(object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
-			heads = 4;
-		}
-
+// H.M.Wang 2020-3-3 修改生成偏移，镜像以及倒置的算法
+/*
 		for (int i = 0; i < heads; i++) {
-			/**
-			 * for 'Nova' header, shift & mirror is forbiden; 
-			 */
-//			int revert = 0x00;
+			int revert = 0x00;
 			int shift = object.getPNozzle().shiftEnable ? Configs.getMessageShift(i) : 0;
 			int mirror = object.getPNozzle().mirrorEnable ? Configs.getMessageDir(i) : SegmentBuffer.DIRECTION_NORMAL;
-/*			SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
+			SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
 			if (object.getPNozzle().reverseEnable) {
 
 				if (sysconf.getParam(14) > 0) {
@@ -668,7 +661,7 @@ public class DataTask {
 			}
 
 			int rotate = sysconf.getParam(35);
-*/
+
 //			if (object.getPNozzle().shiftEnable) {
 //				buffers.add(new SegmentBuffer(mContext, mPrintBuffer, i, heads, mBinInfo.getCharsFeed(), SegmentBuffer.DIRECTION_NORMAL, 0));
 //			} else {
@@ -680,14 +673,11 @@ public class DataTask {
 					.ch(mBinInfo.getCharsFeed())
 					.direction(mirror)
 					.shift(shift)
-					.revert(0)
-					.rotate(0)
-//					.revert(revert)
-//					.rotate(rotate)
+					.revert(revert)
+					.rotate(rotate)
 					.build());
 		}
-		
-		/*计算转换后的buffer总列数*/
+
 		int columns=0;
 		int hight = 0;
 		for (SegmentBuffer segmentBuffer : buffers) {
@@ -696,16 +686,28 @@ public class DataTask {
 		}
 		Debug.d(TAG, "--->columns: " + columns + "  hight: " + hight);
 		mBuffer = new char[columns * hight];
-		/*处理完之后重新合并为一个buffer, 因为涉及到坐标平移，所以不能对齐的段要补0*/
 		for (int j=0; j < columns; j++) {
 			for (SegmentBuffer buffer : buffers) {
 				buffer.readColumn(mBuffer, j, j*hight + buffer.mHight * buffer.mType);
 			}
 		}
+*/
+		int offsetDiv = 1;
 
-		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
+		if(object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT || object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			heads = 4;		// 16点，32点和64点，在这里假设按4个头来算，主要是为了就和当前的实现逻辑
+			offsetDiv = 6;	// 打字机位移量除6
+		}
+
+		int[] shifts = new int[heads];
+		int[] mirrors = new int[heads];
+		for (int i = 0; i < heads; i++) {
+			shifts[i] = (object.getPNozzle().shiftEnable ? Configs.getMessageShift(i) : 0) / offsetDiv;
+			mirrors[i] = object.getPNozzle().mirrorEnable ? Configs.getMessageDir(i) : SystemConfigFile.DIRECTION_NORMAL;
+		}
 
 		int revert = 0x00;
+		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
 		if (object.getPNozzle().reverseEnable) {
 			if (sysconf.getParam(14) > 0) {
 				revert |= 0x01;
@@ -720,24 +722,17 @@ public class DataTask {
 				revert |= 0x08;
 			}
 		}
-		int rotate = sysconf.getParam(35);
 
-		SegmentBuffer buffer = new SegmentBuffer.Builder(mContext, mBuffer)
-				.type(0)
-				.heads(1)
-				.ch(mBinInfo.getCharsFeed())
-				.direction(SegmentBuffer.DIRECTION_NORMAL)
-				.shift(0)
-				.revert(revert)
-				.rotate(rotate)
-				.build();
-
-		mBuffer = buffer.getBuffer();
+		BufferRebuilder br = new BufferRebuilder(mPrintBuffer, mBinInfo.getCharsFeed(), heads);
+		br.mirror(mirrors)
+		  .shift(shifts)
+		  .reverse(revert);
+		mBuffer = br.getCharBuffer();
+// End of H.M.Wang 2020-3-3 修改生成偏移，镜像以及倒置的算法
 
 		int slant = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_SLANT);
 		Debug.d(TAG, "--->slant: " + slant);
-		expendColumn(mBuffer, columns, slant);
-		
+		expendColumn(mBuffer, br.getColumnNum(), slant);
 	}
 	/**
 	 * 双列喷嘴用的，  以后不用了，   替换为旋转逻辑

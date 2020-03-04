@@ -118,7 +118,6 @@ public class SystemConfigFile{
 	// Kevin-zhao
 	public static final int INDEX_LOG_ENABLE = 59;
 
-
 	public static final int DATA_SOURCE_DISABLED 	= 0;		// 数据源禁用
 	public static final int DATA_SOURCE_BIN 		= 1;		// 数据源使用BIN
 	public static final int DATA_SOURCE_FILE 		= 2;		// 数据源使用文件
@@ -128,6 +127,11 @@ public class SystemConfigFile{
 	public static final int DATA_SOURCE_RS231_3 	= 6;		// 数据源使用串口协议3
 	public static final int DATA_SOURCE_RS231_4 	= 7;		// 数据源使用串口协议4
 	public static final int DATA_SOURCE_RS231_5 	= 8;		// 数据源使用串口协议5
+
+// H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
+	public static final int DIRECTION_NORMAL = 0;
+	public static final int DIRECTION_REVERS = 1;
+// End of H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
 
 	/**
 	 * 参数39接收网络bin并直接打印

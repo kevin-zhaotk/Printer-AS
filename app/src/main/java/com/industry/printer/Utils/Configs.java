@@ -369,14 +369,14 @@ public class Configs {
 		default:
 			break;
 		}
-		if (dir != SegmentBuffer.DIRECTION_NORMAL && dir != SegmentBuffer.DIRECTION_REVERS) {
-			dir = SegmentBuffer.DIRECTION_NORMAL;
+		if (dir != SystemConfigFile.DIRECTION_NORMAL && dir != SystemConfigFile.DIRECTION_REVERS) {
+			dir = SystemConfigFile.DIRECTION_NORMAL;
 		}
 		if (mSysconfig.getParam(1) == 1) {
-			if (dir == SegmentBuffer.DIRECTION_NORMAL) {
-				dir = SegmentBuffer.DIRECTION_REVERS;
+			if (dir == SystemConfigFile.DIRECTION_NORMAL) {
+				dir = SystemConfigFile.DIRECTION_REVERS;
 			} else {
-				dir = SegmentBuffer.DIRECTION_NORMAL;
+				dir = SystemConfigFile.DIRECTION_NORMAL;
 			}
 		}
 		return dir;
