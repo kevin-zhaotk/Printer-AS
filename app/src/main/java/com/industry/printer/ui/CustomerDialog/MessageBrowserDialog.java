@@ -233,7 +233,7 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 
 						Map<String, Object> item = mContent.get(Integer.parseInt(key));
 						String title = (String) item.get("title");
-						if (title.startsWith("Group-")) {
+						if (title.startsWith("G-")) {
 							continue;
 						}
 						mTitles.add(title);
@@ -281,7 +281,7 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 			mTitles.add((String) selected.get("title"));
 		} else {
 			String title = (String) selected.get("title");
-			if (title == null || title.startsWith("Group-")) {
+			if (title == null || title.startsWith("G-")) {
 				return;
 			}
 			if (mTitles.contains(title)) {
@@ -355,7 +355,7 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 
 							@Override
 							public boolean accept(File arg0, String arg1) {
-								if (mFrom == OpenFrom.OPEN_EDIT && arg1.startsWith("Group-")) {
+								if (mFrom == OpenFrom.OPEN_EDIT && arg1.startsWith("G-")) {
 									return false;
 								}
 								return true;
@@ -369,10 +369,10 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 									public int compare(Object arg0, Object arg1) {
 										int cp1 = 0;
 										int cp2 = 0;
-										if (((String) arg0).startsWith("Group-") || ((String) arg1).startsWith("Group-")) {
-											if (((String) arg0).startsWith("Group-") && !((String) arg1).startsWith("Group-")) {
+										if (((String) arg0).startsWith("G-") || ((String) arg1).startsWith("G-")) {
+											if (((String) arg0).startsWith("G-") && !((String) arg1).startsWith("G-")) {
 												return -1;
-											} else if (!((String) arg0).startsWith("Group-") && ((String) arg1).startsWith("Group-")) {
+											} else if (!((String) arg0).startsWith("G-") && ((String) arg1).startsWith("G-")) {
 												return 1;
 											} else {
 												return 0;

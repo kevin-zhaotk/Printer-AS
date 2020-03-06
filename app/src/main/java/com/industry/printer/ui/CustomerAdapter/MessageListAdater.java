@@ -335,7 +335,7 @@ public class MessageListAdater extends BaseAdapter {
 
 		Debug.d(TAG, "--->getview position= "+ position + "  -- selected=" + mSelected + "  MultiMode = " + mMultiMode);
 		if (mMultiMode) {
-			if (title.startsWith("Group-")) {
+			if (title.startsWith("G-")) {
 				mHolder.mCheck.setVisibility(View.GONE);
 			} else {
 				mHolder.mCheck.setVisibility(View.VISIBLE);

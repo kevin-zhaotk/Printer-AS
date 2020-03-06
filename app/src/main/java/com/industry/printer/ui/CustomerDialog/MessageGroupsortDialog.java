@@ -120,7 +120,7 @@ public class MessageGroupsortDialog extends CustomerDialogBase implements View.O
                     if (i != tlkList.size() - 1) result.append("^");
                 }
                 /* save group */
-                String group = "Group-" + getSuffix();
+                String group = "G-" + getSuffix();
                 MessageTask.saveGroup(group, result.toString());
                 if (pListener != null) {
                     pListener.onClick(group);
@@ -143,7 +143,7 @@ public class MessageGroupsortDialog extends CustomerDialogBase implements View.O
     	String[] files = dir.list(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				if (name != null && name.startsWith("Group-")) {
+				if (name != null && name.startsWith("G-")) {
 					return true;
 				} else {
 					return false;

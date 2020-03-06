@@ -920,7 +920,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						public void run() {
 							mMsgTask.clear();
 							/**鑾峰彇鎵撳嵃缂╃暐鍥撅紝鐢ㄤ簬棰勮灞曠幇**/
-							if (mObjPath.startsWith("Group-")) {   // group messages
+							if (mObjPath.startsWith("G-")) {   // group messages
 								List<String> paths = MessageTask.parseGroup(mObjPath);
 								for (String path : paths) {
 									MessageTask task = new MessageTask(mContext, path);
@@ -1939,7 +1939,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			@Override
 			public int compare(String s, String t1) {
 				try {
-					if (s.startsWith("Group-") && t1.startsWith("Group-")) {
+					if (s.startsWith("G-") && t1.startsWith("G-")) {
 						String g1 = s.substring(6);
 						String g2 = s.substring(6);
 						int gi1 = Integer.parseInt(g1);
@@ -1951,9 +1951,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						} else {
 							return 0;
 						}
-					} else if (s.startsWith("Group-")) {
+					} else if (s.startsWith("G-")) {
 						return -1;
-					} else if (t1.startsWith("Group-")) {
+					} else if (t1.startsWith("G-")) {
 						return 1;
 					} else {
 						int gi1 = Integer.parseInt(s);
@@ -1993,7 +1993,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			public int compare(String s, String t1) {
 
 				try {
-					if (s.startsWith("Group-") && t1.startsWith("Group-")) {
+					if (s.startsWith("G-") && t1.startsWith("G-")) {
 						String g1 = s.substring(6);
 						String g2 = s.substring(6);
 						int gi1 = Integer.parseInt(g1);
@@ -2005,9 +2005,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						} else {
 							return 0;
 						}
-					} else if (s.startsWith("Group-")) {
+					} else if (s.startsWith("G-")) {
 						return -1;
-					} else if (t1.startsWith("Group-")) {
+					} else if (t1.startsWith("G-")) {
 						return 1;
 					} else {
 						int gi1 = Integer.parseInt(s);
