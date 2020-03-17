@@ -265,8 +265,36 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 		} else if (max < ink) {
 			return 100;
 		}
-		return (ink*100/max);
+//// 临时取消		return (ink*100/max);
+		Debug.d(TAG, "[2020-3-16 Check] Ink: " + ink + "Max: " + max);
+		return ink;
 	}
+
+    @Override
+    public float getLocalInkPercentage(int dev) {
+        if (dev >= mRfidDevices.size()) {
+            return 0;
+        }
+        RFIDDevice device = mRfidDevices.get(dev);
+        if (device == null) {
+            return 0;
+        }
+        int max = device.getMax();
+        if (max <= 0 && Configs.READING) {
+// H.M.Wang 2020-2-25 修改max值
+//            max = 370;
+            max = 2000;
+// End of H.M.Wang 2020-2-25 修改max值
+        }
+        float ink = device.getLocalInk();
+        if (max <= 0) {
+            return 0;
+        } else if (max < ink) {
+            return 100;
+        }
+        Debug.d(TAG, "[2020-3-16 Check] Ink: " + ink + "Max: " + max);
+        return (ink*100/max);
+    }
 
 	/** implement IInkDevice*/
 	@Override

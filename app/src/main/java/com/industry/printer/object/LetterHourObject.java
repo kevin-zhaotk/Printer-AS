@@ -57,15 +57,15 @@ public class LetterHourObject extends BaseObject {
 	
 		boolean isCorrect = false;
 		// Debug.d(TAG,"--->getBitmap font = " + mFont);
-		for (String font : mFonts) {
-			if (font.equals(mFont)) {
-				isCorrect = true;
-				break;
-			}
-		}
-		if (!isCorrect) {
-			mFont = DEFAULT_FONT;
-		}
+////		for (String font : mFonts) {
+////			if (font.equals(mFont)) {
+////				isCorrect = true;
+////				break;
+////			}
+////		}
+////		if (!isCorrect) {
+////			mFont = DEFAULT_FONT;
+////		}
 		try {
 			mPaint.setTypeface(FontCache.get(context, mFont));
 		} catch (Exception e) {}
@@ -152,15 +152,15 @@ public class LetterHourObject extends BaseObject {
 	
 		boolean isCorrect = false;
 		// Debug.d(TAG,"--->getBitmap font = " + mFont);
-		for (String font : mFonts) {
-			if (font.equals(mFont)) {
-				isCorrect = true;
-				break;
-			}
-		}
-		if (!isCorrect) {
-			mFont = DEFAULT_FONT;
-		}
+////		for (String font : mFonts) {
+////			if (font.equals(mFont)) {
+////				isCorrect = true;
+////				break;
+////			}
+////		}
+////		if (!isCorrect) {
+////			mFont = DEFAULT_FONT;
+////		}
 		try {
 			mPaint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {}

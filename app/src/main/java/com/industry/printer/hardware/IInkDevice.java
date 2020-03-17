@@ -29,6 +29,13 @@ public interface IInkDevice {
     float getLocalInk(int head);
 
     /**
+     * 获取指定喷头对应的锁值
+     * @param head 喷头索引
+     * @return
+     */
+    float getLocalInkPercentage(int head);
+
+    /**
      * 判断设备是否有效
      * 如：RFID如果feature code与固定值不一致就认为设备不合法
      *    SmartCard - 需要王工来指定合法规则

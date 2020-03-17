@@ -109,7 +109,8 @@ public class RealtimeDate extends BaseObject {
 //////addbylk 
 	@Override	 
 	public Bitmap getpreviewbmp()
-	{		Debug.e(TAG, "===========--->content: " + getContent() );	
+	{
+		Debug.d(TAG, "1===== " + getContent() );
 		Bitmap bitmap;
 		
 		mPaint.setTextSize(getfeed());
@@ -118,15 +119,15 @@ public class RealtimeDate extends BaseObject {
 	
 		boolean isCorrect = false;
 		// Debug.d(TAG,"--->getBitmap font = " + mFont);
-		for (String font : mFonts) {
-			if (font.equals(mFont)) {
-				isCorrect = true;
-				break;
-			}
-		}
-		if (!isCorrect) {
-			mFont = DEFAULT_FONT;
-		}
+////		for (String font : mFonts) {
+////			if (font.equals(mFont)) {
+////				isCorrect = true;
+////				break;
+////			}
+////		}
+////		if (!isCorrect) {
+////			mFont = DEFAULT_FONT;
+////		}
 		try {
 			mPaint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {}
@@ -147,16 +148,17 @@ public class RealtimeDate extends BaseObject {
 		// Debug.e(TAG, "--->content: " + getContent() + "  width=" + width);
 
 		int width = (int)mPaint.measureText(str_new_content);//addbylk
+		Debug.d(TAG, "--->content: " + getContent() + "  width=" + width);
 
 		bitmap = Bitmap.createBitmap(width , (int)mHeight, Configs.BITMAP_PRE_CONFIG);
-		Debug.d(TAG,"--->getBitmap width="+mWidth+", mHeight="+mHeight);
+		Debug.d(TAG,"--->getBitmap width="+width+", mHeight="+mHeight);
 		mCan = new Canvas(bitmap);
 		FontMetrics fm = mPaint.getFontMetrics();
 		mPaint.setColor(Color.BLUE);
 
 		mCan.drawText(str_new_content , 0, mHeight-fm.descent, mPaint);
-	
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);	
-	}	
+
+		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+	}
 	
 }

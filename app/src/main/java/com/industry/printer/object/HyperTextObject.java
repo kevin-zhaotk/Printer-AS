@@ -128,8 +128,9 @@ public class HyperTextObject extends BaseObject {
                         addedMap.put(CounterObject.class.getSimpleName(), "");
                         obj = new CounterObject(mContext, this, 0);
                         ((CounterObject)obj).setBits(5);
-                        ((CounterObject)obj).setStart(mCounterStart);
-                        ((CounterObject)obj).setEnd(mCounterEnd);
+//                        ((CounterObject)obj).setStart(mCounterStart);
+//                        ((CounterObject)obj).setEnd(mCounterEnd);
+                        ((CounterObject)obj).setRange(mCounterStart, mCounterEnd);;
                         ((CounterObject)obj).setIndex(mCounterIndex);
                     }
                 } else if(testStr.startsWith(HYPER_TEXT_4_COUNTER, foundPos)) {
@@ -138,8 +139,9 @@ public class HyperTextObject extends BaseObject {
                         addedMap.put(CounterObject.class.getSimpleName(), "");
                         obj = new CounterObject(mContext, this, 0);
                         ((CounterObject)obj).setBits(4);
-                        ((CounterObject)obj).setStart(mCounterStart);
-                        ((CounterObject)obj).setEnd(mCounterEnd);
+//                        ((CounterObject)obj).setStart(mCounterStart);
+//                        ((CounterObject)obj).setEnd(mCounterEnd);
+                        ((CounterObject)obj).setRange(mCounterStart, mCounterEnd);;
                         ((CounterObject)obj).setIndex(mCounterIndex);
                     }
                 } else if(testStr.startsWith(HYPER_TEXT_3_COUNTER, foundPos)) {
@@ -148,8 +150,9 @@ public class HyperTextObject extends BaseObject {
                         addedMap.put(CounterObject.class.getSimpleName(), "");
                         obj = new CounterObject(mContext, this, 0);
                         ((CounterObject)obj).setBits(3);
-                        ((CounterObject)obj).setStart(mCounterStart);
-                        ((CounterObject)obj).setEnd(mCounterEnd);
+//                        ((CounterObject)obj).setStart(mCounterStart);
+//                        ((CounterObject)obj).setEnd(mCounterEnd);
+                        ((CounterObject)obj).setRange(mCounterStart, mCounterEnd);;
                         ((CounterObject)obj).setIndex(mCounterIndex);
                     }
                 } else if(testStr.startsWith(HYPER_TEXT_2_COUNTER, foundPos)) {
@@ -158,8 +161,9 @@ public class HyperTextObject extends BaseObject {
                         addedMap.put(CounterObject.class.getSimpleName(), "");
                         obj = new CounterObject(mContext, this, 0);
                         ((CounterObject)obj).setBits(2);
-                        ((CounterObject)obj).setStart(mCounterStart);
-                        ((CounterObject)obj).setEnd(mCounterEnd);
+//                        ((CounterObject)obj).setStart(mCounterStart);
+//                        ((CounterObject)obj).setEnd(mCounterEnd);
+                        ((CounterObject)obj).setRange(mCounterStart, mCounterEnd);;
                         ((CounterObject)obj).setIndex(mCounterIndex);
                     }
                 } else if(testStr.startsWith(HYPER_TEXT_WEEK_OF_YEAR, foundPos)) {
@@ -292,6 +296,7 @@ public class HyperTextObject extends BaseObject {
             o.meature();
             o.setX(width);
             o.setWidth(o.getWidth() * mRatio);
+//            o.setWidth(o.getWidth());
             width += o.getWidth();
         }
         super.setWidth(width);
@@ -332,13 +337,12 @@ public class HyperTextObject extends BaseObject {
 
         Debug.d(TAG, "--->setHeight: " + size);
 
-        isNeedRedraw = true;
-
-//        if(mSubObjs == null) return;
-
         for(BaseObject o : mSubObjs) {
             o.setHeight(size);
         }
+
+        isNeedRedraw = true;
+//        meature();
     }
 
     @Override
@@ -417,7 +421,7 @@ public class HyperTextObject extends BaseObject {
 
         for(BaseObject o : mSubObjs) {
             if(o instanceof CounterObject) {
-                ((CounterObject) o).setStart(mCounterStart);
+                ((CounterObject) o).setRange(mCounterStart, mCounterEnd);
             }
         }
     }
@@ -433,7 +437,7 @@ public class HyperTextObject extends BaseObject {
 
         for(BaseObject o : mSubObjs) {
             if(o instanceof CounterObject) {
-                ((CounterObject) o).setEnd(mCounterEnd);
+                ((CounterObject) o).setRange(mCounterStart, mCounterEnd);
             }
         }
     }

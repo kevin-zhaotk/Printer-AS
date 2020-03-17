@@ -87,8 +87,10 @@ public class MessageListAdater extends BaseAdapter {
 	/**
 	 * The Content list
 	 */
-	private LinkedList<Map<String, Object>> mCntList;
-	
+////	private LinkedList<Map<String, Object>> mCntList;
+	private String[] mTotalContents = null;
+	private ArrayList<Integer> mDispIndex = null;
+
 	/**
 	 * An inflater for inflate the view
 	 */
@@ -129,18 +131,19 @@ public class MessageListAdater extends BaseAdapter {
 	 */
 	private boolean mMultiMode = false;
 
-	private Map<String, Boolean> mMultiSelected = new HashMap<String, Boolean>();
-	
+////	private Map<String, Boolean> mMultiSelected = new HashMap<String, Boolean>();
+	private ArrayList<Integer> mMultiSelected = null;
+
 	private Map<String, Bitmap> mPreviews = new HashMap<String, Bitmap>();
 	
 	/**
 	 * Construct
 	 */
-	public MessageListAdater(Context context, LinkedList<Map<String, Object>> list, int resource,
-			String from[], int to[])
+////	public MessageListAdater(Context context, LinkedList<Map<String, Object>> list, int resource, String from[], int to[])
+	public MessageListAdater(Context context, int resource, String from[], int to[])
 	{
 		mSelected = -1;
-		mCntList = list;
+////		mCntList = list;
 		item_layout = resource;
 		mContext = context;
 		mKeys = new String[from.length];
@@ -149,33 +152,53 @@ public class MessageListAdater extends BaseAdapter {
 		System.arraycopy(from, 0, mKeys, 0, from.length);
 		System.arraycopy(to, 0, mViewIDs, 0, to.length);
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		Debug.d(TAG, "--->size = " + mCntList.size());
-		mSCroll= new int [mCntList.size()];
-		for(int x=0;x<mCntList.size();x++)
-		{
-			mSCroll[x]=0;
-	
-		}
-		
+////		Debug.d(TAG, "--->size = " + mCntList.size());
+////		mSCroll= new int [mCntList.size()];
+////		for(int x=0;x<mCntList.size();x++)
+////		{
+////			mSCroll[x]=0;
+////		}
+		mDispIndex = new ArrayList<Integer>();
+		mMultiSelected = new ArrayList<Integer>();
 	}
 	
 	public MessageListAdater getInstance()
 	{
 		return this;
 	}
+
+	public void setmTotalContents(String[] contents) {
+		mTotalContents = contents;
+	}
+
+	public void setContentIndex(ArrayList<Integer> index) {
+		mDispIndex = index;
+		Debug.d(TAG, "--->size = " + mDispIndex.size());
+		mSCroll= new int [mDispIndex.size()];
+		for(int x=0;x<mDispIndex.size();x++)
+		{
+			mSCroll[x]=0;
+		}
+		mSelected = -1;
+		mMultiSelected.clear();
+		notifyDataSetChanged();
+	}
+
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		if (mSCroll.length != mCntList.size()) {
-			mSCroll = new int[mCntList.size()];
-		}
-		return mCntList.size();
+////		if (mSCroll.length != mCntList.size()) {
+////			mSCroll = new int[mCntList.size()];
+////		}
+////		return mCntList.size();
+		return mDispIndex.size();
 	}
 
 	@Override
 	public Object getItem(int arg0) {
 		// TODO Auto-generated method stub
-		return mCntList.get(arg0);
+////		return mCntList.get(arg0);
+		return mDispIndex.get(arg0);
 	}
 
 	@Override
@@ -184,23 +207,30 @@ public class MessageListAdater extends BaseAdapter {
 		return arg0;
 	}
 
-	public void setMode(boolean multi) {
+	public void setMultiMode(boolean multi) {
 		mMultiMode = multi;
 	}
 
 	public void setSelected(int position) {
 		if (mMultiMode) {
-			if (mMultiSelected.containsKey(String.valueOf(position))) {
-				mMultiSelected.remove(String.valueOf(position));
+////			if (mMultiSelected.containsKey(String.valueOf(position))) {
+			if (mMultiSelected.contains(mDispIndex.get(position))) {
+				mMultiSelected.remove(mDispIndex.get(position));
 			} else {
-				mMultiSelected.put(String.valueOf(position), true);
+////				mMultiSelected.put(String.valueOf(position), true);
+				mMultiSelected.add(mDispIndex.get(position));
 			}
 		} else {
 			mSelected = position;
 		}
 	}
 
-	public Map<String, Boolean> getSelected() {
+	public Integer getSelectedSingle() {
+		return mDispIndex.get(mSelected);
+	}
+
+////	public Map<String, Boolean> getSelected() {
+	public ArrayList<Integer> getSelected() {
 		return mMultiSelected;
 	}
 
@@ -224,9 +254,11 @@ public class MessageListAdater extends BaseAdapter {
 			convertView.setTag(mHolder);
 		}
 
-		HashMap<String, Object> item = (HashMap<String, Object>) mCntList.get(position);
-		
-		String title = (String) item.get(mKeys[0]);
+////		HashMap<String, Object> item = (HashMap<String, Object>) mCntList.get(position);
+////		String title = (String) item.get(mKeys[0]);
+
+		String title = mTotalContents[mDispIndex.get(position)];
+
 		// String abstrace = (String) item.get(mKeys[1]);
 		//fill the elements into the empty view created early 
 		mHolder.mTitle.setText(title);
@@ -303,8 +335,8 @@ public class MessageListAdater extends BaseAdapter {
 			}
 			
 			 
-			 mCan.drawBitmap(bmp_disk, new Rect(0, 0, iwidth, 100), new Rect(0, 0, iwidth, 100), null);
-			   Debug.e(TAG, "mSCroll mSCroll==11111=============="+mSCroll);	
+			mCan.drawBitmap(bmp_disk, new Rect(0, 0, iwidth, 100), new Rect(0, 0, iwidth, 100), null);
+//			Debug.e(TAG, "mSCroll mSCroll==11111=============="+mSCroll);
 				
 		//	bmp_disk = Bitmap.createScaledBitmap(bmp_disk);//,bmp_disk.getWidth(), bmp_disk.getHeight() , true);		
 			
@@ -333,13 +365,14 @@ public class MessageListAdater extends BaseAdapter {
 	*/
 		
 
-		Debug.d(TAG, "--->getview position= "+ position + "  -- selected=" + mSelected + "  MultiMode = " + mMultiMode);
+//		Debug.d(TAG, "--->getview position= "+ position + "  -- selected=" + mSelected + "  MultiMode = " + mMultiMode);
 		if (mMultiMode) {
 			if (title.startsWith("G-")) {
 				mHolder.mCheck.setVisibility(View.GONE);
 			} else {
 				mHolder.mCheck.setVisibility(View.VISIBLE);
-				if (mMultiSelected.containsKey(String.valueOf(position))) {
+////				if (mMultiSelected.containsKey(String.valueOf(position))) {
+				if (mMultiSelected.contains(mDispIndex.get(position))) {
 					mHolder.mCheck.setImageResource(R.drawable.checked);
 				} else {
 					mHolder.mCheck.setImageResource(R.drawable.check_nor);
@@ -379,16 +412,16 @@ public class MessageListAdater extends BaseAdapter {
 					mSCroll[position] = bmp_disk.getWidth() - width;
 				}
 				mCan.drawBitmap(bmp_disk, new Rect(mSCroll[position], 0, iwidth + mSCroll[position], 100), new Rect(0, 0, iwidth, 100), null);
-				Debug.e(TAG, "mSCroll mSCroll=2222==============" + mSCroll[position]);
+//				Debug.e(TAG, "mSCroll mSCroll=2222==============" + mSCroll[position]);
 //				mPreviews.put(title, Bmp_bak);
 
 
-				Debug.d(TAG, "---blue");
+//				Debug.d(TAG, "---blue");
 				mHolder.mMark.setVisibility(View.VISIBLE);
 			} else {
 				//	mSCroll[position]=0;
 
-				Debug.d(TAG, "---transparent");
+//				Debug.d(TAG, "---transparent");
 				mHolder.mMark.setVisibility(View.GONE);
 			}
 			mHolder.mCheck.setVisibility(View.GONE);
@@ -406,7 +439,7 @@ public class MessageListAdater extends BaseAdapter {
 		}
 		float scale = (float)DimenssionConvertion.dip2px(mContext, 100)/bmp.getHeight();
 		mHolder.mllPreview.removeAllViews();
-		Debug.e(TAG, "-===================-->width= " + bmp.getWidth() + "  scale============================= " + scale);
+//		Debug.e(TAG, "-===================-->width= " + bmp.getWidth() + "  scale============================= " + scale);
 			for (int i = 0;x < bmp.getWidth(); i++) 
 			{
 				if (x + 1200 + 50 > bmp.getWidth()) 
@@ -419,7 +452,7 @@ public class MessageListAdater extends BaseAdapter {
 					break;
 				}
 				Bitmap child = Bitmap.createBitmap(bmp, x, 0, cutWidth, bmp.getHeight());
-				Debug.d(TAG, "-->child: " + child.getWidth() + "  " + child.getHeight() + "   view h: " + mHolder.mllPreview.getHeight());
+//				Debug.d(TAG, "-->child: " + child.getWidth() + "  " + child.getHeight() + "   view h: " + mHolder.mllPreview.getHeight());
 				
 				Bitmap scaledChild = Bitmap.createScaledBitmap(child, (int) (cutWidth*scale), (int) (bmp.getHeight() * scale), true);
 				child.recycle();
@@ -441,30 +474,35 @@ public class MessageListAdater extends BaseAdapter {
 	/**
 	 * delete the selected message
 	 */
+/*
 	public void delete() {
 		if (mMultiMode) {
 			deleteMulti();
 		} else {
-			deleteSingle();
+			deleteSingle(getSelectedSingle());
 		}
 	}
-	
-	public void deleteSingle() {
-		if (mSelected < 0 || mSelected >= mCntList.size()) {
+
+////	public void deleteSingle() {
+	public void deleteSingle(Integer selected) {
+////		if (mSelected < 0 || mSelected >= mCntList.size()) {
+		if (selected < 0 || selected >= mTotalContents.length) {
 			return;
 		}
-		HashMap<String, Object> item = (HashMap<String, Object>)mCntList.get(mSelected);
-		String title = (String) item.get(mKeys[0]);
+////		HashMap<String, Object> item = (HashMap<String, Object>)mCntList.get(mSelected);
+////		String title = (String) item.get(mKeys[0]);
+		String title = mTotalContents[selected];
+		Debug.d(TAG, "Delete: " + title + "@" + selected);
 		File file = new File(ConfigPath.getTlkDir(title));
 		if (file.exists()) {
 			File[] list = file.listFiles();
 			for (int i = 0; i < list.length; i++) {
 				File f = list[i];
 				f.delete();
-			} 
+			}
 		}
 		file.delete();
-		mCntList.remove(mSelected);
+//		mDispIndex.remove(selected);
 		notifyDataSetChanged();
 	}
 	
@@ -472,28 +510,32 @@ public class MessageListAdater extends BaseAdapter {
 		if (mMultiSelected == null) {
 			return;
 		}
-		Iterator<String> keys = mMultiSelected.keySet().iterator();
+////		Iterator<String> keys = mMultiSelected.keySet().iterator();
 		
-		while (keys.hasNext()) {
-			int index = Integer.parseInt(keys.next());
-			HashMap<String, Object> item = (HashMap<String, Object>)mCntList.get(index);
-			String title = (String) item.get(mKeys[0]);
-			File file = new File(ConfigPath.getTlkDir(title));
-			if (file.exists()) {
-				File[] list = file.listFiles();
-				for (int i = 0; i < list.length; i++) {
-					File f = list[i];
-					f.delete();
-				} 
-			}
-			file.delete();
+////		while (keys.hasNext()) {
+////			int index = Integer.parseInt(keys.next());
+////			HashMap<String, Object> item = (HashMap<String, Object>)mCntList.get(index);
+////			String title = (String) item.get(mKeys[0]);
+////			File file = new File(ConfigPath.getTlkDir(title));
+////			if (file.exists()) {
+////				File[] list = file.listFiles();
+////				for (int i = 0; i < list.length; i++) {
+////					File f = list[i];
+////					f.delete();
+////				}
+////			}
+////			file.delete();
+////		}
+////		mCntList.clear();
+		for(int idx : mMultiSelected) {
+			deleteSingle(mDispIndex.get(idx));
 		}
-		mCntList.clear();
 		mMultiSelected.clear();
 //		mMultiMode = false;
 //		notifyDataSetChanged();
 	}
-	
+*/
+	@Deprecated
 	public void Scroll(int left_rigt) 
 	{
 		
@@ -522,14 +564,9 @@ public class MessageListAdater extends BaseAdapter {
 		}
 		
 		Debug.e(TAG, "------Scroll");	
-		if (mSelected < 0 || mSelected >= mCntList.size()) {
-			return;
-		}
-
-
-		Debug.e(TAG, "------Scroll2");		
-		
+////		if (mSelected < 0 || mSelected >= mCntList.size()) {
+////			return;
+////		}
+		Debug.e(TAG, "------Scroll2");
 	}
-
-
 }

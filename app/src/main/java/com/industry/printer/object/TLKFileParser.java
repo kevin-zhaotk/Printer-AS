@@ -388,6 +388,8 @@ public class TLKFileParser  extends TlkFile{
 		if(!(obj instanceof MessageObject))
 		{
 			try {
+				obj.setFont(attr[19]);
+
 				obj.setIndex(Integer.parseInt(attr[0]));
 // 必须先设置Y值和高，然后在设置X和宽，否则图片变形
 				obj.setY(StringUtil.parseInt(attr[3])/(2*mProportion));
@@ -413,7 +415,6 @@ public class TLKFileParser  extends TlkFile{
 				obj.setDragable(Boolean.parseBoolean(attr[7]));
 				Debug.d(TAG, "--->attr[111] = " + attr[11]);
 				obj.setReverse(StringUtil.parseBool(attr[11]));
-				obj.setFont(attr[19]);
 
 				// H.M.Wang追加一行，设置初始横向缩放比例
 				obj.setXRatio();
@@ -427,9 +428,6 @@ public class TLKFileParser  extends TlkFile{
 		}
 		return obj;
 	}
-	
-	
-
 	
 	/**
 	 * 获取打印对象的内容缩略信息

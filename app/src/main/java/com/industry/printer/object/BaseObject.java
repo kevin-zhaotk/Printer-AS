@@ -110,7 +110,7 @@ public class BaseObject{
 	/**
 	 * supported fonts
 	 */
-	public static String[] mFonts = FontCache.getFonts(PrinterApplication.getInstance());
+////	public static String[] mFonts = FontCache.getFonts(PrinterApplication.getInstance());
 	
 	public BaseObject(Context context, String id, float x)
 	{
@@ -144,24 +144,24 @@ public class BaseObject{
 		mHeight = Configs.gDots;
 		mWidth = 0;
 
-		boolean findFont = false;
-		Debug.d(TAG, "--->fonts: " + mFonts);
-		if (mFonts != null && mFonts.length > 0) {
-			for (String font : mFonts) {
-				Debug.d(TAG, "--->font: " + font);
-				if (DEFAULT_FONT.equalsIgnoreCase(font)) {
-					Debug.d(TAG, "--->font match: " + font);
-					mFont = DEFAULT_FONT;
-					findFont = true;
-					break;
-				}
-			}
-			if (!findFont) {
-				mFont = mFonts[0];
-			}
-		} else {
+////		boolean findFont = false;
+////		Debug.d(TAG, "--->fonts: " + mFonts);
+////		if (mFonts != null && mFonts.length > 0) {
+////			for (String font : mFonts) {
+////				Debug.d(TAG, "--->font: " + font);
+////				if (DEFAULT_FONT.equalsIgnoreCase(font)) {
+////					Debug.d(TAG, "--->font match: " + font);
+////					mFont = DEFAULT_FONT;
+////					findFont = true;
+////					break;
+////				}
+////			}
+////			if (!findFont) {
+////				mFont = mFonts[0];
+////			}
+////		} else {
 			mFont = DEFAULT_FONT;
-		}
+////		}
 
 		initPaint();
 		setSelected(true);	
@@ -308,18 +308,19 @@ public class BaseObject{
 		if (!new File("file://android_assets/" + f).exists()) {
 			mFont = DEFAULT_FONT;
 		}*/
-		boolean isCorrect = false;
+////		boolean isCorrect = false;
 		// Debug.d(TAG,"--->getBitmap font = " + mFont);
 //		String[] mFonts = FontCache.getFonts();
-		for (String font : mFonts) {
-			if (font.equals(mFont)) {
-				isCorrect = true;
-				break;
-			}
-		}
-		if (!isCorrect) {
-			mFont = DEFAULT_FONT;
-		}
+////		for (String font : mFonts) {
+////			Debug.d(TAG,"font = " + font + "； mFont = " + mFont);
+////			if (font.equals(mFont)) {
+////				isCorrect = true;
+////				break;
+////			}
+////		}
+////		if (!isCorrect) {
+////			mFont = DEFAULT_FONT;
+////		}
 		mFont = verifyFont();
 		Debug.d(TAG,"--->draw font = " + mFont +"  h: " + mHeight);
 		try {
@@ -818,9 +819,12 @@ public class BaseObject{
                 mHeight = 152f/2 * 12 / 16;
             } else if (MessageObject.mDot_32_Size[3].equalsIgnoreCase(dspH)) {
                 mHeight = 152f/2 * 14 / 16;
-            } else if (MessageObject.mDot_32_Size[4].equalsIgnoreCase(dspH)) {
+            } else if (MessageObject.mDot_32_Size[4].equalsIgnoreCase(dspH) ||
+						MessageObject.mDot_32_Size[5].equalsIgnoreCase(dspH) ||
+						MessageObject.mDot_32_Size[6].equalsIgnoreCase(dspH)) {
 // End of H.M.Wang 2020-1-31 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
                 mHeight = 152f/2;
+				mHeight = 152f/2;
 			} else {
 				mHeight = 152f;
 			}
@@ -839,17 +843,19 @@ public class BaseObject{
                 mHeight = 152f/8*2 * 12 / 16;
             } else if (MessageObject.mDot_64_Size[3].equalsIgnoreCase(dspH)) {
                 mHeight = 152f/8*2 * 14 / 16;
-            } else if (MessageObject.mDot_64_Size[4].equalsIgnoreCase(dspH)) {
+			} else if (MessageObject.mDot_64_Size[4].equalsIgnoreCase(dspH) ||
+					MessageObject.mDot_64_Size[5].equalsIgnoreCase(dspH) ||
+					MessageObject.mDot_64_Size[6].equalsIgnoreCase(dspH)) {
 // End of H.M.Wang 2020-1-31 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 				mHeight = 152f/8*2;
 // H.M.Wang 2020-1-31 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 //			} else if (MessageObject.mDot_64_Size[2].equalsIgnoreCase(dspH)) {
-			} else if (MessageObject.mDot_64_Size[5].equalsIgnoreCase(dspH)) {
+			} else if (MessageObject.mDot_64_Size[7].equalsIgnoreCase(dspH)) {
 // End of H.M.Wang 2020-1-31 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 				mHeight = 152f/8*3;
 // H.M.Wang 2020-1-31 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 //			} else if (MessageObject.mDot_64_Size[3].equalsIgnoreCase(dspH)) {
-			} else if (MessageObject.mDot_64_Size[6].equalsIgnoreCase(dspH)) {
+			} else if (MessageObject.mDot_64_Size[8].equalsIgnoreCase(dspH)) {
 // End of H.M.Wang 2020-1-31 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 				mHeight = 152f/8*4;
 			} else {
@@ -885,7 +891,27 @@ public class BaseObject{
 
 	public String getDisplayHeight() {
 		Debug.d(TAG, "--->getDisplayHeight: " + mHeight);
-		return mTask.getMsgObject().getDisplayFs(mHeight);
+//		return mTask.getMsgObject().getDisplayFs(mHeight);
+		String dispString =  mTask.getMsgObject().getDisplayFs(mHeight);
+		if(dispString.startsWith(MessageObject.mDotSizes[4]) || dispString.startsWith(MessageObject.mDot_32_Size[4]) || dispString.startsWith(MessageObject.mDot_64_Size[4])) {
+			String[] dispStrings = dispString.split(",");
+			if(null != dispStrings) {
+				if(mFont.equals("7")) {
+					dispString = dispStrings.length > 0 ? dispStrings[0] : "16x12";
+				} else if(mFont.equals("7L")) {
+					dispString = dispStrings.length > 1 ? dispStrings[1] : "16x12";
+				} else if(mFont.equals("7R")) {
+					dispString = dispStrings.length > 2 ? dispStrings[2] : "16x12";
+				} else {
+					dispString = "16x12";
+				}
+			} else {
+				dispString = "16x12";
+			}
+		} else {
+			dispString = dispString;
+		}
+		return dispString;
 	}
 	
 	public float getHeight()
@@ -1205,7 +1231,11 @@ public class BaseObject{
 	}
 
 	protected void meature() {
-		Debug.d(TAG, "meature content = " + getMeatureString());
+		Debug.d(TAG, "meature content = " + getMeatureString() + "; font = " + mFont);
+
+		try {
+			mPaint.setTypeface(FontCache.get(mContext, mFont));
+		} catch (Exception e) {}
 
 		// H.M.Wang 修改为测量标准字符串，而非实际内容
 //		int width = (int) mPaint.measureText(getContent());
@@ -1252,7 +1282,13 @@ public class BaseObject{
             } else if(getHeight() <= 152f * 14 / 16){
                 font = "14";
             } else if(getHeight() <= 152f){
-				font = "7";
+				if(mFont.equals("7L")) {
+					font = "7L";
+				} else if (mFont.equals("7R")) {
+					font = "7R";
+				} else {
+					font = "7";
+				}
 			} else {
 				font = mFont;
 // End of H.M.Wang 2020-1-30 追加"10x8", "12x9", "14x10"字体
@@ -1269,7 +1305,13 @@ public class BaseObject{
             } else if(getHeight() <= 76f * 14 / 16){
                 font = "14";
             } else if(getHeight() <= 76f){
-                font = "7";
+				if(mFont.equals("7L")) {
+					font = "7L";
+				} else if (mFont.equals("7R")) {
+					font = "7R";
+				} else {
+					font = "7";
+				}
 // End of H.M.Wang 2020-1-30 追加"10x8", "12x9", "14x10"字体
 			} else {
 				font = mFont;
@@ -1288,7 +1330,13 @@ public class BaseObject{
             } else if(getHeight() <= 38f * 14 / 16){
                 font = "14";
             } else if(getHeight() <= 38f){
-                font = "7";
+				if(mFont.equals("7L")) {
+					font = "7L";
+				} else if (mFont.equals("7R")) {
+					font = "7R";
+				} else {
+					font = "7";
+				}
 // End of H.M.Wang 2020-1-30 追加"10x8", "12x9", "14x10"字体
 			} else {
 				font = mFont;
@@ -1316,7 +1364,13 @@ public class BaseObject{
 			return isFixed;
 		}
 		String  height = getDisplayHeight();
-		if (MessageObject.mDotSizes[0].equalsIgnoreCase(height) || MessageObject.mDotSizes[1].equalsIgnoreCase(height)) {
+		if (MessageObject.mDotSizes[0].equalsIgnoreCase(height) ||
+				MessageObject.mDotSizes[1].equalsIgnoreCase(height) ||
+				MessageObject.mDotSizes[2].equalsIgnoreCase(height) ||
+				MessageObject.mDotSizes[3].equalsIgnoreCase(height) ||
+				MessageObject.mDotSizes[4].equalsIgnoreCase(height) ||
+				MessageObject.mDotSizes[5].equalsIgnoreCase(height) ||
+				MessageObject.mDotSizes[6].equalsIgnoreCase(height)) {
 			isFixed = true;
 		}
 		return isFixed;

@@ -185,6 +185,12 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[4])) {
 					mFont.setText("7");
 					mFont.setClickable(false);
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[5])) {
+					mFont.setText("7L");
+					mFont.setClickable(false);
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[6])) {
+					mFont.setText("7R");
+					mFont.setClickable(false);
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体
 				} else {
 					mFont.setClickable(true);
@@ -535,6 +541,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 
 						Debug.d(TAG, "--->positive click");
 						try {
+////						String font = mFont.getText().toString();
+							mObject.setFont(mFont.getText().toString());
+
 //							if (mHeightType.isChecked()) {
 //								mObject.setHeight(Integer.parseInt(mHeight_O.getText().toString()));
 //							} else {
@@ -563,10 +572,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 //						mObject.setY(Float.parseFloat(mYcorEdit.getText().toString())/2);
 						Debug.d(TAG, "content="+mContent.getText().toString());
 
-						Resources res = mContext.getResources();
+////						Resources res = mContext.getResources();
 						
-						String font = mFont.getText().toString();
-						mObject.setFont(font);
 						mObject.setReverse(mReverse.isChecked());
 						Debug.d(TAG, "--->redraw: " + mObject.isNeedDraw());
 						//mObjRefreshHandler.sendEmptyMessage(0);

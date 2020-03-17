@@ -39,21 +39,36 @@ public class MessageGroupsortDialog extends CustomerDialogBase implements View.O
     
     private int mSelected = -1;
     
-    LinkedList<Map<String, Object>> tlkList = new LinkedList<Map<String, Object>>();
+////    LinkedList<Map<String, Object>> tlkList = new LinkedList<Map<String, Object>>();
+    private String[] mTotalContents = null;
+    private ArrayList<Integer> mDispIndex = null;
 
     public MessageGroupsortDialog(Context context, ArrayList<String> tlks) {
         super(context, R.style.Dialog_Fullscreen);
 
-        if (tlks != null) {
-            for (String t : tlks) {
-                Map<String, Object> m = new HashMap<String, Object>();
-                m.put("title", t);
-                tlkList.add(m);
+////        if (tlks != null) {
+////            for (String t : tlks) {
+////                Map<String, Object> m = new HashMap<String, Object>();
+////                m.put("title", t);
+////                tlkList.add(m);
+////            }
+
+////        }
+        if(null != tlks) {
+            mTotalContents = new String[tlks.size()];
+            tlks.toArray(mTotalContents);
+
+            mDispIndex = new ArrayList<Integer>();
+            for(int i=0; i<tlks.size(); i++) {
+                mDispIndex.add(i);
             }
-            
+        } else {
+            mTotalContents = new String[0];
+            mDispIndex = new ArrayList<Integer>();
         }
+
         mFileAdapter = new MessageListAdater(context,
-                tlkList,
+//                tlkList,
                 R.layout.message_sortitem_layout,
                 new String[]{"title", "abstract", ""},
                 // new int[]{R.id.tv_message_title, R.id.tv_message_abstract
@@ -82,6 +97,8 @@ public class MessageGroupsortDialog extends CustomerDialogBase implements View.O
         mListview.setAdapter(mFileAdapter);
         mListview.setOnItemClickListener(this);
         // mListview.setOnItemSelectedListener();
+        mFileAdapter.setmTotalContents(mTotalContents);
+        mFileAdapter.setContentIndex(mDispIndex);
     }
 
     @Override
@@ -90,9 +107,12 @@ public class MessageGroupsortDialog extends CustomerDialogBase implements View.O
             case R.id.move_up:
                 Debug.d("XXX", "--->up mSelected: " + mSelected);
                 if (mSelected > 0) {
-                    Map<String, Object> m = tlkList.remove(mSelected);
+//                    Map<String, Object> m = tlkList.remove(mSelected);
+                    Integer pos = mDispIndex.get(mSelected);
+                    mDispIndex.remove(mSelected);
                     mSelected = mSelected - 1;
-                    tlkList.add(mSelected, m);
+                    mDispIndex.add(mSelected, pos);
+//                    tlkList.add(mSelected, m);
                     mFileAdapter.setSelected(mSelected);
                     mFileAdapter.notifyDataSetChanged();
                 }
@@ -102,9 +122,12 @@ public class MessageGroupsortDialog extends CustomerDialogBase implements View.O
             case R.id.move_down:
             	Debug.d("XXX", "--->down mSelected: " + mSelected);
                 if (mSelected >= 0 && mSelected < mListview.getCount() - 1) {
-                    Map<String, Object> m = tlkList.remove(mSelected);
+//                    Map<String, Object> m = tlkList.remove(mSelected);
+                    Integer pos = mDispIndex.get(mSelected);
+                    mDispIndex.remove(mSelected);
                     mSelected += 1;
-                    tlkList.add(mSelected, m);
+                    mDispIndex.add(mSelected, pos);
+//                    tlkList.add(mSelected, m);
                     mFileAdapter.setSelected(mSelected);
                     mFileAdapter.notifyDataSetChanged();
                 }
@@ -113,11 +136,11 @@ public class MessageGroupsortDialog extends CustomerDialogBase implements View.O
 
             case R.id.ok:
                 StringBuilder result = new StringBuilder();
-                for (int i = 0; i < tlkList.size(); i++) {
-                    Map<String, Object> m = tlkList.get(i);
-                    String name = (String) m.get("title");
+                for (int i = 0; i < mDispIndex.size(); i++) {
+//                    Map<String, Object> m = tlkList.get(i);
+                    String name = mTotalContents[mDispIndex.get(i)];
                     result.append(name);
-                    if (i != tlkList.size() - 1) result.append("^");
+                    if (i != mDispIndex.size() - 1) result.append("^");
                 }
                 /* save group */
                 String group = "G-" + getSuffix();

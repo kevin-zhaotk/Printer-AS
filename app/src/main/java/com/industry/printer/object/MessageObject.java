@@ -26,16 +26,16 @@ public class MessageObject extends BaseObject {
 	
 // H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体
 	public static final String[] mDotSizes = {
-		"7x6", "10x8", "12x9", "14x10", "16x12"
+		"7x6", "10x8", "12x9", "14x10", "16x12", "16@L", "16@R"
 	};
 
 	public static final String[] mDot_32_Size = {
-		"7x6", "10x8", "12x9", "14x10", "16x12", "32"
+		"7x6", "10x8", "12x9", "14x10", "16x12", "16@L", "16@R", "32"
 	};
 
     // H.M.Wang 追加下列3行
     public static final String[] mDot_64_Size = {
-        "7x6", "10x8", "12x9", "14x10", "16x12", "24", "32", "64"
+        "7x6", "10x8", "12x9", "14x10", "16x12", "16@L", "16@R", "24", "32", "64"
     };
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体
 
@@ -293,34 +293,32 @@ public class MessageObject extends BaseObject {
 
 		} else if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT )//addbylk 喷头类型
 		{
-            if (size.equalsIgnoreCase("7x6")) {
-				h = 12.7f / 2;
-//				h = 6.4f;
-			} else if (size.equalsIgnoreCase("16x12")) {
-                h = 12.7f;
 // H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
-			} else if (size.equalsIgnoreCase("14x10")) {
+            if (size.equalsIgnoreCase(mDotSizes[0])) {
+				h = 12.7f / 2;
+			} else if (size.equalsIgnoreCase(mDotSizes[1])) {
+				h = 12.7f * 10 / 16;
+			} else if (size.equalsIgnoreCase(mDotSizes[2])) {
+				h = 12.7f * 12 / 16;
+			} else if (size.equalsIgnoreCase(mDotSizes[3])) {
 				h = 12.7f * 14 / 16;
-			} else if (size.equalsIgnoreCase("12x9")) {
-                h = 12.7f * 12 / 16;
-			} else if (size.equalsIgnoreCase("10x8")) {
-                h = 12.7f * 10 / 16;
+//			} else if (size.equalsIgnoreCase(mDotSizes[4]) || size.equalsIgnoreCase(mDotSizes[5]) || size.equalsIgnoreCase(mDotSizes[6])) {
+			} else {	// 与上面等效
+				h = 12.7f;
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 			}
 		} else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT ) { //addbylk
-			if (size.equalsIgnoreCase("7x6")) {
-				h = 12.7f / 4;
-//				h = 3.2f;
-			} else if (size.equalsIgnoreCase("16x12")) {
-				h = 12.7f / 2;
-//				h = 6.4f;
 // H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
-			} else if (size.equalsIgnoreCase("14x10")) {
+			if (size.equalsIgnoreCase(mDot_32_Size[0])) {
+				h = 12.7f / 4;
+			} else if (size.equalsIgnoreCase(mDot_32_Size[1])) {
+				h = 12.7f / 2 * 10 / 16;
+			} else if (size.equalsIgnoreCase(mDot_32_Size[2])) {
+				h = 12.7f / 2 * 12 / 16;
+			} else if (size.equalsIgnoreCase(mDot_32_Size[3])) {
 				h = 12.7f / 2 * 14 / 16;
-			} else if (size.equalsIgnoreCase("12x9")) {
-                h = 12.7f / 2 * 12 / 16;
-			} else if (size.equalsIgnoreCase("10x8")) {
-                h = 12.7f / 2 * 10 / 16;
+			} else if (size.equalsIgnoreCase(mDot_32_Size[4]) || size.equalsIgnoreCase(mDot_32_Size[5]) || size.equalsIgnoreCase(mDot_32_Size[6])) {
+				h = 12.7f / 2;
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 			} else {
 				h = 12.7f;
@@ -329,31 +327,25 @@ public class MessageObject extends BaseObject {
 
         // H.M.Wang 追加下列9行
         } else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT ) {
-            if (size.equalsIgnoreCase("7x6")) {
-				h = 12.7f / 8;
-//				h = 1.6f;
-            } else if (size.equalsIgnoreCase("16x12")) {
-				h = 12.7f / 8 * 2;
-//                h = 3.2f;
 // H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
-			} else if (size.equalsIgnoreCase("14x10")) {
+			if (size.equalsIgnoreCase(mDot_64_Size[0])) {
+				h = 12.7f / 8;
+			} else if (size.equalsIgnoreCase(mDot_64_Size[1])) {
+				h = 12.7f / 8 * 2 * 10 / 16;
+			} else if (size.equalsIgnoreCase(mDot_64_Size[2])) {
+				h = 12.7f / 8 * 2 * 12 / 16;
+			} else if (size.equalsIgnoreCase(mDot_64_Size[3])) {
                 h = 12.7f / 8 * 2 * 14 / 16;
-			} else if (size.equalsIgnoreCase("12x9")) {
-                h = 12.7f / 8 * 2 * 12 / 16;
-			} else if (size.equalsIgnoreCase("10x8")) {
-                h = 12.7f / 8 * 2 * 10 / 16;
-// End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
-			// H.M.Wang 2019-09-12 修改对应64DOT时指定的24点和32点高设置
-			} else if (size.equalsIgnoreCase("24")) {
+			} else if (size.equalsIgnoreCase(mDot_64_Size[4]) || size.equalsIgnoreCase(mDot_64_Size[5]) || size.equalsIgnoreCase(mDot_64_Size[6])) {
+				h = 12.7f / 8 * 2;
+			} else if (size.equalsIgnoreCase(mDot_64_Size[7])) {
 				h = 12.7f / 8 * 3;
-//				h = 4.8f;
-			} else if (size.equalsIgnoreCase("32")) {
+			} else if (size.equalsIgnoreCase(mDot_64_Size[8])) {
 				h = 12.7f / 8 * 4;
-//				h = 6.4f;
             } else {
                 h = 12.7f;
             }
-//            return h;
+// End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 		}
 		Debug.d(TAG, "--->h: " + h + ", type=" + mPNozzle.mType);
 		return h;
@@ -398,7 +390,8 @@ public class MessageObject extends BaseObject {
             } else if(size <= 152f * 14 / 16) {
                 return mDotSizes[3];
             } else {
-                return mDotSizes[4];
+//				return mDotSizes[4];
+                return mDotSizes[4] + "," + mDotSizes[5] + "," + mDotSizes[6];
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 			}
 		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
@@ -414,10 +407,12 @@ public class MessageObject extends BaseObject {
                 return mDot_32_Size[3];
             } else if (size <= 152f/2) {
 //				return mDot_32_Size[1];
-                return mDot_32_Size[4];
+//                return mDot_32_Size[4];
+				return mDot_32_Size[4] + "," + mDot_32_Size[5] + "," + mDot_32_Size[6];
 			} else {
 //				return mDot_32_Size[2];
-				return mDot_32_Size[5];
+//				return mDot_32_Size[5];
+				return mDot_32_Size[7];
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 			}
 
@@ -435,16 +430,17 @@ public class MessageObject extends BaseObject {
                 return mDot_64_Size[3];
 			} else if (size <= 152f/8*2) {
 //				return mDot_64_Size[1];
-                return mDot_64_Size[4];
+//                return mDot_64_Size[4];
+				return mDot_64_Size[4] + "," + mDot_64_Size[5] + "," + mDot_64_Size[6];
 			} else if (size <= 152f/8*3) {
 //				return mDot_64_Size[2];
-				return mDot_64_Size[5];
+				return mDot_64_Size[7];
 			} else if (size <= 152f/8*4) {
 //				return mDot_64_Size[3];
-				return mDot_64_Size[6];
+				return mDot_64_Size[8];
             } else {
 //				return mDot_64_Size[4];
-				return mDot_64_Size[7];
+				return mDot_64_Size[9];
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
             }
 

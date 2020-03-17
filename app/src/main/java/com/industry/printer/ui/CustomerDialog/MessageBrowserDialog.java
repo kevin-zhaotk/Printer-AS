@@ -52,8 +52,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class MessageBrowserDialog extends CustomerDialogBase implements android.view.View.OnClickListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnTouchListener, OnScrollListener, TextWatcher {
-
+//// public class MessageBrowserDialog extends CustomerDialogBase implements android.view.View.OnClickListener, OnItemClickListener, AdapterView.OnItemLongClickListener, OnTouchListener, OnScrollListener, TextWatcher {
+public class MessageBrowserDialog extends CustomerDialogBase implements android.view.View.OnClickListener, OnItemClickListener, AdapterView.OnItemLongClickListener, TextWatcher {
 	private final String TAG = MessageBrowserDialog.class.getSimpleName();
 
 	public TextView mConfirm;
@@ -62,38 +62,30 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 	public RelativeLayout mPageNext;
 	public TextView mDelete;
 	public TextView mGroup;
-	public ImageView mLoading;
 	public RelativeLayout mLoadingLy;
-
-	private Animation mOperating;
-
 
 	public EditText mSearch;
 	private static ArrayList<String> mTitles;
 
+	private String[] mTotalContents = null;
+	private ArrayList<Integer> mTotalIndex = null;
+	private ArrayList<Integer> mDispIndex = null;
+
 	public KZListView mMessageList;
 	public View mVSelected;
 
-	public boolean isTop;
-	public boolean isBottom;
-
 	public MessageListAdater mFileAdapter;
-	public LinkedList<Map<String, Object>> mContent;
-	public LinkedList<Map<String, Object>> mFilterContent;
 
 	/**
 	 * multi select
 	 */
-	private boolean mMode = false;
+	private boolean mMultiMode = false;
 	private OpenFrom mFrom;
-	private String location = null;
-	private int indexForScroll = 0;
+	private String mCurrentMsg = null;
 
 	private static final int MSG_FILTER_CHANGED = 1;
 	private static final int MSG_LOADED = 2;
-
-	private static final int MSG_REF = 3;
-
+	private static final int MSG_UPDATE_FILTER_STATUS = 3;
 
 	public enum OpenFrom {
 		OPEN_EDIT,
@@ -107,22 +99,19 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 				case MSG_FILTER_CHANGED:
 					Bundle bundle = msg.getData();
 					String title = bundle.getString("title");
-					//filterAfter(title);
 					filter(title);
 					break;
-				case MSG_LOADED:
-					mMessageList.setAdapter(mFileAdapter);
-					mFileAdapter.notifyDataSetChanged();
-					Debug.d(TAG, "--->indexForScroll ： " + indexForScroll);
-					mMessageList.setSelection(indexForScroll);
-					mFileAdapter.setSelected(indexForScroll);
-//					mMessageList.smoothScrollToPosition(indexForScroll);
-//					mMessageList.smoothScrollToPositionFromTop(indexForScroll, 0, 100);
-					hideLoading();
+				case MSG_UPDATE_FILTER_STATUS:
+					mFileAdapter.setContentIndex(mDispIndex);
 					break;
-				case MSG_REF:
-					mMessageList.setAdapter(mFileAdapter);
-					mFileAdapter.notifyDataSetChanged();
+				case MSG_LOADED:
+					mFileAdapter.setmTotalContents(mTotalContents);
+					mDispIndex = new ArrayList<Integer>(mTotalIndex);
+					mFileAdapter.setContentIndex(mDispIndex);
+					int scrollToPosition = find(mDispIndex, mCurrentMsg);
+					mMessageList.setSelection(scrollToPosition);
+					mFileAdapter.setSelected(scrollToPosition);
+					hideLoading();
 					break;
 				default:
 					break;
@@ -134,21 +123,14 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 		super(context, R.style.Dialog_Fullscreen);
 		mFrom = OpenFrom.OPEN_EDIT;
 		mVSelected = null;
-		mContent = new LinkedList<Map<String, Object>>();
-		mFilterContent = new LinkedList<Map<String, Object>>();
-		isTop = false;
-		isBottom = false;
 		mTitles = new ArrayList<String>();
+		mTotalIndex = new ArrayList<Integer>();
+		mDispIndex = new ArrayList<Integer>();
+
 		mFileAdapter = new MessageListAdater(context,
-				mContent,
 				R.layout.message_item_layout,
 				new String[]{"title", "abstract", ""},
-				// new int[]{R.id.tv_message_title, R.id.tv_message_abstract
 				new int[]{R.id.tv_msg_title, R.id.ll_preview, R.id.image_selected});
-
-		mOperating = AnimationUtils.loadAnimation(context, R.anim.loading_anim);
-		LinearInterpolator lin = new LinearInterpolator();
-		mOperating.setInterpolator(lin);
 	}
 
 	public MessageBrowserDialog(Context context, OpenFrom from) {
@@ -159,16 +141,12 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 	public MessageBrowserDialog(Context context, OpenFrom from, String msg) {
 		this(context);
 		mFrom = from;
-		location = msg;
-
-		Debug.d(TAG, "--->location: " + msg);
+		mCurrentMsg = msg;
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Debug.d(TAG, "===>oncreate super");
 		super.onCreate(savedInstanceState);
-		Debug.d(TAG, "===>oncreate");
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.setContentView(R.layout.message_list_layout);
 
@@ -198,18 +176,18 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 		mMessageList = (KZListView) findViewById(R.id.message_listview);
 		mMessageList.setOnItemClickListener(this);
 
+		mMessageList.setAdapter(mFileAdapter);
 
-		mMessageList.setOnTouchListener(this);
-		mMessageList.setOnScrollListener(this);
-
+		mMessageList.setOnItemLongClickListener(this);
+////		mMessageList.setOnTouchListener(this);
+////		mMessageList.setOnScrollListener(this);
 
 		mLoadingLy = (RelativeLayout) findViewById(R.id.loading);
-		mLoading = (ImageView) findViewById(R.id.loading_img);
 
 		mTitles.clear();
 		loadMessages();
 
-		mTitles.add(location);
+		mTitles.add(mCurrentMsg);
 		setupViews();
 
 	}
@@ -221,18 +199,36 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 		}
 	}
 
+	private void deleteTlkDir(String title) {
+		File file = new File(ConfigPath.getTlkDir(title));
+		if (file.exists()) {
+			File[] list = file.listFiles();
+			for (int i = 0; i < list.length; i++) {
+				File f = list[i];
+				f.delete();
+			}
+		}
+		file.delete();
+	}
+
+	private void deleteItem(Integer selected) {
+		String title = mTotalContents[selected];
+		Debug.d(TAG, "Delete: " + title + "@" + selected);
+		deleteTlkDir(title);
+		mTotalIndex.remove(selected);
+		mTotalContents[selected.intValue()] = "";
+		mDispIndex.remove(selected);
+	}
 
 	@Override
 	public void onClick(View arg0) {
 		switch (arg0.getId()) {
 			case R.id.btn_ok_message_list:
-				if (mMode) {
+				if (mMultiMode) {
 					mTitles.clear();
-					Map<String, Boolean> selected = mFileAdapter.getSelected();
-					for (String key : selected.keySet()) {
-
-						Map<String, Object> item = mContent.get(Integer.parseInt(key));
-						String title = (String) item.get("title");
+					ArrayList<Integer> selected = mFileAdapter.getSelected();
+					for(Integer idx : selected) {
+						String title = mTotalContents[idx];
 						if (title.startsWith("G-")) {
 							continue;
 						}
@@ -257,15 +253,19 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 				mMessageList.smoothScrollBy(200, 50);
 				break;
 			case R.id.btn_delete:
-				mFileAdapter.delete();
-				if (mMode) {
+				if (mMultiMode) {
+					for(Integer i : mFileAdapter.getSelected()) {
+						deleteItem(i);
+					}
 					clearMultiSelect();
+				} else {
+					deleteItem(mFileAdapter.getSelectedSingle());
 				}
+				mFileAdapter.setContentIndex(mDispIndex);
 				break;
 				
 			case R.id.btn_multi_select:
 				switchMultiSelect();
-
 				break;
 		}
 	}
@@ -273,14 +273,13 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Debug.d(TAG, "--->onItemClick");
-		Map<String, Object> selected = mContent.get(position);
 		mFileAdapter.setSelected(position);
 		mFileAdapter.notifyDataSetChanged();
-		if (!mMode) {
+		if (!mMultiMode) {
 			mTitles.clear();
-			mTitles.add((String) selected.get("title"));
+			mTitles.add(mTotalContents[mDispIndex.get(position)]);
 		} else {
-			String title = (String) selected.get("title");
+			String title = mTotalContents[mDispIndex.get(position)];
 			if (title == null || title.startsWith("G-")) {
 				return;
 			}
@@ -290,144 +289,131 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 				mTitles.add(title);
 			}
 		}
-		//addbylk
-		//	mMessageList.setAdapter(mFileAdapter);
-			/*
-			if(mVSelected == null)
-			{
-				view.setBackgroundColor(R.color.message_selected_color);
-				mVSelected = view;
-			}
-			else
-			{
-				mVSelected.setBackgroundColor(Color.WHITE);
-				view.setBackgroundColor(R.color.message_selected_color);
-				mVSelected = view;
-			}*/
-
 	}
 
+	private void switchMode(boolean mode) {
+		mMultiMode = mode;
+		mTitles.clear();
+		mFileAdapter.setMultiMode(mMultiMode);
+		mFileAdapter.notifyDataSetChanged();
+	}
 
 	private void clearMultiSelect() {
-		
-		mMode = false;
-		mTitles.clear();
-		mFileAdapter.setMode(mMode);
-		mFileAdapter.notifyDataSetChanged();
+		switchMode(false);
 	}
 
 	private void switchMultiSelect() {
-		
-		mMode = !mMode;
-		mTitles.clear();
-		mFileAdapter.setMode(mMode);
-		mFileAdapter.notifyDataSetChanged();
+		switchMode(!mMultiMode);
 	}
+
 	@Override
 	public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-		Debug.d(TAG, "--->onItemLongClick: " + i);
-		Map<String, Object> item = (Map<String, Object>) mFileAdapter.getItem(i);
-
-		mMode = true;
-		mTitles.clear();
-		mFileAdapter.setMode(mMode);
-		mFileAdapter.notifyDataSetChanged();
+		switchMode(true);
 		return true;
+	}
+
+	private ArrayList<Integer> sort(String[] src) {
+		ArrayList<Integer> indexs = new ArrayList<Integer>();
+
+		for (int i=0; i<src.length; i++) {
+			int start = 0;
+			int end = indexs.size();
+
+			int j = start;
+			do {
+				if (j >= end) {
+					indexs.add(end, i);
+					break;
+				}
+				int et = src[i].compareTo(src[indexs.get(j)]);
+				if (et == 0) {
+					indexs.add(j, i);
+					break;
+				} else if (et < 0) {        // 欲插入字符串比当前字符串小
+					end = j;
+					j = (start + end) / 2;
+				} else if (et > 0) {        // 欲插入字符串比当前字符串大
+					start = j;
+					j = (start + end) / 2;
+				}
+				if (start + 1 == end) {
+					indexs.add(end, i);
+					break;
+				}
+			} while (true);
+		}
+		return indexs;
+	}
+
+	private int find(ArrayList<Integer> index, String find) {
+		if(null == find || find.isEmpty()) {
+			return 0;
+		}
+
+		int foundPos = 0;
+
+		int start = 0;
+		int end = index.size();
+
+		int i = start;
+		do {
+			int et = find.compareTo(mTotalContents[index.get(i)]);
+			if (et == 0) {
+				foundPos = i;
+				break;
+			} else if (et < 0) {
+				end = i;
+				i = (start + end) / 2;
+			} else if (et > 0) {
+				start = i;
+				i = (start + end) / 2;
+			}
+		} while (start + 1 < end);
+
+		return foundPos;
 	}
 
 	@SuppressWarnings("unchecked")
 	public void loadMessages() {
 		showLoading();
-		mHandler.post(
-				new Runnable() {
-
-					@Override
-					public void run() {
-						TLKFileParser parser = new TLKFileParser(getContext(), null);
-						String tlkPath = ConfigPath.getTlkPath();
-						if (tlkPath == null) {
-							return;
-						}
-						Debug.d(TAG, "--->load message begin");
-						File rootpath = new File(tlkPath);
-						// File[] Tlks = rootpath.listFiles();
-						String[] Tlks = rootpath.list(new FilenameFilter() {
-
-							@Override
-							public boolean accept(File arg0, String arg1) {
-								if (mFrom == OpenFrom.OPEN_EDIT && arg1.startsWith("G-")) {
-									return false;
-								}
-								return true;
-							}
-						});
-						if (Tlks == null) {
-							return;
-						}
-						Arrays.sort(Tlks,
-								new Comparator() {
-									public int compare(Object arg0, Object arg1) {
-										int cp1 = 0;
-										int cp2 = 0;
-										if (((String) arg0).startsWith("G-") || ((String) arg1).startsWith("G-")) {
-											if (((String) arg0).startsWith("G-") && !((String) arg1).startsWith("G-")) {
-												return -1;
-											} else if (!((String) arg0).startsWith("G-") && ((String) arg1).startsWith("G-")) {
-												return 1;
-											} else {
-												return 0;
-											}
-										}
-										try {
-											cp1 = Integer.parseInt((String) arg0);
-											cp2 = Integer.parseInt((String) arg1);
-										} catch (NumberFormatException e) {
-											e.printStackTrace();
-										}
-										//Debug.d(TAG, "--->cp1 = " + cp1 + "  cp2 = " + cp2);
-										if (cp1 > cp2) {
-											return 1;
-										} else if (cp1 == cp2) {
-											return 0;
-										}
-										return -1;
-									}
-								}
-						);
-
-						Debug.d(TAG, "--->load message sort ok");
-						for (String t : Tlks) {
-
-							File file = new File(tlkPath, t);
-							if (!file.isDirectory()) {
-								continue;
-							}
-
-							Map<String, Object> map = new HashMap<String, Object>();
-							map.put("title", t);
-							mContent.add(map);
-							if (t.equalsIgnoreCase(location)) {
-								indexForScroll = mContent.size() - 1;
-							}
-							mFilterContent.add(map);
-						}
-						// mMessageList.setAdapter(mFileAdapter);
-						Debug.d(TAG, "--->load message load success");
-						mHandler.sendEmptyMessage(MSG_LOADED);
-					}
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				String tlkPath = ConfigPath.getTlkPath();
+				if (tlkPath == null) {
+					return;
 				}
-		);
 
+				Debug.d(TAG, "--->load message begin");
+				File rootpath = new File(tlkPath);
 
+				mTotalContents = rootpath.list(new FilenameFilter() {
+					@Override
+					public boolean accept(File arg0, String arg1) {
+						if (mFrom == OpenFrom.OPEN_EDIT && arg1.startsWith("G-")) {
+							return false;
+						}
+						if(!arg0.isDirectory()) {
+							return false;
+						}
+						return true;
+					}
+				});
+				if (mTotalContents == null) {
+					return;
+				}
+
+				mTotalIndex = sort(mTotalContents);
+				mHandler.sendEmptyMessage(MSG_LOADED);
+			}
+		}).start();
 	}
 
 	private void showLoading() {
 		mLoadingLy.setVisibility(View.VISIBLE);
-		mLoading.startAnimation(mOperating);
 	}
 
 	private void hideLoading() {
-		mLoading.clearAnimation();
 		mLoadingLy.setVisibility(View.GONE);
 	}
 
@@ -440,24 +426,25 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 		}
 	}
 
-	private boolean isTouch = true;
-	@Override
-	public boolean onTouch(View arg0, MotionEvent arg1) {
-		switch (arg1.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				//mMessageList.dispatchTouchEvent(arg1);
+////	private boolean isTouch = true;
 
-				break;
-			case MotionEvent.ACTION_MOVE:
-				isTouch =false;
-				break;
-			case MotionEvent.ACTION_UP:
-				isTouch = true;
-				break;
-		}
-		return false;
-	}
-		float mdownx,mdowny;
+////	@Override
+////	public boolean onTouch(View arg0, MotionEvent arg1) {
+////		switch (arg1.getAction()) {
+////			case MotionEvent.ACTION_DOWN:
+////				//mMessageList.dispatchTouchEvent(arg1);
+////				break;
+////			case MotionEvent.ACTION_MOVE:
+////				isTouch =false;
+////				break;
+////			case MotionEvent.ACTION_UP:
+////				isTouch = true;
+////				break;
+////		}
+////		return false;
+////	}
+
+////		float mdownx,mdowny;
 //		@Override
 //		public boolean onTouch(View arg0, MotionEvent arg1) {
 //			// TODO Auto-generated method stub
@@ -505,108 +492,72 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 //			return false;
 //		}
 
-		@Override
-		public void onScroll(AbsListView arg0, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-			if(firstVisibleItem==0){
-				Debug.e(TAG, "滑到顶部");
-				isTop = true;
-            } else {
-            	isTop = false;
-            }
-			
-			if(visibleItemCount+firstVisibleItem==totalItemCount){
-            	Debug.e(TAG, "滑到底部");
-            	isBottom = true;
-            } else {
-            	isBottom = false;
-            }
-		}
+////		@Override
+////		public void onScroll(AbsListView arg0, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+////			if(firstVisibleItem==0){
+////				Debug.e(TAG, "滑到顶部");
+////				isTop = true;
+////            } else {
+////            	isTop = false;
+////            }
 
-		@Override
-		public void onScrollStateChanged(AbsListView view, int state) {
-			switch (state) {
-			case OnScrollListener.SCROLL_STATE_IDLE:
-				Debug.d(TAG, "===>idle");
-				
-				break;
-			case OnScrollListener.SCROLL_STATE_FLING:
-				Debug.d(TAG, "===>fling");
-				break;
-			case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-				Debug.d(TAG, "===>touch scroll");
-				break;
-			default:
-				break;
-			}
-		}
+////			if(visibleItemCount+firstVisibleItem==totalItemCount){
+////            	Debug.e(TAG, "滑到底部");
+////            	isBottom = true;
+////            } else {
+////            	isBottom = false;
+////            }
+////		}
+
+////		@Override
+////		public void onScrollStateChanged(AbsListView view, int state) {
+////			switch (state) {
+////			case OnScrollListener.SCROLL_STATE_IDLE:
+////				Debug.d(TAG, "===>idle");
+
+////				break;
+////			case OnScrollListener.SCROLL_STATE_FLING:
+////				Debug.d(TAG, "===>fling");
+////				break;
+////			case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+////				Debug.d(TAG, "===>touch scroll");
+////				break;
+////			default:
+////				break;
+////			}
+////		}
 		
 
 		/**
 		 * 過濾信息名匹配的
 		 * @param filter
 		 */
-		public void filter(String filter) {
-			mContent.clear();
-			mFileAdapter.setSelected(-1);
-			for (int i = 0; i < mFilterContent.size(); i++) {
-				mContent.add(mFilterContent.get(i));
+		public void filter(final String filter) {
+			if(filter.isEmpty()) {
+				mDispIndex = new ArrayList<Integer>(mTotalIndex);
+				mHandler.sendEmptyMessage(MSG_UPDATE_FILTER_STATUS);
+			} else {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						mDispIndex.clear();
+						long interval = System.currentTimeMillis();
+						for(int i=0; i<mTotalIndex.size(); i++) {
+							if(mTotalContents[mTotalIndex.get(i)].indexOf(filter) >=0 ) {
+								mDispIndex.add(mTotalIndex.get(i));
+							}
+							if(System.currentTimeMillis() > interval + 50) {
+								mHandler.sendEmptyMessage(MSG_UPDATE_FILTER_STATUS);
+								try {Thread.sleep(100);} catch (Exception e) {};
+								interval = System.currentTimeMillis();
+							}
+						}
+						mHandler.sendEmptyMessage(MSG_UPDATE_FILTER_STATUS);
+					}
+				}).start();
 			}
-			Debug.d(TAG, "mcontent.size=" + mContent.size());
-			
-			if (StringUtil.isEmpty(filter)) {
-				mFileAdapter.notifyDataSetChanged();
-				return;
-			}
-			
-			for (int i = 0; i < mContent.size();) {
-				HashMap<String, Object> item = (HashMap<String, Object>) mContent.get(i);
-				String title = (String) item.get("title");
-				Debug.d(TAG, "title=" + title);
-				if (!title.contains(filter)) {
-					Debug.d(TAG, "is match: " + title + ", filter: " + filter);
-					mContent.remove(item);
-				} else {
-					i++;
-				}
-			}
-			Debug.d(TAG, "mcontent.size=" + mContent.size());
-			mMessageList.setAdapter(mFileAdapter);
-			mFileAdapter.notifyDataSetChanged();
 		}
 		
-		/**
-		 * 過濾結果爲從第一個開始匹配的信息
-		 * @param filter
-		 */
-		public void filterAfter(String filter) {
-			mContent.clear();
-			mFileAdapter.setSelected(-1);
-			for (int i = 0; i < mFilterContent.size(); i++) {
-				mContent.add(mFilterContent.get(i));
-			}
-			Debug.d(TAG, "mcontent.size=" + mContent.size());
-			
-			if (StringUtil.isEmpty(filter)) {
-				mFileAdapter.notifyDataSetChanged();
-				return;
-			}
-			
-			for (int i = 0; i < mContent.size();) {
-				HashMap<String, Object> item = (HashMap<String, Object>) mContent.get(i);
-				String title = (String) item.get("title");
-				Debug.d(TAG, "title=" + title);
-				if (!title.startsWith(filter)) {
-					Debug.d(TAG, "is match: " + title + ", filter: " + filter);
-					mContent.remove(item);
-				} else {
-					break;
-				}
-			}
-			Debug.d(TAG, "mcontent.size=" + mContent.size());
-			mMessageList.setAdapter(mFileAdapter);
-			mFileAdapter.notifyDataSetChanged();
-		}
-
 		@Override
 		public void afterTextChanged(Editable arg0) {
 			String text = arg0.toString();

@@ -103,7 +103,8 @@ public class RealtimeMonth extends BaseObject {
 //////addbylk 
 	@Override	 
 	public Bitmap getpreviewbmp()
-	{	Debug.d(TAG, "1===== " + getContent() );
+	{
+		Debug.d(TAG, "1===== " + getContent() );
 		Bitmap bitmap;
 		mPaint.setTextSize(getfeed());
 		mPaint.setAntiAlias(true);   
@@ -111,15 +112,16 @@ public class RealtimeMonth extends BaseObject {
 	
 		boolean isCorrect = false;
 		// Debug.d(TAG,"--->getBitmap font = " + mFont);
-		for (String font : mFonts) {
-			if (font.equals(mFont)) {
-				isCorrect = true;
-				break;
-			}
-		}
-		if (!isCorrect) {
-			mFont = DEFAULT_FONT;
-		}
+////		for (String font : mFonts) {
+////			if (font.equals(mFont)) {
+////				isCorrect = true;
+////				break;
+////			}
+////		}
+////		if (!isCorrect) {
+////			mFont = DEFAULT_FONT;
+////		}
+		Debug.d(TAG, "Font: " + mFont );
 		try {
 			mPaint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {}
@@ -144,13 +146,13 @@ public class RealtimeMonth extends BaseObject {
 		
 //		Debug.d(TAG, "2===== " + getContent() );
 		bitmap = Bitmap.createBitmap(width , (int)mHeight, Configs.BITMAP_CONFIG);
-		Debug.d(TAG,"--->getBitmap width="+mWidth+", mHeight="+mHeight);
+		Debug.d(TAG,"--->getBitmap width="+width+", mHeight="+mHeight);
 		mCan = new Canvas(bitmap);
 		FontMetrics fm = mPaint.getFontMetrics();
 		mPaint.setColor(Color.BLUE);
 
 		mCan.drawText(str_new_content , 0, mHeight-fm.descent, mPaint);
-	
-		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);	
-	}	
+
+		return Bitmap.createScaledBitmap(bitmap, (int)mWidth, (int)mHeight, false);
+	}
 }

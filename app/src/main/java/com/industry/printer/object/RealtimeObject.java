@@ -262,6 +262,7 @@ public class RealtimeObject extends BaseObject {
 			object.meature();
 			object.setX(x);
 			object.setWidth(object.getWidth() * mRatio);
+//			object.setWidth(object.getWidth());
 			x = x + object.getWidth();
 		}
 		mXcor_end = x;
@@ -276,7 +277,6 @@ public class RealtimeObject extends BaseObject {
 		size = getHeight();
 		Debug.d(TAG, "--->setHeight: " + size);
 		float x = getX();
-		isNeedRedraw = true;
 		if(mSubObjs == null)
 			return;
 		for(BaseObject o : mSubObjs)
@@ -290,6 +290,8 @@ public class RealtimeObject extends BaseObject {
 			// x = o.getXEnd();
 		}
 		// setWidth(x - getX());
+		isNeedRedraw = true;
+//		this.meature();
 	}
 	
 	@Override

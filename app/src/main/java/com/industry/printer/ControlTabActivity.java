@@ -692,7 +692,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	private void refreshInk() {
 		
-		float ink = mInkManager.getLocalInk(mRfid);
+		float ink = mInkManager.getLocalInkPercentage(mRfid);
 //		Debug.d(TAG, "--->refresh ink: " + mRfid + " = " + ink);
 		String level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");
 		
@@ -748,9 +748,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		// ((MainActivity)getActivity()).mCtrlTitle.setText(String.format(cFormat, mCounter));
 
 		count = mInkManager.getLocalInk(mRfid) - 1;
+		Debug.d(TAG, "[2020-3-16 Check] mInkManager.getLocalInk(mRfid): " + count);
 		if (mDTransThread != null) {
 			Debug.d(TAG, "--->count: " + count);
 			count = count * mDTransThread.getInkThreshold(0) + mDTransThread.getCount();
+			Debug.d(TAG, "[2020-3-16 Check] mDTransThread.getInkThreshold(0): " + mDTransThread.getInkThreshold(0));
+			Debug.d(TAG, "[2020-3-16 Check] mDTransThread.getCount(): " + mDTransThread.getCount());
+			Debug.d(TAG, "[2020-3-16 Check] calculated count: " + count);
 		}
 		if (count < 0) {
 			count = 0;

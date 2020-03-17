@@ -27,6 +27,11 @@ public class SmartCardManager implements IInkDevice{
     }
 
     @Override
+    public float getLocalInkPercentage(int head) {
+        return 0;
+    }
+
+    @Override
     public boolean isValid(int dev) {
         return false;
     }

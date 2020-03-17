@@ -13,6 +13,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.widget.Toast;
 
 import com.industry.printer.Constants.Constants;
 import com.industry.printer.FileFormat.SystemConfigFile;
@@ -786,7 +787,15 @@ public class DataTransferThread {
 				int totalDot = 0;
 				for (int j = 0; j < dots.length; j++) {
 					// H.M.Wang 2019-10-11 获得的点数乘2
-                    dots[j] *= 2;
+					SystemConfigFile config = SystemConfigFile.getInstance(mContext);
+					final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+					final PrinterNozzle head = PrinterNozzle.getInstance(headIndex);
+
+					if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT && head != PrinterNozzle.MESSAGE_TYPE_32_DOT && head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+						dots[j] *= 2;
+					} else {
+						dots[j] *= 200;
+					}
 					totalDot += dots[j];
 				}
 				t.setDots(totalDot);
@@ -794,7 +803,7 @@ public class DataTransferThread {
 
 //				Debug.d(TAG, "GetPrintDots Done Time: " + System.currentTimeMillis());
 
-				StringBuilder sb = new StringBuilder();
+				final StringBuilder sb = new StringBuilder();
 				sb.append("Dots per Head: [");
 				for (int i=0; i<dots.length; i++) {
 					if(i != 0) {
@@ -804,6 +813,12 @@ public class DataTransferThread {
 				}
 				sb.append("]");
 				Debug.d(TAG, sb.toString());
+				mHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(mContext, sb.toString(), Toast.LENGTH_LONG).show();
+					}
+				});
 
 				Debug.e(TAG, "--->write data");
 				FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
