@@ -1236,6 +1236,7 @@ public class BaseObject{
 		try {
 			mPaint.setTypeface(FontCache.get(mContext, mFont));
 		} catch (Exception e) {}
+		mPaint.setTextSize(getfeed());
 
 		// H.M.Wang 修改为测量标准字符串，而非实际内容
 //		int width = (int) mPaint.measureText(getContent());

@@ -261,11 +261,13 @@ public class RealtimeObject extends BaseObject {
 			BaseObject object = mSubObjs.get(i);
 			object.meature();
 			object.setX(x);
+			Debug.d(TAG, "Content:" + object.getContent() + "; mWidth:" + object.getWidth() + "; mRatio:" + mRatio);
 			object.setWidth(object.getWidth() * mRatio);
 //			object.setWidth(object.getWidth());
 			x = x + object.getWidth();
 		}
 		mXcor_end = x;
+		Debug.d(TAG, "Toal mXcor_end:" + mXcor_end + "; mXcor:" + mXcor);
 		setWidth(mXcor_end - mXcor);
 	};
 	
@@ -291,7 +293,7 @@ public class RealtimeObject extends BaseObject {
 		}
 		// setWidth(x - getX());
 		isNeedRedraw = true;
-//		this.meature();
+		this.meature();
 	}
 	
 	@Override

@@ -23,7 +23,7 @@ void print_returns(HP_SMART_CARD_result_t result)
 void assert_handler(const char *error_str)
 {
     printf("=========================================\n");
-    printf("Test Main: HP_ASSERT Failed\n");
+    printf("Smartcard Main: HP_ASSERT Failed\n");
     printf("%s\n", error_str);
     printf("=========================================\n");
 }
@@ -32,7 +32,7 @@ void cache_monitor_failure_handler(HP_SMART_CARD_device_id_t dev_id,
                                    HP_SMART_CARD_result_t result)
 {
     printf("=========================================\n");
-    printf("Test Main: Cache monitor failure\n");
+    printf("Smartcard Main: Cache monitor failure\n");
     printf("Device Id = %d, ", dev_id);
     print_returns(result);
     printf("=========================================\n");

@@ -252,7 +252,8 @@
 
 	<string name="strBtnSave">Ok</string>
 
-	
+	<string name="strRecvedRemote">Received from Remote</string>
+
 	<string name="str_fileicon_des">file icon</string>
 	<string name="str_file_save"> Ok </string>
 	<string name="str_file_cancel">Cancel</string>

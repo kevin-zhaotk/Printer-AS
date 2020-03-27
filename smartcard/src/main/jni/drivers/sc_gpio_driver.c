@@ -13,19 +13,139 @@
         北京
     @变更履历
         2019.10.15 创建 Version 1.0
+        2020.3.20 取消ext-gpio的引用，改为通过shell进行访问
 *********************************************************************************/
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <hp_debug_log_internal.h>
 #include "common_log.h"
 #include "internal_ifc/sc_gpio_driver.h"
 
 /*********************************************************************************
-    SC_GPIO_DRIVER_open
+    SP_GPIO_DRIVER_set_value
+----------------------------------------------------------------------------------
+    @描述
+        给GPIO端口设置值。
+    @参数
+        port: GPIO端口
+        value: 设置值
+    @返回值
+        SC_GPIO_DRIVER_SUCCESS(0): 关闭成功
+        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
+**********************************************************************************/
+
+int SP_GPIO_DRIVER_set_value(int port, int value) {
+    LOGI(">>> SP_GPIO_DRIVER_set_value[%d] to port[%d]", value, port);
+
+    FILE *fp;
+    char s[50]="";
+    char s1[50]="";
+
+    /*    system("su");
+    if(chmod("/sys/class/gpio/export", 777) == -1) {
+        LOGE(">>> Error: SP_GPIO_DRIVER_set_value chmod. %s", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+*/
+    if((fp = fopen("/sys/class/gpio/export", "w")) == NULL) {
+        LOGE(">>> SP_GPIO_DRIVER_set_value error when open port! [%s]", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    fprintf(fp, "%d", port);
+    fclose(fp);
+
+    sprintf(s, "/sys/class/gpio/gpio%d/direction", port);
+
+    if((fp = fopen(s, "rb+")) == NULL) {
+        LOGE(">>> SP_GPIO_DRIVER_set_value error when set direction! [%s]", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+    fprintf(fp, "out");
+    fclose(fp);
+
+    sprintf(s1, "/sys/class/gpio/gpio%d/value", port);
+    if((fp = fopen(s1, "rb+")) == NULL) {
+        LOGE(">>> SP_GPIO_DRIVER_set_value error when set value! [%s]", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    fprintf(fp, "%d", value);
+    fclose(fp);
+
+    if((fp = fopen("/sys/class/gpio/unexport", "w")) == NULL) {
+        LOGE(">>> SP_GPIO_DRIVER_set_value error when close port! [%s]", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    fprintf(fp, "%d", port);
+    fclose(fp);
+
+    LOGD(">>> SP_GPIO_DRIVER_set_value set [%d] to port [%d], done!", value, port);
+
+    return SC_GPIO_DRIVER_SUCCESS;
+}
+
+/*********************************************************************************
+    SP_GPIO_DRIVER_get_value
+----------------------------------------------------------------------------------
+    @描述
+        从GPIO端口读取值。
+    @参数
+        port: GPIO端口
+    @返回值
+        value: 读取的值
+        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
+**********************************************************************************/
+
+int SP_GPIO_DRIVER_get_value(int port) {
+    LOGI(">>> SP_GPIO_DRIVER_get_value from port [%d]", port);
+
+    int value;
+
+    FILE *fp;
+    char s[50]="";
+    char s1[50]="";
+
+    if((fp = fopen("/sys/class/gpio/export", "w")) == NULL) {
+        LOGE(">>> SP_GPIO_DRIVER_get_value error when open port! [%s]", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    fprintf(fp, "%d", port);
+    fclose(fp);
+
+    sprintf(s, "/sys/class/gpio/gpio%d/direction", port);
+    if((fp = fopen(s, "rb+")) == NULL) {
+        LOGE(">>> SP_GPIO_DRIVER_get_value error when set direction! [%s]", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+    fprintf(fp, "in");
+    fclose(fp);
+
+    sprintf(s1, "/sys/class/gpio/gpio%d/value", port);
+    if((fp = fopen(s1, "rb+")) == NULL) {
+        LOGE(">>> SP_GPIO_DRIVER_get_value error when read value! [%s]", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    size_t ret = fread(&value, sizeof(value), 1, fp);
+
+    if((fp = fopen("/sys/class/gpio/unexport", "w")) == NULL) {
+        LOGE(">>> SP_GPIO_DRIVER_get_value error when close port! [%s]", strerror(errno));
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    fprintf(fp, "%d", port);
+    fclose(fp);
+
+    LOGD(">>> SP_GPIO_DRIVER_get_value: %d", value);
+    return (ret > 0 ? value : SC_GPIO_DRIVER_FAIL);
+}
+
+/*********************************************************************************
+    SC_GPIO_DRIVER_open(取消)
 ----------------------------------------------------------------------------------
     @描述
         打开一个GPIO端口。
@@ -35,7 +155,7 @@
         >0: 文件描述符
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
-
+/*
 int SC_GPIO_DRIVER_open(char *dev) {
     LOGI(">>> SC_GPIO_DRIVER_open: %s", dev);
 
@@ -54,9 +174,9 @@ int SC_GPIO_DRIVER_open(char *dev) {
 
     return fd;
 }
-
+*/
 /*********************************************************************************
-    SC_GPIO_DRIVER_write
+    SC_GPIO_DRIVER_write（取消）
 ----------------------------------------------------------------------------------
     @描述
         向一个GPIO端口写数据。
@@ -68,7 +188,7 @@ int SC_GPIO_DRIVER_open(char *dev) {
         >0: 写入数据的长度
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
-
+/*
 int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count) {
     char buf[1024];
     toHexString(data_buf, buf, count, ',');
@@ -88,9 +208,9 @@ int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count) {
 
     return ret;
 }
-
+*/
 /*********************************************************************************
-    SC_GPIO_DRIVER_ioctl
+    SC_GPIO_DRIVER_ioctl（取消）
 ----------------------------------------------------------------------------------
     @描述
         向一个GPIO端口发送输入输出控制字。
@@ -102,7 +222,7 @@ int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count) {
         SC_GPIO_DRIVER_SUCCESS(0): 设置成功
         SC_GPIO_DRIVER_FAIL(<=-1)：失败，及失败原因
 **********************************************************************************/
-
+/*
 int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
     LOGI(">>> SC_GPIO_DRIVER_ioctl: Command: 0x%02X; Value: [0x%04X]", cmd, arg1);
 
@@ -119,7 +239,7 @@ int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
 
     return ret;
 }
-
+*/
 /*
 int SC_GPIO_DRIVER_poll(int fd) {
 	LOGI(">>> SC_GPIO_DRIVER_poll: %d", fd);
@@ -147,7 +267,7 @@ int SC_GPIO_DRIVER_poll(int fd) {
 */
 
 /*********************************************************************************
-    SC_GPIO_DRIVER_read ------------------------------- 该函数需要待赵工将驱动写好后，根据其驱动进行再次修改
+    SC_GPIO_DRIVER_read（取消）
 ----------------------------------------------------------------------------------
     @描述
         从一个GPIO端口读取数值。
@@ -158,7 +278,7 @@ int SC_GPIO_DRIVER_poll(int fd) {
         >0: 读取的数值
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
-
+/*
 int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
     LOGI(">>> SC_GPIO_DRIVER_read: Pin: %d", pin);
 
@@ -178,9 +298,9 @@ int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
 
     return buf;
 }
-
+*/
 /*********************************************************************************
-    SC_GPIO_DRIVER_close
+    SC_GPIO_DRIVER_close（取消）
 ----------------------------------------------------------------------------------
     @描述
         关闭一个GPIO端口。
@@ -190,7 +310,7 @@ int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
         SC_GPIO_DRIVER_SUCCESS(0): 关闭成功
         SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
 **********************************************************************************/
-
+/*
 int SC_GPIO_DRIVER_close(int fd) {
 //    LOGI(">>> SC_GPIO_DRIVER_close: %d", fd);
 
@@ -208,3 +328,4 @@ int SC_GPIO_DRIVER_close(int fd) {
 
     return ret;
 }
+*/

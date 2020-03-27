@@ -9,7 +9,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -315,8 +317,18 @@ public class DataTransferThread {
 
 // H.M.Wang 2019-12-19 函数名变更，处理由分隔符分开的字符串，主要满足数据源为以太网和串口协议2的情况
 // H.M.Wang 2019-12-16 将计数器和动态二维码替代部分函数化，以对应串口和网络两方面的需求
-	public void setRemoteTextSeparated(String data) {
+	public void setRemoteTextSeparated(final String data) {
 		Debug.d(TAG, "String from Remote = [" + data + "]");
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if(null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.setMessage(data);
+					mRemoteRecvedPromptDlg.show();		// 不知道为啥，hide之后，必须要show两次才能够及时显示出来
+					mRemoteRecvedPromptDlg.show();
+				}
+			}
+		});
 		String[] recvStrs = data.split(EC_DOD_Protocol.TEXT_SEPERATOR);
 
 		int strIndex = 0;
@@ -346,8 +358,18 @@ public class DataTransferThread {
 // End. -----
 
 // H.M.Wang 2019-12-19 追加函数，处理未由分隔符分开的字符串，根据计数器的位数向前逐个填充计数器，数据不足时计数器内容为空，主要满足串口协议1
-	public void setRemoteTextFitCounter(String data) {
+	public void setRemoteTextFitCounter(final String data) {
 		Debug.d(TAG, "String from Remote = [" + data + "]");
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if(null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.setMessage(data);
+					mRemoteRecvedPromptDlg.show();
+					mRemoteRecvedPromptDlg.show();
+				}
+			}
+		});
 
 		int strIndex = 0;
 		int counterIndex = 0;
@@ -373,8 +395,18 @@ public class DataTransferThread {
 // End. -----
 
 // H.M.Wang 2019-12-19 追加函数，将字符串直接付给第一个计数器，主要满足串口协议3
-	public void setRemoteTextDirect(String data) {
+	public void setRemoteTextDirect(final String data) {
 		Debug.d(TAG, "String from Remote = [" + data + "]");
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if(null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.setMessage(data);
+					mRemoteRecvedPromptDlg.show();
+					mRemoteRecvedPromptDlg.show();
+				}
+			}
+		});
 
 		boolean needUpdate = false;
 
@@ -390,6 +422,8 @@ public class DataTransferThread {
 		mNeedUpdate = needUpdate;
 	}
 // End. -----
+
+	private AlertDialog mRemoteRecvedPromptDlg = null;
 
 	public boolean launch(Context ctx) {
 		// H.M.Wang 2019-12-31 设置mContext，以避免因为mContext=null而导致程序崩溃
@@ -438,6 +472,14 @@ public class DataTransferThread {
 
 		// End of H.M.Wang 2019-12-19 支持多种串口协议的修改
 
+		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		mRemoteRecvedPromptDlg = builder.setTitle(R.string.strRecvedRemote).setMessage("").setPositiveButton(R.string.str_ok, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				mRemoteRecvedPromptDlg.hide();
+			}
+		}).create();
+
 		mRunning = true;
 
 		mPrinter = new PrintTask();
@@ -453,6 +495,10 @@ public class DataTransferThread {
 	public void finish() {
 		mRunning = false;
 
+		if(null != mRemoteRecvedPromptDlg) {
+			mRemoteRecvedPromptDlg.dismiss();
+			mRemoteRecvedPromptDlg = null;
+		}
 		// H.M.Wang 2019-10-23 串口发送数据支持
 		SerialHandler serialHandler =  SerialHandler.getInstance();
 		serialHandler.setPrintCommandListener(null);

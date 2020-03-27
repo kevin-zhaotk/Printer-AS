@@ -573,7 +573,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						Debug.d(TAG, "content="+mContent.getText().toString());
 
 ////						Resources res = mContext.getResources();
-						
+
 						mObject.setReverse(mReverse.isChecked());
 						Debug.d(TAG, "--->redraw: " + mObject.isNeedDraw());
 						//mObjRefreshHandler.sendEmptyMessage(0);

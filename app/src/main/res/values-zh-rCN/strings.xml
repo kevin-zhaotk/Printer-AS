@@ -228,6 +228,7 @@
 	<string name="strResvname63">63.保留</string>
 	<string name="strResvname64">64.保留</string>
 	<string name="strBtnSave">确认</string>
+	<string name="strRecvedRemote">接收到远程数据</string>
 	<string name="str_fileicon_des">文件图标</string>
 	<string name="str_file_save"> 确认 </string>
 	<string name="str_file_cancel">取消</string>
