@@ -29,7 +29,9 @@ LOCAL_SRC_FILES := com_smartcard.c \
                     src/hp_smart_card/hw_smart_card.c \
                     src/hp_smart_card/hw_smart_card_proto.c \
                     src/hp_smart_card/hw_smart_card_xpt_i2c.c \
-                    src/hp_smart_card/lib_crc.c
+                    src/hp_smart_card/lib_crc.c \
+                    src/sc_memory_access.c \
+                    src/level_memory_access.c
 
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/ifc \

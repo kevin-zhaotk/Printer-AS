@@ -18,7 +18,7 @@
 #ifndef _SC_I2C_DRIVER_H_
 #define _SC_I2C_DRIVER_H_
 
-#include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {

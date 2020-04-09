@@ -100,5 +100,6 @@ int toHexString(const uint8_t *src, char *dst, int len, char div) {
         }
         strcat(dst, s);
     }
+//    strcat(dst, 0x00);
     return 0;
 }

@@ -47,8 +47,8 @@ extern "C" {
 #define SELECT_CARD_2   FALSE, FALSE, TRUE
 */
 // 低电平有效，589排列
-#define SELECT_LEVEL_1  TRUE, TRUE, FALSE
-#define SELECT_CARD_1   TRUE, FALSE, TRUE
+#define SELECT_LEVEL_1  0x00, 0x00, 0x00
+#define SELECT_CARD_1   0x00, 0x01, 0x00
 #define SELECT_LEVEL_2  TRUE, FALSE, FALSE
 #define SELECT_CARD_2   FALSE, TRUE, TRUE
 /*

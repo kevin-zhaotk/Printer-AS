@@ -43,7 +43,7 @@ extern "C" {
         SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
 **********************************************************************************/
 
-int SP_GPIO_DRIVER_set_value(int port, int value);
+int SP_GPIO_DRIVER_set_value(int port, uint8_t value);
 
 /*********************************************************************************
     SP_GPIO_DRIVER_get_value

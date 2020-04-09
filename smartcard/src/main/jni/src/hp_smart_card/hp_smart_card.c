@@ -44,6 +44,7 @@
 #include "../hp_host_smart_card/hp_host_smart_card_ifc.h"
 
 #include <stdio.h>
+#include <common_log.h>
 
 #define DBG_SMART_CARD_ID           "SC"
 
@@ -927,7 +928,7 @@ HP_SMART_CARD_result_t flush_pending_for_threading_mode()
 HP_SMART_CARD_result_t LIB_HP_SMART_CARD_read_field(HP_SMART_CARD_device_id_t device_id,
                                                     HP_SMART_CARD_field_t field,
                                                     unsigned char size,
-                                                    void                      *dst)
+                                                    void *dst)
 {
     HP_SMART_CARD_id_t      device;
     HP_SMART_CARD_result_t  result = HP_SMART_CARD_OK;
@@ -983,7 +984,7 @@ HP_SMART_CARD_result_t LIB_HP_SMART_CARD_read_field(HP_SMART_CARD_device_id_t de
 HP_SMART_CARD_result_t LIB_HP_SMART_CARD_read_string(HP_SMART_CARD_device_id_t device_id,
                                                      HP_SMART_CARD_field_t field,
                                                      unsigned char size,
-                                                     void                      *dst)
+                                                     void *dst)
 {
     HP_SMART_CARD_id_t      device;
     HP_SMART_CARD_result_t  result = HP_SMART_CARD_OK;

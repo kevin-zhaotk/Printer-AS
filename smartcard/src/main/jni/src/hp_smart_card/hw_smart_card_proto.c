@@ -9,6 +9,7 @@
  */
 
 #include <stdio.h>
+#include <common_log.h>
 
 #include "hw_smart_card.h"
 #include "hp_os_service.h"
@@ -301,6 +302,12 @@ static HW_SMART_CARD_status_t _verify_mac(HW_SMART_CARD_device_t *device_p,
         CMAC_CALL(final)(CMAC, mac, sizeof(mac));
 
         /* if mac is different then invalidate session */
+        char buf[1024];
+        toHexString(pkt_p + offs_mac, buf, sizeof(mac), ',');
+        LOGE(">>> pkt_p + offs_mac = [%s]", buf);
+        toHexString(mac, buf, sizeof(mac), ',');
+        LOGE(">>> mac = [%s]", buf);
+
         if (memcmp(pkt_p + offs_mac, mac, sizeof(mac)))
         {
             device_p->sk_valid = FALSE;

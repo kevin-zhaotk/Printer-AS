@@ -953,6 +953,12 @@ public class RFIDDevice implements RfidCallback{
 	public void down() {
 		if (mCurInkLevel > 0) {
 			mCurInkLevel = mCurInkLevel -1;
+// H.M.Wang 2020-4-9 修改当值为212+255*n的时候，再减1
+			if((mCurInkLevel+43)/255*255-43 == mCurInkLevel) {
+				mCurInkLevel--;
+			}
+// End of H.M.Wang 2020-4-9 修改当值为212+255*n的时候，再减1
+
 		} else if (mCurInkLevel <= 0) {
 			mCurInkLevel = 0;
 		}

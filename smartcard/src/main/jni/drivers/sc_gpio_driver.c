@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include "common_log.h"
 #include "internal_ifc/sc_gpio_driver.h"
 
@@ -35,14 +36,14 @@
         SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
 **********************************************************************************/
 
-int SP_GPIO_DRIVER_set_value(int port, int value) {
+int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
     LOGI(">>> SP_GPIO_DRIVER_set_value[%d] to port[%d]", value, port);
 
     FILE *fp;
     char s[50]="";
     char s1[50]="";
 
-    /*    system("su");
+/*    system("su");
     if(chmod("/sys/class/gpio/export", 777) == -1) {
         LOGE(">>> Error: SP_GPIO_DRIVER_set_value chmod. %s", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
@@ -73,7 +74,7 @@ int SP_GPIO_DRIVER_set_value(int port, int value) {
 
     fprintf(fp, "%d", value);
     fclose(fp);
-
+/*
     if((fp = fopen("/sys/class/gpio/unexport", "w")) == NULL) {
         LOGE(">>> SP_GPIO_DRIVER_set_value error when close port! [%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
@@ -81,7 +82,7 @@ int SP_GPIO_DRIVER_set_value(int port, int value) {
 
     fprintf(fp, "%d", port);
     fclose(fp);
-
+*/
     LOGD(">>> SP_GPIO_DRIVER_set_value set [%d] to port [%d], done!", value, port);
 
     return SC_GPIO_DRIVER_SUCCESS;
@@ -102,7 +103,7 @@ int SP_GPIO_DRIVER_set_value(int port, int value) {
 int SP_GPIO_DRIVER_get_value(int port) {
     LOGI(">>> SP_GPIO_DRIVER_get_value from port [%d]", port);
 
-    int value;
+    uint8_t value;
 
     FILE *fp;
     char s[50]="";
@@ -131,7 +132,7 @@ int SP_GPIO_DRIVER_get_value(int port) {
     }
 
     size_t ret = fread(&value, sizeof(value), 1, fp);
-
+/*
     if((fp = fopen("/sys/class/gpio/unexport", "w")) == NULL) {
         LOGE(">>> SP_GPIO_DRIVER_get_value error when close port! [%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
@@ -139,6 +140,8 @@ int SP_GPIO_DRIVER_get_value(int port) {
 
     fprintf(fp, "%d", port);
     fclose(fp);
+*/
+    value &= 0x01;
 
     LOGD(">>> SP_GPIO_DRIVER_get_value: %d", value);
     return (ret > 0 ? value : SC_GPIO_DRIVER_FAIL);
