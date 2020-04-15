@@ -169,29 +169,34 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				Bundle d = msg.getData();
 				String size = d.getString("height");
 				mHighEdit.setText(size);
+// H.M.Wang 2020-4-15 追加"5x5"字体
 				if (size.equalsIgnoreCase(MessageObject.mDotSizes[0])) {
+					mFont.setText("5x5");
+					mFont.setClickable(false);
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[1])) {
 					mFont.setText("4");
 					mFont.setClickable(false);
 // H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体
-				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[1])) {
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[2])) {
 					mFont.setText("10");
 					mFont.setClickable(false);
-				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[2])) {
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[3])) {
 					mFont.setText("12");
 					mFont.setClickable(false);
-				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[3])) {
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[4])) {
 					mFont.setText("14");
 					mFont.setClickable(false);
-				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[4])) {
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[5])) {
 					mFont.setText("7");
 					mFont.setClickable(false);
-				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[5])) {
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[6])) {
 					mFont.setText("7L");
 					mFont.setClickable(false);
-				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[6])) {
+				} else if (size.equalsIgnoreCase(MessageObject.mDotSizes[7])) {
 					mFont.setText("7R");
 					mFont.setClickable(false);
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体
+// End of H.M.Wang 2020-4-15 追加"5x5"字体
 				} else {
 					mFont.setClickable(true);
 				}

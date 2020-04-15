@@ -1838,6 +1838,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
                 mGroupIndex.setVisibility(View.GONE);
+// H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp
+				Bitmap bmp = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
+				dispPreview(bmp);
+// End of H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp
 // End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 				break;
 			/*娓呮礂鎵撳嵃澶达紙涓�涓壒娈婄殑鎵撳嵃浠诲姟锛夛紝闇�瑕佸崟鐙殑璁剧疆锛氬弬鏁�2蹇呴』涓� 4锛屽弬鏁�4涓�200锛� 鍙傛暟5涓�20锛�*/
@@ -2953,13 +2957,20 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
         public void onPrint(final int index) {
 			Debug.d(TAG, "Index of Group: " + index);
+// H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp
 			mGroupIndex.post(new Runnable() {
 				@Override
 				public void run() {
 					mGroupIndex.setText("No. " + (index + 1));
 					mGroupIndex.setVisibility(View.VISIBLE);
+					if (mObjPath.startsWith("G-")) {   // group messages
+						List<String> paths = MessageTask.parseGroup(mObjPath);
+						Bitmap bmp = BitmapFactory.decodeFile(MessageTask.getPreview(paths.get(index)));
+						dispPreview(bmp);
+					}
 				}
 			});
+// End of H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp
         }
 // End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 	static char[] sRemoteBin;

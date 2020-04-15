@@ -37,7 +37,7 @@
 **********************************************************************************/
 
 int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
-    LOGI(">>> SP_GPIO_DRIVER_set_value[%d] to port[%d]", value, port);
+//    LOGI(">>> SP_GPIO_DRIVER_set_value[%d] to port[%d]", value, port);
 
     FILE *fp;
     char s[50]="";
@@ -83,7 +83,7 @@ int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
     fprintf(fp, "%d", port);
     fclose(fp);
 */
-    LOGD(">>> SP_GPIO_DRIVER_set_value set [%d] to port [%d], done!", value, port);
+//    LOGD(">>> SP_GPIO_DRIVER_set_value set [%d] to port [%d], done!", value, port);
 
     return SC_GPIO_DRIVER_SUCCESS;
 }
@@ -101,7 +101,7 @@ int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
 **********************************************************************************/
 
 int SP_GPIO_DRIVER_get_value(int port) {
-    LOGI(">>> SP_GPIO_DRIVER_get_value from port [%d]", port);
+//    LOGI(">>> SP_GPIO_DRIVER_get_value from port [%d]", port);
 
     uint8_t value;
 
@@ -143,7 +143,7 @@ int SP_GPIO_DRIVER_get_value(int port) {
 */
     value &= 0x01;
 
-    LOGD(">>> SP_GPIO_DRIVER_get_value: %d", value);
+//    LOGD(">>> SP_GPIO_DRIVER_get_value: %d", value);
     return (ret > 0 ? value : SC_GPIO_DRIVER_FAIL);
 }
 

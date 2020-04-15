@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2015 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -25,9 +25,11 @@ void hp_host_smart_card_set_xpt(hp_host_smart_card_xpt_t *xpt_p);
 
 #define MAX_DATA_LENGTH                 0x200
 #define MAX_BUFFER_LENGTH               (MAX_DATA_LENGTH + 2)
+/* Command not used. H.M.Wang 2020-4-12
 #define ADDR_CMD                        0x00
 #define ADDR_RSP_HDR                    0x80
 #define ADDR_RSP_BODY                   0x82
+*/
 
 //COMMAND CODES for Host Smart Card
 #define CMD_ECHO                        0x80

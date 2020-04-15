@@ -4,7 +4,7 @@
    THE LICENSED SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY DESCRIPTION.  HP SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  YOU ASSUME THE ENTIRE RISK RELATING TO THE USE OR PERFORMANCE OF THE LICENSED SOFTWARE.
 
    HP Company Confidential
-   © Copyright 2009-2015 HP Development Company, L.P.
+   ï¿½ Copyright 2009-2015 HP Development Company, L.P.
    Made in U.S.A.
  */
 
@@ -18,7 +18,7 @@
 #include "hw_smart_card_proto.h"
 #include "carnac_types.h"
 
-#define DBG_HW_SMART_CARD_ID    "HW_SMART_CARD"
+#define DBG_HW_SMART_CARD_ID    "HWSC"
 
 HW_SMART_CARD_device_t      hw_smart_card_device[HW_SMART_CARD_NUM_DEVICES];
 static void                 (*_stats_func_cb_p)(int device, HW_SMART_CARD_status_t err_type) = NULL;
@@ -244,6 +244,10 @@ HW_SMART_CARD_raw_read(HW_SMART_CARD_device_t *device_p, uint32_t addr,
     int                     failures    = 0;
     HW_SMART_CARD_status_t  status      = HW_SMART_CARD_failed_e;
 
+    HP_DEBUG_printf(DBG_HW_SMART_CARD_ID,
+                    HP_DBG_LEVEL_SC_TRACE, 2,
+                    "Entering HW_SMART_CARD_raw_read()\n");
+
     (void) failures;
 
     *bytes_read = 0;
@@ -295,6 +299,11 @@ HW_SMART_CARD_raw_read(HW_SMART_CARD_device_t *device_p, uint32_t addr,
     {
         device_p->sk_valid = FALSE;
     }
+
+    HP_DEBUG_printf(DBG_HW_SMART_CARD_ID,
+                    HP_DBG_LEVEL_SC_TRACE, 2,
+                    "Exiting HW_SMART_CARD_raw_read(). Status = %d\n", status);
+
     return(status);
 }
 
@@ -305,6 +314,10 @@ HW_SMART_CARD_raw_write(HW_SMART_CARD_device_t *device_p, uint32_t addr,
     int                     retry       = 0;
     int                     failures    = 0;
     HW_SMART_CARD_status_t  status      = HW_SMART_CARD_failed_e;
+
+    HP_DEBUG_printf(DBG_HW_SMART_CARD_ID,
+                    HP_DBG_LEVEL_SC_TRACE, 2,
+                    "Entering HW_SMART_CARD_raw_write()\n");
 
     (void) failures;
 
@@ -355,6 +368,11 @@ HW_SMART_CARD_raw_write(HW_SMART_CARD_device_t *device_p, uint32_t addr,
     {
         device_p->sk_valid = FALSE;
     }
+
+    HP_DEBUG_printf(DBG_HW_SMART_CARD_ID,
+                    HP_DBG_LEVEL_SC_TRACE, 2,
+                    "Exiting HW_SMART_CARD_raw_write(). Status = %d\n", status);
+
     return(status);
 }
 
@@ -362,6 +380,10 @@ HW_SMART_CARD_status_t
 HW_SMART_CARD_change_partition(HW_SMART_CARD_device_t *device_p, int id, int access_mode)
 {
     HW_SMART_CARD_status_t status = HW_SMART_CARD_failed_e;
+
+    HP_DEBUG_printf(DBG_HW_SMART_CARD_ID,
+                    HP_DBG_LEVEL_SC_TRACE, 2,
+                    "Entering HW_SMART_CARD_change_partition()\n");
 
     // Start a session if needed, then issue the change_partition command
     status = _start_session_if_needed(device_p);
@@ -375,6 +397,11 @@ HW_SMART_CARD_change_partition(HW_SMART_CARD_device_t *device_p, int id, int acc
     {
         device_p->sk_valid = FALSE;
     }
+
+    HP_DEBUG_printf(DBG_HW_SMART_CARD_ID,
+                    HP_DBG_LEVEL_SC_TRACE, 2,
+                    "Exiting HW_SMART_CARD_change_partition(). Status = %d\n", status);
+
     return(status);
 }
 

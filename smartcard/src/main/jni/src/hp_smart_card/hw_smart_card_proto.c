@@ -136,10 +136,13 @@ static int _send_cmd(hw_smart_card_xpt_t *xpt_p,
     }
 
     char buf[1024];
+    memset(buf, 0x00, 1024);
     toHexString(pkt, buf, body_len + 2, ',');
-    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
-                    HP_DBG_LEVEL_HSCC_TRACE, 4,
-                    "Data to be written:", buf);
+    LOGD(">>> %s Data to be written: [%s]", SMART_CARD_PROTO_DBG_ID, buf);
+
+//    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+//                    HP_DBG_LEVEL_HSCC_TRACE, 4,
+//                    "Data to be written:", buf);
 
     result = IFC_CALL(xpt_p, write)(xpt_p, PROTO_CMD_ADDR, pkt, PROTO_LEN_HDR + body_len);
 
@@ -254,10 +257,12 @@ static HW_SMART_CARD_status_t _recv_rsp(hw_smart_card_xpt_t *xpt_p,
     }
 
     char buf[1024];
+    memset(buf, 0x00, 1024);
     toHexString(rcv_buf, buf, rsp_len + 2, ',');
-    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
-                    HP_DBG_LEVEL_HSCC_TRACE, 4,
-                    "Data read: [%s]", buf);
+    LOGD(">>> %s Data read: [%s]", SMART_CARD_PROTO_DBG_ID, buf);
+//    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+//                    HP_DBG_LEVEL_HSCC_TRACE, 4,
+//                    "Data read: [%s]", buf);
 
     HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
                     HP_DBG_LEVEL_SCP_TRACE, 3,
@@ -303,8 +308,10 @@ static HW_SMART_CARD_status_t _verify_mac(HW_SMART_CARD_device_t *device_p,
 
         /* if mac is different then invalidate session */
         char buf[1024];
+        memset(buf, 0x00, 1024);
         toHexString(pkt_p + offs_mac, buf, sizeof(mac), ',');
         LOGE(">>> pkt_p + offs_mac = [%s]", buf);
+        memset(buf, 0x00, 1024);
         toHexString(mac, buf, sizeof(mac), ',');
         LOGE(">>> mac = [%s]", buf);
 
@@ -348,6 +355,10 @@ hw_smart_card_proto_start_session_with_mkid(HW_SMART_CARD_device_t *device_p,
                                             CARNAC_sk_id_t *sk_id_p,
                                             int action)
 {
+    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                    HP_DBG_LEVEL_SCP_TRACE, 3,
+                    "Entering hw_smart_card_proto_start_session_with_mkid()\n");
+
     HW_SMART_CARD_status_t  status;
     hw_smart_card_xpt_t     *xpt_p = device_p->xpt_p;
     uint8_t                 cmd_start_session_body[PROTO_LEN_HOSTDIV + \
@@ -384,12 +395,20 @@ hw_smart_card_proto_start_session_with_mkid(HW_SMART_CARD_device_t *device_p,
     /* check for no transport */
     if (!xpt_p)
     {
+        HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                        HP_DBG_LEVEL_SCP_TRACE, 3,
+                        "Exiting hw_smart_card_proto_start_session_with_mkid(). Status = %d\n", HW_SMART_CARD_xpt_not_set_failure_e);
+
         return _release(HW_SMART_CARD_xpt_not_set_failure_e);
     }
 
     /* write command */
     if (_send_cmd(xpt_p, PROTO_CMD_START_SESSION, cmd_start_session_body, body_len) < 0)
     {
+        HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                        HP_DBG_LEVEL_SCP_TRACE, 3,
+                        "Exiting hw_smart_card_proto_start_session_with_mkid(). Status = %d\n", HW_SMART_CARD_xpt_cmd_failed_e);
+
         return _release(HW_SMART_CARD_xpt_cmd_failed_e);
     }
 
@@ -399,6 +418,11 @@ hw_smart_card_proto_start_session_with_mkid(HW_SMART_CARD_device_t *device_p,
     if (status != HW_SMART_CARD_success_e)
     {
         _save_pkt(pkt, expected_rsp_len);
+
+        HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                        HP_DBG_LEVEL_SCP_TRACE, 3,
+                        "Exiting hw_smart_card_proto_start_session_with_mkid(). Status = %d\n", status);
+
         return _release(status);
     }
 
@@ -408,6 +432,10 @@ hw_smart_card_proto_start_session_with_mkid(HW_SMART_CARD_device_t *device_p,
     if (_get_u8(pkt + PROTO_OFFS_RSP) == PROTO_RSP_SUCCESS &&
         _get_u32(sk_id_p->host_div) != host_div)
     {
+        HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                        HP_DBG_LEVEL_SCP_TRACE, 3,
+                        "Exiting hw_smart_card_proto_start_session_with_mkid(). Status = %d\n", HW_SMART_CARD_proto_failure_e);
+
         return _release(HW_SMART_CARD_proto_failure_e);
     }
 
@@ -421,6 +449,10 @@ hw_smart_card_proto_start_session_with_mkid(HW_SMART_CARD_device_t *device_p,
 
     /* update the security level for this device */
     device_p->level = (int8_t) action;
+
+    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                    HP_DBG_LEVEL_SCP_TRACE, 3,
+                    "Exiting hw_smart_card_proto_start_session_with_mkid(). Status = %d\n", status);
 
     return _release(status);
 }
@@ -439,6 +471,10 @@ hw_smart_card_proto_read(HW_SMART_CARD_device_t *device_p, uint32_t addr, int si
     HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
                     HP_DBG_LEVEL_SCP_TRACE, 3,
                     "Entering hw_smart_card_proto_read()\n");
+    LOGE(">>> addr = [0x%08X]", addr);
+    LOGE(">>> size = [0x%02X]", size);
+    memset(pkt, 0x00, PROTO_MAX_LEN_PKT);
+    memset(cmd_mac, 0x00, PROTO_LEN_MAC);
 
     _acquire();
 
@@ -453,12 +489,21 @@ hw_smart_card_proto_read(HW_SMART_CARD_device_t *device_p, uint32_t addr, int si
     }
 
     /* put together cmd_mac_data  & compute cmd_mac & save it */
-    _put_u8(pkt + PROTO_OFFS_CMD, PROTO_CMD_READ);
-    _put_u8(pkt + PROTO_OFFS_LEN, PROTO_LEN_READ_CMD_BODY);
-    _put_u24(pkt + PROTO_OFFS_BODY + PROTO_OFFS_READADDR, (uint32_t) addr);
-    _put_u8(pkt + PROTO_OFFS_BODY + PROTO_OFFS_READLEN, (uint8_t) size);
-    _compute_mac(device_p, pkt, PROTO_OFFS_BODY + PROTO_OFFS_READ_MACDIV);
-    _put(cmd_mac, pkt + PROTO_OFFS_BODY + PROTO_OFFS_READ_MAC, PROTO_LEN_MAC);
+    _put_u8(pkt + PROTO_OFFS_CMD, PROTO_CMD_READ);                                          // pkt[0] = 0xC1
+    _put_u8(pkt + PROTO_OFFS_LEN, PROTO_LEN_READ_CMD_BODY);                                 // pkt[1] = 0x0C
+    _put_u24(pkt + PROTO_OFFS_BODY + PROTO_OFFS_READADDR, (uint32_t) addr);                 // pkt[2-4] = addr
+    _put_u8(pkt + PROTO_OFFS_BODY + PROTO_OFFS_READLEN, (uint8_t) size);                    // pkt[5] = size
+    _compute_mac(device_p, pkt, PROTO_OFFS_BODY + PROTO_OFFS_READ_MACDIV);                  // device_p->mac_div --> pkt[6-7] -- calculate mac --> pkt[6-13]
+    _put(cmd_mac, pkt + PROTO_OFFS_BODY + PROTO_OFFS_READ_MAC, PROTO_LEN_MAC);              // pkt[6-13] --> cmd_mac
+
+    char buf[1024];
+    memset(buf, 0x00, 1024);
+    toHexString(pkt, buf, PROTO_LEN_READ_CMD_BODY + PROTO_OFFS_BODY, ',');
+    LOGE(">>> pkt = [%s]", buf);
+
+    memset(buf, 0x00, 1024);
+    toHexString(cmd_mac, buf, PROTO_LEN_MAC, ',');
+    LOGE(">>> cmd_mac = [%s]", buf);
 
     /* write command */
     if (_send_cmd(xpt_p, PROTO_CMD_READ, pkt + PROTO_OFFS_BODY, PROTO_LEN_READ_CMD_BODY) < 0)
@@ -472,6 +517,11 @@ hw_smart_card_proto_read(HW_SMART_CARD_device_t *device_p, uint32_t addr, int si
 
     /* read response */
     status = _recv_rsp(xpt_p, pkt, size + PROTO_LEN_MAC, NULL);
+
+    memset(buf, 0x00, 1024);
+    toHexString(pkt, buf, size + PROTO_LEN_MAC + PROTO_OFFS_BODY, ',');
+    LOGE(">>> recv pkt = [%s]", buf);
+
 
     if (status != HW_SMART_CARD_success_e)
     {
@@ -727,6 +777,10 @@ hw_smart_card_proto_list_bkdb(HW_SMART_CARD_device_t *device_p)
     int                     idx;
     int                     data_offset, num_keys;
 
+    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                    HP_DBG_LEVEL_SCP_TRACE, 3,
+                    "Entering hw_smart_card_proto_list_bkdb()\n");
+
     HP_ASSERT(device_p->level == PROTO_SECURITY_NORMAL);
 
     _acquire();
@@ -734,6 +788,10 @@ hw_smart_card_proto_list_bkdb(HW_SMART_CARD_device_t *device_p)
     /* check for no transport */
     if (!xpt_p)
     {
+        HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                        HP_DBG_LEVEL_SCP_TRACE, 3,
+                        "Exiting hw_smart_card_proto_list_bkdb(). Status = %d\n", HW_SMART_CARD_xpt_not_set_failure_e);
+
         return _release(HW_SMART_CARD_xpt_not_set_failure_e);
     }
 
@@ -749,6 +807,10 @@ hw_smart_card_proto_list_bkdb(HW_SMART_CARD_device_t *device_p)
     /* write command */
     if (_send_cmd(xpt_p, PROTO_CMD_LIST_BKDB, pkt + PROTO_OFFS_BODY, PROTO_LEN_LIST_BKDB_CMD_BODY) < 0)
     {
+        HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                        HP_DBG_LEVEL_SCP_TRACE, 3,
+                        "Exiting hw_smart_card_proto_list_bkdb(). Status = %d\n", HW_SMART_CARD_xpt_cmd_failed_e);
+
         return _release(HW_SMART_CARD_xpt_cmd_failed_e);
     }
 
@@ -757,6 +819,11 @@ hw_smart_card_proto_list_bkdb(HW_SMART_CARD_device_t *device_p)
     if (status != HW_SMART_CARD_success_e)
     {
         _save_pkt(pkt, PROTO_LEN_MAC);
+
+        HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                        HP_DBG_LEVEL_SCP_TRACE, 3,
+                        "Exiting hw_smart_card_proto_list_bkdb(). Status = %d\n", status);
+
         return _release(status);
     }
 
@@ -810,6 +877,11 @@ hw_smart_card_proto_list_bkdb(HW_SMART_CARD_device_t *device_p)
     {
         status = HW_SMART_CARD_failed_e;
     }
+
+    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
+                    HP_DBG_LEVEL_SCP_TRACE, 3,
+                    "Exiting hw_smart_card_proto_list_bkdb(). Status = %d\n", status);
+
     return _release(status);
 }
 

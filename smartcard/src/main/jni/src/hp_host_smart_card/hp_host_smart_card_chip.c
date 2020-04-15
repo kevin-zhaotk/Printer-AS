@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <malloc.h>
+#include <common_log.h>
 
 #include "hp_types.h"
 #include "hp_host_smart_card_chip.h"
@@ -130,10 +131,12 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
             HP_ASSERT(cmd_rsp_p->cmd_len <= HOST_SMART_CARD_MAX_CMD_LEN);
 
             char buf[1024];
+            memset(buf, 0x00, 1024);
             toHexString(cmd_rsp_p->cmd_p, buf, cmd_rsp_p->cmd_len, ',');
-            HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
-                            HP_DBG_LEVEL_HSCC_TRACE, 4,
-                            "Data to be written: [%s]", buf);
+            LOGD(">>> %s Data to be written: [%s]", HOST_SMART_CARD_CHIP_DBG_ID, buf);
+//            HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
+//                            HP_DBG_LEVEL_HSCC_TRACE, 4,
+//                            "Data to be written: [%s]", buf);
 
             result = HP_SMART_CARD_i2c_write(HP_SMART_CARD_DEVICE_HOST,
                                              HOST_SMART_CARD_ADDR_CMD,
@@ -211,10 +214,12 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
                 }
 
                 char buf[1024];
+                memset(buf, 0x00, 1024);
                 toHexString(cmd_rsp_p->body_p, buf, body_len, ',');
-                HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
-                                HP_DBG_LEVEL_HSCC_TRACE, 4,
-                                "Data read: [%s]", buf);
+                LOGD(">>> %s Data read: [%s]", HOST_SMART_CARD_CHIP_DBG_ID, buf);
+//                HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
+//                                HP_DBG_LEVEL_HSCC_TRACE, 4,
+//                                "Data read: [%s]", buf);
 
             }
             *cmd_rsp_p->body_len = body_len;

@@ -103,6 +103,7 @@ int SC_I2C_DRIVER_open(int group_id, int address) {
 
 int SC_I2C_DRIVER_write(int fd, int reg, uint8_t *data, int length) {
     char buf[1024];
+    memset(buf, 0x00, 1024);
     toHexString(data, buf, length, ',');
     LOGI(">>> SC_I2C_DRIVER_write: Write [%s](%d bytes) to 0x%02X", buf, length, reg);
 
@@ -179,13 +180,19 @@ int SC_I2C_DRIVER_read(int fd, int reg, uint8_t *result, int length) {
         return -1;
     }
 
-    int read_length = i2c_smbus_read_i2c_block_data(fd, reg, length, result);
-    if(read_length < 0) {
-        LOGE(">>> SC_I2C_DRIVER_read: Read i2c_block_data failed. %s", strerror(errno));
-        return -1;
+    int read_length = 0;
+
+    while(read_length < length) {
+        int _length = i2c_smbus_read_i2c_block_data(fd, reg, length - read_length, result + read_length);
+        if(_length < 0) {
+            LOGE(">>> SC_I2C_DRIVER_read: Read i2c_block_data failed. %s", strerror(errno));
+            return -1;
+        }
+        read_length += _length;
     }
 
     char buf[1024];
+    memset(buf, 0x00, 1024);
     toHexString(result, buf, length, ',');
     LOGD(">>> SC_I2C_DRIVER_read: [%s](%d bytes) read.", buf, read_length);
 
