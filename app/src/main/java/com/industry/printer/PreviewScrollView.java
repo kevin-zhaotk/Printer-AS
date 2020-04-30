@@ -33,7 +33,7 @@ public class PreviewScrollView extends View {
 	public Paint mPaint;
 	
 	public static Bitmap	mPreBitmap;
-	public Vector<TlkObject> mList;
+//	public Vector<TlkObject> mList;
 	
 	public PreviewScrollView(Context context) {
 		super(context);
@@ -72,13 +72,13 @@ public class PreviewScrollView extends View {
 		
 	}
 	
-	
+/*
 	public void setObjectList(Vector<TlkObject> list)
 	{
 		mList = list;
 		Debug.d(TAG, "mList size="+mList.size());
 	}
-	
+*/
 	
 	public void drawBitmap(int x, int y, Bitmap bm)
 	{

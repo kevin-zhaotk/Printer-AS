@@ -394,7 +394,7 @@ public class DataTransferThread {
 	}
 // End. -----
 
-// H.M.Wang 2019-12-19 追加函数，将字符串直接付给第一个计数器，主要满足串口协议3
+// H.M.Wang 2019-12-19 追加函数，将字符串直接付给第一个计数器，主要满足串口协议3和协议4
 	public void setRemoteTextDirect(final String data) {
 		Debug.d(TAG, "String from Remote = [" + data + "]");
 		mHandler.post(new Runnable() {
@@ -697,17 +697,23 @@ public class DataTransferThread {
 			return 65536 * 8;
 		}
 
-		if (config.getParam(2) <= 0) {
+		if (config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY) <= 0) {
 			bold = 1;
 		} else {
-			bold = config.getParam(2)/150;
+			bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
 		}
+
+// H.M.Wang 2020-4-19 追加12.7R5头。dotcount放大相应倍数
+		if(mDataTask.get(index).getPNozzle() == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+            dotCount *= (mDataTask.get(index).getPNozzle().getRTimes() - 1);
+        }
+// End of H.M.Wang 2020-4-19 追加12.7R5头。dotcount放大相应倍数
+
 		Debug.d(TAG, "--->dotCount: " + dotCount + "  bold=" + bold);
 		return Configs.DOTS_PER_PRINT/(dotCount * bold);
 	}
 	
 	public int getHeads() {
-
 		if (mDataTask != null && mDataTask.size() > 0) {
 			return mDataTask.get(0).getPNozzle().mHeads;
 		}
@@ -816,15 +822,6 @@ public class DataTransferThread {
 				setLanBuffer(mContext, index(), buffer);
 			} else {
 				Debug.d(TAG, "--->print buffer ready");
-//			int type = mDataTask.get(index).getHeadType();
-
-				FileUtil.deleteFolder("/mnt/sdcard/print.bin");
-				ExtendInterceptor interceptor = new ExtendInterceptor(mContext);
-				ExtendStat extend = interceptor.getExtend();// save print.bin to /mnt/sdcard/ folder
-				int cH = mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads;
-				Debug.d(TAG, "--->cH: " + cH);
-				BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, cH);
-
 				// H.M.Wang 2019-10-10 追加计算打印区对应于各个头的打印点数
 				DataTask t = mDataTask.get(mIndex);
 //				Debug.d(TAG, "GetPrintDots Start Time: " + System.currentTimeMillis());

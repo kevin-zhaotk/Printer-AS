@@ -896,7 +896,7 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		}
 		onSaveAs();
 	}
-	
+
 	private void onSaveAs() {
 		CustomerDialogBase dialog;
 		dialog = new MessageSaveDialog(mContext);
@@ -915,11 +915,11 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		dialog.setOnExtraClickedListener(new CustomerDialogBase.OnExtraListener() {
             @Override
             public void onClick() {
-                Message  message = mHandler.obtainMessage(HANDLER_MESSAGE_SAVEAS);
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("saveAndPrint", true);
-                message.setData(bundle);
-                message.sendToTarget();
+				Message  message = mHandler.obtainMessage(HANDLER_MESSAGE_SAVEAS);
+				Bundle bundle = new Bundle();
+				bundle.putBoolean("saveAndPrint", true);
+				message.setData(bundle);
+				message.sendToTarget();
             }
         });
 		dialog.show();

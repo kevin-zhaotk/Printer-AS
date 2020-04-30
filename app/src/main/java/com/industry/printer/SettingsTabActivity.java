@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.*;
+import com.industry.printer.data.DataTask;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.hardware.RTCDevice;
@@ -371,6 +372,21 @@ public static final String TAG="SettingsTabActivity";
 					@Override
 					public void onClick() {
 						saveParam();
+// H.M.Wang 2020-4-25 设置按确认， 所有参数都生效，  下发一次fpga
+						DataTransferThread dt = DataTransferThread.getInstance(mContext);
+						if(null != dt && dt.isRunning()) {
+							DataTask task = dt.getCurData();
+							FpgaGpioOperation.clean();
+							FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+							dt.mNeedUpdate = true;
+							while (dt.mNeedUpdate) {
+								try{Thread.sleep(10);}catch(Exception e){};
+							}
+							FpgaGpioOperation.init();
+						} else {
+							FpgaGpioOperation.updateSettings(mContext, null, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+						}
+// End of H.M.Wang 2020-4-25 设置按确认， 所有参数都生效，  下发一次fpga
 						ToastUtil.show(mContext, R.string.toast_save_success);
 					}
 

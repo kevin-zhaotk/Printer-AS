@@ -227,6 +227,19 @@
 	<string name="strResvname62">62.保留</string>
 	<string name="strResvname63">63.保留</string>
 	<string name="strResvname64">64.保留</string>
+
+	<!-- H.M.Wang 2020-4-24 修改计数器值修改方式为对话窗 -->
+	<string name="strCounterEditTitle">修改计数器值</string>
+	<string name="strCounterIndex">计数器%1$d:</string>
+	<string name="strCounterClear">清零</string>
+	<!-- End of H.M.Wang 2020-4-24 修改计数器值修改方式为对话窗 -->
+	<!-- H.M.Wang 2020-4-27 重复打印设置改为对话窗 -->
+	<string name="strPrintRepeatEditTitle">修改重复打印</string>
+	<!-- End of H.M.Wang 2020-4-27 重复打印设置改为对话窗 -->
+	<!-- H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+	<string name="strEncoderPPREditTitle">修改编码器脉冲</string>
+	<!-- End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+
 	<string name="strBtnSave">确认</string>
 	<string name="strRecvedRemote">接收到远程数据</string>
 	<string name="str_fileicon_des">文件图标</string>

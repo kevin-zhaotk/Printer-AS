@@ -250,6 +250,18 @@
 	<string name="strResvname63">63.Reserved</string>
 	<string name="strResvname64">64.Reserved</string>
 
+<!-- H.M.Wang 2020-4-24 修改计数器值修改方式为对话窗 -->
+	<string name="strCounterEditTitle">Modify Counter Value</string>
+	<string name="strCounterIndex">Counter %1$d:</string>
+	<string name="strCounterClear">Clear</string>
+<!-- End of H.M.Wang 2020-4-24 修改计数器值修改方式为对话窗 -->
+<!-- H.M.Wang 2020-4-27 重复打印设置改为对话窗 -->
+	<string name="strPrintRepeatEditTitle">Modify Repeat Print</string>
+<!-- End of H.M.Wang 2020-4-27 重复打印设置改为对话窗 -->
+	<!-- H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+	<string name="strEncoderPPREditTitle">Modify Encoder PPR</string>
+	<!-- End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+
 	<string name="strBtnSave">Ok</string>
 
 	<string name="strRecvedRemote">Received from Remote</string>

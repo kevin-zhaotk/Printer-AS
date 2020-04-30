@@ -4,6 +4,7 @@ import com.industry.printer.R;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.MessageObject;
+import com.industry.printer.ui.CustomerAdapter.SettingsListAdapter;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -25,7 +26,7 @@ import android.widget.TextView;
 public class HeaderSelectDialog extends Dialog implements android.view.View.OnClickListener, OnItemClickListener {
 
 	private Context mContext;
-	private GridView mFontlist;
+	private GridView mHeaderlist;
 	private FontItemAdapter mAdapter;
 	
 	private TextView mOk;
@@ -53,13 +54,13 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 	    
 	    mOk.setOnClickListener(this);
 	    mCancel.setOnClickListener(this);
-	    
-	    mFontlist = (GridView) findViewById(R.id.sizelist);
+
+		mHeaderlist = (GridView) findViewById(R.id.sizelist);
 	    mAdapter = new FontItemAdapter(mSelected);
-	    
-	    
-	    mFontlist.setAdapter(mAdapter);
-	    mFontlist.setOnItemClickListener(this);
+
+
+		mHeaderlist.setAdapter(mAdapter);
+		mHeaderlist.setOnItemClickListener(this);
 	}
 
 	
@@ -68,7 +69,7 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 		private int position=0;
 		private Holder mHolder;
 		private LayoutInflater mInflater;
-		private String[] mFonts; // = new String[MessageObject.mBaseList.length];
+		private String[] mHeaders; // = new String[MessageObject.mBaseList.length];
 		
 		
 		public FontItemAdapter(int pos) {
@@ -78,7 +79,7 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 		}
 		
 		private void init() {
-			mFonts = mContext.getResources().getStringArray(R.array.strPrinterArray);
+			mHeaders = mContext.getResources().getStringArray(R.array.strPrinterArray);
 		}
 		
 		public void setSelect(int pos) {
@@ -87,7 +88,7 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 		}
 		
 		public String getSelectedItem() {
-			return (position >= mFonts.length ? "" : mFonts[position]);
+			return (position >= mHeaders.length ? "" : mHeaders[position]);
 		}
 		
 		public int getSelected() {
@@ -96,12 +97,12 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 		
 		@Override
 		public int getCount() {
-			return mFonts.length;
+			return mHeaders.length;
 		}
 
 		@Override
 		public Object getItem(int arg0) {
-			return (arg0 >= mFonts.length ? null :mFonts[arg0]);
+			return (arg0 >= mHeaders.length ? null :mHeaders[arg0]);
 		}
 
 		@Override
@@ -119,7 +120,7 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 				mHolder.mText = (TextView) convertView.findViewById(R.id.font);
 			}
 			
-			mHolder.mText.setText(position >= mFonts.length ? "" : mFonts[position]);
+			mHolder.mText.setText(position >= mHeaders.length ? "" : mHeaders[position]);
 			if (position == this.position) {
 				mHolder.mText.setSelected(true);
 			} else {
@@ -141,7 +142,7 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 	public void onClick(View arg0) {
 		switch (arg0.getId()) {
 		case R.id.confirm:
-			Message msg = mHandler.obtainMessage(ObjectInfoDialog.MSG_SELECTED_HEADER);
+			Message msg = mHandler.obtainMessage(SettingsListAdapter.MSG_SELECTED_HEADER);
 			msg.arg1 = mAdapter.getSelected();
 			mHandler.sendMessage(msg);
 			dismiss();

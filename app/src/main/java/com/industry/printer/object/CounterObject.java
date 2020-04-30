@@ -134,6 +134,7 @@ public class CounterObject extends BaseObject {
 		
 	public void setValue(int value)
 	{
+		Debug.d(TAG, "SetValue = " + value);
 		if( mStart < mEnd) {
 			if(value < mStart || value> mEnd) {
 				mValue = mStart;
@@ -211,7 +212,7 @@ public class CounterObject extends BaseObject {
 				mValue -= mStepLen;
 		}
 
-		String value =mContent;
+		String value = mContent;
 		setContent( BaseObject.intToFormatString(mValue, mBits));
 		Debug.d(TAG, "getNext mContent="+mContent+", mValue="+mValue);
 		SystemConfigFile.getInstance(mContext).setParamBroadcast(mCounterIndex + SystemConfigFile.INDEX_COUNT_1, Integer.valueOf(value));

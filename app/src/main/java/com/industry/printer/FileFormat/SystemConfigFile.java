@@ -99,6 +99,10 @@ public class SystemConfigFile{
 	
 	public static final String LAST_MESSAGE = "message";
 
+	// H.M.Wang 2020-4-18 增加打印密度索引定义，避免硬码满天飞的现象
+	public static final int INDEX_PRINT_DENSITY = 2;
+	// End of H.M.Wang 2020-4-18 增加打印密度索引定义，避免硬码满天飞的现象
+
 	// 设置里的计数器
 	// H.M.Wang 修改下列2行。为计数器清楚前置0
 //	public static final int INDEX_COUNTER = 17;
@@ -114,6 +118,11 @@ public class SystemConfigFile{
 
 	// H.M.Wang 2019-12-19 追加参数39，数据源的索引,作废原来的索引INDEX_LAN_PRINT
 	public static final int INDEX_DATA_SOURCE = 38;
+
+// H.M.Wang 2020-4-27 追加重复打印和编码器脉冲索引值
+	public static final int INDEX_REPEAT_PRINT = 6;
+	public static final int INDEX_ENCODER_PPR = 9;
+// End of H.M.Wang 2020-4-27 追加重复打印和编码器脉冲索引值
 
 	// Kevin-zhao
 	public static final int INDEX_LOG_ENABLE = 59;

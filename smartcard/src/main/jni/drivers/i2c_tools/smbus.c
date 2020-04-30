@@ -15,6 +15,7 @@
 #include <sys/ioctl.h>
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
+#include <string.h>
 #include "smbus.h"
 //#include <i2c/smbus.h>
 
@@ -36,12 +37,13 @@ __s32 i2c_smbus_access(int file, char read_write, __u8 command, int size, union 
 	args.data = data;
 
 	return ioctl(file, I2C_SMBUS, &args);
+
 }
 
 __s32 i2c_smbus_write_quick(int file, __u8 value) {
 	return i2c_smbus_access(file, value, 0, I2C_SMBUS_QUICK, NULL);
 }
-/*
+
 __s32 i2c_smbus_read_byte(int file) {
 	union i2c_smbus_data data;
 	int err;
@@ -84,7 +86,7 @@ __s32 i2c_smbus_read_word_data(int file, __u8 command) {
 
 	return 0x0FFFF & data.word;
 }
-*/
+
 __s32 i2c_smbus_write_word_data(int file, __u8 command, __u16 value) {
 	union i2c_smbus_data data;
 	data.word = value;
@@ -131,18 +133,18 @@ __s32 i2c_smbus_write_block_data(int file, __u8 command, __u8 length, const __u8
    2.6.23 and later. */
 __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command, __u8 length, __u8 *values) {
 	union i2c_smbus_data data;
-	int i, err;
+	int err;
 
 	if (length > I2C_SMBUS_BLOCK_MAX)
 		length = I2C_SMBUS_BLOCK_MAX;
 	data.block[0] = length;
 
-	err = i2c_smbus_access(file, I2C_SMBUS_READ, command,
-			       length == 32 ? I2C_SMBUS_I2C_BLOCK_BROKEN : I2C_SMBUS_I2C_BLOCK_DATA, &data);
+    err = i2c_smbus_access(file, I2C_SMBUS_READ, command, length == 32 ? I2C_SMBUS_I2C_BLOCK_BROKEN : I2C_SMBUS_I2C_BLOCK_DATA, &data);
+
 	if (err < 0)
 		return err;
 
-	for (i = 1; i <= data.block[0]; i++)
+	for (int i = 1; i <= data.block[0]; i++)
 		values[i-1] = data.block[i];
 	return data.block[0];
 }
@@ -150,6 +152,7 @@ __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command, __u8 length, __u8 *v
 __s32 i2c_smbus_write_i2c_block_data(int file, __u8 command, __u8 length, const __u8 *values) {
 	union i2c_smbus_data data;
 	int i;
+
 	if (length > I2C_SMBUS_BLOCK_MAX)
 		length = I2C_SMBUS_BLOCK_MAX;
 	for (i = 1; i <= length; i++)

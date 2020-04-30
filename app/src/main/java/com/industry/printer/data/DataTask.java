@@ -3,6 +3,7 @@ package com.industry.printer.data;
 import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
 import com.industry.printer.object.BarcodeObject;
@@ -42,6 +44,8 @@ import com.industry.printer.object.TLKFileParser;
 import com.industry.printer.object.WeekDayObject;
 import com.industry.printer.object.WeekOfYearObject;
 import com.industry.printer.object.data.SegmentBuffer;
+
+import org.apache.http.util.CharArrayBuffer;
 
 
 /**
@@ -190,9 +194,49 @@ public class DataTask {
 		*/
 		/*test bin*/
 		Debug.d(TAG, "--->buffer = " + mBuffer.length);
+
+// H.M.Wang 2020-4-18 从DataTransferThread移至此
+		FileUtil.deleteFolder("/mnt/sdcard/print.bin");
+		BinCreater.saveBin("/mnt/sdcard/print.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads);
+// End of H.M.Wang 2020-4-18 从DataTransferThread移至此
+
+// H.M.Wang 2020-4-18 追加12.7R5头
+		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+			CharArrayBuffer caBuf = new CharArrayBuffer(0);
+			int wideTimes = mTask.getNozzle().getRTimes();
+			int heads = mTask.getNozzle().getRHeads();
+			int orgCharsOfCol = mBinInfo.mCharsPerHFeed * mTask.getNozzle().mHeads;
+			int orgCols = mBuffer.length / orgCharsOfCol;
+//			SystemConfigFile config = SystemConfigFile.getInstance(mContext);
+//			int dstCharsOfCol = mTask.getNozzle().getRMaxCols(config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150);
+			int dstCharsOfCol = mTask.getNozzle().getRMaxCols();
+			char[] empty = new char[orgCharsOfCol];
+			Arrays.fill(empty, (char)0x0000);
+
+			for(int i=0; i<wideTimes; i++) {
+				for(int k=0; k<dstCharsOfCol; k++) {
+					for(int j=0; j<heads; j++) {
+						if((j % 2 == 0 && i == 0) || 				// 单数行第一列块
+						   (j % 2 != 0 && i == wideTimes - 1) ||    // 双数行最后一列
+						   (k >= orgCols)) {						// 原始块中宽度不足部分
+							caBuf.append(empty, 0, orgCharsOfCol);
+						} else {
+							caBuf.append(mBuffer, k * orgCharsOfCol, orgCharsOfCol);
+						}
+					}
+				}
+			}
+
+			mBuffer = caBuf.toCharArray();
+
+			FileUtil.deleteFolder("/mnt/sdcard/printR5x6.bin");
+			BinCreater.saveBin("/mnt/sdcard/printR5x6.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * heads);
+		}
+// End of H.M.Wang 2020-4-18 追加12.7R5头
+
 		return mBuffer;
 	}
-	
+
 	private boolean isNeedRebuild() {
 		MessageObject object = mTask.getMsgObject();
 		PrinterNozzle nozzle = object.getPNozzle();

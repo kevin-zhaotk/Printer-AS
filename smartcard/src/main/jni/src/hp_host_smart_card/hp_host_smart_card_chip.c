@@ -130,8 +130,8 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
         {
             HP_ASSERT(cmd_rsp_p->cmd_len <= HOST_SMART_CARD_MAX_CMD_LEN);
 
-            char buf[1024];
-            memset(buf, 0x00, 1024);
+            char buf[1024] = {0x00};
+//            memset(buf, 0x00, 1024);
             toHexString(cmd_rsp_p->cmd_p, buf, cmd_rsp_p->cmd_len, ',');
             LOGD(">>> %s Data to be written: [%s]", HOST_SMART_CARD_CHIP_DBG_ID, buf);
 //            HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,
@@ -213,8 +213,8 @@ static HP_SMART_CARD_i2c_result_t _cmd_rsp(host_smart_card_cmd_rsp_t *cmd_rsp_p,
                     continue;                                                                                                                                                                                                                                                                                                                                                                                                   // Must resend the command
                 }
 
-                char buf[1024];
-                memset(buf, 0x00, 1024);
+                char buf[1024] = {0x00};
+//                memset(buf, 0x00, 1024);
                 toHexString(cmd_rsp_p->body_p, buf, body_len, ',');
                 LOGD(">>> %s Data read: [%s]", HOST_SMART_CARD_CHIP_DBG_ID, buf);
 //                HP_DEBUG_printf(HOST_SMART_CARD_CHIP_DBG_ID,

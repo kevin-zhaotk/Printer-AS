@@ -14,6 +14,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Window;
 
+@Deprecated
 public class PreviewDialog extends Dialog {
 
 	public PreviewScrollView mView;
@@ -34,6 +35,6 @@ public class PreviewDialog extends Dialog {
 	public void show(Vector<TlkObject> list)
 	{	
 		super.show();
-		mView.setObjectList(list);
+////		mView.setObjectList(list);
 	}
 }

@@ -11,12 +11,16 @@ import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.hardware.RTCDevice;
 import com.industry.printer.ui.CustomerAdapter.PopWindowAdapter.IOnItemClickListener;
+import com.industry.printer.ui.CustomerDialog.CounterEditDialog;
 import com.industry.printer.ui.CustomerDialog.DataSourceSelectDialog;
+import com.industry.printer.ui.CustomerDialog.EncoderPPREditDialog;
 import com.industry.printer.ui.CustomerDialog.HeaderSelectDialog;
 import com.industry.printer.ui.CustomerDialog.NewMessageDialog;
 import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
+import com.industry.printer.ui.CustomerDialog.PrintRepeatEditDialog;
 import com.industry.printer.widget.PopWindowSpiner;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -56,7 +60,9 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	private PopWindowAdapter mDirection;
 	private PopWindowAdapter mResolution;
 	private PopWindowAdapter mPhotocell;
-	private PopWindowAdapter mRepeat;
+// H.M.Wang 2020-4-27 重复打印设置改为对话窗
+//	private PopWindowAdapter mRepeat;
+// End of H.M.Wang 2020-4-27 重复打印设置改为对话窗
 	private PopWindowAdapter mNozzle;
 	private PopWindowAdapter mPen1Mirror;
 	private PopWindowAdapter mPen2Mirror;
@@ -93,10 +99,6 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	public static final String ACTION_PARAM_CHANGED = "com.industry.printer.PARAM_CHANGED";
 	public static final String TAG_INDEX = "TagIndex";
 	public static final String TAG_VALUE = "TagCount";
-
-	// H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数
-	public static final int MSG_DATA_SOURCE_SELECTED = 38;		// 数据源选择确定事件定义
-	// End of H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数
 
 	BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
@@ -139,13 +141,27 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		public static final int TYPE_DIRECTION = 2;
 		public static final int TYPE_VALUE = 3;
 		public static final int TYPE_ARRAY = 4;
+// H.M.Wang 2020-4-24 追加计数器编辑类型
+		public static final int TYPE_DIALOG = 5;
+// End of H.M.Wang 2020-4-24 追加计数器编辑类型
 	}
-	
-	public Handler handler = new Handler(){
+
+	public final static int MSG_SELECTED_HEADER = 3;
+	// H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数
+	public static final int MSG_DATA_SOURCE_SELECTED = 38;		// 数据源选择确定事件定义
+	// End of H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数
+// H.M.Wang 2020-4-27 重复打印设置改为对话窗
+	public static final int MSG_PRINT_REPEAT_SET = 39;		// 重复打印设置
+// ENd of H.M.Wang 2020-4-27 重复打印设置改为对话窗
+// H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
+	public static final int MSG_ENCODER_PPR_SET = 40;		// 编码器脉冲设置
+// End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
+
+	public Handler mHandler = new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
-			case ObjectInfoDialog.MSG_SELECTED_HEADER:
+			case MSG_SELECTED_HEADER:
 				int index = msg.arg1;
 				Debug.d(TAG, "--->index: " + index);
 				mSettingItems[30].setValue(index);
@@ -162,6 +178,20 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 				notifyDataSetChanged();
 				break;
 			// End of H.M.Wang 2019-12-19 追加数据源选择对话窗响应
+// H.M.Wang 2020-4-27 重复打印设置改为对话窗
+			case MSG_PRINT_REPEAT_SET:
+				mSettingItems[SystemConfigFile.INDEX_REPEAT_PRINT].setValue(msg.arg1);
+				mSysconfig.setParam(SystemConfigFile.INDEX_REPEAT_PRINT, msg.arg1);
+				notifyDataSetChanged();
+				break;
+// ENd of H.M.Wang 2020-4-27 重复打印设置改为对话窗
+// H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
+			case MSG_ENCODER_PPR_SET:
+				mSettingItems[SystemConfigFile.INDEX_ENCODER_PPR].setValue(msg.arg1);
+				mSysconfig.setParam(SystemConfigFile.INDEX_ENCODER_PPR, msg.arg1);
+				notifyDataSetChanged();
+				break;
+// End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
 			}
 		}
 	};
@@ -206,6 +236,9 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		public void setValue(int value) {
 			switch (mType) {
 			case ItemType.TYPE_NONE:
+// H.M.Wang 2020-4-24 追加计数器编辑类型，值按着普通取值方法获取
+			case ItemType.TYPE_DIALOG:
+// H.M.Wang 2020-4-24 追加计数器编辑类型，值按着普通取值方法获取
 				mValue = String.valueOf(value);
 				break;
 			case ItemType.TYPE_SWITCH:
@@ -267,7 +300,9 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mDirection = new PopWindowAdapter(mContext, null);
 		mResolution = new PopWindowAdapter(mContext, null);
 		mPhotocell = new PopWindowAdapter(mContext, null);
-		mRepeat = new PopWindowAdapter(mContext, null);
+// H.M.Wang 2020-4-27 重复打印设置改为对话窗
+//		mRepeat = new PopWindowAdapter(mContext, null);
+// End of H.M.Wang 2020-4-27 重复打印设置改为对话窗
 		mNozzle = new PopWindowAdapter(mContext, null);
 		mPen1Mirror = new PopWindowAdapter(mContext, null);
 		mPen2Mirror = new PopWindowAdapter(mContext, null);
@@ -384,6 +419,11 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mHolder.mValueLEt.setVisibility(View.GONE);
 			mHolder.mValueLTv.setText(mSettingItems[2*position].getDisplayValue());
 			mHolder.mValueLTv.setOnClickListener(this);
+// H.M.Wang 2020-4-24 追加计数器编辑类型，但是取消右侧的小箭头
+			if(mSettingItems[2*position].mType == ItemType.TYPE_DIALOG) {
+				mHolder.mValueLTv.setCompoundDrawables(null, null, null, null);
+			}
+// End of H.M.Wang 2020-4-24 追加计数器编辑类型，但是取消右侧的小箭头
 		} else {
 			mHolder.mValueLTv.setVisibility(View.GONE);
 			mHolder.mValueLEt.setVisibility(View.VISIBLE);
@@ -396,6 +436,11 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mHolder.mValueREt.setVisibility(View.GONE);
 			mHolder.mValueRTv.setText(mSettingItems[2*position+1].getDisplayValue());
 			mHolder.mValueRTv.setOnClickListener(this);
+// H.M.Wang 2020-4-24 追加计数器编辑类型，但是取消右侧的小箭头
+			if(mSettingItems[2*position + 1].mType == ItemType.TYPE_DIALOG) {
+				mHolder.mValueRTv.setCompoundDrawables(null, null, null, null);
+			}
+// End of H.M.Wang 2020-4-24 追加计数器编辑类型，但是取消右侧的小箭头
 		} else {
 			mHolder.mValueRTv.setVisibility(View.GONE);
 			mHolder.mValueREt.setVisibility(View.VISIBLE);
@@ -420,10 +465,14 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[3] = new ItemOneLine(4, R.string.str_textview_param4, R.string.str_length_unit_mm);
 		mSettingItems[4] = new ItemOneLine(5, R.string.str_textview_param5, R.array.photo_item_entries, 	0, ItemType.TYPE_SWITCH);
 		mSettingItems[5] = new ItemOneLine(6, R.string.str_textview_param6, R.array.switch_item_entries, 	0, ItemType.TYPE_SWITCH);
-		mSettingItems[6] = new ItemOneLine(7, R.string.str_textview_param7, R.string.str_length_unit_mm);
+// H.M.Wang 2020-4-27 重复打印设置改为对话窗
+		mSettingItems[6] = new ItemOneLine(7, R.string.str_textview_param7, R.string.str_length_unit_mm, ItemType.TYPE_DIALOG);
+// End of H.M.Wang 2020-4-27 重复打印设置改为对话窗
 		mSettingItems[7] = new ItemOneLine(8, R.string.str_textview_param8, R.array.direction_item_entries, 0, ItemType.TYPE_DIRECTION);
 		mSettingItems[8] = new ItemOneLine(9, R.string.str_textview_param9, R.string.str_length_unit_mm);
-		mSettingItems[9] = new ItemOneLine(10,R.string.str_textview_param10,0);
+// H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
+		mSettingItems[9] = new ItemOneLine(10,R.string.str_textview_param10,0, ItemType.TYPE_DIALOG);
+// H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
 		mSettingItems[10] = new ItemOneLine(11, R.string.str_textview_param11, R.string.str_length_unit_6_1mm);
 		mSettingItems[11] = new ItemOneLine(12, R.string.str_textview_param12, R.string.str_length_unit_6_1mm);
 		mSettingItems[12] = new ItemOneLine(13, R.string.str_textview_param13, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
@@ -468,16 +517,18 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[41] = new ItemOneLine(42, R.string.str_textview_param42, 0);
 		mSettingItems[42] = new ItemOneLine(43, R.string.str_textview_param43, 0);
 		mSettingItems[43] = new ItemOneLine(44, R.string.str_textview_param44, 0);
-		mSettingItems[44] = new ItemOneLine(45, R.string.str_textview_param45, 0);
-		mSettingItems[45] = new ItemOneLine(46, R.string.str_textview_param46, 0);
-		mSettingItems[46] = new ItemOneLine(47, R.string.str_textview_param47, 0);
-		mSettingItems[47] = new ItemOneLine(48, R.string.str_textview_param48, 0);
-		mSettingItems[48] = new ItemOneLine(49, R.string.str_textview_param49, 0);
-		mSettingItems[49] = new ItemOneLine(50, R.string.str_textview_param50, 0);
-		mSettingItems[50] = new ItemOneLine(51, R.string.str_textview_param51, 0);
-		mSettingItems[51] = new ItemOneLine(52, R.string.str_textview_param52, 0);
-		mSettingItems[52] = new ItemOneLine(53, R.string.str_textview_param53, 0);
-		mSettingItems[53] = new ItemOneLine(54, R.string.str_textview_param54, 0);
+// End of H.M.Wang 2020-4-24 重新定义计数器编辑类型
+		mSettingItems[44] = new ItemOneLine(45, R.string.str_textview_param45, 0, ItemType.TYPE_DIALOG);
+		mSettingItems[45] = new ItemOneLine(46, R.string.str_textview_param46, 0, ItemType.TYPE_DIALOG);
+		mSettingItems[46] = new ItemOneLine(47, R.string.str_textview_param47, 0, ItemType.TYPE_DIALOG);
+		mSettingItems[47] = new ItemOneLine(48, R.string.str_textview_param48, 0, ItemType.TYPE_DIALOG);
+		mSettingItems[48] = new ItemOneLine(49, R.string.str_textview_param49, 0, ItemType.TYPE_DIALOG);
+		mSettingItems[49] = new ItemOneLine(50, R.string.str_textview_param50, 0, ItemType.TYPE_DIALOG);
+		mSettingItems[50] = new ItemOneLine(51, R.string.str_textview_param51, 0, ItemType.TYPE_DIALOG);
+		mSettingItems[51] = new ItemOneLine(52, R.string.str_textview_param52, 0, ItemType.TYPE_DIALOG);
+		mSettingItems[52] = new ItemOneLine(53, R.string.str_textview_param53, 0, ItemType.TYPE_DIALOG);
+		mSettingItems[53] = new ItemOneLine(54, R.string.str_textview_param54, 0, ItemType.TYPE_DIALOG);
+// End of H.M.Wang 2020-4-24 重新定义计数器编辑类型
 		mSettingItems[54] = new ItemOneLine(55, R.string.str_textview_param55, 0);
 		mSettingItems[55] = new ItemOneLine(56, R.string.str_textview_param56, 0);
 		mSettingItems[56] = new ItemOneLine(57, R.string.str_textview_param57, 0);
@@ -525,9 +576,11 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		}
 		
 		items = mContext.getResources().getStringArray(R.array.direction_item_entries);
-		for (int i = 0; i < items.length; i++) {
-			mRepeat.addItem(items[i]);
-		}
+// H.M.Wang 2020-4-27 重复打印设置改为对话窗
+//		for (int i = 0; i < items.length; i++) {
+//			mRepeat.addItem(items[i]);
+//		}
+// End of H.M.Wang 2020-4-27 重复打印设置改为对话窗
 		for (int i = 0; i < items.length; i++) {
 			mNozzle.addItem(items[i]);
 		}
@@ -653,9 +706,20 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		} else if (position == 5) { //參數6
 			mSpiner.setAdapter(mEncoderAdapter);
 		} else if (position == 6) { //參數7
-			mSpiner.setAdapter(mRepeat);
+// H.M.Wang 2020-4-27 重复打印设置改为对话窗
+			PrintRepeatEditDialog dialog = new PrintRepeatEditDialog(mContext, mHandler, mSettingItems[position].getDisplayValue());
+			dialog.show();
+			return;
+//			mSpiner.setAdapter(mRepeat);
+// End of H.M.Wang 2020-4-27 重复打印设置改为对话窗
 		} else if (position == 7) { //參數8
 			mSpiner.setAdapter(mNozzle);
+// H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
+		} else if (position == 9) { //參數10
+			EncoderPPREditDialog dialog = new EncoderPPREditDialog(mContext, mHandler, mSettingItems[position].getDisplayValue());
+			dialog.show();
+			return;
+// H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
 		} else if (position == 12) { //參數13
 			mSpiner.setAdapter(mPen1Mirror);
 		} else if (position == 13) { //參數14
@@ -684,7 +748,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		} else if (position == 26) { //參數27
 			mSpiner.setAdapter(mAutoPulse);
 		} else if (position == 30) { //參數31
-			HeaderSelectDialog dialog = new HeaderSelectDialog(mContext, handler, mSysconfig.getParam(30));
+			HeaderSelectDialog dialog = new HeaderSelectDialog(mContext, mHandler, mSysconfig.getParam(30));
 			dialog.show();
 			return;
 		} else if (position == 31) {
@@ -692,7 +756,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		} else if (position == 38) {
 			// H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用。改为全屏对话窗模式
 			// mSpiner.setAdapter(mLan);
-			DataSourceSelectDialog dialog = new DataSourceSelectDialog(mContext, handler, mSysconfig.getParam(38));
+			DataSourceSelectDialog dialog = new DataSourceSelectDialog(mContext, mHandler, mSysconfig.getParam(38));
 			dialog.show();
 			return;
 			// End of H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用。改为全屏对话窗模式
@@ -700,6 +764,12 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mSpiner.setAdapter(mBeep);
 		} else if (position == 40) { //鍙冩暩40
 			mSpiner.setAdapter(mHandle);
+// H.M.Wang 2020-4-24 追加计数器编辑功能，启动对话窗进行编辑，而不是直接在EditText当中编辑
+		} else if (position >= 44 && position <= 53) { // Counter Setting
+			CounterEditDialog dialog = new CounterEditDialog(mContext, position-44, mSettingItems[position].getDisplayValue());
+			dialog.show();
+			return;
+// End of H.M.Wang 2020-4-24 追加计数器编辑功能，启动对话窗进行编辑，而不是直接在EditText当中编辑
 		}
 		mSpiner.setWidth(view.getWidth());
 		//mSpiner.showAsDropDown(view);

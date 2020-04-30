@@ -135,8 +135,8 @@ static int _send_cmd(hw_smart_card_xpt_t *xpt_p,
         memcpy(pkt + PROTO_OFFS_BODY, body, body_len);
     }
 
-    char buf[1024];
-    memset(buf, 0x00, 1024);
+    char buf[1024] = {0x00};
+//    memset(buf, 0x00, 1024);
     toHexString(pkt, buf, body_len + 2, ',');
     LOGD(">>> %s Data to be written: [%s]", SMART_CARD_PROTO_DBG_ID, buf);
 
@@ -256,8 +256,8 @@ static HW_SMART_CARD_status_t _recv_rsp(hw_smart_card_xpt_t *xpt_p,
         }
     }
 
-    char buf[1024];
-    memset(buf, 0x00, 1024);
+    char buf[1024] = {0x00};
+//    memset(buf, 0x00, 1024);
     toHexString(rcv_buf, buf, rsp_len + 2, ',');
     LOGD(">>> %s Data read: [%s]", SMART_CARD_PROTO_DBG_ID, buf);
 //    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
@@ -307,14 +307,6 @@ static HW_SMART_CARD_status_t _verify_mac(HW_SMART_CARD_device_t *device_p,
         CMAC_CALL(final)(CMAC, mac, sizeof(mac));
 
         /* if mac is different then invalidate session */
-        char buf[1024];
-        memset(buf, 0x00, 1024);
-        toHexString(pkt_p + offs_mac, buf, sizeof(mac), ',');
-        LOGE(">>> pkt_p + offs_mac = [%s]", buf);
-        memset(buf, 0x00, 1024);
-        toHexString(mac, buf, sizeof(mac), ',');
-        LOGE(">>> mac = [%s]", buf);
-
         if (memcmp(pkt_p + offs_mac, mac, sizeof(mac)))
         {
             device_p->sk_valid = FALSE;
@@ -471,8 +463,6 @@ hw_smart_card_proto_read(HW_SMART_CARD_device_t *device_p, uint32_t addr, int si
     HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
                     HP_DBG_LEVEL_SCP_TRACE, 3,
                     "Entering hw_smart_card_proto_read()\n");
-    LOGE(">>> addr = [0x%08X]", addr);
-    LOGE(">>> size = [0x%02X]", size);
     memset(pkt, 0x00, PROTO_MAX_LEN_PKT);
     memset(cmd_mac, 0x00, PROTO_LEN_MAC);
 
@@ -496,15 +486,6 @@ hw_smart_card_proto_read(HW_SMART_CARD_device_t *device_p, uint32_t addr, int si
     _compute_mac(device_p, pkt, PROTO_OFFS_BODY + PROTO_OFFS_READ_MACDIV);                  // device_p->mac_div --> pkt[6-7] -- calculate mac --> pkt[6-13]
     _put(cmd_mac, pkt + PROTO_OFFS_BODY + PROTO_OFFS_READ_MAC, PROTO_LEN_MAC);              // pkt[6-13] --> cmd_mac
 
-    char buf[1024];
-    memset(buf, 0x00, 1024);
-    toHexString(pkt, buf, PROTO_LEN_READ_CMD_BODY + PROTO_OFFS_BODY, ',');
-    LOGE(">>> pkt = [%s]", buf);
-
-    memset(buf, 0x00, 1024);
-    toHexString(cmd_mac, buf, PROTO_LEN_MAC, ',');
-    LOGE(">>> cmd_mac = [%s]", buf);
-
     /* write command */
     if (_send_cmd(xpt_p, PROTO_CMD_READ, pkt + PROTO_OFFS_BODY, PROTO_LEN_READ_CMD_BODY) < 0)
     {
@@ -517,11 +498,6 @@ hw_smart_card_proto_read(HW_SMART_CARD_device_t *device_p, uint32_t addr, int si
 
     /* read response */
     status = _recv_rsp(xpt_p, pkt, size + PROTO_LEN_MAC, NULL);
-
-    memset(buf, 0x00, 1024);
-    toHexString(pkt, buf, size + PROTO_LEN_MAC + PROTO_OFFS_BODY, ',');
-    LOGE(">>> recv pkt = [%s]", buf);
-
 
     if (status != HW_SMART_CARD_success_e)
     {

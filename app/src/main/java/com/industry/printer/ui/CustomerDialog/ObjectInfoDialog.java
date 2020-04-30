@@ -155,8 +155,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 
 	public final static int MSG_SELECTED_FONT = 1;
 	public final static int MSG_SELECTED_SIZE = 2;
-	public final static int MSG_SELECTED_HEADER = 3;
-	
+
 	public Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch(msg.what) {

@@ -37,6 +37,8 @@
         <!--  H.M.Wang 追加下列一行 -->
         <item>64 dot</item>
 
+        <!--  H.M.Wang 2020-4-16 追加追加12.7R5头类型 -->
+        <item>12.7 R5</item>
     </string-array>
 
     <string-array name="strFontArray">

@@ -62,7 +62,7 @@ int SC_I2C_DRIVER_open(int group_id, int device_address);
         -1：失败
 **********************************************************************************/
 
-int SC_I2C_DRIVER_write(int fd, int reg, uint8_t *data, int length);
+int SC_I2C_DRIVER_write(int fd, uint8_t reg, uint8_t *data, int length);
 
 /*********************************************************************************
     SC_I2C_DRIVER_read
@@ -81,7 +81,7 @@ int SC_I2C_DRIVER_write(int fd, int reg, uint8_t *data, int length);
         其它值：失败
 **********************************************************************************/
 
-int SC_I2C_DRIVER_read(int fd, int reg, uint8_t *result, int length);
+int SC_I2C_DRIVER_read(int fd, uint8_t reg, uint8_t *result, int length);
 
 int SC_I2C_DRIVER_close(int fd);
 

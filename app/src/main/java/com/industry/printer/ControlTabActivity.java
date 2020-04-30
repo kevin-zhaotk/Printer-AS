@@ -176,9 +176,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	private boolean mFlagAlarming = false;
 	
-	public static FileInputStream mFileInputStream;
-	Vector<Vector<TlkObject>> mTlkList;
-	Map<Vector<TlkObject>, byte[]> mBinBuffer;
+//	public static FileInputStream mFileInputStream;
+//	Vector<Vector<TlkObject>> mTlkList;
+//	Map<Vector<TlkObject>, byte[]> mBinBuffer;
 	/*
 	 * whether the print-head is doing print work
 	 * if no, poll state Thread will read print-header state
@@ -378,8 +378,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public void onActivityCreated(Bundle savedInstanceState) {	
 		super.onActivityCreated(savedInstanceState);
 		mIndex=0;
-		mTlkList = new Vector<Vector<TlkObject>>();
-		mBinBuffer = new HashMap<Vector<TlkObject>, byte[]>();
+//		mTlkList = new Vector<Vector<TlkObject>>();
+//		mBinBuffer = new HashMap<Vector<TlkObject>, byte[]>();
 		mObjList = new ArrayList<BaseObject>();
 		mContext = this.getActivity();
 		mSysconfig = SystemConfigFile.getInstance(mContext);
@@ -663,7 +663,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	}
 
-
 	public void reloadSettingAndMessage() {
 		mSysconfig.init();
 		loadMessage();
@@ -881,7 +880,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 					Message message = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
 					if (printAfterLoad) {
-						message.sendToTarget();
+// H.M.Wang 2020-4-30 修改打印过程当中编辑内容保存并打印时，重复打印以前内容的问题
+						DataTransferThread dt = DataTransferThread.getInstance(mContext);
+						if(null != dt && dt.isRunning()) {
+							dt.getCurData().prepareBackgroudBuffer();
+						} else {
+							message.sendToTarget();
+						}
+// End of H.M.Wang 2020-4-30 修改打印过程当中编辑内容保存并打印时，重复打印以前内容的问题
 					}
 					if (printNext) {
 						Bundle bundle = new Bundle();
@@ -2413,12 +2419,17 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            }
 		                            else if(PCCommand.CMD_READ_COUNTER.equalsIgnoreCase(cmd.command)) {
 		                            	//400取计数器
-		                            	for(int i=0;i<7;i++)
-		                            	{
-		                            	sendmsg("counter:" + mCounter+" |ink:" + mInkManager.getLocalInk(i) + "|state:" + DataTransferThread.getInstance(mContext).isRunning());
-		                            	//获取INK无显示问题，赵工这地方改好，前面注示去掉就OK了
-		                            	this.sendmsg(Constants.pcOk(msg));
+// H.M.Wang 2020-4-22 修改读取Counter命令返回格式
+										StringBuilder sb = new StringBuilder();
+
+										sb.append("" + mCounter);
+		                            	for(int i=0; i<8; i++) {
+  	  										sb.append("|" + (int)(mInkManager.getLocalInk(i)));
 		                            	}
+										sb.append("|" + (DataTransferThread.getInstance(mContext).isRunning() ? "T" : "F") + "|");
+										sb.append(msg);
+										this.sendmsg(Constants.pcOk(sb.toString()));
+// End of H.M.Wang 2020-4-22 修改读取Counter命令返回格式
 		                            }
 		                            else if(PCCommand.CMD_STOP_PRINT.equalsIgnoreCase(cmd.command)) {
 		                            	//500停止打印

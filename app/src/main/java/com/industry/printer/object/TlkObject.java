@@ -1,5 +1,6 @@
 package com.industry.printer.object;
 
+@Deprecated
 public class TlkObject {
 	
 	public int index;

@@ -51,7 +51,7 @@
 #define MANUFACTURE_ID_ADDR     0x7E        // Default 0x5449
 #define DEVICE_ID_ADDR          0x7F        // Default 0x3055
 
-static int _writeI2Cdata(int reg, uint8_t *data, int length) {
+static int _writeI2Cdata(uint8_t reg, uint8_t *data, int length) {
     int fd;
     int ret;
 
@@ -111,7 +111,7 @@ static int _read2Bytes(int reg, uint16_t *data) {
     return ret;
 }
 
-static int _write2Bytes(int reg, uint16_t *data) {
+static int _write2Bytes(uint8_t reg, uint16_t *data) {
     uint8_t buf[2];
 
     buf[0] = (int8_t )(((*data) >> 8) & 0x00FF);

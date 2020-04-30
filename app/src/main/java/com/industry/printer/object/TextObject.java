@@ -29,7 +29,16 @@ public class TextObject extends BaseObject {
 
 	@Override
 	public void setContent(String content) {
-		super.setContent(content);
+// H.M.Wang 2020-4-20 在内容发生变化的情况下，设置新的内容，并且重新计算宽度，是保持比例
+		if(mContent != null && !mContent.equals(content)) {
+			super.setContent(content);
+			meature();
+		}
+// End of H.M.Wang 2020-4-20 在内容发生变化的情况下，设置新的内容，并且重新计算宽度，是保持比例
+// H.M.Wang 2020-4-19 不重新计算就会出现即使字数发生变化，总宽度不变的问题（如果原来是5个字，修改为1个字的话，后面的1个字会占原来的5个字的宽度
+// 如果重新计算，如果对高度进行过手动调整，但宽度不调整的话，字数发生变化后，宽度也会按着高度的比率发生变化
+// 总而言之，这里原来的逻辑有缺陷，最好的办法是再次确认需求之后，重新定义这里的逻辑，否则，逻辑互相牵制，无法达到最佳状态
+//		meature();
 
 		// H.M.Wang取消宽度归零的设置。如果有这行，用户对高度进行缩小以后，设置属性重新计算宽度，此时宽度也会变小
 //		mWidth = 0;

@@ -24,9 +24,9 @@ typedef enum
 {
     HP_SMART_CARD_DEVICE_ID_0,                              // This is the device id of the first Component Smart Card
 // H.M.Wang 2019-10-17 Added the following 3 devices
-    HP_SMART_CARD_DEVICE_ID_1,                              // This is the device id of the second Component Smart Card
-    HP_SMART_CARD_DEVICE_ID_2,                              // This is the device id of the third Component Smart Card
-    HP_SMART_CARD_DEVICE_ID_3,                              // This is the device id of the fourth Component Smart Card
+//    HP_SMART_CARD_DEVICE_ID_1,                              // This is the device id of the second Component Smart Card
+//    HP_SMART_CARD_DEVICE_ID_2,                              // This is the device id of the third Component Smart Card
+//    HP_SMART_CARD_DEVICE_ID_3,                              // This is the device id of the fourth Component Smart Card
 
 #ifdef INCLUDE_HP_SMART_CARD_SUPPLY
     HP_SMART_CARD_DEVICE_ID_1,                              // If supply is supported, a second Component device is assumed

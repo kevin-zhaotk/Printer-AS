@@ -2173,8 +2173,11 @@ static HP_SMART_CARD_result_t smart_card_cache_write(HP_SMART_CARD_id_t device,
     HP_SMART_CARD_result_t  result  = HP_SMART_CARD_OK;
     int                     i       = 0;
 
+    char buf[1024] = {0x00};
+//        memset(buf, 0x00, 1024);
+    toHexString(src, buf, size, ',');
     HP_DEBUG_printf(DBG_SMART_CARD_ID, HP_DBG_LEVEL_SC_TRACE, 3,
-                    "smart_card_cache_write: device %d, addr %d - entry\n", device, addr);
+                    "smart_card_cache_write: device %d, addr %d, size %d, [%s] - entry\n", device, addr, size, buf);
 
     // check parameters, addr within the part, size assures data within part
     HP_ASSERT(addr >= 0 && addr < pub_cache[device].size);

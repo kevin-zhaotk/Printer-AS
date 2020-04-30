@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background" >
+
+	<TextView
+		android:id="@+id/ceTitle"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="30dp"
+		android:lines="1"
+		android:text="@string/strCounterEditTitle"
+		android:gravity="center"
+		android:textSize="30sp" />
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/ceTitle"
+		android:layout_margin="24dp"
+		android:orientation="vertical" >
+		<RelativeLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+			<TextView
+				android:id="@+id/counterIndex"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:textSize="30sp" />
+			<TextView
+				android:id="@+id/idBtnClear"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginRight="10dp"
+				android:layout_alignParentRight="true"
+				android:text="@string/strCounterClear"
+				android:textSize="30sp" />
+		</RelativeLayout>
+		<EditText
+			android:id="@+id/counterEdit"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="number"
+			android:textSize="30sp" />
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/buttons"
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
+		android:layout_alignParentBottom="true"
+		android:orientation="horizontal" >
+		<TextView
+			android:id="@+id/confirm"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:background="@drawable/style_dialog_btn"
+			android:gravity="center"
+			android:textSize="30sp"
+			android:text="@string/str_ok"
+			/>
+
+		<TextView
+			android:id="@+id/cancel"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:background="@drawable/style_dialog_btn"
+			android:gravity="center"
+			android:textSize="30sp"
+			android:text="@string/strNativeBtn"
+			/>
+	</LinearLayout>
+</RelativeLayout>
