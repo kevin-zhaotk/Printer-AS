@@ -16,8 +16,7 @@ public class SerialProtocol3 {
     public final static int ERROR_SUCESS = 0x00000000;   // 无错误
 
     public int parseFrame(ByteArrayBuffer recvMsg) {
-// H.M.Wang 2020-4-30 修改为新的串口协议3，不检测末尾的0x0A
-/*        int recvCmd = ERROR_FAILED;
+        int recvCmd = ERROR_FAILED;
         try {
             for (int i=recvMsg.length()-1; i>=0; i--) {
                 if (recvMsg.byteAt(i) == 0x0A) {
@@ -30,9 +29,7 @@ public class SerialProtocol3 {
         } catch (Exception e) {
             Debug.e(TAG, e.getMessage());
         }
-        return ERROR_FAILED;*/
-    return ERROR_SUCESS;
-// End of H.M.Wang 2020-4-30 修改为新的串口协议3，不检测末尾的0x0A
+        return ERROR_FAILED;
     }
 
     public byte[] createFrame(int cmd, int ack, int devStatus, int cmdStatus, byte[] msg) {
