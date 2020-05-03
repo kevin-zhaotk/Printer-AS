@@ -36,6 +36,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -615,6 +616,22 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		}
 		
 		return false;
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		return super.onKeyDown(keyCode, event);
+		char eventString = event.getDisplayLabel();
+
+		long currency =  System.currentTimeMillis();
+		if (currency - lastScanTimeStemp > 2000) {
+			mScanedCode.delete(0, mScanedCode.length());
+		}
+		lastScanTimeStemp = currency;
+		mScanedCode = mScanedCode.append(eventString);
+		Debug.i(TAG, "--->event: " + mScanedCode.toString());
+		if (event.getDeviceId() == 10) return false;
+		return super.onKeyDown(keyCode, event);
 	}
 
 	@Override
