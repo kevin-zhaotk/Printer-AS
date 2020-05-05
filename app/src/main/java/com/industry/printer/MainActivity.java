@@ -623,13 +623,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 //		return super.onKeyDown(keyCode, event);
 		char eventString = event.getDisplayLabel();
 
-		long currency =  System.currentTimeMillis();
-		if (currency - lastScanTimeStemp > 2000) {
-			mScanedCode.delete(0, mScanedCode.length());
-		}
-		lastScanTimeStemp = currency;
-		mScanedCode = mScanedCode.append(eventString);
-		Debug.i(TAG, "--->event: " + mScanedCode.toString());
+		Global.writeCode(eventString);
 		if (event.getDeviceId() == 10) return false;
 		return super.onKeyDown(keyCode, event);
 	}
