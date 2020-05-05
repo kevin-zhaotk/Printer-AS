@@ -10,14 +10,16 @@ public class Global {
 
     public static void writeCode(char code) {
         long currency = System.currentTimeMillis();
-        if (currency - mLast > 2000) {
+        if (currency - mLast > 500) {
             gCode.delete(0, gCode.length());
         }
         mLast = currency;
+        Debug.i("Global", "--->gCode: " + gCode.toString());
         gCode = gCode.append(code);
     }
 
     public static String readCode() {
+        Debug.i("Global", "--->getCode: " + gCode.toString());
         return gCode.toString();
     }
 }

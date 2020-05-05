@@ -129,6 +129,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	private Dialog screenSaver;
 	
 	private TextView IP_address;// localhost ip
+	private TextView mCode;// localhost ip
+
 	static {
 		System.loadLibrary("Hardware_jni");
 	}
@@ -144,6 +146,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		//setLocale();
 		setContentView(R.layout.activity_main);
 		IP_address=(TextView)findViewById(R.id.IP_address);
+		mCode = (TextView) findViewById(R.id.code);
 		boolean isroot=false;
 		mContext = getApplicationContext();
 		mActivity = this;
@@ -624,6 +627,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		char eventString = event.getDisplayLabel();
 
 		Global.writeCode(eventString);
+		mCode.setText(Global.readCode());
 		if (event.getDeviceId() == 10) return false;
 		return super.onKeyDown(keyCode, event);
 	}

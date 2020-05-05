@@ -9,7 +9,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 17
         versionCode 30255           //next: 30256
-        versionName "1911150501"
+        versionName "2005050501-zhao"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk {
