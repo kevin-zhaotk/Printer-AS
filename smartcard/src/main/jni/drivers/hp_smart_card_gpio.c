@@ -37,8 +37,8 @@ static HP_SMART_CARD_bool_t Initialized = HP_SMART_CARD_FALSE;
 
 void HP_SMART_CARD_gpio_init() {
     // if already initialized, don't do it again
-    if (Initialized)
-        return;
+//    if (Initialized)
+//        return;
 /* Cut by H.M.Wang 2019-9-22
     // initialize lib
     if (bcm2835_init() == 0)

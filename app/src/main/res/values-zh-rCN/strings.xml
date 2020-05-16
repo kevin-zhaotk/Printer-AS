@@ -239,6 +239,9 @@
 	<!-- H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
 	<string name="strEncoderPPREditTitle">修改编码器脉冲</string>
 	<!-- End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+	<!-- H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理 -->
+	<string name="strQRLastEditTitle">编辑QRLast索引</string>
+	<!-- End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理 -->
 
 	<string name="strBtnSave">确认</string>
 	<string name="strRecvedRemote">接收到远程数据</string>
@@ -386,7 +389,7 @@
 	<string name="str_textview_param52">52.计数器7</string>
 	<string name="str_textview_param53">53.计数器8</string>
 	<string name="str_textview_param54">54.计数器9</string>
-	<string name="str_textview_param55">55.保留</string>
+	<string name="str_textview_param55">55.QR索引</string>
 	<string name="str_textview_param56">56.保留</string>
 	<string name="str_textview_param57">57.保留</string>
 	<string name="str_textview_param58">58.保留</string>

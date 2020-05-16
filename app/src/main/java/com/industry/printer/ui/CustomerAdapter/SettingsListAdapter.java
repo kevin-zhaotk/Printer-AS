@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.industry.printer.FileFormat.QRReader;
 import com.industry.printer.R;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.Configs;
@@ -18,6 +19,7 @@ import com.industry.printer.ui.CustomerDialog.HeaderSelectDialog;
 import com.industry.printer.ui.CustomerDialog.NewMessageDialog;
 import com.industry.printer.ui.CustomerDialog.ObjectInfoDialog;
 import com.industry.printer.ui.CustomerDialog.PrintRepeatEditDialog;
+import com.industry.printer.ui.CustomerDialog.QRLastEditDialog;
 import com.industry.printer.widget.PopWindowSpiner;
 
 import android.app.AlertDialog;
@@ -108,13 +110,21 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 				String count = intent.getStringExtra(SettingsListAdapter.TAG_VALUE);
 
 				// H.M.Wang 2019-12-9 将广播范围扩大到所有参数
-//				if( index >= SystemConfigFile.INDEX_COUNT_1 && index <= SystemConfigFile.INDEX_COUNT_10) {
+				if( index >= SystemConfigFile.INDEX_COUNT_1 && index <= SystemConfigFile.INDEX_COUNT_10) {
 					if(null != mSettingItems[index]) {
 						mSettingItems[index].setValue(count);
 						notifyDataSetChanged();
 					}
-//				}
+				}
 				// End. -----------
+// H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
+				if( index == SystemConfigFile.INDEX_QRCODE_LAST) {
+					if(null != mSettingItems[index]) {
+						mSettingItems[index].setValue(count);
+						notifyDataSetChanged();
+					}
+				}
+// End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 			}
 		}
 	};
@@ -156,6 +166,9 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 // H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
 	public static final int MSG_ENCODER_PPR_SET = 40;		// 编码器脉冲设置
 // End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
+// H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
+	public static final int MSG_QRLAST_SET = 41;		// QRLast设置
+// End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 
 	public Handler mHandler = new Handler(){
 		@Override
@@ -165,7 +178,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 				int index = msg.arg1;
 				Debug.d(TAG, "--->index: " + index);
 				mSettingItems[30].setValue(index);
-				mSysconfig.setParam(30, mSettingItems[30].getValue());
+				mSysconfig.setParam(SystemConfigFile.INDEX_HEAD_TYPE, mSettingItems[30].getValue());
 				String value = mSettingItems[30].getDisplayValue();
 				
 				notifyDataSetChanged();
@@ -192,6 +205,14 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 				notifyDataSetChanged();
 				break;
 // End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
+// H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
+				case MSG_QRLAST_SET:
+					mSettingItems[SystemConfigFile.INDEX_QRCODE_LAST].setValue(msg.arg1);
+					mSysconfig.setParam(SystemConfigFile.INDEX_QRCODE_LAST, msg.arg1);
+					QRReader.getInstance(mContext).writeQRLast(msg.arg1);
+					notifyDataSetChanged();
+					break;
+// End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 			}
 		}
 	};
@@ -517,7 +538,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[41] = new ItemOneLine(42, R.string.str_textview_param42, 0);
 		mSettingItems[42] = new ItemOneLine(43, R.string.str_textview_param43, 0);
 		mSettingItems[43] = new ItemOneLine(44, R.string.str_textview_param44, 0);
-// End of H.M.Wang 2020-4-24 重新定义计数器编辑类型
+// H.M.Wang 2020-4-24 重新定义计数器编辑类型
 		mSettingItems[44] = new ItemOneLine(45, R.string.str_textview_param45, 0, ItemType.TYPE_DIALOG);
 		mSettingItems[45] = new ItemOneLine(46, R.string.str_textview_param46, 0, ItemType.TYPE_DIALOG);
 		mSettingItems[46] = new ItemOneLine(47, R.string.str_textview_param47, 0, ItemType.TYPE_DIALOG);
@@ -529,7 +550,9 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[52] = new ItemOneLine(53, R.string.str_textview_param53, 0, ItemType.TYPE_DIALOG);
 		mSettingItems[53] = new ItemOneLine(54, R.string.str_textview_param54, 0, ItemType.TYPE_DIALOG);
 // End of H.M.Wang 2020-4-24 重新定义计数器编辑类型
-		mSettingItems[54] = new ItemOneLine(55, R.string.str_textview_param55, 0);
+// H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
+		mSettingItems[54] = new ItemOneLine(55, R.string.str_textview_param55, 0, ItemType.TYPE_DIALOG);
+// End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 		mSettingItems[55] = new ItemOneLine(56, R.string.str_textview_param56, 0);
 		mSettingItems[56] = new ItemOneLine(57, R.string.str_textview_param57, 0);
 		mSettingItems[57] = new ItemOneLine(58, R.string.str_textview_param58, 0);
@@ -676,8 +699,6 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		}
 		return 0;
 	}
-	
-	
 
 	@Override
 	public void onClick(View view) {
@@ -770,6 +791,12 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			dialog.show();
 			return;
 // End of H.M.Wang 2020-4-24 追加计数器编辑功能，启动对话窗进行编辑，而不是直接在EditText当中编辑
+// H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
+		} else if (position == 54) { 				// QRLast
+			QRLastEditDialog dialog = new QRLastEditDialog(mContext, mHandler, mSettingItems[position].getDisplayValue());
+			dialog.show();
+			return;
+// End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 		}
 		mSpiner.setWidth(view.getWidth());
 		//mSpiner.showAsDropDown(view);

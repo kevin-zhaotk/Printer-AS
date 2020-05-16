@@ -249,21 +249,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				ExtGpio.playClick();
 			}
 		}.start();
-
-		new Thread() {
-			@Override
-			public void run() {
-				try{
-//					while(true) {
-//						Thread.sleep(5000);
-//						ExtGpio.playClick();
-//						SmartCard.open();
-//					}
-				} catch (Exception e) {
-					Debug.e(TAG, e.getMessage());
-				}
-			}
-		}.start();
 	}
 
 	@Override

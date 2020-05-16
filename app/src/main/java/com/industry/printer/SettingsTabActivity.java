@@ -376,13 +376,14 @@ public static final String TAG="SettingsTabActivity";
 						DataTransferThread dt = DataTransferThread.getInstance(mContext);
 						if(null != dt && dt.isRunning()) {
 							DataTask task = dt.getCurData();
-							FpgaGpioOperation.clean();
+// 2020-5-8							FpgaGpioOperation.clean();
 							FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
-							dt.mNeedUpdate = true;
-							while (dt.mNeedUpdate) {
-								try{Thread.sleep(10);}catch(Exception e){};
-							}
+//							dt.mNeedUpdate = true;
+//							while (dt.mNeedUpdate) {
+//								try{Thread.sleep(10);}catch(Exception e){};
+//							}
 							FpgaGpioOperation.init();
+							dt.resendBufferToFPGA();
 						} else {
 							FpgaGpioOperation.updateSettings(mContext, null, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 						}

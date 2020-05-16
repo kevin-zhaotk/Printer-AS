@@ -15,7 +15,7 @@ public class SmardCardScheduler implements IInkScheduler {
 
     @Override
     public int count() {
-        return 0;
+        return 1;
     }
 
     @Override

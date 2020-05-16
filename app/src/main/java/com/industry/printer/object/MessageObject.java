@@ -59,6 +59,11 @@ public class MessageObject extends BaseObject {
 			return ;
 //		mType = i;
 		mPNozzle = PrinterNozzle.getInstance(i);
+// H.M.Wang 2020-5-9 12.7R5d打印头类型强制修改为12.7类型
+		if(mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+			mPNozzle = PrinterNozzle.MESSAGE_TYPE_12_7;
+		}
+// End of H.M.Wang 2020-5-9 12.7R5d打印头类型强制修改为12.7类型
 	}
 	
 	public void setType(String type) {
@@ -67,6 +72,11 @@ public class MessageObject extends BaseObject {
 			if (printer[i].equals(type)) {
 //				mPNozzle.mType = i;
 				mPNozzle = PrinterNozzle.getInstance(i);
+// H.M.Wang 2020-5-9 12.7R5d打印头类型强制修改为12.7类型
+				if(mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+					mPNozzle = PrinterNozzle.MESSAGE_TYPE_12_7;
+				}
+// End of H.M.Wang 2020-5-9 12.7R5d打印头类型强制修改为12.7类型
 				break;
 			}
 		}

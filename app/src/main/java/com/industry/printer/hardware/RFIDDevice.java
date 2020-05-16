@@ -830,35 +830,6 @@ public class RFIDDevice implements RfidCallback{
 		return encryt.decryptInkLevel(ink);
 	}
 	
-	public float getInkLevel() {
-		Debug.e(TAG, "--->getInkLevel");
-		if (!mReady) {
-			return 0;
-		}
-		// 先从主block读取墨水值
-		int current = getInkLevel(false);
-		if (!isLevelValid(current)) {
-			// 如果主block墨水值不合法则从备份区读取
-			Debug.e(TAG, "--->read from master block failed, try backup block");
-			current = getInkLevel(true);
-			if (!isLevelValid(current)) {
-				Debug.e(TAG, "--->read from backup block failed");
-				mCurInkLevel = 0;
-				return 0;
-			}
-		}
-		mCurInkLevel = current;
-		Debug.e(TAG, "===>curInk=" + mCurInkLevel + ", max=" + mInkMax);
-		return mCurInkLevel;
-		/*if (mInkMax <= 0) {
-			return 0;
-		} else if (mCurInkLevel > mInkMax) {
-			return 100;
-		} else {
-			return (mCurInkLevel * 100)/mInkMax;
-		}*/
-	}
-
 	public float getLocalInk() {
 //		Debug.d(TAG, "===>curInk=" + mCurInkLevel);
 		return mCurInkLevel;
@@ -905,51 +876,6 @@ public class RFIDDevice implements RfidCallback{
 		writeBlock(sector, block, content);
 	}
 
-	/**
-	 *更新墨水值，即当前墨水值减1 
-	 */
-	public float updateInkLevel() {
-		Debug.d(TAG, "--->updateInkLevel");
-		if (!mReady) {
-			return 0;
-		}
-		/* 为了提高效率，更新墨水量时不再从RFID读取，而是使用上次读出的墨水量
-		int level = getInkLevel(false);
-		if (!isLevelValid(level)) {
-			// 如果主block墨水值不合法则从备份区读取
-			level = getInkLevel(true);
-			if (!isLevelValid(level)) {
-				return 0;
-			}
-		}
-		*/
-		
-		if (mCurInkLevel > 0) {
-			mCurInkLevel = mCurInkLevel -1;
-		} else if (mCurInkLevel <= 0) {
-			mCurInkLevel = 0;
-		}
-		
-		// 将新的墨水量写回主block
-		setInkLevel(mCurInkLevel, false);
-		// 将新的墨水量写回备份block
-		setInkLevel(mCurInkLevel, true);
-		Debug.d(TAG, "===>cur=" + mCurInkLevel + ", max=" + mInkMax);
-		return mCurInkLevel;
-		/*
-		if (mInkMax <= 0) {
-			return 0;
-		} else if (mCurInkLevel > mInkMax) {
-			return 100;
-		} else if ((mCurInkLevel * 100)/mInkMax < 0.1) {
-			return (float) 0.1;
-		} else {
-			return (mCurInkLevel * 100)/mInkMax;
-		}
-		*/
-	}
-	
-	
 	public void down() {
 		if (mCurInkLevel > 0) {
 			mCurInkLevel = mCurInkLevel -1;
@@ -964,39 +890,7 @@ public class RFIDDevice implements RfidCallback{
 		}
 		Debug.e(TAG, "--->ink=" + mCurInkLevel);
 	}
-	/**
-	 *更新墨水值，即当前墨水值减1 
-	 */
-	public void updateToDevice() {
-		Debug.d(TAG, "--->updateInkLevel");
-		if (!mReady) {
-			return;
-		}
-		/* 为了提高效率，更新墨水量时不再从RFID读取，而是使用上次读出的墨水量
-		int level = getInkLevel(false);
-		if (!isLevelValid(level)) {
-			// 如果主block墨水值不合法则从备份区读取
-			level = getInkLevel(true);
-			if (!isLevelValid(level)) {
-				return 0;
-			}
-		}
-		*/
-		if (mLastLevel == mCurInkLevel) {
-			return;
-		}
-		mLastLevel = mCurInkLevel;
-		if (mCurInkLevel <= 0) {
-			mCurInkLevel = 0;
-		}
-		Debug.i(TAG, "--->updateInkLevel level = " + mCurInkLevel);
-		
-		// 将新的墨水量写回主block
-		setInkLevel(mCurInkLevel, false);
-		// 将新的墨水量写回备份block
-		setInkLevel(mCurInkLevel, true);
-	}
-	
+
 	public byte[] mFeature = new byte[24];
 	
 	public int getFeature(int index) {

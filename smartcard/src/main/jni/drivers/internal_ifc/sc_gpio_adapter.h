@@ -32,35 +32,12 @@ extern "C" {
 #define SC_GPIO_ADAPTER_FAIL     -1
 
 // Added by H.M.Wang 2019-10-17
-//#define SELECT_ITEM_0   FALSE, FALSE, FALSE
-/*
-// 高电平有效，589排列
-#define SELECT_LEVEL_1  FALSE, FALSE, TRUE
-#define SELECT_CARD_1   FALSE, TRUE, FALSE
-#define SELECT_LEVEL_2  FALSE, TRUE, TRUE
-#define SELECT_CARD_2   TRUE, FALSE, FALSE
-
-// 高电平有效，985排列
-#define SELECT_LEVEL_1  TRUE, FALSE, FALSE
-#define SELECT_CARD_1   FALSE, TRUE, FALSE
-#define SELECT_LEVEL_2  TRUE, TRUE, FALSE
-#define SELECT_CARD_2   FALSE, FALSE, TRUE
-*/
 // 低电平有效，589排列
-#define SELECT_LEVEL_1  0x00, 0x00, 0x00
-#define SELECT_CARD_1   0x00, 0x01, 0x00
-#define SELECT_LEVEL_2  TRUE, FALSE, FALSE
-#define SELECT_CARD_2   FALSE, TRUE, TRUE
-/*
-// 低电平有效，985排列
-#define SELECT_LEVEL_1  FALSE, TRUE, TRUE
-#define SELECT_CARD_1   TRUE, FALSE, TRUE
-#define SELECT_LEVEL_2  FALSE, FALSE, TRUE
-#define SELECT_CARD_2   TRUE, TRUE, FALSE
-*/
-//#define SELECT_ITEM_5   TRUE, FALSE, TRUE
-//#define SELECT_ITEM_6   TRUE, TRUE, FALSE
-//#define SELECT_ITEM_7   TRUE, TRUE, TRUE
+
+#define SELECT_LEVEL        0x01, 0x00, 0x00
+#define SELECT_PRNT_CTRG    0x01, 0x01, 0x00
+#define SELECT_BULK_CTRG    0x00, 0x01, 0x00
+
 // Added by H.M.Wang 2019-10-17 end
 
 //-----------------------------------------------------------------------------

@@ -283,10 +283,26 @@ public class FpgaGpioOperation {
 		data[22] = (char) SystemConfigFile.mResv23;
 		data[23] = (char) SystemConfigFile.mResv24;
 		*/
+
 		if (task != null) {
 			BinInfo info = task.getInfo();
 			data[24] = (char) info.getBytesFeed();
 		}
+// H.M.Wang 2020-5-7 12.7R5头的时候，设置头的数，强制设置打印头类型为12.7->3x25.4->12.7
+		// S17
+// H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
+		if(config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+//		final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+//		PrinterNozzle head = PrinterNozzle.getInstance(headIndex);
+//		if(head == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+// End of H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
+			data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_12_7;
+			data[16] &= 0xfc7f;		// Bit9-7
+			data[16] |= 0x0280;		// 6个头
+			data[24] *= 6;
+		}
+// End of H.M.Wang 2020-5-7 12.7R5头的时候，设置头的数
+
 		//是否雙列打印
 		data[25] = (char)config.getParam(31-1);
 		//雙列偏移量

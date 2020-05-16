@@ -201,27 +201,28 @@ public class DataTask {
 // End of H.M.Wang 2020-4-18 从DataTransferThread移至此
 
 // H.M.Wang 2020-4-18 追加12.7R5头
-		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+// H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
+        SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
+		Debug.d(TAG, "Params = " + sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE));
+		Debug.d(TAG, "Nozzle Index = " + PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5);
+		if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+//		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+// End of H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
 			CharArrayBuffer caBuf = new CharArrayBuffer(0);
-			int wideTimes = mTask.getNozzle().getRTimes();
-			int heads = mTask.getNozzle().getRHeads();
-			int orgCharsOfCol = mBinInfo.mCharsPerHFeed * mTask.getNozzle().mHeads;
-			int orgCols = mBuffer.length / orgCharsOfCol;
-//			SystemConfigFile config = SystemConfigFile.getInstance(mContext);
-//			int dstCharsOfCol = mTask.getNozzle().getRMaxCols(config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150);
-			int dstCharsOfCol = mTask.getNozzle().getRMaxCols();
-			char[] empty = new char[orgCharsOfCol];
+			int orgCharsOfHead = mBinInfo.mCharsPerHFeed * mTask.getNozzle().mHeads;
+			int orgCols = mBuffer.length / orgCharsOfHead;
+			char[] empty = new char[orgCharsOfHead];
 			Arrays.fill(empty, (char)0x0000);
 
-			for(int i=0; i<wideTimes; i++) {
-				for(int k=0; k<dstCharsOfCol; k++) {
-					for(int j=0; j<heads; j++) {
-						if((j % 2 == 0 && i == 0) || 				// 单数行第一列块
-						   (j % 2 != 0 && i == wideTimes - 1) ||    // 双数行最后一列
-						   (k >= orgCols)) {						// 原始块中宽度不足部分
-							caBuf.append(empty, 0, orgCharsOfCol);
+			for(int i=0; i<PrinterNozzle.R5x6_PRINT_COPY_NUM; i++) {
+				for(int k=0; k<PrinterNozzle.R5x6_MAX_COL_NUM_EACH_UNIT; k++) {
+					for(int j=0; j<PrinterNozzle.R5x6_HEAD_NUM; j++) {
+						if((j % 2 == 0 && i == PrinterNozzle.R5x6_PRINT_COPY_NUM - 1) || 	// 单数行最后一列
+						   (j % 2 != 0 && i == 0) ||    									// 双数行第一列
+						   (k >= orgCols)) {												// 原始块中宽度不足部分
+							caBuf.append(empty, 0, orgCharsOfHead);
 						} else {
-							caBuf.append(mBuffer, k * orgCharsOfCol, orgCharsOfCol);
+							caBuf.append(mBuffer, k * orgCharsOfHead, orgCharsOfHead);
 						}
 					}
 				}
@@ -230,7 +231,7 @@ public class DataTask {
 			mBuffer = caBuf.toCharArray();
 
 			FileUtil.deleteFolder("/mnt/sdcard/printR5x6.bin");
-			BinCreater.saveBin("/mnt/sdcard/printR5x6.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * heads);
+			BinCreater.saveBin("/mnt/sdcard/printR5x6.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R5x6_HEAD_NUM);
 		}
 // End of H.M.Wang 2020-4-18 追加12.7R5头
 

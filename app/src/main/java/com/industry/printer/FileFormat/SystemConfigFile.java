@@ -174,6 +174,7 @@ public class SystemConfigFile{
 	public static final int INDEX_COUNT_9 = 52;
 	public static final int INDEX_COUNT_10 = 53;
 
+    public static final int INDEX_QRCODE_LAST = 54;
 
 	/*
 	 * 目前參數使用情況：
@@ -414,6 +415,10 @@ public class SystemConfigFile{
 			mParam[i] = (int)(RTCDevice.getInstance(mContext).read(i - INDEX_COUNT_1));
 			Debug.d(TAG, "mParam[" + i + "] = " + mParam[i]);
 		}
+
+// H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
+        mParam[INDEX_QRCODE_LAST] = QRReader.getInstance(mContext).readQRLast();
+// End of H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 
 		return true;
 		/*
@@ -675,6 +680,10 @@ public class SystemConfigFile{
 			counters[i - INDEX_COUNT_1] = mParam[i];
 		}
 		RTCDevice.getInstance(mContext).writeAll(counters);
+
+// H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
+        QRReader.getInstance(mContext).writeQRLast(mParam[INDEX_QRCODE_LAST]);
+// End of H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 	}
 	
 	/*
@@ -1181,7 +1190,6 @@ public class SystemConfigFile{
 		// H.M.Wang 修改完
 	}
 
-
 	public void setCounters(int[] counters) {
 		if (counters.length > 0) {
 			mParam[INDEX_COUNT_1] = counters[0];
@@ -1277,6 +1285,10 @@ public class SystemConfigFile{
 		} else if (param/10 > 0) {
 			return param%10;
 		} else {
+			// 2020-5-11
+			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+				return 6;
+			}
 			return 1;
 		}
 	}
@@ -1293,8 +1305,12 @@ public class SystemConfigFile{
 		} else if (param/10 > 0) {
 			return 0;
 		} else {
+			// 2020-5-11
+			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+				return (head < 6 ? 0 : head);
+			}
+			// 2020-5-11
 			return head;
 		}
 	}
-	
 }

@@ -72,11 +72,11 @@ static uint8_t DeviceIDtoAddr(HP_SMART_CARD_device_id_t device_id) {
     if (device_id == HP_SMART_CARD_DEVICE_HOST) {
         return (0xF0 >> 1);
     } else if (device_id == HP_SMART_CARD_DEVICE_ID_0) {
-        SC_GPIO_ADAPTER_select_38_xlater(SELECT_CARD_1);               // select Card 0
+        SC_GPIO_ADAPTER_select_38_xlater(SELECT_PRNT_CTRG);               // select Print Cartridge
         return (0x42 >> 1);
-//    } else if (device_id == HP_SMART_CARD_DEVICE_ID_1) {
-//        SC_GPIO_ADAPTER_select_38_xlater(SELECT_CARD_2);               // select Pen 1
-//        return (0x42 >> 1);
+    } else if (device_id == HP_SMART_CARD_DEVICE_ID_1) {
+        SC_GPIO_ADAPTER_select_38_xlater(SELECT_BULK_CTRG);               // select Bulk Cartridge
+        return (0x42 >> 1);
 //    } else if (device_id == HP_SMART_CARD_DEVICE_ID_2) {
 //        HP_SMART_CARD_gpio_select(SELECT_CARD_3);               // select Pen 2
 //        return (0x42 >> 1);

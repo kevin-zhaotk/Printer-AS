@@ -4,6 +4,7 @@
 
 #include <drivers/internal_ifc/sc_i2c_driver.h>
 #include <common_log.h>
+#include <unistd.h>
 #include "level_memory_access.h"
 
 #define LEVEL_I2C_ADDRESS       0x2b
@@ -62,7 +63,16 @@ static int _writeI2Cdata(uint8_t reg, uint8_t *data, int length) {
         return LEVEL_I2C_FAILED;
     }
 
-    ret = SC_I2C_DRIVER_write(fd, reg, data, length);
+    int try = 100;
+    while (try > 0) {
+        ret = SC_I2C_DRIVER_write(fd, reg, data, length);
+
+        if(ret >= 0) {
+            break;
+        }
+        try--;
+        usleep(10);
+    }
 
     SC_I2C_DRIVER_close(fd);
 
@@ -85,7 +95,16 @@ static int _readI2Cdata(int reg, uint8_t *data, int length) {
         return LEVEL_I2C_FAILED;
     }
 
-    read_length = SC_I2C_DRIVER_read(fd, reg, data, length);
+    int try = 100;
+    while (try > 0) {
+        read_length = SC_I2C_DRIVER_read(fd, reg, data, length);
+
+        if(read_length >= 0) {
+            break;
+        }
+        try--;
+        usleep(10);
+    }
 
     SC_I2C_DRIVER_close(fd);
 
@@ -123,9 +142,10 @@ static int _write2Bytes(uint8_t reg, uint16_t *data) {
 static int _read4Bytes(int reg, uint32_t *data) {
     uint8_t buf[2];
 
+    *data = 0x00000000;
+
     int ret = _readI2Cdata(reg, buf, 2);
 
-    *data = 0x00000000;
     (*data) <<= 8;
     *data |= buf[0];
     (*data) <<= 8;

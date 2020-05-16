@@ -10,7 +10,7 @@
 extern char *inkFamilyGetFiledName(uint8_t id);
 extern char *supplyFamilyGetFiledName(uint8_t id);
 
-static char *(*FIELD_NAME[HP_SMART_CARD_DEVICE_NUM_DEVICES])(uint8_t id) = {tag0GetFiledName};
+// static char *(*FIELD_NAME[HP_SMART_CARD_DEVICE_NUM_DEVICES])(uint8_t id) = {tag0GetFiledName, tag0GetFiledName};
 
 HP_SMART_CARD_result_t readByte(HP_SMART_CARD_device_id_t cardId, uint8_t fieldId, uint8_t *data) {
     HP_SMART_CARD_result_t result = LIB_HP_SMART_CARD_read_field(cardId, fieldId, sizeof(*data), data);
@@ -28,7 +28,7 @@ HP_SMART_CARD_result_t writeByte(HP_SMART_CARD_device_id_t cardId, uint8_t field
     if (HP_SMART_CARD_OK == result) {
         LOGD(">>> Write %s = 0x%02x", FIELD_NAME[cardId](fieldId), data);
 
-        usleep(1000000);                 // 1 second delay
+        usleep(1000);                 // 1 ms delay
         result = LIB_HP_SMART_CARD_flush();
         if (HP_SMART_CARD_OK != result) {
             LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));
@@ -56,7 +56,7 @@ HP_SMART_CARD_result_t write2Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fie
     if (HP_SMART_CARD_OK == result) {
         LOGD(">>> Write %s = 0x%04x", FIELD_NAME[cardId](fieldId), data);
 
-        usleep(1000000);                 // 1 second delay
+        usleep(1000);                 // 1 ms delay
         result = LIB_HP_SMART_CARD_flush();
         if (HP_SMART_CARD_OK != result) {
             LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));
@@ -84,7 +84,7 @@ HP_SMART_CARD_result_t write4Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fie
     if (HP_SMART_CARD_OK == result) {
         LOGD(">>> Write %s = 0x%08x", FIELD_NAME[cardId](fieldId), data);
 
-        usleep(1000000);                 // 1 second delay
+        usleep(1000);                 // 1 ms delay
         result = LIB_HP_SMART_CARD_flush();
         if (HP_SMART_CARD_OK != result) {
             LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));
@@ -125,7 +125,7 @@ HP_SMART_CARD_result_t writeString(HP_SMART_CARD_device_id_t cardId, uint8_t fie
         toHexString(data, buf, size, ',');
         LOGD(">>> Write %s = [%s]", FIELD_NAME[cardId](fieldId), buf);
 
-        usleep(1000000);                 // 1 second delay
+        usleep(1000);                 // 1 ms delay
         result = LIB_HP_SMART_CARD_flush();
         if (HP_SMART_CARD_OK != result) {
             LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));
@@ -198,7 +198,7 @@ HP_SMART_CARD_result_t readTag0PersoRevision(HP_SMART_CARD_device_id_t cardId, u
 // Skipped (Tag 0 - Reserved for Perso - 6, 3, 4)
 // Skipped (Tag 0 - Blank - 7, 7, 8)
 
-char *tag0GetFiledName(uint8_t id) {
+char *tag0GetFieldName(uint8_t id) {
     switch (id) {
         case HP_SMART_CARD_CHIP_TAG:
             return "HP_SMART_CARD_CHIP_TAG";

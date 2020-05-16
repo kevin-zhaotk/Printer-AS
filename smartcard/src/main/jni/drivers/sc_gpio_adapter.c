@@ -23,39 +23,8 @@
 
 // Added by H.M.Wang 2019-10-17
 
-#define GPIO_PORT_PG5           154
-#define GPIO_PORT_PG6           155
-#define GPIO_PORT_PG7           156
-#define GPIO_PORT_PG8           157
-#define GPIO_PORT_PG9           158
-
-#define GPIO_ENABLE             0x00
-#define GPIO_DISABLE            0x01
-
-/*
-#define GPIO_DEVICE "/dev/ext-gpio"
-
-#define GPIO_DEVICE_IOCTL_WRITE (0x10)
-
-#define GPIO_PIN_PG5_ENABLE     (0x6050)
-#define GPIO_PIN_PG5_DIAABLE    (0x6051)
-
-#define GPIO_PIN_PG6_ENABLE     (0x6060)
-#define GPIO_PIN_PG6_DIAABLE    (0x6061)
-
-#define GPIO_PIN_PG7_ENABLE     (0x6070)
-#define GPIO_PIN_PG7_DIAABLE    (0x6071)
-
-#define GPIO_PIN_PG8_ENABLE     (0x6080)
-#define GPIO_PIN_PG8_DIAABLE    (0x6081)
-
-#define GPIO_PIN_PG9_ENABLE     (0x6090)
-#define GPIO_PIN_PG9_DIAABLE    (0x6091)
-*/
-
 // Added by H.M.Wang 2019-10-17 end
-int16_t GPIOLineToPin(HP_SMART_CARD_gpio_line_t line)
-{
+int16_t GPIOLineToPin(HP_SMART_CARD_gpio_line_t line) {
 	if (line == HP_SMART_CARD_GPIO_HOST_RESET)
 	{
 		return GPIO_PORT_PG6;
@@ -138,7 +107,7 @@ uint8_t SC_GPIO_ADAPTER_select_38_xlater(int pg5, int pg8, int pg9) {
     } else {
         ret2 = SP_GPIO_DRIVER_set_value(GPIO_PORT_PG8, GPIO_DISABLE);
     }
-    if(!pg8) {
+    if(!pg9) {
         ret3 = SP_GPIO_DRIVER_set_value(GPIO_PORT_PG9, GPIO_ENABLE);
     } else {
         ret3 = SP_GPIO_DRIVER_set_value(GPIO_PORT_PG9, GPIO_DISABLE);

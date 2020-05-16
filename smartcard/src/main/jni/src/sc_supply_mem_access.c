@@ -1515,6 +1515,6 @@ char *supplyFamilyGetFiledName(uint8_t id) {
             return "HPSCS_OEM_DEFINED_RW_FIELD_2";
             break;
         default:
-            return tag0GetFiledName(id);
+            return tag0GetFieldName(id);
     }
 }

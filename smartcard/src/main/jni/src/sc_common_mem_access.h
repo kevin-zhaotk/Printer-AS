@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include "hp_smart_card.h"
 
+char *(*FIELD_NAME[HP_SMART_CARD_DEVICE_NUM_DEVICES])(uint8_t id);
+
 HP_SMART_CARD_result_t readByte(HP_SMART_CARD_device_id_t cardId, uint8_t fieldId, uint8_t *data);
 HP_SMART_CARD_result_t writeByte(HP_SMART_CARD_device_id_t cardId, uint8_t fieldId, uint8_t data);
 HP_SMART_CARD_result_t read2Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fieldId, uint16_t *data);
@@ -56,7 +58,7 @@ HP_SMART_CARD_result_t readTag0PersoRevision(HP_SMART_CARD_device_id_t cardId, u
 // Skipped (Tag 0 - Reserved for Perso - 6, 3, 4)
 // Skipped (Tag 0 - Blank - 7, 7, 8)
 
-char *tag0GetFiledName(uint8_t id);
+char *tag0GetFieldName(uint8_t id);
 
 // -- For Ink
 // Partition #0(Tag 1,2)

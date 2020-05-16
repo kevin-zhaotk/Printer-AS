@@ -648,6 +648,7 @@ public class DataTransferThread {
 			// H.M.Wang 2019-10-10 添加初值是否为0的判断，如果为0，则判定为还没有初始化，首先进行初始化
 			if(mcountdown[i] == 0) mcountdown[i] = getInkThreshold(i);
 
+			Debug.d(TAG, "mCountDown[" + i + "] = " + mcountdown[i]);
 			mcountdown[i]--;
 			if (mcountdown[i] <= 0) {
 				// 赋初值
@@ -657,11 +658,11 @@ public class DataTransferThread {
 		}
 	}
 	
-	public int getCount() {
+	public int getCount(int head) {
 		if (mcountdown == null) {
 			initCount();
 		}
-		return mcountdown[0];
+		return mcountdown[head];
 	}
 	
 	/**
@@ -688,13 +689,14 @@ public class DataTransferThread {
 // Kevin.Zhao 2019-11-12 1带多用12，13，14表示1带2，1带3，1带4....
 		int dotCount = getDotCount(mDataTask.get(index), config.getMainHeads(head));
 
-		dotCount = dotCount/config.getHeadFactor();
+		Debug.d(TAG, "--->dotCount[" + head + "]: " + dotCount + "  bold=" + bold);
+
+//		dotCount = dotCount/config.getHeadFactor();		// ??????为什么要除以头数
 		// Debug.d(TAG, "--->getInkThreshold  head: " + head + "   index = " + index + " dataTask: " + mDataTask.size());
-		Debug.d(TAG, "--->dotCount: " + dotCount + "  bold=" + bold);
 		if (dotCount <= 0) {
 // H.M.Wang 2019-9-28 当该打印头没有数据可打印的时候，原来返回1，会产生错误效果，返回一个尽量大的数以避免之
 //			return 1;
-			return 65536 * 8;
+			return 65536 * 8;						// 无打印内容时可能错误减记
 		}
 
 		if (config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY) <= 0) {
@@ -704,12 +706,15 @@ public class DataTransferThread {
 		}
 
 // H.M.Wang 2020-4-19 追加12.7R5头。dotcount放大相应倍数
-		if(mDataTask.get(index).getPNozzle() == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
-            dotCount *= (mDataTask.get(index).getPNozzle().getRTimes() - 1);
+// H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
+		if(config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+//		if(mDataTask.get(index).getPNozzle() == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+// End of H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
+            dotCount *= (PrinterNozzle.R5x6_PRINT_COPY_NUM - 1);
         }
 // End of H.M.Wang 2020-4-19 追加12.7R5头。dotcount放大相应倍数
 
-		Debug.d(TAG, "--->dotCount: " + dotCount + "  bold=" + bold);
+		Debug.d(TAG, "--->dotCount[" + head + "]: " + dotCount + "  bold=" + bold);
 		return Configs.DOTS_PER_PRINT/(dotCount * bold);
 	}
 	
@@ -806,26 +811,33 @@ public class DataTransferThread {
 		}
 	}
 
+// H.M.Wang 2020-5-6 参数设置页面，在未修改计数器的情况下，点击OK保存后，计数器会跳数，分析是因为设置了	mNeedUpdate=true，重新生成打印缓冲区，重新生成时计数器会自动增量，所以增加了一个重新下发的函数，而不重新生成缓冲区
+	public void resendBufferToFPGA() {
+		if(null != mPrintBuffer) {
+			FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+		}
+	}
+
+	char[] mPrintBuffer = null;
+// H.M.Wang 2020-5-6 参数设置页面，...
 
 	public class PrintTask extends Thread {
 
 		@Override
 		public void run() {
-
-			char[] buffer = null;
 			long last = 0;
 			/*逻辑要求，必须先发数据*/
 			Debug.d(TAG, "--->print run");
 
-			buffer = mDataTask.get(index()).getPrintBuffer();
+			mPrintBuffer = mDataTask.get(index()).getPrintBuffer();
 			if (isLanPrint()) {
-				setLanBuffer(mContext, index(), buffer);
+				setLanBuffer(mContext, index(), mPrintBuffer);
 			} else {
 				Debug.d(TAG, "--->print buffer ready");
 				// H.M.Wang 2019-10-10 追加计算打印区对应于各个头的打印点数
 				DataTask t = mDataTask.get(mIndex);
 //				Debug.d(TAG, "GetPrintDots Start Time: " + System.currentTimeMillis());
-				int[] dots = NativeGraphicJni.GetPrintDots(buffer, buffer.length, t.getInfo().mCharsPerHFeed, t.getPNozzle().mHeads);
+/*				int[] dots = NativeGraphicJni.GetPrintDots(mPrintBuffer, mPrintBuffer.length, t.getInfo().mCharsPerHFeed, t.getPNozzle().mHeads);
 
 				int totalDot = 0;
 				for (int j = 0; j < dots.length; j++) {
@@ -843,16 +855,23 @@ public class DataTransferThread {
 				}
 				t.setDots(totalDot);
 				t.setDotsEach(dots);
-
+*/
 //				Debug.d(TAG, "GetPrintDots Done Time: " + System.currentTimeMillis());
 
+				SystemConfigFile config = SystemConfigFile.getInstance(mContext);
 				final StringBuilder sb = new StringBuilder();
 				sb.append("Dots per Head: [");
-				for (int i=0; i<dots.length; i++) {
+				for (int i=0; i<8; i++) {
 					if(i != 0) {
 						sb.append(", ");
 					}
-					sb.append(dots[i]);
+// 2020-5-11
+					if(config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
+					} else {
+						sb.append(t.getDots(i));
+					}
+// 2020-5-11
 				}
 				sb.append("]");
 				Debug.d(TAG, sb.toString());
@@ -864,7 +883,7 @@ public class DataTransferThread {
 				});
 
 				Debug.e(TAG, "--->write data");
-				FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
+				FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
                 if(mDataTask.size() > 1) {
@@ -885,7 +904,6 @@ public class DataTransferThread {
 				int writable = FpgaGpioOperation.pollState();
 
 				if (writable == 0) { //timeout
-
 //					if (isLanPrint() && pcReset == true) {
 //						buffer = getLanBuffer(index());
 //						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
@@ -904,8 +922,8 @@ public class DataTransferThread {
 					synchronized (DataTransferThread.class) {
 						next();
 						if (isLanPrint()) {
-							buffer = getLanBuffer(index());
-							Debug.i(TAG, "--->buffer.length: " + buffer.length);
+							mPrintBuffer = getLanBuffer(index());
+							Debug.i(TAG, "--->mPrintBuffer.length: " + mPrintBuffer.length);
 						} else {
 							if (!mDataTask.get(index()).isReady) {
 								mRunning = false;
@@ -915,9 +933,9 @@ public class DataTransferThread {
 								break;
 							}
 							Debug.i(TAG, "mIndex: " + index());
-							buffer = mDataTask.get(index()).getPrintBuffer();
+							mPrintBuffer = mDataTask.get(index()).getPrintBuffer();
 						}
-						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
+						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
                         if(mCallback != null && mDataTask.size() > 1) {
@@ -943,17 +961,17 @@ public class DataTransferThread {
 					//在此处发生打印数据，同时
 // H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素
 					if (isLanPrint()) {
-						buffer = getLanBuffer(index());
+						mPrintBuffer = getLanBuffer(index());
 					} else {
-						buffer = mDataTask.get(index()).getPrintBuffer();
+						mPrintBuffer = mDataTask.get(index()).getPrintBuffer();
 					}
 // End of H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素
-					Debug.d(TAG, "===>buffer size="+buffer.length);
+					Debug.d(TAG, "===>mPrintBuffer size=" + mPrintBuffer.length);
 					// H.M.Wang 2019-12-20 关闭print.bin保存
 //					// H.M.Wang 2019-12-17 每次重新生成print内容后，都保存print.bin
 //					BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads);
 //					// End.
-					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
+					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length*2);
 					mHandler.sendEmptyMessageDelayed(MESSAGE_DATA_UPDATE, MESSAGE_EXCEED_TIMEOUT);
 					mNeedUpdate = false;
 				}

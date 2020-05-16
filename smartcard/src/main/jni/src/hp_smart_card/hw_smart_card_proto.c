@@ -135,10 +135,10 @@ static int _send_cmd(hw_smart_card_xpt_t *xpt_p,
         memcpy(pkt + PROTO_OFFS_BODY, body, body_len);
     }
 
-    char buf[1024] = {0x00};
-//    memset(buf, 0x00, 1024);
-    toHexString(pkt, buf, body_len + 2, ',');
-    LOGD(">>> %s Data to be written: [%s]", SMART_CARD_PROTO_DBG_ID, buf);
+//    char buf[1024] = {0x00};
+////    memset(buf, 0x00, 1024);
+//    toHexString(pkt, buf, body_len + 2, ',');
+//    LOGD(">>> %s Data to be written: [%s]", SMART_CARD_PROTO_DBG_ID, buf);
 
 //    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
 //                    HP_DBG_LEVEL_HSCC_TRACE, 4,
@@ -256,10 +256,10 @@ static HW_SMART_CARD_status_t _recv_rsp(hw_smart_card_xpt_t *xpt_p,
         }
     }
 
-    char buf[1024] = {0x00};
-//    memset(buf, 0x00, 1024);
-    toHexString(rcv_buf, buf, rsp_len + 2, ',');
-    LOGD(">>> %s Data read: [%s]", SMART_CARD_PROTO_DBG_ID, buf);
+//    char buf[1024] = {0x00};
+////    memset(buf, 0x00, 1024);
+//    toHexString(rcv_buf, buf, rsp_len + 2, ',');
+//    LOGD(">>> %s Data read: [%s]", SMART_CARD_PROTO_DBG_ID, buf);
 //    HP_DEBUG_printf(SMART_CARD_PROTO_DBG_ID,
 //                    HP_DBG_LEVEL_HSCC_TRACE, 4,
 //                    "Data read: [%s]", buf);

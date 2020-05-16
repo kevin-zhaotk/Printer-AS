@@ -288,7 +288,10 @@ public enum PrinterNozzle {
 
     // H.M.Wang 2020-4-17 追加12.7R5头类型
     // 返回对于R5头，横向复制的份数
-    public int getRTimes() {
+    public static final int     R5x6_PRINT_COPY_NUM = 6;
+    public static final int     R5x6_HEAD_NUM = 6;
+    public static final int     R5x6_MAX_COL_NUM_EACH_UNIT = 48 * 6;
+/*    public int getRTimes() {
         if(mIndex == MessageType.NOZZLE_INDEX_12_7_R5) {
             return 6;
         } else {
@@ -314,7 +317,7 @@ public enum PrinterNozzle {
             return 0;
         }
     }
-
+*/
     // End of H.M.Wang 2020-4-17 追加12.7R5头类型
 
     public static PrinterNozzle getInstance(int index) {

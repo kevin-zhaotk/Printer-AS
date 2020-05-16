@@ -160,28 +160,21 @@ public class RTCDevice {
 	 */
 
 	public void write(long count, int index) {
-
-		if (index < 0 || index >= 10) {
-			Debug.i(TAG, "--->index out of range");
-			return;
-		}
-
 		Debug.d(TAG, "--->NVRAM written count[" + index + "] : " + count);
-        StringBuilder cmd = new StringBuilder(ADDRESS[index]);
+		StringBuilder cmd = new StringBuilder(ADDRESS[index]);
 		byte byte0 = (byte) (count & 0x0ff);
 		byte byte1 = (byte) ((count >> 8) & 0x0ff);
 		byte byte2 = (byte) ((count >> 16) & 0x0ff);
 		byte byte3 = (byte) ((count >> 24) & 0x0ff);
-        cmd.append(",");
-        cmd.append("0x" + Integer.toHexString(byte0));
-        cmd.append(",");
-        cmd.append("0x" + Integer.toHexString(byte1));
-        cmd.append(",");
-        cmd.append("0x" + Integer.toHexString(byte2));
-        cmd.append(",");
-        cmd.append("0x" + Integer.toHexString(byte3));
+		cmd.append(",");
+		cmd.append("0x" + Integer.toHexString(byte0));
+		cmd.append(",");
+		cmd.append("0x" + Integer.toHexString(byte1));
+		cmd.append(",");
+		cmd.append("0x" + Integer.toHexString(byte2));
+		cmd.append(",");
+		cmd.append("0x" + Integer.toHexString(byte3));
 		SystemFs.writeSysfs(I2C_WRITE, cmd.toString());
-
 	}
 
 	/**
@@ -215,8 +208,7 @@ public class RTCDevice {
 	}
 
 	public long read(int index) {
-
-	    String cmd = "4," + ADDRESS[index];
+		String cmd = "4," + ADDRESS[index];
 		SystemFs.writeSysfs(I2C_DEVICE, getAddress());
 		SystemFs.writeSysfs(I2C_READ, cmd);
 		String out = SystemFs.readSysfs(I2C_READ);
@@ -288,5 +280,4 @@ public class RTCDevice {
 //		Debug.d(TAG, "--->readAll NVRAM");
 //		return counts;
 //	}
-	
 }

@@ -1427,6 +1427,6 @@ char *inkFamilyGetFiledName(uint8_t id) {
             return "HP_SMART_CARD_INK_UD8_FUSE";
             break;
         default:
-            return tag0GetFiledName(id);
+            return tag0GetFieldName(id);
     }
 }

@@ -11,37 +11,34 @@ extern "C" {
 #endif
 
 /* Added by H.M.Wang 2019-10-17 */
-#define COMPONET_SMART_CARD_1   11
-#define COMPONET_SMART_CARD_2   12
-#define COMPONET_SMART_CARD_3   13
-#define COMPONET_SMART_CARD_4   14
-
-#define COMPONET_LEVEL_1        21
-#define COMPONET_LEVEL_2        22
-#define COMPONET_LEVEL_3        23
-#define COMPONET_LEVEL_4        24
+#define HP_PRINT_CARTRIDGE      11
+#define HP_BULK_CARTRIDGE       12
+#define LEVEL_SENSOR            21
 /* Added by H.M.Wang 2019-10-17 end */
 
-/**************************************
- * RTC操作接口
- **************************************/
-/**
- * 打开RTC设备
+/*
+ * 初始化HP智能卡设备，包括HOST卡，COMPONENT卡以及LEVEL
  */
-JNIEXPORT jint JNICALL Java_com_Smartcard_init
-    (JNIEnv *env, jclass arg);
+JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg);
 
 /**
- * 关闭RTC设备
+ * 检查墨袋参数一致性
  */
-JNIEXPORT jint JNICALL Java_com_Smartcard_close
-    (JNIEnv *env, jclass arg);
+JNIEXPORT jint JNICALL Java_com_Smartcard_chechConsistency(JNIEnv *env, jclass arg, jint card);
 
-JNIEXPORT jint JNICALL Java_com_Smartcard_getSmartCardData
-        (JNIEnv *env, jclass arg, jint card);
+/**
+ * 检查墨袋是否已经用完
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_checkOIB(JNIEnv *env, jclass arg, jint card);
 
-JNIEXPORT jint JNICALL Java_com_Smartcard_getLevelData
-        (JNIEnv *env, jclass arg, jint card);
+/**
+ * 获取剩余墨量数据
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, jint card);
+
+JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jint card);
+
+JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jint card);
 
 
 #ifdef __cplusplus

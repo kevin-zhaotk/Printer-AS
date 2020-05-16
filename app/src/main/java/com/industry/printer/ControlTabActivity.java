@@ -66,6 +66,7 @@ import com.industry.printer.hardware.RFIDDevice;
 import com.industry.printer.hardware.RFIDManager;
 import com.industry.printer.hardware.RTCDevice;
 import com.industry.printer.hardware.SmartCard;
+import com.industry.printer.hardware.SmartCardManager;
 import com.industry.printer.hardware.UsbSerial;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
@@ -690,14 +691,22 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	}
 
 	private void refreshInk() {
-		
 		float ink = mInkManager.getLocalInkPercentage(mRfid);
 //		Debug.d(TAG, "--->refresh ink: " + mRfid + " = " + ink);
-		String level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");
-		
+		String level = "";
+		if(mInkManager instanceof RFIDManager) {
+			level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");
+		} else {
+			level = String.format("%.1f", ink) + "%";
+		}
+
 		if (!mInkManager.isValid(mRfid)) {
 			mInkLevel.setBackgroundColor(Color.RED);
-			mInkLevel.setText(String.valueOf(mRfid + 1) + "--");
+			if(mInkManager instanceof RFIDManager) {
+				mInkLevel.setText(String.valueOf(mRfid + 1) + "--");
+			} else {
+				mInkLevel.setText("--");
+			}
 
 			// H.M.Wang RFID错误时报警，禁止打印
 			mBtnStart.setClickable(false);
@@ -747,13 +756,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		// ((MainActivity)getActivity()).mCtrlTitle.setText(String.format(cFormat, mCounter));
 
 		count = mInkManager.getLocalInk(mRfid) - 1;
-//		Debug.d(TAG, "[2020-3-16 Check] mInkManager.getLocalInk(mRfid): " + count);
 		if (mDTransThread != null) {
 			Debug.d(TAG, "--->count: " + count);
-			count = count * mDTransThread.getInkThreshold(0) + mDTransThread.getCount();
-//			Debug.d(TAG, "[2020-3-16 Check] mDTransThread.getInkThreshold(0): " + mDTransThread.getInkThreshold(0));
-//			Debug.d(TAG, "[2020-3-16 Check] mDTransThread.getCount(): " + mDTransThread.getCount());
-//			Debug.d(TAG, "[2020-3-16 Check] calculated count: " + count);
+			count = count * mDTransThread.getInkThreshold(0) + mDTransThread.getCount(0);
 		}
 		if (count < 0) {
 			count = 0;
@@ -1107,6 +1112,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					}
 					mInkManager.checkUID(heads);
 					break;
+				case SmartCardManager.MSG_SMARTCARD_CHECK_FAILED:
 				case RFIDManager.MSG_RFID_CHECK_FAIL:
 					Debug.d(TAG, "--->Print check UUID fail");
 					handleError(R.string.str_toast_ink_error, pcMsg);
@@ -1125,6 +1131,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						}
 					}.start();
 					break;
+				case SmartCardManager.MSG_SMARTCARD_CHECK_SUCCESS:
 				case RFIDManager.MSG_RFID_CHECK_SUCCESS:
 				case MESSAGE_PRINT_START:
 
@@ -1237,7 +1244,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					}
 					// }
 					/*鎵撳嵃鏅備笉鍐嶅鏅傛洿鏂板ⅷ姘撮噺*/
-					// refreshInk();
+					refreshInk();
 					// mInkManager.write(mHandler);
 					break;
 				case MESSAGE_COUNT_CHANGE:
@@ -1256,9 +1263,17 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					break;
 				case RFIDManager.MSG_RFID_INIT:
 					mInkManager.init(mHandler);
+					refreshInk();
 					break;
+				case SmartCardManager.MSG_SMARTCARD_INIT_SUCCESS:
+					Debug.i(TAG, "Smartcard Initialization Success!");
 				case RFIDManager.MSG_RFID_INIT_SUCCESS:
 					// mInkManager.read(mHandler);
+					break;
+				case SmartCardManager.MSG_SMARTCARD_INIT_FAILED:
+					Debug.e(TAG, "Smartcard Initialization Failed! [" + msg.arg1 + "]");
+					ToastUtil.show(mContext, "Smartcard Initialization Failed.");
+					mHandler.sendEmptyMessage(MESSAGE_RFID_ZERO);
 					break;
 				case RFIDManager.MSG_RFID_READ_SUCCESS:
 					boolean ready = true;
@@ -1272,7 +1287,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					}
 
 					if (Configs.READING) {
-						// H.M.Wang 2019-09-12 修改在Configs.READING = true时，直接显示缺省值，而不是在尝试10此后显示
+						// H.M.Wang 2019-09-12 修改在Configs.READING = true时，直接显示缺省值，而不是在尝试10次后显示
 						mInkManager.defaultInkForIgnoreRfid();
 
 //						if (repeatTimes <= 0) {
@@ -1315,7 +1330,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				case MESSAGE_RFID_ALARM:
 					mFlagAlarming = true;
 					ExtGpio.writeGpio('h', 7, 1);
-////////////////////// H.M.Wang 2019-10-8 为了调试，注释掉
 					if (mRfiAlarmTimes++ < 3) {
 						ExtGpio.playClick();
 						mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_ALARM, 150);
@@ -2503,13 +2517,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 											if(null != mDTransThread && mDTransThread.isRunning()) {
 // H.M.Wang 2019-12-29 修改在打印状态下设置FPGA参数的逻辑
 												DataTask task = mDTransThread.getCurData();
-												FpgaGpioOperation.clean();
+// 2020-5-8												FpgaGpioOperation.clean();
 												FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
-												mDTransThread.mNeedUpdate = true;
-												while(mDTransThread.mNeedUpdate) {
-													Thread.sleep(10);
-												}
+//												mDTransThread.mNeedUpdate = true;
+//												while(mDTransThread.mNeedUpdate) {
+//													Thread.sleep(10);
+//												}
 												FpgaGpioOperation.init();
+												mDTransThread.resendBufferToFPGA();
 // End of H.M.Wang 2019-12-29 修改在打印状态下设置FPGA参数的逻辑
 											}
 											this.sendmsg(Constants.pcOk(msg));
@@ -2529,14 +2544,15 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 											Thread.sleep(10);
 // End of H.M.Wang 2019-12-27 间隔时间修改为10ms
 											SystemConfigFile.getInstance().setParam(0, param0);
-											FpgaGpioOperation.clean();
+// 2020-5-8											FpgaGpioOperation.clean();
 											FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 // H.M.Wang 2019-12-27 重新启动打印
-											mDTransThread.mNeedUpdate = true;
-											while(mDTransThread.mNeedUpdate) {
-												Thread.sleep(10);
-											}
+//											mDTransThread.mNeedUpdate = true;
+//											while(mDTransThread.mNeedUpdate) {
+//												Thread.sleep(10);
+//											}
 											FpgaGpioOperation.init();
+											mDTransThread.resendBufferToFPGA();
 // End of H.M.Wang 2019-12-27 重新启动打印
 										}
                                     // End of H.M.Wang 2019-12-25 追加速度和清洗命令

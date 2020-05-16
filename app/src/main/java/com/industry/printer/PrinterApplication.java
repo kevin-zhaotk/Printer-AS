@@ -83,7 +83,7 @@ public class PrinterApplication extends Application {
 					FileUtil.writeFile("/system/lib/" + Configs.UPGRADE_NATIVEGRAPHIC_SO, is);
 
 					is.close();
-/* 暂时屏蔽2019-10-31
+
                     // 复制SmartCard库
 					Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_SMARTCARD_SO);
 					os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_SMARTCARD_SO);
@@ -94,7 +94,7 @@ public class PrinterApplication extends Application {
 					FileUtil.writeFile("/system/lib/" + Configs.UPGRADE_SMARTCARD_SO, is);
 
 					is.close();
-*/
+
                     // 复制SerialPort库
                     Debug.d(TAG, "chmod 777 /system/lib/" + Configs.UPGRADE_SERIAL_SO);
                     os.writeBytes("chmod 777 /system/lib/" + Configs.UPGRADE_SERIAL_SO);
@@ -109,7 +109,7 @@ public class PrinterApplication extends Application {
                     os.writeBytes("exit\n");
 
 					NativeGraphicJni.loadLibrary();
-//					SmartCard.loadLibrary();
+					SmartCard.loadLibrary();
 					SerialPort.loadLibrary();
 
                 } catch (Exception e) {

@@ -19,9 +19,38 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/stat.h>
+//#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #include "common_log.h"
 #include "internal_ifc/sc_gpio_driver.h"
+
+/*
+*/
+static int ioctlValue(int port) {
+    int gpio_ioctl_value = 0;
+
+    switch (port) {
+        case GPIO_PORT_PG5:
+            gpio_ioctl_value = GPIO_PIN_PG5_ENABLE;
+            break;
+        case GPIO_PORT_PG6:
+            gpio_ioctl_value = GPIO_PIN_PG6_ENABLE;
+            break;
+        case GPIO_PORT_PG7:
+            gpio_ioctl_value = GPIO_PIN_PG7_ENABLE;
+            break;
+        case GPIO_PORT_PG8:
+            gpio_ioctl_value = GPIO_PIN_PG8_ENABLE;
+            break;
+        case GPIO_PORT_PG9:
+            gpio_ioctl_value = GPIO_PIN_PG9_ENABLE;
+            break;
+    }
+
+    return gpio_ioctl_value;
+}
 
 /*********************************************************************************
     SP_GPIO_DRIVER_set_value
@@ -39,18 +68,24 @@
 int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
 //    LOGI(">>> SP_GPIO_DRIVER_set_value[%d] to port[%d]", value, port);
 
+    int fd = SC_GPIO_DRIVER_open(GPIO_DEVICE);
+
+    if(fd == SC_GPIO_DRIVER_FAIL) {
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    int ret = SC_GPIO_DRIVER_ioctl(fd, GPIO_DEVICE_IOCTL_WRITE, ioctlValue(port) + (value & 0x01));
+
+    SC_GPIO_DRIVER_close(fd);
+
+    return ret;
+/*
     FILE *fp;
     char s[50]="";
     char s1[50]="";
 
-/*    system("su");
-    if(chmod("/sys/class/gpio/export", 777) == -1) {
-        LOGE(">>> Error: SP_GPIO_DRIVER_set_value chmod. %s", strerror(errno));
-        return SC_GPIO_DRIVER_FAIL;
-    }
-*/
     if((fp = fopen("/sys/class/gpio/export", "w")) == NULL) {
-        LOGE(">>> SP_GPIO_DRIVER_set_value error when open port! [%s]", strerror(errno));
+        LOGE(">>> SP_GPIO_DRIVER_set_value error when open port [/sys/class/gpio/export]! [%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
 
@@ -59,7 +94,7 @@ int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
 
     sprintf(s, "/sys/class/gpio/gpio%d/direction", port);
 
-    if((fp = fopen(s, "rb+")) == NULL) {
+    if((fp = fopen(s, "wb+")) == NULL) {
         LOGE(">>> SP_GPIO_DRIVER_set_value error when set direction! [%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
@@ -67,25 +102,18 @@ int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
     fclose(fp);
 
     sprintf(s1, "/sys/class/gpio/gpio%d/value", port);
-    if((fp = fopen(s1, "rb+")) == NULL) {
+
+    if((fp = fopen(s1, "wb+")) == NULL) {
         LOGE(">>> SP_GPIO_DRIVER_set_value error when set value! [%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
 
     fprintf(fp, "%d", value);
     fclose(fp);
-/*
-    if((fp = fopen("/sys/class/gpio/unexport", "w")) == NULL) {
-        LOGE(">>> SP_GPIO_DRIVER_set_value error when close port! [%s]", strerror(errno));
-        return SC_GPIO_DRIVER_FAIL;
-    }
-
-    fprintf(fp, "%d", port);
-    fclose(fp);
-*/
 //    LOGD(">>> SP_GPIO_DRIVER_set_value set [%d] to port [%d], done!", value, port);
 
     return SC_GPIO_DRIVER_SUCCESS;
+*/
 }
 
 /*********************************************************************************
@@ -103,6 +131,18 @@ int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
 int SP_GPIO_DRIVER_get_value(int port) {
 //    LOGI(">>> SP_GPIO_DRIVER_get_value from port [%d]", port);
 
+    int fd = SC_GPIO_DRIVER_open(GPIO_DEVICE);
+
+    if(fd == SC_GPIO_DRIVER_FAIL) {
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    int read = SC_GPIO_DRIVER_read(fd, 0);
+
+    SC_GPIO_DRIVER_close(fd);
+
+    return read;
+/*
     uint8_t value;
 
     FILE *fp;
@@ -110,7 +150,7 @@ int SP_GPIO_DRIVER_get_value(int port) {
     char s1[50]="";
 
     if((fp = fopen("/sys/class/gpio/export", "w")) == NULL) {
-        LOGE(">>> SP_GPIO_DRIVER_get_value error when open port! [%s]", strerror(errno));
+        LOGE(">>> SP_GPIO_DRIVER_get_value error when open port [/sys/class/gpio/export]! [%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
 
@@ -118,7 +158,8 @@ int SP_GPIO_DRIVER_get_value(int port) {
     fclose(fp);
 
     sprintf(s, "/sys/class/gpio/gpio%d/direction", port);
-    if((fp = fopen(s, "rb+")) == NULL) {
+
+    if((fp = fopen(s, "wb+")) == NULL) {
         LOGE(">>> SP_GPIO_DRIVER_get_value error when set direction! [%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
@@ -126,25 +167,19 @@ int SP_GPIO_DRIVER_get_value(int port) {
     fclose(fp);
 
     sprintf(s1, "/sys/class/gpio/gpio%d/value", port);
-    if((fp = fopen(s1, "rb+")) == NULL) {
+
+    if((fp = fopen(s1, "wb+")) == NULL) {
         LOGE(">>> SP_GPIO_DRIVER_get_value error when read value! [%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
 
     size_t ret = fread(&value, sizeof(value), 1, fp);
-/*
-    if((fp = fopen("/sys/class/gpio/unexport", "w")) == NULL) {
-        LOGE(">>> SP_GPIO_DRIVER_get_value error when close port! [%s]", strerror(errno));
-        return SC_GPIO_DRIVER_FAIL;
-    }
 
-    fprintf(fp, "%d", port);
-    fclose(fp);
-*/
     value &= 0x01;
 
 //    LOGD(">>> SP_GPIO_DRIVER_get_value: %d", value);
     return (ret > 0 ? value : SC_GPIO_DRIVER_FAIL);
+*/
 }
 
 /*********************************************************************************
@@ -158,9 +193,9 @@ int SP_GPIO_DRIVER_get_value(int port) {
         >0: 文件描述符
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
-/*
+
 int SC_GPIO_DRIVER_open(char *dev) {
-    LOGI(">>> SC_GPIO_DRIVER_open: %s", dev);
+//    LOGI(">>> SC_GPIO_DRIVER_open: %s", dev);
 
     if(dev == NULL)	{
         LOGE(">>> SC_GPIO_DRIVER_open: [null device]");
@@ -177,7 +212,7 @@ int SC_GPIO_DRIVER_open(char *dev) {
 
     return fd;
 }
-*/
+
 /*********************************************************************************
     SC_GPIO_DRIVER_write（取消）
 ----------------------------------------------------------------------------------
@@ -225,9 +260,9 @@ int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count) {
         SC_GPIO_DRIVER_SUCCESS(0): 设置成功
         SC_GPIO_DRIVER_FAIL(<=-1)：失败，及失败原因
 **********************************************************************************/
-/*
+
 int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
-    LOGI(">>> SC_GPIO_DRIVER_ioctl: Command: 0x%02X; Value: [0x%04X]", cmd, arg1);
+//    LOGI(">>> SC_GPIO_DRIVER_ioctl: Command: 0x%02X; Value: [0x%04X]", cmd, arg1);
 
     if(fd < 0) {
         LOGE(">>> SC_GPIO_DRIVER_ioctl: Error[%s]", strerror(errno));
@@ -242,7 +277,7 @@ int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
 
     return ret;
 }
-*/
+
 /*
 int SC_GPIO_DRIVER_poll(int fd) {
 	LOGI(">>> SC_GPIO_DRIVER_poll: %d", fd);
@@ -281,9 +316,9 @@ int SC_GPIO_DRIVER_poll(int fd) {
         >0: 读取的数值
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
-/*
+
 int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
-    LOGI(">>> SC_GPIO_DRIVER_read: Pin: %d", pin);
+//    LOGI(">>> SC_GPIO_DRIVER_read: Pin: %d", pin);
 
     if(fd <= 0) {
         LOGE(">>> SC_GPIO_DRIVER_read: Error[%s]", strerror(errno));
@@ -296,12 +331,12 @@ int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
     if(ret == SC_GPIO_DRIVER_FAIL) {
         LOGE(">>> SC_GPIO_DRIVER_read: Error[%s]", strerror(errno));
     } else {
-        LOGD(">>> SC_GPIO_DRIVER_read: [%d(0x%X)] - %d bytes read", buf, buf, ret);
+//        LOGD(">>> SC_GPIO_DRIVER_read: [0x%X] - %d bytes read", buf, ret);
     }
 
     return buf;
 }
-*/
+
 /*********************************************************************************
     SC_GPIO_DRIVER_close（取消）
 ----------------------------------------------------------------------------------
@@ -313,7 +348,7 @@ int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
         SC_GPIO_DRIVER_SUCCESS(0): 关闭成功
         SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
 **********************************************************************************/
-/*
+
 int SC_GPIO_DRIVER_close(int fd) {
 //    LOGI(">>> SC_GPIO_DRIVER_close: %d", fd);
 
@@ -331,4 +366,4 @@ int SC_GPIO_DRIVER_close(int fd) {
 
     return ret;
 }
-*/
+

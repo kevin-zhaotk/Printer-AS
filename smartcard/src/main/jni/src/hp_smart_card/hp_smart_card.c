@@ -45,6 +45,7 @@
 
 #include <stdio.h>
 #include <common_log.h>
+#include <src/sc_common_mem_access.h>
 
 #define DBG_SMART_CARD_ID           "SC"
 
@@ -565,6 +566,9 @@ void LIB_HP_SMART_CARD_init(void)
     /* Now initialize the local data for this layer */
     for (i = 0; i < NUM_SMART_CARD_DEVICES; i++)
     {
+// Added by H.M.Wang for initializing the log output functions for each devices
+        FIELD_NAME[i] = tag0GetFieldName;
+// End of Added by H.M.Wang for initializing the log output functions for each devices
         smart_card_state[i] = HP_SMART_CARD_STATE_UNINITIALIZED;
     }
 

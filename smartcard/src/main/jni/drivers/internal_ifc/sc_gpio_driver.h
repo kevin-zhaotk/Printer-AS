@@ -27,6 +27,34 @@ extern "C" {
 #define SC_GPIO_DRIVER_SUCCESS   0
 #define SC_GPIO_DRIVER_FAIL     -1
 
+#define GPIO_PORT_PG5           154
+#define GPIO_PORT_PG6           155
+#define GPIO_PORT_PG7           156
+#define GPIO_PORT_PG8           157
+#define GPIO_PORT_PG9           158
+
+#define GPIO_ENABLE             0x00
+#define GPIO_DISABLE            0x01
+
+#define GPIO_DEVICE "/dev/ext-gpio"
+
+#define GPIO_DEVICE_IOCTL_WRITE (0x10)
+
+#define GPIO_PIN_PG5_ENABLE     (0x6050)
+#define GPIO_PIN_PG5_DIAABLE    (0x6051)
+
+#define GPIO_PIN_PG6_ENABLE     (0x6060)
+#define GPIO_PIN_PG6_DIAABLE    (0x6061)
+
+#define GPIO_PIN_PG7_ENABLE     (0x6070)
+#define GPIO_PIN_PG7_DIAABLE    (0x6071)
+
+#define GPIO_PIN_PG8_ENABLE     (0x6080)
+#define GPIO_PIN_PG8_DIAABLE    (0x6081)
+
+#define GPIO_PIN_PG9_ENABLE     (0x6090)
+#define GPIO_PIN_PG9_DIAABLE    (0x6091)
+
 //-----------------------------------------------------------------------------
 // Function Prototypes
 
@@ -71,7 +99,7 @@ int SP_GPIO_DRIVER_get_value(int port);
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
 
-//int SC_GPIO_DRIVER_open(char *dev);
+int SC_GPIO_DRIVER_open(char *dev);
 
 /*********************************************************************************
     SC_GPIO_DRIVER_write(取消)
@@ -103,7 +131,7 @@ int SP_GPIO_DRIVER_get_value(int port);
         SC_GPIO_DRIVER_FAIL(<=-1)：失败，及失败原因
 **********************************************************************************/
 
-// int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1);
+int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1);
 
 /*********************************************************************************
     SC_GPIO_DRIVER_read(取消)
@@ -118,7 +146,7 @@ int SP_GPIO_DRIVER_get_value(int port);
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
 
-//int SC_GPIO_DRIVER_read(int fd, uint8_t pin);
+int SC_GPIO_DRIVER_read(int fd, uint8_t pin);
 
 /*********************************************************************************
     SC_GPIO_DRIVER_close(取消)
@@ -132,7 +160,7 @@ int SP_GPIO_DRIVER_get_value(int port);
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
 
-//int SC_GPIO_DRIVER_close(int fd);
+int SC_GPIO_DRIVER_close(int fd);
 
 #ifdef __cplusplus
 }
