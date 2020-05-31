@@ -5,11 +5,13 @@ import com.industry.printer.Utils.Debug;
 
 import org.apache.http.util.ByteArrayBuffer;
 
+import java.nio.charset.Charset;
+
 /**
  * Created by hmwan on 2019/10/26.
  */
 
-public class EC_DOD_Protocol {
+public class EC_DOD_Protocol extends SerialProtocol {
     public static String TAG = EC_DOD_Protocol.class.getSimpleName();
 
     private final byte TAG_STX = 0x7E;
@@ -87,7 +89,6 @@ public class EC_DOD_Protocol {
     public final static int CMD_STOP_PRINT_A          = 0x0019;       // A喷印完成	0x0019
     public final static int CMD_STOP_PRINT_B          = 0x0020;       // B喷印完成	0x0020
 
-    public final static int ERROR_SUCESS              = 0x00000000;   // 无错误
     public final static int ERROR_INVALID_STX         = 0x81000000;   // 起始标识错误
     public final static int ERROR_INVALID_ETX         = 0x82000000;   // 终止标识错误
     public final static int ERROR_UNKNOWN_CMD         = 0x83000000;   // 不可识别的命令
@@ -97,9 +98,19 @@ public class EC_DOD_Protocol {
     // H.M.Wang 2019-12-15 追加串口文本间隔符
     public final static String TEXT_SEPERATOR         = ",";          // 串口接收文本的间隔符
 
-    public EC_DOD_Protocol(){}
+//    private final int ERROR_MASK = 0xffff0000;
+//    private final int CMD_MASK = 0x0000ffff;
 
-    public int parseFrame(ByteArrayBuffer recvMsg) {
+//    private SerialPort mSerialPort = null;
+//    private SerialHandler.OnSerialPortCommandListenner mNormalCmdListeners = null;
+//    private SerialHandler.OnSerialPortCommandListenner mPrintCmdListeners = null;
+
+    public EC_DOD_Protocol(SerialPort serialPort){
+        super(serialPort);
+    }
+
+    @Override
+    protected int parseFrame(ByteArrayBuffer recvMsg) {
         int recvCmd = 0;
 
         try {
@@ -149,7 +160,8 @@ public class EC_DOD_Protocol {
         return ERROR_FAILED;
     }
 
-    public byte[] createFrame(int cmd, int ack, int devStatus, int cmdStatus, byte[] msg) {
+    @Override
+    protected byte[] createFrame(int cmd, int ack, int devStatus, int cmdStatus, byte[] msg) {
 //        Debug.d(TAG, "[" + ByteArrayUtils.toHexString(msg) + "]");
 
         ByteArrayBuffer sendBuffer = new ByteArrayBuffer(0);
@@ -239,5 +251,88 @@ public class EC_DOD_Protocol {
         }
 
         return replace.toByteArray();
+    }
+
+    @Override
+    public void handleCommand(SerialHandler.OnSerialPortCommandListenner normalCmdListenner, SerialHandler.OnSerialPortCommandListenner printCmdListenner, ByteArrayBuffer bab) {
+        setListeners(normalCmdListenner, printCmdListenner);
+
+        int result = parseFrame(bab);
+        byte[] recvData = bab.toByteArray();
+
+        switch(result & ERROR_MASK) {
+            case ERROR_INVALID_STX:                // 起始标识错误
+                sendCommandProcessResult(0, 1, 0, 1, "");
+//                mSerialPort.writeStringSerial( "<!-- Invalid STX -->");
+                break;
+            case ERROR_INVALID_ETX:                // 终止标识错误
+                sendCommandProcessResult(0, 1, 0, 1, "");
+//                mSerialPort.writeStringSerial( "<!-- Invalid ETX -->");
+                break;
+            case ERROR_CRC_FAILED:                 // CRC校验失败
+                sendCommandProcessResult(result & CMD_MASK, 1, 0, 1, "");
+//                mSerialPort.writeStringSerial("<!-- CRC Failed -->");
+                break;
+            case ERROR_UNKNOWN_CMD:                     // 解析帧失败
+                sendCommandProcessResult(0, 1, 0, 1, "");
+//                mSerialPort.writeStringSerial("<!-- Unknown Command -->");
+                break;
+            case ERROR_FAILED:                     // 解析帧失败
+                sendCommandProcessResult(0, 1, 0, 1, "");
+//                mSerialPort.writeStringSerial("<!-- Failed -->");
+                break;
+            case ERROR_SUCESS:
+                dispatchCommands(result & CMD_MASK, recvData);
+                break;
+            default:
+                sendCommandProcessResult(0, 1, 0, 1, "");
+//                mSerialPort.writeStringSerial("<!-- Failed -->");
+                break;
+        }
+    }
+
+    private void dispatchCommands(int cmd, byte[] data) {
+        switch (cmd) {
+            case EC_DOD_Protocol.CMD_SET_NOZZLE_HEIGHT:            // 设定喷头喷印高度	0x0002
+            case EC_DOD_Protocol.CMD_GET_NOZZLE_HEIGHT:            // 读取喷头喷印高度	0x0003
+            case EC_DOD_Protocol.CMD_SET_DOT_INTERVAL:             // 设定喷头喷印点距	0x0004
+            case EC_DOD_Protocol.CMD_GET_DOT_INTERVAL:             // 读取喷头喷印点距	0x0005
+            case EC_DOD_Protocol.CMD_SET_DROP_SIZE:                // 设定喷头喷印墨滴大小	0x0006
+            case EC_DOD_Protocol.CMD_GET_DROP_SIZE:                // 读取喷头墨滴大小	0x0007
+            case EC_DOD_Protocol.CMD_GET_PRINT_DELAY:              // 读取喷头喷印延时	0x0009
+            case EC_DOD_Protocol.CMD_GET_MOVE_SPEED:               // 读取物体移动速度	0x000b
+            case EC_DOD_Protocol.CMD_SET_EYE_STATUS:               // 设定喷头电眼状态	0x000c
+            case EC_DOD_Protocol.CMD_GET_EYE_STATUS:               // 读取喷头电眼状态	0x000d
+            case EC_DOD_Protocol.CMD_SET_SYNC_STATUS:              // 设定喷头同步器状态	0x000e
+            case EC_DOD_Protocol.CMD_GET_SYNC_STATUS:              // 读取喷头同步器状态	0x000f
+            case EC_DOD_Protocol.CMD_GET_REVERSE:                  // 读取喷头翻转喷印	0x0011
+            case EC_DOD_Protocol.CMD_GET_USABLE_IDS:               // 获取当前文件中可用的ID	0x0012
+            case EC_DOD_Protocol.CMD_SAVE_CURRENT_INFO:            // 保存当前信息	0x0014
+            case EC_DOD_Protocol.CMD_START_PRINT_A:                // A喷头喷印	0x0017
+            case EC_DOD_Protocol.CMD_START_PRINT_B:                // B喷头喷印	0x0018
+            case EC_DOD_Protocol.CMD_STOP_PRINT_A:                 // A喷印完成	0x0019
+            case EC_DOD_Protocol.CMD_STOP_PRINT_B:                 // B喷印完成	0x0020
+                sendCommandProcessResult(cmd, 1, 0, 1, "");
+//                mSerialPort.writeStringSerial( "<!-- Not Support Command -->");
+                break;
+            case EC_DOD_Protocol.CMD_CHECK_CHANNEL:                // 检查信道	0x0001
+            case EC_DOD_Protocol.CMD_SET_PRINT_DELAY:              // 设定喷头喷印延时	0x0008
+            case EC_DOD_Protocol.CMD_SET_MOVE_SPEED:               // 设定物体移动速度	0x000a
+            case EC_DOD_Protocol.CMD_SET_REVERSE:                  // 设定喷头翻转喷印	0x0010
+            case EC_DOD_Protocol.CMD_TEXT:                         // 发送一条文本	0x0013
+            case EC_DOD_Protocol.CMD_START_PRINT:                  // 启动喷码机开始喷印	0x0015
+            case EC_DOD_Protocol.CMD_STOP_PRINT:                   // 停机命令	0x0016
+                procCommands(cmd, data);
+                break;
+            default:
+                sendCommandProcessResult(cmd, 1, 0, 1, "");
+                break;
+        }
+    }
+
+    @Override
+    public void sendCommandProcessResult(int cmd, int ack, int devStatus, int cmdStatus, String message) {
+        byte[] retMsg = createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
+        super.sendCommandProcessResult(retMsg);
     }
 }

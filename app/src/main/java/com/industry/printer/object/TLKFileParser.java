@@ -285,7 +285,6 @@ public class TLKFileParser  extends TlkFile{
 				((CounterObject) obj).mCounterIndex = index;
 				((CounterObject) obj).setValue(conf.getParam(SystemConfigFile.INDEX_COUNT_1 + index));
 				((CounterObject) obj).setSteplen(Integer.parseInt(attr[15]));
-
 			} else if (BaseObject.OBJECT_TYPE_ELLIPSE.equals(attr[1]))    //ellipse
 			{
 				obj = new EllipseObject(mContext, 0);
@@ -364,7 +363,7 @@ public class TLKFileParser  extends TlkFile{
 			} else if (BaseObject.OBJECT_TYPE_WEEKDAY.equalsIgnoreCase(attr[1])) {
 				obj = new WeekDayObject(mContext);
 			} else if (BaseObject.OBJECT_TYPE_DYN_TEXT.equalsIgnoreCase(attr[1])) {
-				// H.M.Wang 2019-12-6 PC制作的面向串口的动态文本，暂时以OBJECT_TYPE_DYN_TEXT作为标识，适用计数器类进行处理
+/*				// H.M.Wang 2019-12-6 PC制作的面向串口的动态文本，暂时以OBJECT_TYPE_DYN_TEXT作为标识，适用计数器类进行处理
 //				obj = DynamicText.fromTlk(mContext, str);
 				obj = new CounterObject(mContext, 0);
 				((CounterObject) obj).setBits(Integer.parseInt(attr[8]));
@@ -374,6 +373,11 @@ public class TLKFileParser  extends TlkFile{
 				((CounterObject) obj).setValue(0);
 				((CounterObject) obj).setSteplen(0);
 				// End. -----------------
+*/
+				obj = new DynamicText(mContext, 0);
+				((DynamicText) obj).setDtIndex(Integer.parseInt(attr[16]));
+				((DynamicText) obj).setBits(Integer.parseInt(attr[8]));
+				obj.setContent(new String(attr[21].getBytes(), "UTF-8"));
 			} else {
 				Debug.d(TAG, "Unknown object type: " + attr[1]);
 				return null;
@@ -396,6 +400,7 @@ public class TLKFileParser  extends TlkFile{
 				obj.setHeight(StringUtil.parseInt(attr[5])/(2*mProportion)-StringUtil.parseInt(attr[3])/(2*mProportion));
 
 				if((obj instanceof CounterObject)||
+						obj instanceof DynamicText ||
 						obj instanceof JulianDayObject ||
 						obj instanceof ShiftObject ||
 						obj instanceof WeekOfYearObject ||
@@ -413,7 +418,7 @@ public class TLKFileParser  extends TlkFile{
 //				obj.setY(StringUtil.parseInt(attr[3])/(2*mProportion));
 //				obj.setHeight(StringUtil.parseInt(attr[5])/(2*mProportion)-StringUtil.parseInt(attr[3])/(2*mProportion));
 				obj.setDragable(Boolean.parseBoolean(attr[7]));
-				Debug.d(TAG, "--->attr[111] = " + attr[11]);
+//				Debug.d(TAG, "--->attr[111] = " + attr[11]);
 				obj.setReverse(StringUtil.parseBool(attr[11]));
 
 				// H.M.Wang追加一行，设置初始横向缩放比例

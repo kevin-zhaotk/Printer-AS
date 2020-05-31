@@ -315,6 +315,7 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 	private ArrayList<Integer> sort(String[] src) {
 		ArrayList<Integer> indexs = new ArrayList<Integer>();
 
+// H.M.Wang 2020-5-19 增加文件名长度优先的排序，长度一致时按字符排序
 		for (int i=0; i<src.length; i++) {
 			int start = 0;
 			int end = indexs.size();
@@ -325,16 +326,28 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 					indexs.add(end, i);
 					break;
 				}
-				int et = src[i].compareTo(src[indexs.get(j)]);
-				if (et == 0) {
-					indexs.add(j, i);
-					break;
-				} else if (et < 0) {        // 欲插入字符串比当前字符串小
+
+				int lenSrc1 = src[i].length();
+				int lenSrc2 = src[indexs.get(j)].length();
+
+				if(lenSrc1 < lenSrc2) {
 					end = j;
 					j = (start + end) / 2;
-				} else if (et > 0) {        // 欲插入字符串比当前字符串大
+				} else if(lenSrc1 > lenSrc2) {
 					start = j;
 					j = (start + end) / 2;
+				} else {
+					int et = src[i].compareTo(src[indexs.get(j)]);
+					if (et == 0) {
+						indexs.add(j, i);
+						break;
+					} else if (et < 0) {        // 欲插入字符串比当前字符串小
+						end = j;
+						j = (start + end) / 2;
+					} else if (et > 0) {        // 欲插入字符串比当前字符串大
+						start = j;
+						j = (start + end) / 2;
+					}
 				}
 				if (start + 1 == end) {
 					indexs.add(end, i);
@@ -342,6 +355,7 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 				}
 			} while (true);
 		}
+// End of H.M.Wang 2020-5-19 增加文件名长度优先的排序，长度一致时按字符排序
 		return indexs;
 	}
 

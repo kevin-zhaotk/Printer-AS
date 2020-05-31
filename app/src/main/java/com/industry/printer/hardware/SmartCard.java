@@ -22,6 +22,8 @@ public class SmartCard {
     public final static int SC_PRINT_CARTRIDGE_ACCESS_FAILED = 200;
     public final static int SC_BULK_CARTRIDGE_ACCESS_FAILED = 201;
     public final static int SC_LEVEL_CENSOR_ACCESS_FAILED   = 202;
+    public final static int SC_CONSISTENCY_FAILED           = 300;
+    public final static int SC_OUT_OF_INK_ERROR             = 301;
 
     public static void loadLibrary() {
         Debug.d("SmartCard", "Loading smartcard library...");

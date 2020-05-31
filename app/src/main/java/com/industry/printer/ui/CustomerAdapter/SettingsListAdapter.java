@@ -207,9 +207,12 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 // End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
 // H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 				case MSG_QRLAST_SET:
-					mSettingItems[SystemConfigFile.INDEX_QRCODE_LAST].setValue(msg.arg1);
-					mSysconfig.setParam(SystemConfigFile.INDEX_QRCODE_LAST, msg.arg1);
-					QRReader.getInstance(mContext).writeQRLast(msg.arg1);
+					mSettingItems[SystemConfigFile.INDEX_QRCODE_LAST].setValue(msg.arg1);		// 更新编辑页面数据
+					mSysconfig.setParam(SystemConfigFile.INDEX_QRCODE_LAST, msg.arg1);			// 更新参数设置数据
+					RTCDevice.getInstance(mContext).writeQRLast(msg.arg1);						// 更新不挥发保存区数据
+// H.M.Wang 2020-5-19 写入不挥发存储区后，重新初始化QRReader类，否则，上次执行结果留存，新设置内容不起作用
+					QRReader.reInstance(mContext);												// 重新初始化QRReader类，必须在更新了不挥发存储区后执行
+// End of H.M.Wang 2020-5-19 写入不挥发存储区后，重新初始化QRReader类，否则，上次执行结果留存，新设置内容不起作用
 					notifyDataSetChanged();
 					break;
 // End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理

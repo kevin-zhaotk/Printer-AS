@@ -23,9 +23,11 @@
 #define SC_INIT_BULK_CTRG_INIT_FAILED           121
 #define SC_INIT_PRNT_CTRG_FID_NOT_MATCH         130
 #define SC_INIT_BULK_CTRG_FID_NOT_MATCH         131
-#define SC_PRINT_CARTRIDGE_ACCESS_FAILED        200
-#define SC_BULK_CARTRIDGE_ACCESS_FAILED         201
+#define SC_PRINT_CTRG_ACCESS_FAILED             200
+#define SC_BULK_CTRG_ACCESS_FAILED              201
 #define SC_LEVEL_CENSOR_ACCESS_FAILED           202
+#define SC_CONSISTENCY_FAILED                   300
+
 
 #define MAX_INK_VOLUME                          4700
 #define INK_VOLUME_PER_CENTAGE                  (MAX_INK_VOLUME / 100)
@@ -67,16 +69,16 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
     LOGI("Initializing smart card library....\n");
 
     // Register for assert callback
-    LIB_HP_SMART_CARD_register_assert_callback(assert_handler);
+//    LIB_HP_SMART_CARD_register_assert_callback(assert_handler);
 
     // Register for cache monitor callack
-    LIB_HP_SMART_CARD_register_cache_monitor_callback(cache_monitor_failure_handler);
+//    LIB_HP_SMART_CARD_register_cache_monitor_callback(cache_monitor_failure_handler);
 
 //    LIB_HP_SMART_CARD_set_log_depth(0);
 
     // Initialise the library
     LIB_HP_SMART_CARD_init();
-
+/*
     if (LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_HOST) != HP_SMART_CARD_OK) {
         LOGE(">>> LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_HOST): NOT PRESENT.  ");
         return SC_INIT_HOST_CARD_NOT_PRESENT;
@@ -101,7 +103,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
         LOGD(">>> Tag0 Family ID of Device %d -> %d\n", HP_SMART_CARD_DEVICE_ID_0, family_id);
         if(family_id != HP_SMART_CARD_INK_FAMILY_ID) return SC_INIT_PRNT_CTRG_FID_NOT_MATCH;
     } else {
-        return SC_PRINT_CARTRIDGE_ACCESS_FAILED;
+        return SC_PRINT_CTRG_ACCESS_FAILED;
     }
 
     // Initialize Smart Card 1, this should be a bulk cartridge
@@ -120,9 +122,9 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
         LOGD(">>> Tag0 Family ID of Device %d -> %d\n", HP_SMART_CARD_DEVICE_ID_1, family_id);
         if(family_id != HPSCS_FAMILY_ID) return SC_INIT_BULK_CTRG_FID_NOT_MATCH;
     } else {
-        return SC_BULK_CARTRIDGE_ACCESS_FAILED;
+        return SC_BULK_CTRG_ACCESS_FAILED;
     }
-
+*/
     SC_GPIO_ADAPTER_select_38_xlater(SELECT_LEVEL);
 
     int ret;
@@ -146,6 +148,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
 JNIEXPORT jint JNICALL Java_com_Smartcard_chechConsistency(JNIEnv *env, jclass arg, jint card) {
     HP_SMART_CARD_result_t r = HP_SMART_CARD_OK;
 
+    return SC_SUCCESS;
+
     uint8_t ink_designator, supply_designator;
     uint8_t ink_formulator_id, supply_formulator_id;
     uint8_t ink_family, supply_ink_family;
@@ -159,7 +163,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_chechConsistency(JNIEnv *env, jclass a
     r |= inkReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_ID_0, &ink_family_member);
 
     if (HP_SMART_CARD_OK != r) {
-        return SC_PRINT_CARTRIDGE_ACCESS_FAILED;
+        return SC_PRINT_CTRG_ACCESS_FAILED;
     }
 
     r |= supplyReadTag1OEMInkDesignator(HP_SMART_CARD_DEVICE_ID_1, &supply_designator);
@@ -169,7 +173,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_chechConsistency(JNIEnv *env, jclass a
     r |= supplyReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_ID_1, &supply_ink_family_member);
 
     if (HP_SMART_CARD_OK != r) {
-        return SC_BULK_CARTRIDGE_ACCESS_FAILED;
+        return SC_BULK_CTRG_ACCESS_FAILED;
     }
 /*
     if(ink_designator != supply_designator ||
@@ -198,11 +202,11 @@ static char* toBinaryString(char* dst, uint32_t src) {
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_chechOIB(JNIEnv *env, jclass arg, jint card) {
-    HP_SMART_CARD_result_t r = HP_SMART_CARD_OK;
+    return 0;
 
     uint8_t out_of_ink = 1;
 
-    r = supplyReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_1, &out_of_ink);
+    HP_SMART_CARD_result_t r = supplyReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_1, &out_of_ink);
 
     if (HP_SMART_CARD_OK != r) {
         out_of_ink = 1;
@@ -212,6 +216,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_chechOIB(JNIEnv *env, jclass arg, jint
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, jint card) {
+    return 2000;
+
     uint32_t x = 0;
 
     HP_SMART_CARD_result_t r = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, &x);
@@ -253,11 +259,13 @@ HP_SMART_CARD_result_t (*ILGReadFunc[4])(HP_SMART_CARD_device_id_t cardId, uint3
 };
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jint card) {
+    return SC_SUCCESS;
+
     uint32_t x = 0;
 
     HP_SMART_CARD_result_t r = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, &x);
     if (HP_SMART_CARD_OK != r) {
-        return SC_BULK_CARTRIDGE_ACCESS_FAILED;
+        return SC_BULK_CTRG_ACCESS_FAILED;
     }
 
     int p1, p2;
@@ -267,7 +275,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
 
     r = supplyWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, x);
     if (HP_SMART_CARD_OK != r) {
-        return SC_BULK_CARTRIDGE_ACCESS_FAILED;
+        return SC_BULK_CTRG_ACCESS_FAILED;
     }
 
     if(p1 != p2) {
@@ -295,9 +303,13 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jint card) {
+//    return 0x77777777;
+
     int ret;
 
+//    LOGD(">>> Enter readLevel(). Start 3 ioctls");
     SC_GPIO_ADAPTER_select_38_xlater(SELECT_LEVEL);
+//    LOGD(">>> Finish 3 ioctls");
 
     uint32_t chData;
     ret = readChannelData0(&chData);
@@ -353,7 +365,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     JNIEnv* env = NULL;
     jint result = -1;
 
-    LOGI("SmartCard.so 1.0.190 Loaded.");
+    LOGI("SmartCard.so 1.0.233 Loaded.");
 
     if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
         //__android_log_print(ANDROID_LOG_INFO, JNI_TAG,"ERROR: GetEnv failed\n");

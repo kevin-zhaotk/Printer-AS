@@ -36,25 +36,6 @@ extern "C" {
 #define GPIO_ENABLE             0x00
 #define GPIO_DISABLE            0x01
 
-#define GPIO_DEVICE "/dev/ext-gpio"
-
-#define GPIO_DEVICE_IOCTL_WRITE (0x10)
-
-#define GPIO_PIN_PG5_ENABLE     (0x6050)
-#define GPIO_PIN_PG5_DIAABLE    (0x6051)
-
-#define GPIO_PIN_PG6_ENABLE     (0x6060)
-#define GPIO_PIN_PG6_DIAABLE    (0x6061)
-
-#define GPIO_PIN_PG7_ENABLE     (0x6070)
-#define GPIO_PIN_PG7_DIAABLE    (0x6071)
-
-#define GPIO_PIN_PG8_ENABLE     (0x6080)
-#define GPIO_PIN_PG8_DIAABLE    (0x6081)
-
-#define GPIO_PIN_PG9_ENABLE     (0x6090)
-#define GPIO_PIN_PG9_DIAABLE    (0x6091)
-
 //-----------------------------------------------------------------------------
 // Function Prototypes
 

@@ -19,7 +19,11 @@ public enum PrinterNozzle {
     MESSAGE_TYPE_1_INCH_FOUR(MessageType.NOZZLE_INDEX_1_INCH_FOUR, NozzleType.NOZZLE_TYPE_1_INCH_FOUR, 4, 4),
 
     // H.M.Wang 2020-4-17 追加12.7R5头类型
-    MESSAGE_TYPE_12_7_R5(MessageType.NOZZLE_INDEX_12_7_R5, NozzleType.NOZZLE_TYPE_12_7_R5, 1, 1);
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//    MESSAGE_TYPE_12_7_R5(MessageType.NOZZLE_INDEX_12_7_R5, NozzleType.NOZZLE_TYPE_12_7_R5, 1, 1);
+    MESSAGE_TYPE_R6X48(MessageType.NOZZLE_INDEX_R6X48, NozzleType.NOZZLE_TYPE_R6X48, 1, 1),
+    MESSAGE_TYPE_R6X50(MessageType.NOZZLE_INDEX_R6X50, NozzleType.NOZZLE_TYPE_R6X50, 1, 1);
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
     // End of H.M.Wang 2020-4-17 追加12.7R5头类型
 
     public final int mIndex;
@@ -115,7 +119,11 @@ public enum PrinterNozzle {
         switch (mType) {
             case NozzleType.NOZZLE_TYPE_12_7:
             // H.M.Wang 2020-4-17 追加12.7R5头类型
-            case NozzleType.NOZZLE_TYPE_12_7_R5:
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//            case NozzleType.NOZZLE_TYPE_12_7_R5:
+            case NozzleType.NOZZLE_TYPE_R6X48:
+            case NozzleType.NOZZLE_TYPE_R6X50:
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
             // End of H.M.Wang 2020-4-17 追加12.7R5头类型
                 mHeight = 152;
                 break;
@@ -161,7 +169,11 @@ public enum PrinterNozzle {
         switch (mType) {
             case NozzleType.NOZZLE_TYPE_12_7:
             // H.M.Wang 2020-4-17 追加12.7R5头类型
-            case NozzleType.NOZZLE_TYPE_12_7_R5:
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//            case NozzleType.NOZZLE_TYPE_12_7_R5:
+            case NozzleType.NOZZLE_TYPE_R6X48:
+            case NozzleType.NOZZLE_TYPE_R6X50:
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
             // End of H.M.Wang 2020-4-17 追加12.7R5头类型
                 scaleW = 1f;
                 scaleH = 1f;
@@ -224,7 +236,11 @@ public enum PrinterNozzle {
         switch (mType) {
             case NozzleType.NOZZLE_TYPE_12_7:
             // H.M.Wang 2020-4-17 追加12.7R5头类型
-            case NozzleType.NOZZLE_TYPE_12_7_R5:
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//            case NozzleType.NOZZLE_TYPE_12_7_R5:
+            case NozzleType.NOZZLE_TYPE_R6X48:
+            case NozzleType.NOZZLE_TYPE_R6X50:
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
             // End of H.M.Wang 2020-4-17 追加12.7R5头类型
                 ratio = 1.0f * 12.7f / 304;
                 break;
@@ -288,9 +304,10 @@ public enum PrinterNozzle {
 
     // H.M.Wang 2020-4-17 追加12.7R5头类型
     // 返回对于R5头，横向复制的份数
-    public static final int     R5x6_PRINT_COPY_NUM = 6;
-    public static final int     R5x6_HEAD_NUM = 6;
-    public static final int     R5x6_MAX_COL_NUM_EACH_UNIT = 48 * 6;
+    public static final int     R6_PRINT_COPY_NUM = 6;
+    public static final int     R6_HEAD_NUM = 6;
+    public static final int     R6X48_MAX_COL_NUM_EACH_UNIT = 48 * 6;
+    public static final int     R6X50_MAX_COL_NUM_EACH_UNIT = 50 * 6;
 /*    public int getRTimes() {
         if(mIndex == MessageType.NOZZLE_INDEX_12_7_R5) {
             return 6;
@@ -349,8 +366,14 @@ public enum PrinterNozzle {
                 return MESSAGE_TYPE_1_INCH_FOUR;
 
             // H.M.Wang 2020-4-17 追加12.7R5头类型
-            case MessageType.NOZZLE_INDEX_12_7_R5:
-                return MESSAGE_TYPE_12_7_R5;
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//            case MessageType.NOZZLE_INDEX_12_7_R5:
+//                return MESSAGE_TYPE_12_7_R5;
+            case MessageType.NOZZLE_INDEX_R6X48:
+                return MESSAGE_TYPE_R6X48;
+            case MessageType.NOZZLE_INDEX_R6X50:
+                return MESSAGE_TYPE_R6X50;
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
             // End of H.M.Wang 2020-4-17 追加12.7R5头类型
 
             default:
@@ -388,8 +411,14 @@ public enum PrinterNozzle {
                 return MESSAGE_TYPE_1_INCH_FOUR;
 
             // H.M.Wang 2020-4-17 追加12.7R5头类型
-            case NozzleType.NOZZLE_TYPE_12_7_R5:
-                return MESSAGE_TYPE_12_7_R5;
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//            case NozzleType.NOZZLE_TYPE_12_7_R5:
+//                return MESSAGE_TYPE_12_7_R5;
+            case NozzleType.NOZZLE_TYPE_R6X48:
+                return MESSAGE_TYPE_R6X48;
+            case NozzleType.NOZZLE_TYPE_R6X50:
+                return MESSAGE_TYPE_R6X50;
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
             // End of H.M.Wang 2020-4-17 追加12.7R5头类型
 
             default:
@@ -416,7 +445,11 @@ public enum PrinterNozzle {
         public static final int NOZZLE_INDEX_64_DOT  = 10;   // 64 dot
 
         // H.M.Wang 2020-4-17 追加12.7R5头类型
-        public static final int NOZZLE_INDEX_12_7_R5 = 11;  // 12.7R5
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//        public static final int NOZZLE_INDEX_12_7_R5 = 11;  // 12.7R5
+        public static final int NOZZLE_INDEX_R6X48 = 11;        // R6X48
+        public static final int NOZZLE_INDEX_R6X50 = 12;        // R6X50
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
         // End of H.M.Wang 2020-4-17 追加12.7R5头类型
     }
 
@@ -436,7 +469,11 @@ public enum PrinterNozzle {
         public static final int NOZZLE_TYPE_64_DOT = 20;
 
         // H.M.Wang 2020-4-17 追加12.7R5头类型
-        public static final int NOZZLE_TYPE_12_7_R5 = 30;
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//        public static final int NOZZLE_TYPE_12_7_R5 = 30;
+        public static final int NOZZLE_TYPE_R6X48 = 30;
+        public static final int NOZZLE_TYPE_R6X50 = 31;
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
         // End of H.M.Wang 2020-4-17 追加12.7R5头类型
     }
 }

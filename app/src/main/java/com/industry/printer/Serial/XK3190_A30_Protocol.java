@@ -5,11 +5,13 @@ import com.industry.printer.Utils.Debug;
 
 import org.apache.http.util.ByteArrayBuffer;
 
+import java.nio.charset.Charset;
+
 /**
  * Created by hmwan on 2020/1/13.
  */
 
-public class XK3190_A30_Protocol {
+public class XK3190_A30_Protocol extends SerialProtocol {
     public static String TAG = XK3190_A30_Protocol.class.getSimpleName();
 
     /*
@@ -38,14 +40,17 @@ public class XK3190_A30_Protocol {
 
     private final int FIXED_FRAME_SIZE          = TAG_END_POS - TAG_START_POS + 1;
 
-    public final static int ERROR_SUCESS              = 0x00000000;   // 无错误
     public final static int ERROR_INVALID_STX         = 0x81000000;   // 起始标识错误
     public final static int ERROR_INVALID_ETX         = 0x82000000;   // 终止标识错误
     public final static int ERROR_INVALID_CMD         = 0x83000000;   // 不可识别的命令
     public final static int ERROR_CHECK_FAILED        = 0x84000000;   // 校验失败
-    public final static int ERROR_FAILED              = 0x85000000;   // 解析帧失败
 
-    public int parseFrame(ByteArrayBuffer recvMsg) {
+    public XK3190_A30_Protocol(SerialPort serialPort){
+        super(serialPort);
+    }
+
+    @Override
+    protected int parseFrame(ByteArrayBuffer recvMsg) {
         int recvCmd = 0;
 
         try {
@@ -114,11 +119,12 @@ public class XK3190_A30_Protocol {
         return ERROR_FAILED;
     }
 
-    public byte[] createFrame(int cmd, int ack, int devStatus, int cmdStatus, byte[] msg) {
+    @Override
+    protected byte[] createFrame(int cmd, int ack, int devStatus, int cmdStatus, byte[] msg) {
         return msg;
     }
 
-    public String createErrorMessage(int error) {
+    private String createErrorMessage(int error) {
         String errStr = "";
 
         switch(error) {
@@ -139,5 +145,29 @@ public class XK3190_A30_Protocol {
                 break;
         }
         return errStr;
+    }
+
+    @Override
+    public void handleCommand(SerialHandler.OnSerialPortCommandListenner normalCmdListenner, SerialHandler.OnSerialPortCommandListenner printCmdListenner, ByteArrayBuffer bab) {
+        setListeners(normalCmdListenner, printCmdListenner);
+
+        int result = parseFrame(bab);
+        if((result & ERROR_MASK) == XK3190_A30_Protocol.ERROR_SUCESS) {
+            String value = Integer.toString(result & CMD_MASK);
+
+            if(null == mPrintCmdListeners) {
+                sendCommandProcessResult(0, 1, 0, 1, "PRINTER_NOT_READY");
+            } else {
+                procCommands(result, value.getBytes());
+            }
+        } else {
+            sendCommandProcessResult(0, 1, 0, 1, createErrorMessage(result & ERROR_MASK));
+        }
+    }
+
+    @Override
+    public void sendCommandProcessResult(int cmd, int ack, int devStatus, int cmdStatus, String message) {
+        byte[] retMsg = createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
+        super.sendCommandProcessResult(retMsg);
     }
 }

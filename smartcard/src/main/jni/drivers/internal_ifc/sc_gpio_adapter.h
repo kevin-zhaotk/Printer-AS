@@ -34,9 +34,13 @@ extern "C" {
 // Added by H.M.Wang 2019-10-17
 // 低电平有效，589排列
 
-#define SELECT_LEVEL        0x01, 0x00, 0x00
-#define SELECT_PRNT_CTRG    0x01, 0x01, 0x00
-#define SELECT_BULK_CTRG    0x00, 0x01, 0x00
+#define SELECT_LEVEL        0x00, 0x00, 0x00
+#define SELECT_PRNT_CTRG    0x00, 0x01, 0x00
+#define SELECT_BULK_CTRG    0x01, 0x01, 0x00
+
+//#define SELECT_LEVEL        0x01, 0x00, 0x00
+//#define SELECT_PRNT_CTRG    0x01, 0x01, 0x00
+//#define SELECT_BULK_CTRG    0x00, 0x01, 0x00
 
 // Added by H.M.Wang 2019-10-17 end
 

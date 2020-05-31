@@ -1,6 +1,5 @@
 package com.industry.printer.Serial;
 
-import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Debug;
 
 import org.apache.http.util.ByteArrayBuffer;
@@ -8,11 +7,11 @@ import org.apache.http.util.ByteArrayBuffer;
 import java.nio.charset.Charset;
 
 /**
- * Created by hmwan on 2019/12/20.
+ * Created by hmwan on 2020/5/18.
  */
 
-public class SerialProtocol3 extends SerialProtocol {
-    public static String TAG = SerialProtocol3.class.getSimpleName();
+public class SerialProtocol5 extends SerialProtocol {
+    public static String TAG = SerialProtocol5.class.getSimpleName();
 
 //    public final static int ERROR_FAILED = 0x85000000;   // 解析帧失败
 
@@ -20,24 +19,14 @@ public class SerialProtocol3 extends SerialProtocol {
 //    private SerialHandler.OnSerialPortCommandListenner mNormalCmdListeners = null;
 //    private SerialHandler.OnSerialPortCommandListenner mPrintCmdListeners = null;
 
-    public SerialProtocol3(SerialPort serialPort){
+    public SerialProtocol5(SerialPort serialPort){
         super(serialPort);
     }
 
     @Override
     protected int parseFrame(ByteArrayBuffer recvMsg) {
-        int recvCmd = ERROR_FAILED;
-        try {
-            for (int i=recvMsg.length()-1; i>=0; i--) {
-                if (recvMsg.byteAt(i) == 0x0A) {
-                    recvMsg.setLength(i);
-                    recvCmd = ERROR_SUCESS;
-                    break;
-                }
-            }
-            return recvCmd;
-        } catch (Exception e) {
-            Debug.e(TAG, e.getMessage());
+        if(recvMsg.length() == 32) {
+            return ERROR_SUCESS;
         }
         return ERROR_FAILED;
     }
@@ -54,7 +43,6 @@ public class SerialProtocol3 extends SerialProtocol {
         int result = parseFrame(bab);
         if (result == ERROR_SUCESS) {
             byte[] recvData = bab.toByteArray();
-
             procCommands(result, recvData);
         }
     }

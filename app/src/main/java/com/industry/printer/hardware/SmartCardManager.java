@@ -32,22 +32,23 @@ public class SmartCardManager implements IInkDevice {
     private boolean mValid;
     private int     mInkLevel;
 
-    private static int READ_LEVEL_TIMES                 = 10;
+    private static int READ_LEVEL_TIMES                 = 1;
     private int[] mReadLevels;
     private int mCurrentLevel;
-
 
     private AlertDialog mRecvedLevelPromptDlg = null;
 
     private static final int MSG_CHECK_USABILITY        = 100;
     private static final int MSG_UPDATE_LEVEL           = 101;
     private static final int MSG_READ_LEVEL             = 102;
+    private static final int MSG_LEVEL_UPDATED          = 103;
+
 //    private static final int MSG_CHECK_DOWNTEST       = 1000;
 //    private static final int MSG_B11_LAMP_TEST        = 1001;
 //    private boolean mLampOn = false;
 
     private final static int UPDATE_LEVEL_INTERVAL      = 1000 * 30;
-    private final static int READ_LEVEL_INTERVAL        = 100;
+    private final static int READ_LEVEL_INTERVAL        = 10;
     private final static int USABILITY_CHECK_INTERVAL   = 1000 * 60 * 3;
 
     private Handler mHandler = new Handler() {
@@ -74,7 +75,18 @@ public class SmartCardManager implements IInkDevice {
                     } else {
                         levelValueUpdated();
                     }
-
+                    break;
+                case MSG_LEVEL_UPDATED:
+//                    Toast.makeText(mContext, "Current Level: " + mCurrentLevel, Toast.LENGTH_LONG).show();
+                    if(null != mRecvedLevelPromptDlg) {
+//                        if(mCurrentLevel < 100000 || mCurrentLevel > 150000) {
+//                            mRecvedLevelPromptDlg.setMessage("< Invalid Level Value >");
+//                        } else {
+                            mRecvedLevelPromptDlg.setMessage("Level: " + mCurrentLevel);
+//                        }
+                        mRecvedLevelPromptDlg.show();
+                        mRecvedLevelPromptDlg.show();
+                    }
                     break;
 //                case MSG_B11_LAMP_TEST:
 //                    if(!mLampOn) {
@@ -104,8 +116,9 @@ public class SmartCardManager implements IInkDevice {
         mRecvedLevelPromptDlg = builder.setTitle("读取LEVEL值").setMessage("").setPositiveButton("关闭", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mRecvedLevelPromptDlg.dismiss();
-                mRecvedLevelPromptDlg = null;
+                mRecvedLevelPromptDlg.hide();
+//                mRecvedLevelPromptDlg.dismiss();
+//                mRecvedLevelPromptDlg = null;
             }
         }).create();
     }
@@ -125,7 +138,7 @@ public class SmartCardManager implements IInkDevice {
             mHandler.sendEmptyMessage(MSG_CHECK_USABILITY);
 //            mHandler.sendEmptyMessageDelayed(MSG_CHECK_DOWNTEST, 5000);
 //            mHandler.sendEmptyMessageDelayed(MSG_B11_LAMP_TEST, 10000);
-            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_LEVEL, UPDATE_LEVEL_INTERVAL);
+//            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_LEVEL, UPDATE_LEVEL_INTERVAL);
             mValid = true;
         } else {
             mValid = false;
@@ -140,8 +153,7 @@ public class SmartCardManager implements IInkDevice {
                 int ret = SmartCard.chechConsistency(HP_BULK_CARTRIDGE);
                 if(SmartCard.SC_SUCCESS != ret) {
                     mValid = false;
-                    mCallback.sendEmptyMessage(MSG_SMARTCARD_CHECK_FAILED);
-                    return;
+                    mCallback.obtainMessage(MSG_SMARTCARD_CHECK_FAILED, ret, 0, null).sendToTarget();
                 }
             }
         }
@@ -154,7 +166,7 @@ public class SmartCardManager implements IInkDevice {
                 int ret = SmartCard.chechOIB(HP_BULK_CARTRIDGE);
                 if(0 != ret) {
                     mValid = false;
-                    mCallback.sendEmptyMessage(ControlTabActivity.MESSAGE_RFID_ZERO);
+                    mCallback.obtainMessage(MSG_SMARTCARD_CHECK_FAILED, SmartCard.SC_OUT_OF_INK_ERROR, 0, null).sendToTarget();
                 }
             }
         }
@@ -166,26 +178,32 @@ public class SmartCardManager implements IInkDevice {
             synchronized (this) {
                 level = SmartCard.readLevel(LEVEL_SENSOR);
             }
-            Debug.d(TAG, "Read Level " + (count + 1) + " times = " + level);
-            mReadLevels[count] = level;
+            if((level & 0xF0000000) == 0x00000000) {
+                Debug.d(TAG, "Read Level " + (count + 1) + " times = " + level);
+                mReadLevels[count] = level;
+            } else {
+                Debug.e(TAG, "Read Level Error: " + Integer.toHexString(level & 0xF0000000));
+                mReadLevels[count] = level;
+            }
         }
     }
 
     private void levelValueUpdated() {
-        int sum = 0;
+        long sum = 0;
         for(int i=0; i<READ_LEVEL_TIMES; i++) {
             sum += mReadLevels[i];
         }
-        mCurrentLevel = sum / READ_LEVEL_TIMES;
+        mCurrentLevel = (int)(sum / READ_LEVEL_TIMES);
         Debug.d(TAG, "Current Level = " + mCurrentLevel);
 
-//        Toast.makeText(mContext, "Current Level: " + mCurrentLevel, Toast.LENGTH_LONG).show();
+        mHandler.sendEmptyMessage(MSG_LEVEL_UPDATED);
+    }
 
-        if(null != mRecvedLevelPromptDlg) {
-            mRecvedLevelPromptDlg.setMessage("Level: " + mCurrentLevel);
-            mRecvedLevelPromptDlg.show();
-            mRecvedLevelPromptDlg.show();
+    public void updateLevel() {
+        for(int i=0; i<READ_LEVEL_TIMES; i++) {
+            readLevelValue(i);
         }
+        levelValueUpdated();
     }
 
     @Override

@@ -35,8 +35,8 @@ public class InkManagerFactory {
         String inkDev = PlatformInfo.getInkDevice();
         Debug.d(TAG, "--->Platform: " + inkDev);
         if (PlatformInfo.DEVICE_SMARTCARD.equals(inkDev)) {
-            //return new SmartCardManager(ctx);
-            return new RFIDManager(ctx);
+              return new SmartCardManager(ctx);
+//            return new RFIDManager(ctx);
         } else {
             return new RFIDManager(ctx);
         }

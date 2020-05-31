@@ -63,16 +63,7 @@ static int _writeI2Cdata(uint8_t reg, uint8_t *data, int length) {
         return LEVEL_I2C_FAILED;
     }
 
-    int try = 100;
-    while (try > 0) {
-        ret = SC_I2C_DRIVER_write(fd, reg, data, length);
-
-        if(ret >= 0) {
-            break;
-        }
-        try--;
-        usleep(10);
-    }
+    ret = SC_I2C_DRIVER_write(fd, reg, data, length);
 
     SC_I2C_DRIVER_close(fd);
 
@@ -95,16 +86,7 @@ static int _readI2Cdata(int reg, uint8_t *data, int length) {
         return LEVEL_I2C_FAILED;
     }
 
-    int try = 100;
-    while (try > 0) {
-        read_length = SC_I2C_DRIVER_read(fd, reg, data, length);
-
-        if(read_length >= 0) {
-            break;
-        }
-        try--;
-        usleep(10);
-    }
+    read_length = SC_I2C_DRIVER_read(fd, reg, data, length);
 
     SC_I2C_DRIVER_close(fd);
 
@@ -121,11 +103,13 @@ static int _read2Bytes(int reg, uint16_t *data) {
 
     int ret = _readI2Cdata(reg, buf, 2);
 
-    *data = 0x0000;
-    (*data) <<= 8;
-    *data |= buf[0];
-    (*data) <<= 8;
-    *data |= buf[1];
+    if(ret == LEVEL_I2C_OK) {
+        *data = 0x0000;
+        (*data) <<= 8;
+        *data |= buf[0];
+        (*data) <<= 8;
+        *data |= buf[1];
+    }
 
     return ret;
 }
@@ -146,17 +130,21 @@ static int _read4Bytes(int reg, uint32_t *data) {
 
     int ret = _readI2Cdata(reg, buf, 2);
 
-    (*data) <<= 8;
-    *data |= buf[0];
-    (*data) <<= 8;
-    *data |= buf[1];
+    if(ret == LEVEL_I2C_OK) {
+        (*data) <<= 8;
+        *data |= buf[0];
+        (*data) <<= 8;
+        *data |= buf[1];
 
-    ret = _readI2Cdata(reg+1, buf, 2);
+        ret = _readI2Cdata(reg+1, buf, 2);
 
-    (*data) <<= 8;
-    *data |= buf[0];
-    (*data) <<= 8;
-    *data |= buf[1];
+        if(ret == LEVEL_I2C_OK) {
+            (*data) <<= 8;
+            *data |= buf[0];
+            (*data) <<= 8;
+            *data |= buf[1];
+        }
+    }
 
     return ret;
 }

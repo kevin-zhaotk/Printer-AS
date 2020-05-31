@@ -345,11 +345,11 @@ public class HyperTextObject extends BaseObject {
 //        meature();
     }
 
-    @Override
-    public void setHeight(String size) {
-        float height = 1.0f * mTask.getMsgObject().getPixels(size);
-        this.setHeight(height);
-    }
+//    @Override
+//    public void setHeight(String size) {
+//        float height = 1.0f * mTask.getMsgObject().getPixels(size);
+//        this.setHeight(height);
+//    }
 
     // H.M.Wang 2019-9-25 该类对象重新根据高度重新设置宽度的时候，主要根据子项目的内容来设置，跟自己的内容无关
     @Override

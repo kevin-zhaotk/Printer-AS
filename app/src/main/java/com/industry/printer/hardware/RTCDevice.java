@@ -280,4 +280,59 @@ public class RTCDevice {
 //		Debug.d(TAG, "--->readAll NVRAM");
 //		return counts;
 //	}
+
+// H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存
+	private final static String QRLAST_REGISTER = "0x38";
+
+	public int readQRLast() {
+		SystemFs.writeSysfs(I2C_DEVICE, getAddress());
+
+		String cmd = "4," + QRLAST_REGISTER;
+		Debug.d(TAG, "--->Reading QRLast from register " + QRLAST_REGISTER);
+
+		SystemFs.writeSysfs(I2C_READ, cmd);
+		String out = SystemFs.readSysfs(I2C_READ);
+		if (out == null) {
+			return 0;
+		}
+
+		int pos =0;
+		String[] bytes = out.split("/r/n");
+		if (bytes == null || bytes.length < 7) {
+			return 0;
+		}
+		pos = bytes[3].lastIndexOf("0x");
+		byte byte1 = (byte) Integer.parseInt(bytes[3].substring(pos+2), 16);
+		byte byte2 = (byte) Integer.parseInt(bytes[4].substring(pos+2), 16);
+		byte byte3 = (byte) Integer.parseInt(bytes[5].substring(pos+2), 16);
+		byte byte4 = (byte) Integer.parseInt(bytes[6].substring(pos+2), 16);
+
+		int count = (byte1 & 0x0ff) + (byte2 & 0x0ff) * 256 + (byte3 & 0x0ff) * 256 * 256 + (byte4 & 0x0ff) * 256 * 256 * 256;
+		Debug.d(TAG, "--->QRLast = " + count);
+
+		return count;
+	}
+
+	public void writeQRLast(int count) {
+		SystemFs.writeSysfs(I2C_DEVICE, getAddress());
+
+		StringBuilder cmd = new StringBuilder(QRLAST_REGISTER);
+		Debug.d(TAG, "--->Writing QRLast(" + count + ") to register " + QRLAST_REGISTER);
+
+		byte byte0 = (byte) (count & 0x0ff);
+		byte byte1 = (byte) ((count >> 8) & 0x0ff);
+		byte byte2 = (byte) ((count >> 16) & 0x0ff);
+		byte byte3 = (byte) ((count >> 24) & 0x0ff);
+		cmd.append(",");
+		cmd.append("0x" + Integer.toHexString(byte0));
+		cmd.append(",");
+		cmd.append("0x" + Integer.toHexString(byte1));
+		cmd.append(",");
+		cmd.append("0x" + Integer.toHexString(byte2));
+		cmd.append(",");
+		cmd.append("0x" + Integer.toHexString(byte3));
+
+		SystemFs.writeSysfs(I2C_WRITE, cmd.toString());
+	}
+// End of H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存
 }

@@ -127,15 +127,17 @@ public class SystemConfigFile{
 	// Kevin-zhao
 	public static final int INDEX_LOG_ENABLE = 59;
 
+	public static final int INDEX_PARAM_63 = 62;
+
 	public static final int DATA_SOURCE_DISABLED 	= 0;		// 数据源禁用
 	public static final int DATA_SOURCE_BIN 		= 1;		// 数据源使用BIN
 	public static final int DATA_SOURCE_FILE 		= 2;		// 数据源使用文件
 	public static final int DATA_SOURCE_LAN 		= 3;		// 数据源使用以太网数据
-	public static final int DATA_SOURCE_RS231_1 	= 4;		// 数据源使用串口协议1
-	public static final int DATA_SOURCE_RS231_2 	= 5;		// 数据源使用串口协议2
-	public static final int DATA_SOURCE_RS231_3 	= 6;		// 数据源使用串口协议3
-	public static final int DATA_SOURCE_RS231_4 	= 7;		// 数据源使用串口协议4
-	public static final int DATA_SOURCE_RS231_5 	= 8;		// 数据源使用串口协议5
+	public static final int DATA_SOURCE_RS231_1 	= 4;		// 数据源使用串口协议1。EC_DOD协议，按位数紧凑填充前面的计数器。位数不足时，后续计数器不填充，位数超出所有计数器的位数总和时，后面的剪切
+	public static final int DATA_SOURCE_RS231_2 	= 5;		// 数据源使用串口协议2。EC_DOD协议，用逗号等分隔符分开各计数器的内容。每个计数器的接收位数大于计数器的预设位数时剪切
+	public static final int DATA_SOURCE_RS231_3 	= 6;		// 数据源使用串口协议3。平文直接填充第一个计数器。超出计数器位数部分剪切
+	public static final int DATA_SOURCE_RS231_4 	= 7;		// 数据源使用串口协议4。XK3190协议
+	public static final int DATA_SOURCE_RS231_5 	= 8;		// 数据源使用串口协议5。暂时代替扫码枪的数据源
 
 // H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
 	public static final int DIRECTION_NORMAL = 0;
@@ -417,7 +419,7 @@ public class SystemConfigFile{
 		}
 
 // H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
-        mParam[INDEX_QRCODE_LAST] = QRReader.getInstance(mContext).readQRLast();
+        mParam[INDEX_QRCODE_LAST] = RTCDevice.getInstance(mContext).readQRLast();
 // End of H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 
 		return true;
@@ -682,7 +684,7 @@ public class SystemConfigFile{
 		RTCDevice.getInstance(mContext).writeAll(counters);
 
 // H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
-        QRReader.getInstance(mContext).writeQRLast(mParam[INDEX_QRCODE_LAST]);
+        RTCDevice.getInstance(mContext).writeQRLast(mParam[INDEX_QRCODE_LAST]);
 // End of H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 	}
 	
@@ -1286,7 +1288,11 @@ public class SystemConfigFile{
 			return param%10;
 		} else {
 			// 2020-5-11
-			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
+				getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 				return 6;
 			}
 			return 1;
@@ -1306,7 +1312,11 @@ public class SystemConfigFile{
 			return 0;
 		} else {
 			// 2020-5-11
-			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
+					getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 				return (head < 6 ? 0 : head);
 			}
 			// 2020-5-11

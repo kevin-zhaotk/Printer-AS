@@ -14,6 +14,7 @@ import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.SystemFs;
+import com.industry.printer.hardware.RTCDevice;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -73,8 +74,7 @@ public class QRReader {
 //		mRoot = paths.get(0);
 // H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存
 //		File last = new File(Configs.QR_LAST);
-		checkDeviceAddress();
-		mRow = readQRLast();
+		mRow = RTCDevice.getInstance(mContext).readQRLast();
 // End of H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存
 
 		try {
@@ -135,7 +135,7 @@ public class QRReader {
 // H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存
 			mRow++;
 			SystemConfigFile.getInstance().setParamBroadcast(SystemConfigFile.INDEX_QRCODE_LAST, mRow);
-			writeQRLast(mRow);
+			RTCDevice.getInstance(mContext).writeQRLast(mRow);
 //			FileWriter w = new FileWriter(Configs.QR_LAST);
 //			w.write(String.valueOf(mRow++));
 //			w.flush();
@@ -155,93 +155,4 @@ public class QRReader {
 	public boolean isReady() {
 		return mReader != null;
 	}
-
-// H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存
-	private final String I2C_READ = "/sys/class/device_of_i2c/read";
-	private final String I2C_WRITE = "/sys/class/device_of_i2c/write";
-	private final String I2C_DEVICE = "/sys/class/device_of_i2c/device";
-	private String DeviceAddress = "1,0x68";
-	private final String REGISTER = "0x38";
-
-	private void checkDeviceAddress() {
-		SystemFs.writeSysfs(I2C_DEVICE, "1,0x68");
-		// 自动探测RTC的I2C地址
-		String cmdWR = "0x0f,0x55";
-		SystemFs.writeSysfs(I2C_WRITE, cmdWR);
-		String cmdRD = "1,0x0f";
-		SystemFs.writeSysfs(I2C_READ, cmdRD);
-		String out = SystemFs.readSysfs(I2C_READ);
-		if (out==null) {
-			return ;
-		}
-
-		String[] bytes = out.split("/r/n");
-		if (bytes == null || bytes.length < 4) {
-			return ;
-		}
-		int pos = bytes[3].lastIndexOf("0x");
-
-		byte check = (byte) Integer.parseInt(bytes[3].substring(pos+2), 16);
-
-		Debug.d(TAG, "--->NVRAM init out = " + String.valueOf(check));
-
-		if (check == 0x55) {
-			DeviceAddress = "1,0x68";
-		} else {
-			DeviceAddress = "2,0x68";
-		}
-		Debug.d(TAG, "Device Address = " + DeviceAddress);
-	}
-
-	public int readQRLast() {
-		SystemFs.writeSysfs(I2C_DEVICE, DeviceAddress);
-
-		String cmd = "4," + REGISTER;
-		Debug.d(TAG, "--->Reading QRLast from register " + REGISTER);
-
-		SystemFs.writeSysfs(I2C_READ, cmd);
-		String out = SystemFs.readSysfs(I2C_READ);
-		if (out == null) {
-			return 0;
-		}
-
-		int pos =0;
-		String[] bytes = out.split("/r/n");
-		if (bytes == null || bytes.length < 7) {
-			return 0;
-		}
-		pos = bytes[3].lastIndexOf("0x");
-		byte byte1 = (byte) Integer.parseInt(bytes[3].substring(pos+2), 16);
-		byte byte2 = (byte) Integer.parseInt(bytes[4].substring(pos+2), 16);
-		byte byte3 = (byte) Integer.parseInt(bytes[5].substring(pos+2), 16);
-		byte byte4 = (byte) Integer.parseInt(bytes[6].substring(pos+2), 16);
-
-		int count = (byte1 & 0x0ff) + (byte2 & 0x0ff) * 256 + (byte3 & 0x0ff) * 256 * 256 + (byte4 & 0x0ff) * 256 * 256 * 256;
-		Debug.d(TAG, "--->QRLast = " + count);
-
-		return count;
-	}
-
-	public void writeQRLast(int count) {
-		SystemFs.writeSysfs(I2C_DEVICE, DeviceAddress);
-
-		StringBuilder cmd = new StringBuilder(REGISTER);
-		Debug.d(TAG, "--->Writing QRLast(" + count + ") to register " + REGISTER);
-
-		byte byte0 = (byte) (count & 0x0ff);
-		byte byte1 = (byte) ((count >> 8) & 0x0ff);
-		byte byte2 = (byte) ((count >> 16) & 0x0ff);
-		byte byte3 = (byte) ((count >> 24) & 0x0ff);
-		cmd.append(",");
-		cmd.append("0x" + Integer.toHexString(byte0));
-		cmd.append(",");
-		cmd.append("0x" + Integer.toHexString(byte1));
-		cmd.append(",");
-		cmd.append("0x" + Integer.toHexString(byte2));
-		cmd.append(",");
-		cmd.append("0x" + Integer.toHexString(byte3));
-
-		SystemFs.writeSysfs(I2C_WRITE, cmd.toString());
-	}
-// End of H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存
 }

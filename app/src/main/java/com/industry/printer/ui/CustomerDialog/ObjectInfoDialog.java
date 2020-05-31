@@ -196,6 +196,14 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 					mFont.setClickable(false);
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
+// H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
+				} else if (size.equalsIgnoreCase(MessageObject.mDot_32_Size[8])) {
+					mFont.setText("19");
+					mFont.setClickable(false);
+				} else if (size.equalsIgnoreCase(MessageObject.mDot_32_Size[9])) {
+					mFont.setText("21");
+					mFont.setClickable(false);
+// End of H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
 				} else {
 					mFont.setClickable(true);
 				}

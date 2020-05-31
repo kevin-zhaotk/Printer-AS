@@ -30,14 +30,16 @@ public class MessageObject extends BaseObject {
 		"5x5", "7x6", "10x8", "12x9", "14x10", "16x12", "16@L", "16@R"
 	};
 
+// H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
 	public static final String[] mDot_32_Size = {
-		"5x5", "7x6", "10x8", "12x9", "14x10", "16x12", "16@L", "16@R", "32"
+		"5x5", "7x6", "10x8", "12x9", "14x10", "16x12", "16@L", "16@R", "19x13", "21x14", "32"
 	};
 
     // H.M.Wang 追加下列3行
     public static final String[] mDot_64_Size = {
-		"5x5", "7x6", "10x8", "12x9", "14x10", "16x12", "16@L", "16@R", "24", "32", "64"
+		"5x5", "7x6", "10x8", "12x9", "14x10", "16x12", "16@L", "16@R", "19x13", "21x14", "24", "32", "64"
     };
+// End of H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体
 
@@ -60,7 +62,10 @@ public class MessageObject extends BaseObject {
 //		mType = i;
 		mPNozzle = PrinterNozzle.getInstance(i);
 // H.M.Wang 2020-5-9 12.7R5d打印头类型强制修改为12.7类型
-		if(mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//		if(mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+		if(mPNozzle == PrinterNozzle.MESSAGE_TYPE_R6X48 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_R6X50) {
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 			mPNozzle = PrinterNozzle.MESSAGE_TYPE_12_7;
 		}
 // End of H.M.Wang 2020-5-9 12.7R5d打印头类型强制修改为12.7类型
@@ -73,7 +78,10 @@ public class MessageObject extends BaseObject {
 //				mPNozzle.mType = i;
 				mPNozzle = PrinterNozzle.getInstance(i);
 // H.M.Wang 2020-5-9 12.7R5d打印头类型强制修改为12.7类型
-				if(mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//				if(mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
+				if(mPNozzle == PrinterNozzle.MESSAGE_TYPE_R6X48 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_R6X50) {
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 					mPNozzle = PrinterNozzle.MESSAGE_TYPE_12_7;
 				}
 // End of H.M.Wang 2020-5-9 12.7R5d打印头类型强制修改为12.7类型
@@ -340,6 +348,12 @@ public class MessageObject extends BaseObject {
 				h = 12.7f * 16 / 32;
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
+// H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
+			} else if (size.equalsIgnoreCase(mDot_32_Size[8])) {
+				h = 12.7f * 19 / 32;
+			} else if (size.equalsIgnoreCase(mDot_32_Size[9])) {
+				h = 12.7f * 21 / 32;
+// End of H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
 			} else {
 				h = 12.7f * 32 / 32;
 			}
@@ -361,9 +375,15 @@ public class MessageObject extends BaseObject {
                 h = 12.7f * 14 / 64;
 			} else if (size.equalsIgnoreCase(mDot_64_Size[5]) || size.equalsIgnoreCase(mDot_64_Size[6]) || size.equalsIgnoreCase(mDot_64_Size[7])) {
 				h = 12.7f * 16 / 64;
+// H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
 			} else if (size.equalsIgnoreCase(mDot_64_Size[8])) {
-				h = 12.7f * 24 / 64;
+				h = 12.7f * 19 / 64;
 			} else if (size.equalsIgnoreCase(mDot_64_Size[9])) {
+				h = 12.7f * 21 / 64;
+// End of H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
+			} else if (size.equalsIgnoreCase(mDot_64_Size[10])) {
+				h = 12.7f * 24 / 64;
+			} else if (size.equalsIgnoreCase(mDot_64_Size[11])) {
 				h = 12.7f * 32 / 64;
             } else {
                 h = 12.7f * 64 / 64;
@@ -436,8 +456,55 @@ public class MessageObject extends BaseObject {
                 return mDot_32_Size[4];
             } else if (size <= 152f * 16 / 32) {
 				return mDot_32_Size[5] + "," + mDot_32_Size[6] + "," + mDot_32_Size[7];
-			} else {
+// H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
+			} else if (size <= 152f * 19 / 32) {
 				return mDot_32_Size[8];
+			} else if (size <= 152f * 21.1f / 32) {		// 应该是21，但是由于设置高的时候，取得RealPixel=12.7x21/32=8.334375，
+														// 再乘以PIXELS_PER_MM(12)= 100.0125，取整=100。而这里计算的152x21/32=99.75，
+														// 出现误差，导致判断错误。所以只好设21.1。实际上这两个方向的计算因为不是完全反运算，
+														// 因此产生误差难免，应该采用完全封闭的反运算才合理
+				// 出现问题的路径是：
+				// ObjectInfoDialog.java(564) mObject.setHeight(mHighEdit.getText().toString());
+				// BaseObject.java(901) setHeight(String size); 其中结算RealPixels得到100
+				// BaseObject.java(748) setHeight(float size)；
+				// BaseObject.java(788) tuningHeightOfSpecialHeadtype()；
+				// BaseObject.java(907) getDisplayHeight()；
+				// MessageObject.java(404) getDisplayFs()
+				// 进入到本段时，size=100，但是计算的152f * 21.1f / 32=99.750，因此size <= 152f * 21.1f / 32就不成立了
+				// 经过分析，下面是所有情况的计算值，由于有取整操作，因此，只有32点和64点的21x14会出问题
+				// 12.7	5	16	12	47.0 		152	5	16	47.500
+				// 12.7	8	16	12	76.0 		152	8	16	76.000
+				// 12.7	10	16	12	95.0 		152	10	16	95.000
+				// 12.7	12	16	12	114.0	 	152	12	16	114.000
+				// 12.7	14	16	12	133.0	 	152	14	16	133.000
+				// 12.7	16	16	12	152.0	 	152	16	16	152.000
+
+				// 12.7	5	32	12	23.0 		152	5	32	23.750
+				// 12.7	8	32	12	38.0 		152	8	32	38.000
+				// 12.7	10	32	12	47.0 		152	10	32	47.500
+				// 12.7	12	32	12	57.0 		152	12	32	57.000
+				// 12.7	14	32	12	66.0 		152	14	32	66.500
+				// 12.7	16	32	12	76.0 		152	16	32	76.000
+				// 12.7	19	32	12	90.0 		152	19	32	90.250
+				// 12.7	21	32	12	100.0 		152	21	32	99.750 --> 有问题
+				// 12.7	32	32	12	152.0 		152	32	32	152.000
+
+				// 12.7	5	64	12	11.0 		152	5	64	11.875
+				// 12.7	8	64	12	19.0 		152	8	64	19.000
+				// 12.7	10	64	12	23.0 		152	10	64	23.750
+				// 12.7	12	64	12	28.0 		152	12	64	28.500
+				// 12.7	14	64	12	33.0 		152	14	64	33.250
+				// 12.7	16	64	12	38.0 		152	16	64	38.000
+				// 12.7	19	64	12	45.0 		152	19	64	45.125
+				// 12.7	21	64	12	50.0 		152	21	64	49.875 --> 有问题
+				// 12.7	24	64	12	57.0 		152	24	64	57.000
+				// 12.7	32	64	12	76.0 		152	32	64	76.000
+				// 12.7	64	64	12	152.0 		152	64	64	152.000
+
+				return mDot_32_Size[9];
+// End of H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
+			} else {
+				return mDot_32_Size[10];
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 			}
 
@@ -456,12 +523,18 @@ public class MessageObject extends BaseObject {
                 return mDot_64_Size[4];
 			} else if (size <= 152f * 16 / 64) {
 				return mDot_64_Size[5] + "," + mDot_64_Size[6] + "," + mDot_64_Size[7];
-			} else if (size <= 152f * 24 / 64) {
+// H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
+			} else if (size <= 152f * 19 / 64) {
 				return mDot_64_Size[8];
-			} else if (size <= 152f * 32 / 64) {
+			} else if (size <= 152f * 21.1f / 64) {
 				return mDot_64_Size[9];
-            } else {
+// End of H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
+			} else if (size <= 152f * 24 / 64) {
 				return mDot_64_Size[10];
+			} else if (size <= 152f * 32 / 64) {
+				return mDot_64_Size[11];
+            } else {
+				return mDot_64_Size[12];
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
             }
         } else {

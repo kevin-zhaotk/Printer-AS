@@ -48,7 +48,7 @@ public class CounterObject extends BaseObject {
 	{
 		mBits = n;
 		mValue = 1;
-		setContent( BaseObject.intToFormatString(mValue, mBits));
+		setContent(BaseObject.intToFormatString(mValue, mBits));
 		mEnd = (int) Math.pow(10, mBits) -1;
 		// H.M.Wang 2019-10-8 根据位数调整宽度
 		setWidth(mPaint.measureText(getContent()));
@@ -167,7 +167,7 @@ public class CounterObject extends BaseObject {
 
 //		Debug.d(TAG, "setContent content="+content+", value="+mValue+", mMax="+mMax);
 	}
-
+/*
 	private String mRemoteContent = "";
 
 	public void setRemoteContent(String content) {
@@ -187,12 +187,14 @@ public class CounterObject extends BaseObject {
 		}
 		mRemoteContent = sb.toString();
 		mRemoteContent = mRemoteContent.substring(0, getBits());
+
+		Debug.d(TAG, "Index: " + mIndex + "; RemoteContent: " + mRemoteContent);
 	}
 
 	public String getRemoteContent() {
 		return mRemoteContent;
 	}
-
+*/
 	public String getNext()
 	{
 		Debug.d(TAG, "--->getNext mContent="+mContent+", mValue="+mValue+", mStart="+mStart+", mEnd="+mEnd+", mSteplen=" + mStepLen + " direction=" + mDirection);
@@ -355,5 +357,4 @@ public class CounterObject extends BaseObject {
 		BinFromBitmap.recyleBitmap(bitmap);
 		return result;
 	}	
-	
 }

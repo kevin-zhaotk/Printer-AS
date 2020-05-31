@@ -56,17 +56,6 @@ public class PrinterApplication extends Application {
 					DataOutputStream os = new DataOutputStream(process.getOutputStream());
 					sleep(100);
 
-/* 测试通过DataOutputStream设置PG6，无效果
-					byte[] buf = new byte[1024];
-					Debug.d(TAG, "echo 155 > /sys/class/gpio/export");
-					os.writeBytes("echo 155 > /sys/class/gpio/export");
-					DataInputStream es = new DataInputStream(process.getErrorStream());
-					es.read(buf);
-					Debug.d(TAG, new String(buf, "UTF-8"));
-					DataInputStream iis = new DataInputStream(process.getInputStream());
-					iis.read(buf);
-					Debug.d(TAG, new String(buf, "UTF-8"));
-*/
 					Debug.d(TAG, "chmod 777 /system/lib");
 					os.writeBytes("chmod 777 /system/lib\n");
 					sleep(100);

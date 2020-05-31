@@ -28,6 +28,7 @@ import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
+import com.industry.printer.object.DynamicText;
 import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.object.JulianDayObject;
 import com.industry.printer.object.LetterHourObject;
@@ -203,9 +204,14 @@ public class DataTask {
 // H.M.Wang 2020-4-18 追加12.7R5头
 // H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
         SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
-		Debug.d(TAG, "Params = " + sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE));
-		Debug.d(TAG, "Nozzle Index = " + PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5);
-		if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+//		Debug.d(TAG, "Params = " + sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE));
+//		Debug.d(TAG, "Nozzle Index = " + PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5);
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+//		if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
+		if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
+			sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+
 //		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
 // End of H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
 			CharArrayBuffer caBuf = new CharArrayBuffer(0);
@@ -214,10 +220,19 @@ public class DataTask {
 			char[] empty = new char[orgCharsOfHead];
 			Arrays.fill(empty, (char)0x0000);
 
-			for(int i=0; i<PrinterNozzle.R5x6_PRINT_COPY_NUM; i++) {
-				for(int k=0; k<PrinterNozzle.R5x6_MAX_COL_NUM_EACH_UNIT; k++) {
-					for(int j=0; j<PrinterNozzle.R5x6_HEAD_NUM; j++) {
-						if((j % 2 == 0 && i == PrinterNozzle.R5x6_PRINT_COPY_NUM - 1) || 	// 单数行最后一列
+// H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+			int maxColNumPerUnit = 0;
+			if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48) {
+				maxColNumPerUnit = PrinterNozzle.R6X48_MAX_COL_NUM_EACH_UNIT;
+			} else if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
+				maxColNumPerUnit = PrinterNozzle.R6X50_MAX_COL_NUM_EACH_UNIT;
+			}
+
+			for(int i=0; i<PrinterNozzle.R6_PRINT_COPY_NUM; i++) {
+				for(int k=0; k<maxColNumPerUnit; k++) {
+					for(int j=0; j<PrinterNozzle.R6_HEAD_NUM; j++) {
+						if((j % 2 == 0 && i == PrinterNozzle.R6_PRINT_COPY_NUM - 1) || 	// 单数行最后一列
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 						   (j % 2 != 0 && i == 0) ||    									// 双数行第一列
 						   (k >= orgCols)) {												// 原始块中宽度不足部分
 							caBuf.append(empty, 0, orgCharsOfHead);
@@ -231,7 +246,7 @@ public class DataTask {
 			mBuffer = caBuf.toCharArray();
 
 			FileUtil.deleteFolder("/mnt/sdcard/printR5x6.bin");
-			BinCreater.saveBin("/mnt/sdcard/printR5x6.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R5x6_HEAD_NUM);
+			BinCreater.saveBin("/mnt/sdcard/printR5x6.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R6_HEAD_NUM);
 		}
 // End of H.M.Wang 2020-4-18 追加12.7R5头
 
@@ -371,7 +386,10 @@ public class DataTask {
 // 2019-12-18 H.M.Wang 当数据源为外部的时候，不去读取内部的QR文件。并且修改content的设置方式，原来的方式如果不从reader读数据，则可能就是“123456789”，新的方式是如果读并且读到，则设置，否则跳过
 //				String content = "123456789";
 //				if (!prev) {
-				if (!prev && SystemConfigFile.getInstance().getParam(40) == SystemConfigFile.DATA_SOURCE_FILE) {
+// H.M.Wang 2020-5-18 由于数据源参数索引使用立即数，未及时发现修改，改为固定变量索引
+//				if (!prev && SystemConfigFile.getInstance().getParam(40) == SystemConfigFile.DATA_SOURCE_FILE) {
+				if (!prev && SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE) {
+// End of H.M.Wang 2020-5-18 由于数据源参数索引使用立即数，未及时发现修改，改为固定变量索引
 					QRReader reader = QRReader.getInstance(mContext);
 					String content = reader.read();
 
@@ -390,6 +408,25 @@ public class DataTask {
 
 				BinInfo.overlap(mPrintBuffer, info.getBgBuffer(), (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
 				continue;
+// H.M.Wang 2020-5-22 串口数据启用DynamicText，取消代用CounterObject
+            } else if(o instanceof DynamicText) {
+				Debug.d(TAG, "--->object index=" + o.getIndex());
+				BinInfo info = null;
+				if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
+						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
+						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2 ||
+						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_3 ||
+						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_5 ) {
+					info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, 128, mExtendStat);
+					var = info.getVarBuffer(o.getContent(), true, true);
+				} else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_4 ) {
+					info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
+					var = info.getVarBuffer(o.getContent(), true, false);
+				} else {
+					info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
+					var = info.getVarBuffer(o.getContent(), true, false);
+				}
+				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
 			} else if(o instanceof CounterObject)
 			{
 // 2019-12-17 H.M.Wang 彻底取消原来的事先保存与Object对应的BinInfo的做法，因为修改为通过useSerialContent()来判断是何种打印方式的话，每次都有可能发生变化
@@ -401,7 +438,7 @@ public class DataTask {
 //				if (info == null) {
 				// H.M.Wang 2019-12-19 追加多种协议支持
 				// H.M.Wang 2019-12-5 为对应串口打印时，vbin的元素个数不是传统计数器的10位，而是128位，做了区分
-					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
+/*					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
 						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
 						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2 ||
 						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_3 ) {
@@ -410,10 +447,10 @@ public class DataTask {
 					} else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_4 ) {
 						info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
 						var = info.getVarBuffer(((CounterObject) o).getRemoteContent(), true, false);
-					} else {
+					} else {*/
 						info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
 						var = info.getVarBuffer(prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext(), true, false);
-					}
+/*					}*/
 //					info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
 					// End. 2019-12-5 -----------
 //					mVarBinList.put(o, info);
@@ -434,6 +471,7 @@ public class DataTask {
 				// Debug.d(TAG, "--->object x=" + o.getX()/div);
 
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
+// End of H.M.Wang 2020-5-22 串口数据启用DynamicText，取消代用CounterObject
 			}
 			else if(o instanceof RealtimeObject) {
 
@@ -639,6 +677,9 @@ public class DataTask {
 // H.M.Wang 2020-2-16 追加HyperText控件
 					|| (o instanceof HyperTextObject)
 // End of H.M.Wang 2020-2-16 追加HyperText控件
+// H.M.Wang 2020-5-22 追加DynamicText控件
+					|| (o instanceof DynamicText)
+// End of H.M.Wang 2020-5-22 追加DynamicText控件
 					|| (o instanceof JulianDayObject)
 					|| (o instanceof ShiftObject)
 					|| (o instanceof LetterHourObject)

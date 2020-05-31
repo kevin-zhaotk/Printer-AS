@@ -520,7 +520,13 @@ public class BinInfo {
 						ba.append(blank, 0, mBytesPerH);
 					} else {
 						// H.M.Wang 2019-12-20 浮点运算后取整
-						ba.append(mBuffer, (int)(n*mColPerElement) * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
+						// 2020-5-30 由于vbin可能是10位的，也可能是128位的，如果一个128位的变量去参照10位的vbin就会产生溢出，再次追加一个判断，如果超出范围则填充空
+						try{
+							ba.append(mBuffer, (int)(n*mColPerElement) * mBytesPerColumn + 16 + k * mBytesPerColumn + j * mBytesPerH, mBytesPerH);
+						} catch (IndexOutOfBoundsException e) {
+							ba.append(blank, 0, mBytesPerH);
+						}
+						// End of 2020-5-30 由于vbin可能是10位的，也可能是128位的，如果一个128位的变量去参照10位的vbin就会产生溢出，再次追加一个判断，如果超出范围则填充空
 					}
 
    	   	   			if (mNeedFeed) {

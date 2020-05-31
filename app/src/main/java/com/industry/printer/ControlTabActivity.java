@@ -1113,6 +1113,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mInkManager.checkUID(heads);
 					break;
 				case SmartCardManager.MSG_SMARTCARD_CHECK_FAILED:
+// H.M.Wang 2020-5-18 Smartcard定期检测出现错误显示错误码
+					mInkLevel.setBackgroundColor(Color.RED);
+					mInkLevel.setText("" + msg.arg1);
+// End of H.M.Wang 2020-5-18 Smartcard定期检测出现错误显示错误码
 				case RFIDManager.MSG_RFID_CHECK_FAIL:
 					Debug.d(TAG, "--->Print check UUID fail");
 					handleError(R.string.str_toast_ink_error, pcMsg);
@@ -1263,16 +1267,26 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					break;
 				case RFIDManager.MSG_RFID_INIT:
 					mInkManager.init(mHandler);
-					refreshInk();
+// H.M.Wang 2020-5-18 取消初始化时调用墨水量显示更新，否则RFID的时候会显示红底101--字样
+//					refreshInk();
+// End of H.M.Wang 2020-5-18 取消初始化时调用墨水量显示更新，否则RFID的时候会显示红底101--字样
 					break;
 				case SmartCardManager.MSG_SMARTCARD_INIT_SUCCESS:
 					Debug.i(TAG, "Smartcard Initialization Success!");
+// H.M.Wang 2020-5-18 取消初始化时调用墨水量显示更新，待Smartcard初始化成功后更新墨水量显示，以满足及时更新Smartcard状态下的墨水量显示
+					refreshInk();
+// End of H.M.Wang 2020-5-18 取消初始化时调用墨水量显示更新，待Smartcard初始化成功后更新墨水量显示，以满足及时更新Smartcard状态下的墨水量显示
+					break;
 				case RFIDManager.MSG_RFID_INIT_SUCCESS:
 					// mInkManager.read(mHandler);
 					break;
 				case SmartCardManager.MSG_SMARTCARD_INIT_FAILED:
 					Debug.e(TAG, "Smartcard Initialization Failed! [" + msg.arg1 + "]");
-					ToastUtil.show(mContext, "Smartcard Initialization Failed.");
+// H.M.Wang 2020-5-18 初始化失败时显示错误码
+					mInkLevel.setBackgroundColor(Color.RED);
+					mInkLevel.setText("" + msg.arg1);
+// End of H.M.Wang 2020-5-18 初始化失败时显示错误码
+//					ToastUtil.show(mContext, "Smartcard Initialization Failed.");
 					mHandler.sendEmptyMessage(MESSAGE_RFID_ZERO);
 					break;
 				case RFIDManager.MSG_RFID_READ_SUCCESS:
@@ -2131,14 +2145,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public void OnFinished(int code) {
 		Debug.d(TAG, "--->onFinished");
 		mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
-		this.getActivity().runOnUiThread(new Runnable() {
-			
+		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				ToastUtil.show(mContext, R.string.str_barcode_end);	
+				ToastUtil.show(mContext, R.string.str_barcode_end);
 			}
 		});
-		
 	}
 	
 	private void sendToRemote(String msg) {

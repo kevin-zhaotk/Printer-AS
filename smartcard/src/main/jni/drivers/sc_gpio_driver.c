@@ -23,8 +23,28 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "common_log.h"
 #include "internal_ifc/sc_gpio_driver.h"
+
+#define GPIO_DEVICE "/dev/ext-gpio"
+
+#define GPIO_DEVICE_IOCTL_WRITE (0x10)
+
+#define GPIO_PIN_PG5_ENABLE     (0x6050)
+#define GPIO_PIN_PG5_DIAABLE    (0x6051)
+
+#define GPIO_PIN_PG6_ENABLE     (0x6060)
+#define GPIO_PIN_PG6_DIAABLE    (0x6061)
+
+#define GPIO_PIN_PG7_ENABLE     (0x6070)
+#define GPIO_PIN_PG7_DIAABLE    (0x6071)
+
+#define GPIO_PIN_PG8_ENABLE     (0x6080)
+#define GPIO_PIN_PG8_DIAABLE    (0x6081)
+
+#define GPIO_PIN_PG9_ENABLE     (0x6090)
+#define GPIO_PIN_PG9_DIAABLE    (0x6091)
 
 /*
 */
@@ -74,7 +94,7 @@ int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
         return SC_GPIO_DRIVER_FAIL;
     }
 
-    int ret = SC_GPIO_DRIVER_ioctl(fd, GPIO_DEVICE_IOCTL_WRITE, ioctlValue(port) + (value & 0x01));
+    int ret = SC_GPIO_DRIVER_ioctl(fd, GPIO_DEVICE_IOCTL_WRITE, ioctlValue(port) + (value & 0x0001));
 
     SC_GPIO_DRIVER_close(fd);
 
@@ -138,6 +158,8 @@ int SP_GPIO_DRIVER_get_value(int port) {
     }
 
     int read = SC_GPIO_DRIVER_read(fd, 0);
+
+    usleep(50000);
 
     SC_GPIO_DRIVER_close(fd);
 
@@ -262,7 +284,7 @@ int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count) {
 **********************************************************************************/
 
 int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
-//    LOGI(">>> SC_GPIO_DRIVER_ioctl: Command: 0x%02X; Value: [0x%04X]", cmd, arg1);
+//    LOGI(">>> SC_GPIO_DRIVER_ioctl: File: %d; Command: 0x%02X; Value: [0x%04X]", fd, cmd, arg1);
 
     if(fd < 0) {
         LOGE(">>> SC_GPIO_DRIVER_ioctl: Error[%s]", strerror(errno));
@@ -270,7 +292,7 @@ int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
     }
 
     uint8_t ret = ioctl(fd, cmd, arg1);
-//	if(ret == EINVAL) {
+
     if(ret != SC_GPIO_DRIVER_SUCCESS) {
         LOGE(">>> SC_GPIO_DRIVER_ioctl: %s(Return value: 0x%02X)", strerror(errno), ret);
     }
@@ -318,23 +340,25 @@ int SC_GPIO_DRIVER_poll(int fd) {
 **********************************************************************************/
 
 int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
-//    LOGI(">>> SC_GPIO_DRIVER_read: Pin: %d", pin);
+//    LOGI(">>> SC_GPIO_DRIVER_read: File: %d; Pin: %d", fd, pin);
 
     if(fd <= 0) {
         LOGE(">>> SC_GPIO_DRIVER_read: Error[%s]", strerror(errno));
         return SC_GPIO_DRIVER_FAIL;
     }
 
-    uint8_t buf = 0;
+    return SC_GPIO_DRIVER_SUCCESS;
 
-    size_t ret = read(fd, &buf, sizeof(buf));
-    if(ret == SC_GPIO_DRIVER_FAIL) {
-        LOGE(">>> SC_GPIO_DRIVER_read: Error[%s]", strerror(errno));
-    } else {
-//        LOGD(">>> SC_GPIO_DRIVER_read: [0x%X] - %d bytes read", buf, ret);
-    }
+/////    uint8_t buf = 0;
 
-    return buf;
+/////    size_t ret = read(fd, &buf, sizeof(buf));
+/////    if(ret == SC_GPIO_DRIVER_FAIL) {
+/////        LOGE(">>> SC_GPIO_DRIVER_read: Error[%s]", strerror(errno));
+/////    } else {
+///////        LOGD(">>> SC_GPIO_DRIVER_read: [0x%X] - %d bytes read", buf, ret);
+/////    }
+
+/////    return buf;
 }
 
 /*********************************************************************************
