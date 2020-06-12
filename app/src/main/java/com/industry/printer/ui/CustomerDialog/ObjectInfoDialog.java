@@ -10,6 +10,7 @@ import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
+import com.industry.printer.object.DynamicText;
 import com.industry.printer.object.EllipseObject;
 import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.object.JulianDayObject;
@@ -128,7 +129,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	private EditText mTextsize;
 	private CheckBox mReverse;
 
-	
+	private EditText mIndex;
+
 	public EditText mMsg;
 	public CheckBox mMsgResolution;
 	public TextView mPrinter;
@@ -265,10 +267,15 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 // H.M.Wang 2020-2-16 追加HyperText控件
 		 else if(mObject instanceof HyperTextObject)
 		 {
-			 Debug.d(TAG, "HyperTextObject");
 			 this.setContentView(R.layout.obj_info_hypertext);
 		 }
 // End of H.M.Wang 2020-2-16 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		 else if(mObject instanceof DynamicText)
+		 {
+			 this.setContentView(R.layout.obj_info_dynamictext);
+		 }
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 	     else if(mObject instanceof MessageObject)
 	     {
 	    	 this.setContentView(R.layout.msg_info);
@@ -429,6 +436,12 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				mOffset = (EditText) findViewById(R.id.et_offset);
 			}
 // End of H.M.Wang 2020-2-19 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+			if (mObject instanceof DynamicText) {
+				mIndex = (EditText) findViewById(id.et_dt_index);
+				mDigits = (EditText) findViewById(id.cntBits);
+			}
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 	 	}
 
 	     mOk = (Button) findViewById(R.id.btn_confirm);
@@ -545,6 +558,20 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 							((HyperTextObject) mObject).setShiftValue(3, mShiftVal4.getText().toString());
 							((HyperTextObject) mObject).setDateOffset(mOffset.getText().toString());
 // End of H.M.Wang 2020-2-19 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+						} else if (mObject instanceof DynamicText) {
+							try {
+								((DynamicText) mObject).setDtIndex(Integer.parseInt(mIndex.getText().toString()));
+							} catch (NumberFormatException e) {
+								((DynamicText) mObject).setDtIndex(0);
+							}
+							try {
+								((DynamicText) mObject).setBits(Integer.parseInt(mDigits.getText().toString()));
+							} catch (NumberFormatException e) {
+								((DynamicText) mObject).setBits(0);
+							}
+//							((DynamicText) mObject).setContent(mContent.getText().toString());
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 						} else if (mObject instanceof GraphicObject) {
 
 						}
@@ -698,6 +725,11 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 					mShiftVal4.setText(((HyperTextObject)mObject).getShiftValue(3));
 					mOffset.setText(String.valueOf(((HyperTextObject) mObject).getOffset()));
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+				} else if(mObject instanceof DynamicText) {
+					mIndex.setText(String.valueOf(((DynamicText) mObject).getDtIndex()));
+					mDigits.setText(String.valueOf( ((DynamicText) mObject).getBits()));
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 				}
 				else if(mObject instanceof CounterObject)
 				{
@@ -770,14 +802,17 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			return ;
 		
 		if(mObject instanceof RealtimeObject ||
-				 mObject instanceof GraphicObject ||
-				 mObject instanceof RealtimeSecond ||
-				 mObject instanceof ShiftObject ||
-				 mObject instanceof EllipseObject ||
-				 mObject instanceof RectObject ||
-				 mObject instanceof LineObject ||
-				 mObject instanceof WeekOfYearObject ||
-				 mObject instanceof WeekDayObject )
+// H.M.Wang 2020-2-16 追加HyperText控件
+			mObject instanceof DynamicText ||
+// End of H.M.Wang 2020-2-16 追加HyperText控件
+			mObject instanceof GraphicObject ||
+			mObject instanceof RealtimeSecond ||
+			mObject instanceof ShiftObject ||
+			mObject instanceof EllipseObject ||
+			mObject instanceof RectObject ||
+			mObject instanceof LineObject ||
+			mObject instanceof WeekOfYearObject ||
+			mObject instanceof WeekDayObject )
 		{
 			Debug.d(TAG, ">>>>>disable content");
 			mContent.setEnabled(false);

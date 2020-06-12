@@ -10,9 +10,6 @@ public class ByteArrayUtils {
         final String HEX = "0123456789ABCDEF";
         StringBuffer result = new StringBuffer(2 * buf.length);
         for (int i = 0; i<buf.length; i++) {
-//            if(i > 0) {
-//                result.append(" ");
-//            }
             result.append(i==0?"":" ").append(HEX.charAt((buf[i] >> 4) & 0x0f)).append(HEX.charAt(buf[i] & 0x0f));
         }
         return result.toString();

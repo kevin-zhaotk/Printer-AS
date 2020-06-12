@@ -206,6 +206,10 @@ public class BaseObject{
 		else if(this instanceof HyperTextObject)
 			mName = mContext.getString(R.string.object_hypertext);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		else if(this instanceof DynamicText)
+			mName = mContext.getString(R.string.object_dynamictext);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		else if (this instanceof LetterHourObject)
 			mName = mContext.getString(R.string.object_charHour);
 		else if (this instanceof WeekOfYearObject) {

@@ -135,6 +135,11 @@
 	<string name="object_msg_name">信息名稱</string>
 	<string name="object_qr">二維碼</string>
 	<string name="object_dynamic_qr">動態二維碼</string>
+<!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
+	<string name="object_dynamictext">動態文本</string>
+	<string name="object_dtindex">索引</string>
+<!-- End of H.M.Wang 2020-6-10 追加DynamicText控件 -->
+
 	<!-- Settings frame -->
 	<string name="strParam0">00.保留</string>
 	<string name="strPrSpeedname">01.打印頻率</string>

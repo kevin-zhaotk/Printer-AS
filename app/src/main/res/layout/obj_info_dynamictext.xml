@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/background">
+    
+    <include layout="@layout/obj_info_button"
+        android:id="@+id/buttons"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_alignParentBottom="true"
+	    	android:layout_marginTop="10dp"
+	    	/>
+    
+	<ScrollView android:id="@+id/viewInfo"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_marginTop="10dp"
+	    android:layout_above="@+id/buttons">
+	        	    
+	    <RelativeLayout
+	        android:id="@+id/objectInfoTable"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        >
+	        
+	        
+	        <include android:id="@+id/base_info" layout="@layout/obj_info_base" />
+	        
+	  
+	        <EditText android:id="@+id/cntBits"
+				android:layout_marginTop="5dp"
+	            android:layout_marginLeft="150dp"
+	            android:layout_width="200dp"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/base_info"
+	            android:imeOptions="flagNoExtractUi|actionDone"
+	            android:textSize="30sp"
+	            android:inputType="number"
+	            android:hint="@string/strDefault"/>
+	        
+	        <TextView android:id="@+id/bitsView"
+	            android:layout_marginLeft="10dp"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignBaseline="@id/cntBits"
+	            android:textSize="30sp"
+	            android:text="@string/strBits"
+	            android:textColor="#000000"
+	            />
+
+			<EditText
+				android:id="@+id/et_dt_index"
+				android:layout_width="200dp"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="150dp"
+				android:layout_below="@id/cntBits"
+				android:imeOptions="flagNoExtractUi|actionDone"
+				android:textSize="30sp"
+				android:inputType="number"
+				android:hint="@string/strDefault"
+			/>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="10dp"
+				android:layout_alignBaseline="@id/et_dt_index"
+				android:textSize="30sp"
+				android:text="@string/object_dtindex"
+				android:textColor="#000000"
+			/>
+
+	    </RelativeLayout>
+	</ScrollView>
+	    
+</RelativeLayout>

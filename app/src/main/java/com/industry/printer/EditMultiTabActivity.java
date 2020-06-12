@@ -3,6 +3,7 @@ package com.industry.printer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.industry.printer.object.DynamicText;
 import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.object.RealtimeSecond;
 import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnPositiveListener;
@@ -715,6 +716,11 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 				onInsertHypertext();
 				break;
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+			case R.id.btn_dynamictext:
+				onInsertDynamictext();
+				break;
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 			default:
 				break;
 		}
@@ -853,6 +859,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setX(obj.getX() - 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setX(obj.getX() - 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setX(obj.getX() - 4);
@@ -886,6 +896,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setX(obj.getX() + 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setX(obj.getX() + 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setX(obj.getX() + 4);
@@ -918,6 +932,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setX(obj.getY() - 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setX(obj.getY() - 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setY(obj.getY() - 4);
@@ -947,8 +965,12 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 			((RealtimeObject) obj).setY(obj.getY() + 4);
 // H.M.Wang 2020-2-17 追加HyperText控件
 		} else if(obj instanceof HyperTextObject) {
-				((HyperTextObject)obj).setY(obj.getY() + 4);
+			((HyperTextObject)obj).setY(obj.getY() + 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setY(obj.getY() + 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setY(obj.getY() + 4);
@@ -981,6 +1003,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setWidth(obj.getWidth() + 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setWidth(obj.getWidth() + 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setWidth(obj.getWidth() + 4);
@@ -1012,6 +1038,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setWidth(obj.getWidth() - 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setWidth(obj.getWidth() - 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setWidth(obj.getWidth() - 4);
@@ -1042,6 +1072,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setHeight(obj.getHeight() + 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setHeight(obj.getHeight() + 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setHeight(obj.getHeight() + 4);
@@ -1072,6 +1106,10 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setHeight(obj.getHeight() - 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setHeight(obj.getHeight() - 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setHeight(obj.getHeight() - 4);
@@ -1121,6 +1159,11 @@ public class EditMultiTabActivity extends Fragment implements OnClickListener, O
 	}
 // End of H.M.Wang 2020-2-16 追加HyperText控件
 
+// H.M.Wang 2020-6-10 追加DynamicText控件
+	private void onInsertDynamictext() {
+	onInsertObject(new DynamicText(mContext, getNextXcor()));
+}
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 	private void onInsertLine() {
 		onInsertObject(new LineObject(mContext, getNextXcor()));
 	}

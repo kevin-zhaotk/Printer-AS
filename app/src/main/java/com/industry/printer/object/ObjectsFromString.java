@@ -35,6 +35,9 @@ public class ObjectsFromString {
 	// H.M.Wang 2020-2-17 追加HyperText控件
 	public static final String HYPERTEXT_FLAG = "#H#";
 	// End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+	public static final String DYNAMICTEXT_FLAG = "#D#";
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 	public static final String IMAGE_FLAG = "#P#";
 	
 	public static ArrayList<BaseObject> makeObjs(Context context, String str) {
@@ -83,6 +86,15 @@ public class ObjectsFromString {
 				objList.add(object);
 				xcor += content.length() * 16;
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+			} else if(s.startsWith(DYNAMICTEXT_FLAG)) {
+				DynamicText object = new DynamicText(context, xcor);
+				String content = s.substring(3);
+				object.setContent(content);
+				object.setIndex(index++);
+				objList.add(object);
+				xcor += content.length() * 16;
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 			} else {	//文本对象
 				if (s==null || s.isEmpty()) {
 					continue;

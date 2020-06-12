@@ -284,15 +284,27 @@
 		android:background="@drawable/style_hypertext"
 		android:contentDescription="@string/str_btn_new"
 		/>
+<!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
+	<ImageButton
+		android:id="@+id/btn_dynamictext"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignTop="@id/btn_ABC"
+		android:layout_toRightOf="@id/btn_hypertext"
+		android:layout_alignBaseline="@id/btn_ABC"
+		android:background="@drawable/style_dynamictext"
+		android:contentDescription="@string/str_btn_new"
+		/>
 
 	<ImageButton android:id="@+id/btn_delete"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_alignTop="@id/btn_ABC"
 	    android:layout_alignBaseline="@id/btn_ABC"
-	    android:layout_toRightOf="@id/btn_hypertext"
+	    android:layout_toRightOf="@id/btn_dynamictext"
 	    android:background="@drawable/style_del"
 	    android:contentDescription="@string/str_btn_new"
 	    />
+<!-- End of H.M.Wang 2020-6-10 追加DynamicText控件 -->
 <!-- End of H.M.Wang 2020-2-16 追加HyperText控件 -->
 </RelativeLayout>

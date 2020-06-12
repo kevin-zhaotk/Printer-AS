@@ -38,6 +38,7 @@ import com.industry.printer.exception.TlkNotFoundException;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
+import com.industry.printer.object.DynamicText;
 import com.industry.printer.object.GraphicObject;
 import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.object.JulianDayObject;
@@ -341,6 +342,9 @@ public class MessageTask {
 // H.M.Wang 2020-2-16 追加HyperText控件
 					|| (object instanceof HyperTextObject)
 // End of H.M.Wang 2020-2-16 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+					|| (object instanceof DynamicText)
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 					|| (object instanceof WeekOfYearObject)
 					|| (object instanceof WeekDayObject))
 			{
@@ -628,6 +632,9 @@ public class MessageTask {
 				continue;
 			
 			if((o instanceof CounterObject)
+// H.M.Wang 2020-6-10 追加DynamicText控件
+					|| (o instanceof DynamicText)
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 					|| (o instanceof JulianDayObject)
 					|| (o instanceof BarcodeObject && o.getSource())
 					|| (o instanceof ShiftObject)
@@ -781,6 +788,13 @@ public class MessageTask {
 				Debug.d(TAG, "--->hypertext: " + content);
 			}
 // End of H.M.Wang 2020-2-16 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+			else if(o instanceof DynamicText)
+			{
+				content += o.getContent();
+				Debug.d(TAG, "--->DynamicText: " + content);
+			}
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 			else if(o instanceof JulianDayObject)
 			{
 				content += o.getContent();

@@ -1,39 +1,27 @@
 package com.industry.printer.Serial;
 
-import com.industry.printer.Utils.ByteArrayUtils;
-import com.industry.printer.Utils.Debug;
-
 import org.apache.http.util.ByteArrayBuffer;
 
 import java.nio.charset.Charset;
 
 /**
- * Created by hmwan on 2019/12/20.
+ * Created by hmwan on 2020/6/9.
  */
 
-public class SerialProtocol3 extends SerialProtocol {
-    public static String TAG = SerialProtocol3.class.getSimpleName();
+public class SerialProtocol6 extends SerialProtocol {
+    public static String TAG = SerialProtocol5.class.getSimpleName();
 
-    public SerialProtocol3(SerialPort serialPort){
+    public SerialProtocol6(SerialPort serialPort){
         super(serialPort);
     }
 
     @Override
     protected int parseFrame(ByteArrayBuffer recvMsg) {
-        int recvCmd = ERROR_FAILED;
-        try {
-            for (int i=recvMsg.length()-1; i>=0; i--) {
-                if (recvMsg.byteAt(i) == 0x0A) {
-                    recvMsg.setLength(i);
-                    recvCmd = ERROR_SUCESS;
-                    break;
-                }
-            }
-            return recvCmd;
-        } catch (Exception e) {
-            Debug.e(TAG, e.getMessage());
+        if(recvMsg.length() != 19) {
+            return ERROR_FAILED;
         }
-        return ERROR_FAILED;
+
+        return ERROR_SUCESS;
     }
 
     @Override
@@ -48,7 +36,6 @@ public class SerialProtocol3 extends SerialProtocol {
         int result = parseFrame(bab);
         if (result == ERROR_SUCESS) {
             byte[] recvData = bab.toByteArray();
-
             procCommands(result, recvData);
         }
     }

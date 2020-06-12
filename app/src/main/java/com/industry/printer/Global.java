@@ -3,7 +3,7 @@ package com.industry.printer;
 import com.industry.printer.Utils.Debug;
 
 public class Global {
-
+/*
     private static StringBuffer gCode = new StringBuffer();
     private static long mLast = 0;
 
@@ -22,4 +22,5 @@ public class Global {
         Debug.i("Global", "--->getCode: " + gCode.toString());
         return gCode.toString();
     }
+*///////////////
 }

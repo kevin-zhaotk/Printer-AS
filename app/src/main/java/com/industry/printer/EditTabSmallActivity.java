@@ -41,6 +41,7 @@ import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
+import com.industry.printer.object.DynamicText;
 import com.industry.printer.object.EllipseObject;
 import com.industry.printer.object.GraphicObject;
 import com.industry.printer.object.HyperTextObject;
@@ -676,6 +677,12 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 						hypertext.setY(cur[1]);
 						onInsertObject(hypertext);
 // End of H.M.Wang 2020-2-16 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+					} else if (BaseObject.OBJECT_TYPE_DYN_TEXT.equalsIgnoreCase(type)) {
+						DynamicText dynamicText = new DynamicText(mContext, cur[0]);
+						dynamicText.setY(cur[1]);
+						onInsertObject(dynamicText);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 					}
             		
             		break;
@@ -1039,6 +1046,10 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setX(obj.getX() - 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setX(obj.getX() - 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setX(obj.getX() - 4);
@@ -1077,6 +1088,10 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setX(obj.getX() + 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setX(obj.getX() + 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setX(obj.getX() + 4);
@@ -1118,6 +1133,10 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setY(obj.getY() - 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setY(obj.getY() - 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setY(obj.getY() - 4);
@@ -1156,6 +1175,10 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		} else if(obj instanceof HyperTextObject) {
 			((HyperTextObject)obj).setY(obj.getY() + 4);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
+// H.M.Wang 2020-6-10 追加DynamicText控件
+		} else if(obj instanceof DynamicText) {
+			((DynamicText)obj).setY(obj.getY() + 4);
+// End of H.M.Wang 2020-6-10 追加DynamicText控件
 		}
 		else
 			obj.setY(obj.getY() + 4);

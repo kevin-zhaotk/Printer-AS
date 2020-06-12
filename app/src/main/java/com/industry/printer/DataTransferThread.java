@@ -15,9 +15,10 @@ import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
-import com.industry.printer.Constants.Constants;
+import com.industry.printer.FileFormat.PackageListReader;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Rfid.IInkScheduler;
@@ -25,22 +26,14 @@ import com.industry.printer.Rfid.InkSchedulerFactory;
 import com.industry.printer.Serial.EC_DOD_Protocol;
 import com.industry.printer.Serial.SerialHandler;
 import com.industry.printer.Serial.SerialProtocol;
-import com.industry.printer.Serial.SerialProtocol3;
-import com.industry.printer.Serial.XK3190_A30_Protocol;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.FileUtil;
-import com.industry.printer.Utils.ToastUtil;
-import com.industry.printer.data.BinCreater;
 import com.industry.printer.data.DataTask;
-import com.industry.printer.data.NativeGraphicJni;
+import com.industry.printer.hardware.BarcodeScanParser;
 import com.industry.printer.hardware.FpgaGpioOperation;
-import com.industry.printer.Serial.SerialPort;
 import com.industry.printer.hardware.IInkDevice;
 import com.industry.printer.hardware.InkManagerFactory;
 import com.industry.printer.hardware.SmartCardManager;
-import com.industry.printer.interceptor.ExtendInterceptor;
-import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
 import com.industry.printer.interceptor.LogIntercepter;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
@@ -429,7 +422,7 @@ public class DataTransferThread {
 	}
 // End. -----
 
-	public void setScanDataToCounter(final String data) {
+	public void setScanDataToDt(final String data) {
 		Debug.d(TAG, "String from Remote = [" + data + "]");
 		mHandler.post(new Runnable() {
 			@Override
@@ -442,7 +435,9 @@ public class DataTransferThread {
 			}
 		});
 
-		String[] dts = new String[7];
+// H.M.Wang 2020-6-7 修改支持包号->批号检索功能
+		String[] dts = new String[8];
+// End of H.M.Wang 2020-6-7 修改支持包号->批号检索功能
 
 		dts[0] = data.substring(7, 9);
 		dts[1] = data.substring(9, 11);
@@ -461,12 +456,20 @@ public class DataTransferThread {
 		dts[5] = data.substring(22, 23);
 		dts[6] = data.substring(26, 32);
 
+// H.M.Wang 2020-6-7 修改支持包号->批号检索功能
+		PackageListReader plr = PackageListReader.getInstance(mContext);
+		dts[7] = plr.getBatchCode(dts[6]);
+		if(null == dts[7]) dts[7] = "";
+// End of H.M.Wang 2020-6-7 修改支持包号->批号检索功能
+
 		for(DataTask dataTask : mDataTask) {
 			ArrayList<BaseObject> objList = dataTask.getObjList();
 			for(BaseObject baseObject: objList) {
 				if(baseObject instanceof DynamicText) {
 					int dtIndex = ((DynamicText)baseObject).getDtIndex();
-					if(dtIndex >= 0 && dtIndex < 7) {
+// H.M.Wang 2020-6-7 修改支持包号->批号检索功能
+					if(dtIndex >= 0 && dtIndex < 8) {
+// End of H.M.Wang 2020-6-7 修改支持包号->批号检索功能
 						baseObject.setContent(dts[dtIndex]);
 						mNeedUpdate = true;
 					}
@@ -475,6 +478,44 @@ public class DataTransferThread {
 		}
 	}
 	// End. -----
+// H.M.Wang 2020-6-9 追加串口6协议
+	public void setSP6DataToDt(final String data) {
+		Debug.d(TAG, "String from Remote = [" + data + "]");
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if (null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.setMessage(data);
+					mRemoteRecvedPromptDlg.show();
+					mRemoteRecvedPromptDlg.show();
+				}
+			}
+		});
+// H.M.Wang 2020-6-7 修改支持包号->批号检索功能
+		String[] dts = new String[6];
+// End of H.M.Wang 2020-6-7 修改支持包号->批号检索功能
+
+		dts[0] = data.substring(7, 8);
+		dts[1] = data.substring(8, 9);
+		dts[2] = data.substring(9, 10);
+		dts[3] = data.substring(10, 11);
+		dts[4] = data.substring(12, 13);
+		dts[5] = data.substring(13, 14);
+
+		for(DataTask dataTask : mDataTask) {
+			ArrayList<BaseObject> objList = dataTask.getObjList();
+			for(BaseObject baseObject: objList) {
+				if(baseObject instanceof DynamicText) {
+					int dtIndex = ((DynamicText)baseObject).getDtIndex();
+					if(dtIndex >= 0 && dtIndex < 6) {
+						baseObject.setContent(dts[dtIndex]);
+						mNeedUpdate = true;
+					}
+				}
+			}
+		}
+	}
+// End of H.M.Wang 2020-6-9 追加串口6协议
 
 	private AlertDialog mRemoteRecvedPromptDlg = null;
 
@@ -485,7 +526,7 @@ public class DataTransferThread {
 
 		// H.M.Wang 2019-12-19 支持多种串口协议的修改
 		// H.M.Wang 2019-10-23 串口发送数据支持
-		final SerialHandler serialHandler =  SerialHandler.getInstance();
+		final SerialHandler serialHandler = SerialHandler.getInstance();
 		serialHandler.setPrintCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
 			@Override
 			public void onCommandReceived(int cmd, byte[] data) {
@@ -519,15 +560,28 @@ public class DataTransferThread {
 					String datastring = new String(data, 0, data.length);
 					setRemoteTextDirect(datastring);
 					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
-                } else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_5) {
-                    String datastring = new String(data, 0, data.length);
-					setScanDataToCounter(datastring);
-                    serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_5) {
+					String datastring = new String(data, 0, data.length);
+					setScanDataToDt(datastring);
+					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
+// H.M.Wang 2020-6-9 追加串口6协议
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_6) {
+					String datastring = new String(data, 0, data.length);
+					setSP6DataToDt(datastring);
+					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
+// End of H.M.Wang 2020-6-9 追加串口6协议
 				}
 			}
 		});
 
 		// End of H.M.Wang 2019-12-19 支持多种串口协议的修改
+
+		BarcodeScanParser.setListener(new BarcodeScanParser.OnScanCodeListener() {
+			@Override
+			public void onCodeReceived(String code) {
+				setScanDataToDt(code);
+			}
+		});
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 		mRemoteRecvedPromptDlg = builder.setTitle(R.string.strRecvedRemote).setMessage("").setPositiveButton(R.string.str_ok, new DialogInterface.OnClickListener() {
@@ -536,6 +590,21 @@ public class DataTransferThread {
 				mRemoteRecvedPromptDlg.hide();
 			}
 		}).create();
+// H.M.Wang 2020-6-3 解决提示对话窗在显示时，扫码枪的信息被其劫持，而无法识别的问题
+        mRemoteRecvedPromptDlg.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+				if(event.getAction() == KeyEvent.ACTION_DOWN) {
+					if(keyCode == KeyEvent.KEYCODE_ENTER) {
+						return true;
+					} else {
+						BarcodeScanParser.append(event.getDisplayLabel());
+					}
+				}
+                return false;
+            }
+        });
+// End of H.M.Wang 2020-6-3 解决提示对话窗在显示时，扫码枪的信息被其劫持，而无法识别的问题
 
 		mRunning = true;
 
@@ -560,6 +629,8 @@ public class DataTransferThread {
 		SerialHandler serialHandler =  SerialHandler.getInstance();
 		serialHandler.setPrintCommandListener(null);
 		// End --------------------
+
+		BarcodeScanParser.setListener(null);
 
 		PrintTask t = mPrinter;
 		mPrinter = null;
@@ -759,7 +830,15 @@ public class DataTransferThread {
 		if (config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY) <= 0) {
 			bold = 1;
 		} else {
-			bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
+// H.M.Wang 2020-6-12 16,32,64点头减锁修改为不受分辨率影响
+			final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+			final PrinterNozzle hType = PrinterNozzle.getInstance(headIndex);
+			if (hType != PrinterNozzle.MESSAGE_TYPE_16_DOT && hType != PrinterNozzle.MESSAGE_TYPE_32_DOT && hType != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+				bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
+			} else {
+				bold = 1;
+			}
+// End of H.M.Wang 2020-6-12 16,32,64点头减锁修改为不受分辨率影响
 		}
 
 // H.M.Wang 2020-4-19 追加12.7R5头。dotcount放大相应倍数

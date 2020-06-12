@@ -2,7 +2,7 @@
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:columnCount="4"
+    android:columnCount="5"
     android:orientation="horizontal"
 	android:background="#436EEE"
 	>
@@ -87,8 +87,7 @@
             android:button="@null"
 	        android:layout_gravity="center"
             />
-    
-    
+
     <Button
             android:id="@+id/objinsert_week_year"
             android:layout_width="130dp"
@@ -98,7 +97,7 @@
             android:button="@null"
 	        android:layout_gravity="center"
             />
-    
+
     <Button
             android:id="@+id/objinsert_week_day"
             android:layout_width="130dp"
@@ -131,6 +130,18 @@
 		android:layout_gravity="center"
 		/>
 <!-- End of H.M.Wang 2020-2-16 追加HyperText控件 -->
+
+<!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
+	<Button
+		android:id="@+id/objinsert_dynamictext"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/style_dynamictext"
+		android:button="@null"
+		android:layout_gravity="center"
+		/>
+<!-- End of 2020-6-10 追加DynamicText控件 -->
 
 <!--
     <Button

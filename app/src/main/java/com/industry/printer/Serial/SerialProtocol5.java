@@ -13,22 +13,22 @@ import java.nio.charset.Charset;
 public class SerialProtocol5 extends SerialProtocol {
     public static String TAG = SerialProtocol5.class.getSimpleName();
 
-//    public final static int ERROR_FAILED = 0x85000000;   // 解析帧失败
-
-//    private SerialPort mSerialPort = null;
-//    private SerialHandler.OnSerialPortCommandListenner mNormalCmdListeners = null;
-//    private SerialHandler.OnSerialPortCommandListenner mPrintCmdListeners = null;
-
     public SerialProtocol5(SerialPort serialPort){
         super(serialPort);
     }
 
     @Override
     protected int parseFrame(ByteArrayBuffer recvMsg) {
-        if(recvMsg.length() == 32) {
-            return ERROR_SUCESS;
+        if(recvMsg.length() != 33) {
+            return ERROR_FAILED;
         }
-        return ERROR_FAILED;
+        if(recvMsg.byteAt(1) != recvMsg.byteAt(32)) {
+            return ERROR_FAILED;
+        }
+
+        recvMsg.setLength(32);
+
+        return ERROR_SUCESS;
     }
 
     @Override

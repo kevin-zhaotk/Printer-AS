@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     android:background="#436EEE"
     >
-    
+
     <RadioGroup
         android:id="@+id/tab_group"
         android:layout_width="480dp"
@@ -94,20 +94,30 @@
         
         />
      -->
-     <RelativeLayout 
+     <RelativeLayout
          android:id="@+id/ctrl_extra"
          android:layout_width="match_parent"
          android:layout_height="@dimen/top_btn_height"
          android:layout_toRightOf="@id/tab_group"
          android:layout_alignParentTop="true"
          >
+		 <!-- H.M.Wang 2020-6-3 这个完全没有必要，仅仅是为了解决扫码枪扫码时，msg_transfer被自动打开的问题 -->
+		 <ImageButton
+			 android:id="@+id/msg_transfer1"
+			 android:layout_width="wrap_content"
+			 android:layout_height="wrap_content"
+			 android:src="@drawable/link"
+			 android:layout_alignParentRight="true"
+			 android:layout_marginRight="10dp"
+			 android:layout_marginTop="10dp"
+			 />
         <RelativeLayout
             android:id="@+id/layout_cnt"
             android:layout_width="match_parent"
             android:layout_height="@dimen/top_btn_height_half"
             android:gravity="center"
-            android:layout_toLeftOf="@+id/msg_tranfer"
-            
+            android:layout_toLeftOf="@+id/msg_transfer"
+
             >
             <TextView
                 android:id="@+id/cnt_dw_label"
@@ -130,7 +140,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/top_btn_height_half"
-            android:layout_toLeftOf="@+id/msg_tranfer"
+            android:layout_toLeftOf="@+id/msg_transfer"
             android:layout_below="@id/layout_cnt"
             android:gravity="center"
             >
@@ -153,20 +163,19 @@
 		        android:gravity="center"
 	        />
 	    </RelativeLayout>
-         
+
         <ImageButton
-            android:id="@+id/msg_tranfer"
+            android:id="@+id/msg_transfer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/link"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            /> 
+            />
      </RelativeLayout>
-     
-     
-     <RelativeLayout 
+
+     <RelativeLayout
          android:id="@+id/edit_extra"
          android:layout_width="match_parent"
          android:layout_height="@dimen/top_btn_height"

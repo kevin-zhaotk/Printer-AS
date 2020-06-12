@@ -82,6 +82,11 @@ public class SerialHandler {
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_5) {
             SerialProtocol5 p = new SerialProtocol5(mSerialPort);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
+// H.M.Wang 2020-6-9 追加串口6协议
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_6) {
+            SerialProtocol6 p = new SerialProtocol6(mSerialPort);
+            p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
+// End of H.M.Wang 2020-6-9 追加串口6协议
         }
     }
 
@@ -109,6 +114,11 @@ public class SerialHandler {
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_5) {
             SerialProtocol5 p = new SerialProtocol5(mSerialPort);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
+// H.M.Wang 2020-6-9 追加串口6协议
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_6) {
+            SerialProtocol6 p = new SerialProtocol6(mSerialPort);
+            p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
+// End of H.M.Wang 2020-6-9 追加串口6协议
         }
     }
 }

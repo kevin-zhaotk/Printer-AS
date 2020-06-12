@@ -98,13 +98,6 @@ public class EC_DOD_Protocol extends SerialProtocol {
     // H.M.Wang 2019-12-15 追加串口文本间隔符
     public final static String TEXT_SEPERATOR         = ",";          // 串口接收文本的间隔符
 
-//    private final int ERROR_MASK = 0xffff0000;
-//    private final int CMD_MASK = 0x0000ffff;
-
-//    private SerialPort mSerialPort = null;
-//    private SerialHandler.OnSerialPortCommandListenner mNormalCmdListeners = null;
-//    private SerialHandler.OnSerialPortCommandListenner mPrintCmdListeners = null;
-
     public EC_DOD_Protocol(SerialPort serialPort){
         super(serialPort);
     }

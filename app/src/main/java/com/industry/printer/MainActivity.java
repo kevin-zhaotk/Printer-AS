@@ -68,6 +68,7 @@ import com.industry.printer.Utils.SystemFs;
 import com.industry.printer.Utils.SystemPropertiesProxy;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.Utils.ZipUtil;
+import com.industry.printer.hardware.BarcodeScanParser;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.Serial.SerialPort;
@@ -324,7 +325,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mVersion = (TextView) findViewById(R.id.setting_version);
 		mVerTitle = (TextView) findViewById(R.id.setting_version_key);
 		
-		mCopy = (ImageButton) findViewById(R.id.msg_tranfer);
+		mCopy = (ImageButton) findViewById(R.id.msg_transfer);
 		mCopy.setOnClickListener(this);
 		
 		try {
@@ -611,8 +612,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 //		return super.onKeyDown(keyCode, event);
 		char eventString = event.getDisplayLabel();
 
-		Global.writeCode(eventString);
-		mCode.setText(Global.readCode());
+		BarcodeScanParser.append(eventString);
+//		mCode.setText(Global.readCode());
 		if (event.getDeviceId() == 10) return false;
 		return super.onKeyDown(keyCode, event);
 	}
@@ -629,7 +630,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		case R.id.delete:
 			mEditSmallTab.deleteSelected();
 			break;
-		case R.id.msg_tranfer:
+		case R.id.msg_transfer:
+//			Debug.e(TAG, "Transfer Clicked!");
 			showImportDialog();
 			// setScreenBrightness(50);
 			break;

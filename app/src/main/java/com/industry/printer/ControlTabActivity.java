@@ -1138,7 +1138,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				case SmartCardManager.MSG_SMARTCARD_CHECK_SUCCESS:
 				case RFIDManager.MSG_RFID_CHECK_SUCCESS:
 				case MESSAGE_PRINT_START:
-
 					Debug.d(TAG, "--->Print check success");
 					if (mDTransThread != null && mDTransThread.isRunning()) {
 						// H.M.Wang注释掉一行
@@ -1159,7 +1158,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					}
 					// reset value of counter object to system config value
 					resetCounterIfNeed();
-					if (!checkQRFile()) {
+// H.M.Wang 2020-6-2 只有数据源为文件打印的时候采取检查QR.txt或者QR.csv的存在
+//					if (!checkQRFile()) {
+					if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE && !checkQRFile()) {
+// End of H.M.Wang 2020-6-2 只有数据源为文件打印的时候采取检查QR.txt或者QR.csv的存在
 						handleError(R.string.str_toast_no_qrfile, Constants.pcErr(pcMsg));
 						mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
 						break;

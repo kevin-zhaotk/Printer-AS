@@ -156,7 +156,11 @@
 	<string name="object_msg_name">Subject</string>
 	<string name="object_qr">QRCode</string>
 	<string name="object_dynamic_qr">DynamicQR</string>
-	
+<!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
+	<string name="object_dynamictext">Dynamictext</string>
+	<string name="object_dtindex">Index</string>
+<!-- End of H.M.Wang 2020-6-10 追加DynamicText控件 -->
+
 	<!-- Settings frame -->
 	<string name="strParam0">00.Reserved</string>
 	<string name="strPrSpeedname">01.Speed</string>
