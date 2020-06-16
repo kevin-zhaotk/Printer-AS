@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:focusable="true"
 	android:focusableInTouchMode="true"
-	android:background="#436EEE"
+	android:background="@color/background"
     >
     
     <GridView
@@ -27,7 +27,7 @@
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:background="#436EEE"
+        android:background="@color/background"
         >
         <TextView
             android:id="@+id/confirm"

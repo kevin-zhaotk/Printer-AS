@@ -3,7 +3,7 @@
 android:layout_width="fill_parent"
 android:layout_height="fill_parent"
 android:orientation="vertical"
- android:background="#436EEE">
+ android:background="@color/background">
 
 <LinearLayout
 android:id="@+id/content"
@@ -11,7 +11,7 @@ android:layout_width="fill_parent"
 android:layout_height="0dp" 
 android:layout_weight="1"
 android:orientation="vertical"
- android:background="#436EEE">
+ android:background="@color/background">
 <ListView
                    android:layout_marginTop="10dp"
                     android:id="@+id/fileView"
@@ -20,7 +20,7 @@ android:orientation="vertical"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                  android:layout_marginBottom="10dp"
-                     android:background="#436EEE">
+                     android:background="@color/background">
                 </ListView>
 </LinearLayout>
 
@@ -29,7 +29,7 @@ android:layout_width="fill_parent"
 android:layout_height="wrap_content"
 android:gravity="bottom"
 android:orientation="vertical"
- android:background="#436EEE">
+ android:background="@color/background">
  <Button
             android:id="@+id/btnSend"
             android:layout_width="100dp"

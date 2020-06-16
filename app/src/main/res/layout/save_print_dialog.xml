@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="30dp"
-    android:background="#436EEE"
+    android:background="@color/background"
     >
 
     <Button

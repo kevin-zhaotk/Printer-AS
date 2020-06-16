@@ -2474,6 +2474,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	
 		                            	}
 		                            }
+// H.M.Wang 2020-6-16 这个条件重复，应该注释掉
+/*
 		                            else if(PCCommand.CMD_SET_COUNTER.equalsIgnoreCase(cmd.command)) {
 		                           //600字符串长成所需文件
 		                            	
@@ -2492,7 +2494,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 											this.sendmsg(Constants.pcErr(msg));
 										}
 										this.sendmsg(Constants.pcOk(msg));
-		                            }
+		                            }*/
+// End of H.M.Wang 2020-6-16 这个条件重复，应该注释掉
+
 		                            else if(PCCommand.CMD_MAKE_TLK.equalsIgnoreCase(cmd.command)) {
 		                           		//700
 		                    			this.sendmsg(getString(R.string.str_build_tlk_start));

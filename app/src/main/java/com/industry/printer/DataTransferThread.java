@@ -972,7 +972,7 @@ public class DataTransferThread {
 			/*逻辑要求，必须先发数据*/
 			Debug.d(TAG, "--->print run");
 
-			mPrintBuffer = mDataTask.get(index()).getPrintBuffer();
+			mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true);
 			if (isLanPrint()) {
 				setLanBuffer(mContext, index(), mPrintBuffer);
 			} else {
@@ -1087,7 +1087,7 @@ public class DataTransferThread {
 						} else {
 // H.M.Wang 2020-5-19 QR文件打印最后一行后无反应问题。应该先生成打印缓冲区，而不是先判断是否到了终点。顺序不对
 							Debug.i(TAG, "mIndex: " + index());
-							mPrintBuffer = mDataTask.get(index()).getPrintBuffer();
+							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
 							if (!mDataTask.get(index()).isReady) {
 								if (mCallback != null) {
 									mCallback.OnFinished(CODE_BARFILE_END);
@@ -1099,6 +1099,7 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-5-19 QR文件打印最后一行后无反应问题。应该先生成打印缓冲区，而不是先判断是否到了终点。顺序不对
 						}
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+                        Debug.d(TAG, "--->FPGA data sent!");
 
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 						if(mCallback != null && mDataTask.size() > 1) {
@@ -1126,7 +1127,7 @@ public class DataTransferThread {
 					if (isLanPrint()) {
 						mPrintBuffer = getLanBuffer(index());
 					} else {
-						mPrintBuffer = mDataTask.get(index()).getPrintBuffer();
+						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
 					}
 // End of H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素
 					Debug.d(TAG, "===>mPrintBuffer size=" + mPrintBuffer.length);

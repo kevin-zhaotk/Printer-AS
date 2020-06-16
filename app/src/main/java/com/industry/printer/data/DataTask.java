@@ -138,12 +138,13 @@ public class DataTask {
 		mPrintBuffer = new char[mBgBuffer.length];
 		return true;
 	}
-	
-	public char[] getPrintBuffer() {
-		return getPrintBuffer(false);
+// H.M.Wang 2020-6-16 追加是否保存print.bin标记，以控制保存行为
+	public char[] getPrintBuffer(boolean bSave) {
+		return getPrintBuffer(false, bSave);
 	}
-	
-	public char[] getPrintBuffer(boolean isPreview) {
+// End of H.M.Wang 2020-6-16 追加是否保存print.bin标记，以控制保存行为
+
+	public char[] getPrintBuffer(boolean isPreview, boolean bSave) {
 		Debug.d(TAG, "--->getPrintBuffer");
 		if (mBgBuffer == null) {
 			return null;
@@ -197,8 +198,10 @@ public class DataTask {
 		Debug.d(TAG, "--->buffer = " + mBuffer.length);
 
 // H.M.Wang 2020-4-18 从DataTransferThread移至此
-		FileUtil.deleteFolder("/mnt/sdcard/print.bin");
-		BinCreater.saveBin("/mnt/sdcard/print.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads);
+        if(bSave) {
+            FileUtil.deleteFolder("/mnt/sdcard/print.bin");
+            BinCreater.saveBin("/mnt/sdcard/print.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads);
+        }
 // End of H.M.Wang 2020-4-18 从DataTransferThread移至此
 
 // H.M.Wang 2020-4-18 追加12.7R5头
@@ -245,8 +248,10 @@ public class DataTask {
 
 			mBuffer = caBuf.toCharArray();
 
-			FileUtil.deleteFolder("/mnt/sdcard/printR5x6.bin");
-			BinCreater.saveBin("/mnt/sdcard/printR5x6.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R6_HEAD_NUM);
+            if(bSave) {
+                FileUtil.deleteFolder("/mnt/sdcard/printR5x6.bin");
+                BinCreater.saveBin("/mnt/sdcard/printR5x6.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R6_HEAD_NUM);
+            }
 		}
 // End of H.M.Wang 2020-4-18 追加12.7R5头
 
