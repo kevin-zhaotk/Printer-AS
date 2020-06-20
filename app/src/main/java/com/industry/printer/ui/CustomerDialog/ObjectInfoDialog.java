@@ -802,9 +802,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			return ;
 		
 		if(mObject instanceof RealtimeObject ||
-// H.M.Wang 2020-2-16 追加HyperText控件
+// H.M.Wang 2020-6-11 追加HyperText控件
 			mObject instanceof DynamicText ||
-// End of H.M.Wang 2020-2-16 追加HyperText控件
+// End of H.M.Wang 2020-6-11 追加HyperText控件
 			mObject instanceof GraphicObject ||
 			mObject instanceof RealtimeSecond ||
 			mObject instanceof ShiftObject ||

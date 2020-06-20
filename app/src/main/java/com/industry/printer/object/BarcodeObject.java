@@ -258,7 +258,7 @@ public class BarcodeObject extends BaseObject {
 	@Override
 	public void resizeByHeight() {
 		if (!is2D()) {
-			mWidth = mContent.length() * 70 * mHeight / 152;
+			mWidth = mContent.length() * 50 * mHeight / 152;
 		} else {
 			mWidth = mHeight;
 		}
@@ -277,7 +277,7 @@ public class BarcodeObject extends BaseObject {
 		if (!is2D()) {
 			if (mWidth <= 0) {
 // H.M.Wang 2019-9-26 这个宽度的设置，由于参照的元是根据字数直接算的，而不是像其他的元素根据高计算的，因此如果高做了调整，mRatio里面已经考虑了高变化的因素，因此需要将高的因素化解后使用
-                mWidth = mContent.length() * 70 * mRatio * mHeight / 152;
+                mWidth = mContent.length() * 50 * mRatio * mHeight / 152;
 //                mWidth = mContent.length() * 70;
 			}
 // H.M.Wang2019-9-26 恢复使用mWidth和mHeight进行画图
@@ -411,8 +411,168 @@ public class BarcodeObject extends BaseObject {
 //			return Bitmap.createScaledBitmap(bitmap, (int) mWidth, (int) mHeight, false);
 //		return bitmap;
 	}
-	
+
+	private int[] BitMatrix2IntArray(BitMatrix matrix, int width, int height) {
+		int[] pixels = new int[width * height];
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (matrix.get(x, y)) {
+					pixels[y * width + x] = 0xff000000;
+				} else {
+					pixels[y * width + x] = 0xffffffff;
+				}
+			}
+		}
+		return pixels;
+	}
+
+	private Bitmap drawEAN8(int w, int h) {
+		BitMatrix matrix=null;
+
+		Debug.d(TAG, "--->drawEAN8 w : " + w + "  h: " + h);
+
+		try {
+			int textH = (h * mTextSize) / 100;
+
+			MultiFormatWriter writer = new MultiFormatWriter();
+			Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
+			hints.put(EncodeHintType.CHARACTER_SET, CODE);
+			BarcodeFormat format = getBarcodeFormat(mFormat);
+
+			Debug.d(TAG, "--->drawEAN8 mContent: " + mContent);
+			String content = check();
+			Debug.d(TAG, "--->drawEAN8 content: " + content);
+			matrix = writer.encode(content, format, w, h-textH/2, null);
+
+			int tl[] = matrix.getTopLeftOnBit();
+			int width = matrix.getWidth();
+			int height = matrix.getHeight();
+			int br[] = matrix.getBottomRightOnBit();
+			Debug.d(TAG, "width="+ width +", height="+height + "， left=" + tl[0] + "， top=" + tl[1] + "， right=" + br[0] + "， bottom=" + br[1]);
+			int[] pixels = BitMatrix2IntArray(matrix, width, height);
+
+			Bitmap bmp = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
+			bmp.setPixels(pixels, 0, width, 0, 0, width, height);
+			Bitmap bitmap = Bitmap.createBitmap(width, h, Configs.BITMAP_CONFIG);
+			Canvas can = new Canvas(bitmap);
+
+			if(mShow) {
+				int left = tl[0];
+				int top = tl[1];
+				float modWidth = 1.0f * (br[0]-tl[0]+1) / 67;		// [3 28 5 28 3]
+
+				Paint paint = new Paint();
+				paint.setColor(Color.WHITE);
+				paint.setAntiAlias(true);
+				paint.setFilterBitmap(true);
+
+				can.drawBitmap(bmp, 0, 0, paint);
+
+				paint.setStyle(Paint.Style.FILL);
+
+				can.drawRect(left + modWidth * 3, top + h - textH - 5, left + modWidth * 31, top + h, paint);
+				can.drawRect(left + modWidth * 36, top + h - textH - 5, left + modWidth * 64, top + h, paint);
+
+				paint.setTextSize(textH);
+
+				float numWid = paint.measureText("0");
+				float numDispWid = 1.0f * 28 * modWidth / 4;
+
+				paint.setTextScaleX(Math.min(2, numDispWid/numWid));
+				paint.setColor(Color.BLACK);
+				paint.setTextAlign(Paint.Align.CENTER);
+
+				for(int i=0; i<4; i++) {
+					can.drawText(content.substring(i, i+1), left + modWidth * 3 + (i+0.5f)* numDispWid, h-3, paint);
+					can.drawText(content.substring(i+4, i+5), left + modWidth * 36 + (i+0.5f) * numDispWid, h-3, paint);
+				}
+			}
+
+			return Bitmap.createScaledBitmap(bitmap, w, h, false);
+		} catch (Exception e) {
+			Debug.d(TAG, "--->exception: " + e.getMessage());
+		}
+		return null;
+	}
+
+	private Bitmap drawEAN13(int w, int h) {
+		BitMatrix matrix=null;
+
+		Debug.d(TAG, "--->drawEAN13 w : " + w + "  h: " + h);
+
+		try {
+			int textH = (h * mTextSize) / 100;
+
+			MultiFormatWriter writer = new MultiFormatWriter();
+			Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
+			hints.put(EncodeHintType.CHARACTER_SET, CODE);
+			BarcodeFormat format = getBarcodeFormat(mFormat);
+
+			Debug.d(TAG, "--->drawEAN13 mContent: " + mContent);
+			String content = check();
+			Debug.d(TAG, "--->drawEAN13 content: " + content);
+			matrix = writer.encode(content, format, w, h-textH/2, null);
+
+			int tl[] = matrix.getTopLeftOnBit();
+			int width = matrix.getWidth();
+			int height = matrix.getHeight();
+			int br[] = matrix.getBottomRightOnBit();
+			Debug.d(TAG, "width="+ width +", height="+height + "， left=" + tl[0] + "， top=" + tl[1] + "， right=" + br[0] + "， bottom=" + br[1]);
+			int[] pixels = BitMatrix2IntArray(matrix, width, height);
+
+			Bitmap bmp = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
+			bmp.setPixels(pixels, 0, width, 0, 0, width, height);
+			Bitmap bitmap = Bitmap.createBitmap(width, h, Configs.BITMAP_CONFIG);
+			Canvas can = new Canvas(bitmap);
+
+			if(mShow) {
+				int left = tl[0];
+				int top = tl[1];
+				float modWidth = 1.0f * (br[0]-tl[0]+1) / 95;		// [3 42 5 42 3]
+
+				Paint paint = new Paint();
+				paint.setColor(Color.WHITE);
+				paint.setAntiAlias(true);
+				paint.setFilterBitmap(true);
+
+				can.drawBitmap(bmp, 0, 0, paint);
+
+				paint.setStyle(Paint.Style.FILL);
+
+				can.drawRect(left + modWidth * 3, top + h - textH - 5, left + modWidth * 45, top + h, paint);
+				can.drawRect(left + modWidth * 50, top + h - textH - 5, left + modWidth * 92, top + h, paint);
+
+				paint.setTextSize(textH);
+
+				float numWid = paint.measureText("0");
+				float numDispWid = 1.0f * 42 * modWidth / 6;
+
+				paint.setTextScaleX(Math.min(2, numDispWid/numWid));
+				paint.setColor(Color.BLACK);
+				paint.setTextAlign(Paint.Align.CENTER);
+
+				for(int i=0; i<6; i++) {
+					can.drawText(content.substring(i, i+1), left + modWidth * 3 + (i+0.5f)* numDispWid, h-3, paint);
+					can.drawText(content.substring(i+6, i+7), left + modWidth * 50 + (i+0.5f) * numDispWid, h-3, paint);
+				}
+			}
+
+			return Bitmap.createScaledBitmap(bitmap, w, h, false);
+		} catch (Exception e) {
+			Debug.d(TAG, "--->exception: " + e.getMessage());
+		}
+		return null;
+	}
+
 	private Bitmap draw(String content, int w, int h) {
+		if ("EAN13".equals(mFormat)) {
+			return drawEAN13(w, h);
+		}
+
+		if ("EAN8".equals(mFormat)) {
+			return drawEAN8(w, h);
+		}
+
 		BitMatrix matrix=null;
 		int margin = 0;
 //		if (h <= mTextSize) {
@@ -420,7 +580,7 @@ public class BarcodeObject extends BaseObject {
 //		}
 		int textH = (h * mTextSize) / 100;
 		Paint paint = new Paint();
-		Debug.d("BarcodeObject", "--->draw w : " + w + "  h: " + h + "  textH = " + textH);
+		Debug.d(TAG, "--->draw w : " + w + "  h: " + h + "  textH = " + textH);
 		try {
 			MultiFormatWriter writer = new MultiFormatWriter();
 			Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();  
@@ -441,13 +601,13 @@ public class BarcodeObject extends BaseObject {
 			}
 */			
             content = check();
-            matrix = writer.encode(content,
-				        format, w, h - textH- 5, null);
+            matrix = writer.encode(content, format, w, h - textH- 5, null);
 
 			int tl[] = matrix.getTopLeftOnBit();
 			int width = matrix.getWidth();
 			int height = matrix.getHeight();
-			Debug.d("BarcodeObject", "mWidth="+ w +", width="+width + "   height=" + height);
+			int br[] = matrix.getBottomRightOnBit();
+			Debug.d(TAG, "width="+ width +", height="+height + "， left=" + tl[0] + "， top=" + tl[1] + "， right=" + br[0] + "， bottom=" + br[1]);
 			// setWidth(width);
 			int[] pixels = new int[width * height];
 			for (int y = 0; y < height; y++) 
@@ -699,7 +859,7 @@ public class BarcodeObject extends BaseObject {
 		}
 		return bitmap;
 	}
-	
+/* 2020-6-18 这个函数没用到，注释掉
 	public int getBestWidth()
 	{
 		int width=0;
@@ -728,7 +888,7 @@ public class BarcodeObject extends BaseObject {
 		}
 		return width;
 	}
-	
+*/
 	private boolean is2D() {
 		Debug.d(TAG, "is2D? " + mFormat);
 		if (TextUtils.isEmpty(mFormat)) {
@@ -1037,3 +1197,20 @@ public class BarcodeObject extends BaseObject {
 		return str;
 	}
 }
+
+
+/*
+    EAN-13商品条码是表示EAN/UCC-13商品标识代码的条码符号，由左侧空白区、起始符、左侧数据符、中间分隔符、右侧数据符、校验符、终止符、右侧空白区及供人识别字符组成。
+        左侧空白区：位于条码符号最左侧与空的反射率相同的区域，其最小宽度为11个模块宽。
+        起始符：位于条码符号左侧空白区的右侧，表示信息开始的特殊符号，由3个模块组成。
+        左侧数据符：位于起始符右侧，表示6位数字信息的一组条码字符，由42个模块组成。
+        中间分隔符：位于左侧数据符的右侧，是平分条码字符的特殊符号，由5个模块组成。
+        右侧数据符：位于中间分隔符右侧，表示5位数字信息的一组条码字符，由35个模块组成。
+        校验符：位于右侧数据符的右侧，表示校验码的条码字符，由7个模块组成。
+        终止符：位于条码符号校验符的右侧，表示信息结束的特殊符号，由3个模块组成。
+        右侧空白区：位于条码符号最右侧的与空的反射率相同的区域，其最小宽度为7个模块宽。为保护右侧空白区的宽度，可在条码符号右下角加“>”符号。
+        供人识读字符：位于条码符号的下方，是与条码字符相对应的供人识别的13位数字，最左边一位称前置码。供人识别字符优先选用OCR-B字符集，字符顶部和条码底部的最小距离为0.5个模块宽。标准版商品条码中的前置码印制在条码符号起始符的左侧。
+
+ 	@参照
+ 	http://www.labelmx.com/tech/CodeKown/Code/201809/4992.html
+ */
