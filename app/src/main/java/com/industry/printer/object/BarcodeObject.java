@@ -426,6 +426,7 @@ public class BarcodeObject extends BaseObject {
 		return pixels;
 	}
 
+// H.M.Wang 2020-6-19 修改EAN-13和EAN-8的图片输出格式
 	private Bitmap drawEAN8(int w, int h) {
 		BitMatrix matrix=null;
 
@@ -563,8 +564,10 @@ public class BarcodeObject extends BaseObject {
 		}
 		return null;
 	}
+// End of H.M.Wang 2020-6-19 修改EAN-13和EAN-8的图片输出格式
 
 	private Bitmap draw(String content, int w, int h) {
+// H.M.Wang 2020-6-19 修改EAN-13和EAN-8的图片输出格式
 		if ("EAN13".equals(mFormat)) {
 			return drawEAN13(w, h);
 		}
@@ -572,6 +575,7 @@ public class BarcodeObject extends BaseObject {
 		if ("EAN8".equals(mFormat)) {
 			return drawEAN8(w, h);
 		}
+// End of H.M.Wang 2020-6-19 修改EAN-13和EAN-8的图片输出格式
 
 		BitMatrix matrix=null;
 		int margin = 0;
@@ -1197,7 +1201,6 @@ public class BarcodeObject extends BaseObject {
 		return str;
 	}
 }
-
 
 /*
     EAN-13商品条码是表示EAN/UCC-13商品标识代码的条码符号，由左侧空白区、起始符、左侧数据符、中间分隔符、右侧数据符、校验符、终止符、右侧空白区及供人识别字符组成。

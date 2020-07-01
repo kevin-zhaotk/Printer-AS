@@ -138,7 +138,7 @@ public class SmartCardManager implements IInkDevice {
             mHandler.sendEmptyMessage(MSG_CHECK_USABILITY);
 //            mHandler.sendEmptyMessageDelayed(MSG_CHECK_DOWNTEST, 5000);
 //            mHandler.sendEmptyMessageDelayed(MSG_B11_LAMP_TEST, 10000);
-//            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_LEVEL, UPDATE_LEVEL_INTERVAL);
+            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_LEVEL, UPDATE_LEVEL_INTERVAL);
             mValid = true;
         } else {
             mValid = false;

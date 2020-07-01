@@ -78,7 +78,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
 
     // Initialise the library
     LIB_HP_SMART_CARD_init();
-/*
+
     if (LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_HOST) != HP_SMART_CARD_OK) {
         LOGE(">>> LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_HOST): NOT PRESENT.  ");
         return SC_INIT_HOST_CARD_NOT_PRESENT;
@@ -124,7 +124,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
     } else {
         return SC_BULK_CTRG_ACCESS_FAILED;
     }
-*/
+
     SC_GPIO_ADAPTER_select_38_xlater(SELECT_LEVEL);
 
     int ret;
@@ -148,7 +148,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
 JNIEXPORT jint JNICALL Java_com_Smartcard_chechConsistency(JNIEnv *env, jclass arg, jint card) {
     HP_SMART_CARD_result_t r = HP_SMART_CARD_OK;
 
-    return SC_SUCCESS;
+////////////////////////    return SC_SUCCESS;
 
     uint8_t ink_designator, supply_designator;
     uint8_t ink_formulator_id, supply_formulator_id;
@@ -202,7 +202,7 @@ static char* toBinaryString(char* dst, uint32_t src) {
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_chechOIB(JNIEnv *env, jclass arg, jint card) {
-    return 0;
+////////////////////////    return 0;
 
     uint8_t out_of_ink = 1;
 
@@ -216,7 +216,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_chechOIB(JNIEnv *env, jclass arg, jint
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, jint card) {
-    return 2000;
+////////////////////////    return 2000;
 
     uint32_t x = 0;
 
@@ -259,7 +259,7 @@ HP_SMART_CARD_result_t (*ILGReadFunc[4])(HP_SMART_CARD_device_id_t cardId, uint3
 };
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jint card) {
-    return SC_SUCCESS;
+////////////////////////    return SC_SUCCESS;
 
     uint32_t x = 0;
 
@@ -303,7 +303,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jint card) {
-//    return 0x77777777;
+////////////////////////    return 0x77777777;
 
     int ret;
 
@@ -365,7 +365,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     JNIEnv* env = NULL;
     jint result = -1;
 
-    LOGI("SmartCard.so 1.0.233 Loaded.");
+    LOGI("SmartCard.so 1.0.260 Loaded.");
 
     if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
         //__android_log_print(ANDROID_LOG_INFO, JNI_TAG,"ERROR: GetEnv failed\n");

@@ -1010,8 +1010,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					Debug.d(TAG, "--->init thread ok");
 					mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
 					// mPreBitmap = mDTransThread.mDataTask.get(0).getPreview();
-					
-//					dispPreview(mPreBitmap);
+// H.M.Wang 2020-6-23 打开注释，显示预览图
+					dispPreview(mPreBitmap);
+// End of H.M.Wang 2020-6-23 打开注释，显示预览图
 
 					refreshInk();
 					refreshCount();
@@ -1207,7 +1208,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					handlerSuccess(R.string.str_print_startok, pcMsg);
 					break;
 				case MESSAGE_PRINT_STOP:
-
 					FpgaGpioOperation.updateSettings(mContext, null, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 					// do nothing if not in printing state
 					if (mDTransThread == null || !mDTransThread.isRunning()) {
@@ -1234,7 +1234,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //					rollback();
 					/* 濡傛灉鐣跺墠鎵撳嵃淇℃伅涓湁瑷堟暩鍣紝闇�瑕佽閷勭暥鍓嶅�煎埌TLK鏂囦欢涓�*/
 					updateCntIfNeed();
-					
+// H.M.Wang 2020-6-24 停止打印时清空网络打印标识
+					StopFlag=0;
+					PrinterFlag=0;
+// End of H.M.Wang 2020-6-24 停止打印时清空网络打印标识
 					break;
 				case MESSAGE_PRINT_END:
 					FpgaGpioOperation.uninit();
@@ -2389,9 +2392,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 										DataTransferThread.getInstance(mContext).resetIndex();
 										this.sendmsg(Constants.pcOk(msg));
 // H.M.Wang 2019-12-16 支持网络下发计数器和动态二维码的值
-									} else if (PCCommand.CMD_SET_COUNTER.equalsIgnoreCase(cmd.command)) {
+									} else if (PCCommand.CMD_SET_REMOTE.equalsIgnoreCase(cmd.command)) {
     // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
-                                        if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN) {
+                                        if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
+// H.M.Wang 2020-6-28 追加专门为网络快速打印设置
+											SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
+// End of H.M.Wang 2020-6-28 追加专门为网络快速打印设置
                                             if(DataTransferThread.getInstance(mContext).isRunning()) {
                                                 DataTransferThread.getInstance(mContext).setRemoteTextSeparated(cmd.content);
                                                 this.sendmsg(Constants.pcOk(msg));
@@ -2418,7 +2424,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            		StopFlag=1;
 		                            		CleanFlag=0;
 
+// H.M.Wang 2020-6-23 设置mObjPath，以便打开成功后显示信息名称
 		                                 	mObjPath= msgfile.getName();
+// End of H.M.Wang 2020-6-23 设置mObjPath，以便打开成功后显示信息名称
 
 		                                 	Message message = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
 		                                 	Bundle bundle = new Bundle();
@@ -2446,7 +2454,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	}
 		                            }
 		                            else if(PCCommand.CMD_READ_COUNTER.equalsIgnoreCase(cmd.command)) {
-		                            	//400取计数器
+/*		                            	//400取计数器
 // H.M.Wang 2020-4-22 修改读取Counter命令返回格式
 										StringBuilder sb = new StringBuilder();
 
@@ -2454,10 +2462,26 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            	for(int i=0; i<8; i++) {
   	  										sb.append("|" + (int)(mInkManager.getLocalInk(i)));
 		                            	}
-										sb.append("|" + (DataTransferThread.getInstance(mContext).isRunning() ? "T" : "F") + "|");
+// H.M.Wang 2020-6-29 打印任务还没有启动时，DataTransferThread.getInstance(mContext)会自动生成instance，导致错误，应避免使用
+										DataTransferThread dt = DataTransferThread.mInstance;
+//										sb.append("|" + (DataTransferThread.getInstance(mContext).isRunning() ? "T" : "F") + "|");
+										sb.append("|" + (null != dt && dt.isRunning() ? "T" : "F") + "|");
+// H.M.Wang 2020-6-29 打印任务还没有启动时，DataTransferThread.getInstance(mContext)会自动生成instance，导致错误，应避免使用
 										sb.append(msg);
 										this.sendmsg(Constants.pcOk(sb.toString()));
 // End of H.M.Wang 2020-4-22 修改读取Counter命令返回格式
+*/
+
+// H.M.Wang 2020-7-1 临时版本，回复原来的回复格式
+                                        for(int i=0;i<7;i++)
+                                        {
+											DataTransferThread dt = DataTransferThread.mInstance;
+                                            sendmsg("counter:" + mCounter+" |ink:" + mInkManager.getLocalInkPercentage(i) + "|state:" + (null != dt && dt.isRunning()));
+                                            //获取INK无显示问题，赵工这地方改好，前面注示去掉就OK了
+                                            this.sendmsg(Constants.pcOk(msg));
+                                        }
+// End of H.M.Wang 2020-7-1 临时版本，回复原来的回复格式
+
 		                            }
 		                            else if(PCCommand.CMD_STOP_PRINT.equalsIgnoreCase(cmd.command)) {
 		                            	//500停止打印
@@ -2476,7 +2500,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            }
 // H.M.Wang 2020-6-16 这个条件重复，应该注释掉
 /*
-		                            else if(PCCommand.CMD_SET_COUNTER.equalsIgnoreCase(cmd.command)) {
+		                            else if(PCCommand.CMD_SET_REMOTE.equalsIgnoreCase(cmd.command)) {
 		                           //600字符串长成所需文件
 		                            	
 		                    			StrInfo_Stack.push(cmd.content);//用堆栈存储收的信息，先进称出;
@@ -2575,6 +2599,34 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 										}
                                     // End of H.M.Wang 2019-12-25 追加速度和清洗命令
                                         this.sendmsg(Constants.pcOk(msg));
+// H.M.Wang 2020-7-1 追加一个计数器设置数值命令
+									} else if(PCCommand.CMD_SET_COUNTER.equalsIgnoreCase(cmd.command)) {
+										try {
+											int cIndex = Integer.valueOf(cmd.content);
+											if(cIndex < 0 || cIndex > 9) {
+												Debug.e(TAG, "CMD_SET_COUNTER command, Index overflow.");
+												this.sendmsg(Constants.pcErr(msg));
+											} else {
+												try {
+													int cValue = Integer.valueOf(cmd.note2);
+													SystemConfigFile.getInstance().setParamBroadcast(cIndex + SystemConfigFile.INDEX_COUNT_1, cValue);
+													RTCDevice.getInstance(mContext).write(cValue, cIndex);
+													DataTransferThread dt = DataTransferThread.mInstance;
+													if(null != dt && dt.isRunning()) {
+														dt.mNeedUpdate = true;
+													}
+
+													this.sendmsg(Constants.pcOk(msg));
+												} catch (NumberFormatException e) {
+													Debug.e(TAG, "CMD_SET_COUNTER command, invalid value.");
+													this.sendmsg(Constants.pcErr(msg));
+												}
+											}
+										} catch (NumberFormatException e) {
+											Debug.e(TAG, "CMD_SET_COUNTER command, invalid index.");
+											this.sendmsg(Constants.pcErr(msg));
+										}
+// End of H.M.Wang 2020-7-1 追加一个计数器设置数值命令
 		                            } else {
 		                            	this.sendmsg(Constants.pcErr(msg));
 		                            }

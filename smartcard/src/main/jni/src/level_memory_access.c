@@ -5,6 +5,7 @@
 #include <drivers/internal_ifc/sc_i2c_driver.h>
 #include <common_log.h>
 #include <unistd.h>
+#include <stdio.h>
 #include "level_memory_access.h"
 
 #define LEVEL_I2C_ADDRESS       0x2b
@@ -53,19 +54,9 @@
 #define DEVICE_ID_ADDR          0x7F        // Default 0x3055
 
 static int _writeI2Cdata(uint8_t reg, uint8_t *data, int length) {
-    int fd;
     int ret;
 
-    fd = SC_I2C_DRIVER_open(0x01, LEVEL_I2C_ADDRESS);
-
-    if(fd < 0) {
-        LOGE("I2C device open error!");
-        return LEVEL_I2C_FAILED;
-    }
-
-    ret = SC_I2C_DRIVER_write(fd, reg, data, length);
-
-    SC_I2C_DRIVER_close(fd);
+    ret = SC_I2C_DRIVER_write(0x01, LEVEL_I2C_ADDRESS, reg, data, length);
 
     if(ret < 0) {
         LOGE("Write data error!");
@@ -76,19 +67,9 @@ static int _writeI2Cdata(uint8_t reg, uint8_t *data, int length) {
 }
 
 static int _readI2Cdata(int reg, uint8_t *data, int length) {
-    int fd;
     int read_length;
 
-    fd = SC_I2C_DRIVER_open(0x01, LEVEL_I2C_ADDRESS);
-
-    if(fd < 0) {
-        LOGE("I2C device open error!");
-        return LEVEL_I2C_FAILED;
-    }
-
-    read_length = SC_I2C_DRIVER_read(fd, reg, data, length);
-
-    SC_I2C_DRIVER_close(fd);
+    read_length = SC_I2C_DRIVER_read(0x01, LEVEL_I2C_ADDRESS, reg, data, length);
 
     if(read_length < 0) {
         LOGE("Read data error!");

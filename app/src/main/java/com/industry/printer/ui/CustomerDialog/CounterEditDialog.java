@@ -92,7 +92,7 @@ public class CounterEditDialog extends Dialog implements android.view.View.OnCli
                             dt.mNeedUpdate = true;
                         }
                     }
-                    SystemConfigFile.getInstance().setParamBroadcast(mIndex + 44, value);
+                    SystemConfigFile.getInstance().setParamBroadcast(mIndex + SystemConfigFile.INDEX_COUNT_1, value);
                     RTCDevice.getInstance(mContext).write(value, mIndex);
                     dismiss();
                 } catch (Exception e) {

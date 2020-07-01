@@ -348,6 +348,32 @@ public static final String TAG="SettingsTabActivity";
 			mTimeRefreshHandler.sendEmptyMessageDelayed(0, 500);
 		}
 	};
+
+// 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
+	private static final int MSG_DELAYED_FPGA_SETTING = 100;
+
+	public Handler mHandler = new Handler(){
+		public void handleMessage(Message msg) {
+			switch(msg.what)
+			{
+				case MSG_DELAYED_FPGA_SETTING:
+					Debug.d(TAG, "Writing to FPGA");
+					DataTransferThread dt = DataTransferThread.getInstance(mContext);
+					DataTask task = dt.getCurData();
+// 2020-5-8							FpgaGpioOperation.clean();
+					FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+//							dt.mNeedUpdate = true;
+//							while (dt.mNeedUpdate) {
+//								try{Thread.sleep(10);}catch(Exception e){};
+//							}
+					FpgaGpioOperation.init();
+					dt.resendBufferToFPGA();
+					break;
+			}
+		}
+	};
+// End of 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
+
 	@Override
 	public void onClick(View arg0) {
 		if (arg0 == null) {
@@ -375,15 +401,20 @@ public static final String TAG="SettingsTabActivity";
 // H.M.Wang 2020-4-25 设置按确认， 所有参数都生效，  下发一次fpga
 						DataTransferThread dt = DataTransferThread.getInstance(mContext);
 						if(null != dt && dt.isRunning()) {
-							DataTask task = dt.getCurData();
-// 2020-5-8							FpgaGpioOperation.clean();
-							FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
-//							dt.mNeedUpdate = true;
-//							while (dt.mNeedUpdate) {
-//								try{Thread.sleep(10);}catch(Exception e){};
-//							}
-							FpgaGpioOperation.init();
-							dt.resendBufferToFPGA();
+// 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
+							Debug.d(TAG, "Time1 = " + dt.Time1 + "; Time2 = " + dt.Time2 + "; Now = " + System.currentTimeMillis());
+							long delay = Math.min(
+											Math.max(
+												Math.round((dt.Time2 - dt.Time1) * 0.85f) - (System.currentTimeMillis() - dt.Time2),
+												0),
+											4000);
+							Debug.d(TAG, "Dalay " + delay + "ms to write to FPGA");
+							if(delay > 0) {
+								mHandler.sendEmptyMessageDelayed(MSG_DELAYED_FPGA_SETTING, delay);
+							} else {
+								mHandler.sendEmptyMessage(MSG_DELAYED_FPGA_SETTING);
+							}
+// End of 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
 						} else {
 							FpgaGpioOperation.updateSettings(mContext, null, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 						}

@@ -18,6 +18,7 @@
 #ifndef _SC_I2C_DRIVER_H_
 #define _SC_I2C_DRIVER_H_
 
+#include <stdio.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -43,7 +44,7 @@ extern "C" {
         -1：失败
 **********************************************************************************/
 
-int SC_I2C_DRIVER_open(int group_id, int device_address);
+// int SC_I2C_DRIVER_open(int group_id, int device_address);
 
 /*********************************************************************************
     SC_I2C_DRIVER_write
@@ -62,7 +63,7 @@ int SC_I2C_DRIVER_open(int group_id, int device_address);
         -1：失败
 **********************************************************************************/
 
-int SC_I2C_DRIVER_write(int fd, uint8_t reg, uint8_t *data, int length);
+int SC_I2C_DRIVER_write(int group_id, int device_address, uint8_t reg, uint8_t *data, int length);
 
 /*********************************************************************************
     SC_I2C_DRIVER_read
@@ -81,9 +82,9 @@ int SC_I2C_DRIVER_write(int fd, uint8_t reg, uint8_t *data, int length);
         其它值：失败
 **********************************************************************************/
 
-int SC_I2C_DRIVER_read(int fd, uint8_t reg, uint8_t *result, int length);
+int SC_I2C_DRIVER_read(int group_id, int device_address, uint8_t reg, uint8_t *result, int length);
 
-int SC_I2C_DRIVER_close(int fd);
+// int SC_I2C_DRIVER_close(int fd);
 
 #ifdef __cplusplus
 }

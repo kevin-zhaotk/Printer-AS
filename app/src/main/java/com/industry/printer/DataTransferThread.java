@@ -964,10 +964,30 @@ public class DataTransferThread {
 
 	private static int mPrintCount = 0;
 
+// 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
+	public long Time1 = 0;
+	public long Time2 = 0;
+// End of 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
+
+// 2020-6-30 追加是否为网络快速打印的第一次数据生成标识
+	private boolean mFirstForLanFast = false;
+// End of 2020-6-30 追加是否为网络快速打印的第一次数据生成标识
+
 	public class PrintTask extends Thread {
 
 		@Override
 		public void run() {
+// 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
+			Time1 = System.currentTimeMillis();
+			Time2 = System.currentTimeMillis();
+// End of 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
+
+// 2020-6-30 网络快速打印的第一次数据生成标识设真
+			if(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
+				mFirstForLanFast = true;
+			}
+// End of 2020-6-30 网络快速打印的第一次数据生成标识设真
+
 			long last = 0;
 			/*逻辑要求，必须先发数据*/
 			Debug.d(TAG, "--->print run");
@@ -1001,7 +1021,6 @@ public class DataTransferThread {
 */
 //				Debug.d(TAG, "GetPrintDots Done Time: " + System.currentTimeMillis());
 
-				SystemConfigFile config = SystemConfigFile.getInstance(mContext);
 				final StringBuilder sb = new StringBuilder();
 				sb.append("Dots per Head: [");
 				for (int i=0; i<8; i++) {
@@ -1011,8 +1030,8 @@ public class DataTransferThread {
 // 2020-5-11
 // H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 //					if(config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
-					if(config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
-							config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
+					if(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
+						SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
 //						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
 						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R6_PRINT_COPY_NUM - 1));
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
@@ -1030,13 +1049,20 @@ public class DataTransferThread {
 					}
 				});
 
-				Debug.e(TAG, "--->write data");
-				FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+// 2020-6-30 网络快速打印的第一次数据生成后不下发
+				if(!mFirstForLanFast) {
+					Debug.e(TAG, "--->write data");
+					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+				}
+// End of 2020-6-30 网络快速打印的第一次数据生成后不下发
 
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
-				if(mDataTask.size() > 1) {
+// H.M.Wang 2020-6-28 追加向网络发送打印数据缓冲区准备完成消息
+				if(null != mCallback && mDataTask.size() > 1) {
 					mCallback.onPrint(index());
+					mCallback.onComplete(index());
 				}
+// End of H.M.Wang 2020-6-28 追加向网络发送打印数据缓冲区准备完成消息
 // End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 
 				/**  save log */
@@ -1062,6 +1088,8 @@ public class DataTransferThread {
 //					Debug.e(TAG, "--->FPGA error");
 				} else {
 					Debug.d(TAG, "--->FPGA buffer is empty");
+					Time1 = Time2;
+					Time2 = System.currentTimeMillis();
 					if (mCallback != null) {
 						mCallback.onPrinted(index());
 					}
@@ -1121,23 +1149,38 @@ public class DataTransferThread {
 				}
 
 				if(mNeedUpdate == true) {
-					mHandler.removeMessages(MESSAGE_DATA_UPDATE);
+// H.M.Wang 2020-6-28 修改打印数据缓冲区更新策略，当网络快速打印的时候不再根据数据更新重新生成打印缓冲区
+					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) != SystemConfigFile.DATA_SOURCE_FAST_LAN) {
+// End of H.M.Wang 2020-6-28 修改打印数据缓冲区更新策略，当网络快速打印的时候不再根据数据更新重新生成打印缓冲区
+						mHandler.removeMessages(MESSAGE_DATA_UPDATE);
 					//在此处发生打印数据，同时
 // H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素
-					if (isLanPrint()) {
-						mPrintBuffer = getLanBuffer(index());
-					} else {
-						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
-					}
+						if (isLanPrint()) {
+							mPrintBuffer = getLanBuffer(index());
+						} else {
+// H.M.Wang 2020-6-24 修改重新生成打印缓冲区的时候计数器自动增值和读条码文件下一条的问题
+//							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
+							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
+// End of H.M.Wang 2020-6-24 修改重新生成打印缓冲区的时候计数器自动增值和读条码文件下一条的问题
+						}
 // End of H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素
-					Debug.d(TAG, "===>mPrintBuffer size=" + mPrintBuffer.length);
-					// H.M.Wang 2019-12-20 关闭print.bin保存
-//					// H.M.Wang 2019-12-17 每次重新生成print内容后，都保存print.bin
-//					BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads);
-//					// End.
-					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length*2);
-					mHandler.sendEmptyMessageDelayed(MESSAGE_DATA_UPDATE, MESSAGE_EXCEED_TIMEOUT);
-					mNeedUpdate = false;
+						Debug.d(TAG, "===>mPrintBuffer size=" + mPrintBuffer.length);
+						// H.M.Wang 2019-12-20 关闭print.bin保存
+//						// H.M.Wang 2019-12-17 每次重新生成print内容后，都保存print.bin
+//						BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads);
+//						// End.
+						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+						mHandler.sendEmptyMessageDelayed(MESSAGE_DATA_UPDATE, MESSAGE_EXCEED_TIMEOUT);
+						mNeedUpdate = false;
+// 2020-6-30 网络快速打印时第一次收到网络数据后下发
+					} else if(mFirstForLanFast) {
+						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
+						Debug.d(TAG, "First print buffer deliver to FPGA. size = " + mPrintBuffer.length);
+						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+						mNeedUpdate = false;
+						mFirstForLanFast = false;
+					}
+// End of 2020-6-30 网络快速打印时第一次收到网络数据后下发
 				}
 				try {
 					Thread.sleep(10);
@@ -1147,7 +1190,6 @@ public class DataTransferThread {
 				}
 				//Debug.d(TAG, "===>kernel buffer empty, fill it");
 				//TO-DO list 下面需要把打印数据下发
-
 			}
 			rollback();
 		}

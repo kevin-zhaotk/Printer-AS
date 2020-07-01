@@ -552,7 +552,10 @@ public class MessageObject extends BaseObject {
 		}
 
 // H.M.Wang 2019-9-29 保留小数点后1位
-		return String.format("%.1f", h);
-//		return String.valueOf(h);
+//  H.M.Wang 2019-6-24 西班牙语时，通过String.format("%.1f", h)转换会把6.0转为6,0。强制转回来
+//		return String.format("%.1f", h);	// 似乎不需要这个转换
+//		Debug.d(TAG, "String.valueOf(h) = " + String.valueOf(h));
+		return String.valueOf(h);
+//  End of H.M.Wang 2019-6-24 西班牙语时，通过String.format("%.1f", h)转换会把6.0转为6,0。强制转回来
 	}
 }

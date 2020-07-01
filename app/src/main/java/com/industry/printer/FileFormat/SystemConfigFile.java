@@ -141,6 +141,9 @@ public class SystemConfigFile{
 // H.M.Wang 2020-6-9 追加串口6协议
 	public static final int DATA_SOURCE_RS231_6 	= 9;		// 数据源使用串口协议6。接收19位字符串，第8, 9, 10, 11, 13, 14分别设置给DT0-DT5
 // End of H.M.Wang 2020-6-9 追加串口6协议
+// H.M.Wang 2020-6-28 追加专门为网络快速打印设置
+	public static final int DATA_SOURCE_FAST_LAN 	= 10;		// 快速网络打印
+// End of H.M.Wang 2020-6-28 追加专门为网络快速打印设置
 
 // H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
 	public static final int DIRECTION_NORMAL = 0;

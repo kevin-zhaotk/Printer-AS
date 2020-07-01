@@ -21,7 +21,7 @@ public class PCCommand {
     public static final String CMD_STOP_PRINT = "500";
 
     /** 设置计数器 */
-    public static final String CMD_SET_COUNTER = "600";
+    public static final String CMD_SET_REMOTE = "600";
 
     /** 生成tlk */
     public static final String CMD_MAKE_TLK = "700";
@@ -48,6 +48,10 @@ public class PCCommand {
     /** 打印归零 */
     public static final String CMD_SET_CLEAN = "Clean";
     // End of H.M.Wang 2019-12-25 追加速度和清洗命令
+
+// H.M.Wang 2020-7-1 追加一个计数器设置数值命令
+    public static final String CMD_SET_COUNTER = "Counter";
+// End of H.M.Wang 2020-7-1 追加一个计数器设置数值命令
 
     /** 包头 */
     public String header;
