@@ -81,7 +81,7 @@ public class CounterEditDialog extends Dialog implements android.view.View.OnCli
                             ArrayList<BaseObject> objList = dt.mDataTask.get(i).getObjList();
                             for(BaseObject o : objList) {
                                 if(o instanceof CounterObject) {
-                                    if(((CounterObject)o).mCounterIndex == mIndex) {
+                                    if(((CounterObject)o).getmCounterIndex() == mIndex) {
                                         ((CounterObject)o).setValue(value);
                                         modified = true;
                                     }

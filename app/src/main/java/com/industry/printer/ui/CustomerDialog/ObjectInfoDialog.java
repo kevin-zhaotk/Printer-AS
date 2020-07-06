@@ -117,8 +117,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 	public EditText mShiftVal3;
 	public EditText mShift4;
 	public EditText mShiftVal4;
-	private EditText mMin;
-	private EditText mMax;
+	private EditText mCounterStart;
+	private EditText mCounterEnd;
 	private EditText mCntIndex;
 	private EditText mCntSteplen;
 	public Button	mBtnOk;
@@ -350,8 +350,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		    	mDigits.addTextChangedListener(this);
 			    // mDir = (TextView) findViewById(R.id.spinDirect);
 			    // mDir.setOnClickListener(this);
-			    mMin = (EditText) findViewById(R.id.et_start);
-			    mMax = (EditText) findViewById(R.id.et_end);
+				mCounterStart = (EditText) findViewById(R.id.et_start);
+				mCounterEnd = (EditText) findViewById(R.id.et_end);
 			    mCntIndex = (EditText) findViewById(R.id.et_cnt_index);
 			    mCntSteplen = (EditText) findViewById(id.et_cnt_step);
 			}
@@ -420,8 +420,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 // End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
 // H.M.Wang 2020-2-19 追加HyperText控件
 			if (mObject instanceof HyperTextObject) {
-				mMin = (EditText) findViewById(R.id.et_start);
-				mMax = (EditText) findViewById(R.id.et_end);
+				mCounterStart = (EditText) findViewById(R.id.et_start);
+				mCounterEnd = (EditText) findViewById(R.id.et_end);
 				mCntIndex = (EditText) findViewById(R.id.et_cnt_index);
 
 				mShift1 = (EditText) findViewById(R.id.edit_shift1);
@@ -485,14 +485,13 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						else if(mObject instanceof CounterObject)
 						{
 							((CounterObject) mObject).setBits(Integer.parseInt(mDigits.getText().toString()));
-							// ((CounterObject) mObject).setDirection("increase".equals(mDir.getText().toString())?true:false);
-							((CounterObject) mObject).setRange(StringUtil.parseInt(mMin.getText().toString()), 
-									StringUtil.parseInt(mMax.getText().toString()));
-							((CounterObject) mObject).setContent(mContent.getText().toString());
-							((CounterObject) mObject).mCounterIndex = Integer.valueOf(mCntIndex.getText().toString());
-							((CounterObject) mObject).mStepLen = Integer.valueOf(mCntSteplen.getText().toString());
-							// ((CounterObject) mObject).setMin(StringUtil.parseInt(mMin.getText().toString()));
-							// ((CounterObject) mObject).setMax(StringUtil.parseInt(mMax.getText().toString()));
+							((CounterObject) mObject).setRange(StringUtil.parseInt(mCounterStart.getText().toString()),
+									StringUtil.parseInt(mCounterEnd.getText().toString()));
+// H.M.Wang 2020-7-3 CounterObject内容不参与编辑
+//							((CounterObject) mObject).setContent(mContent.getText().toString());
+// End of H.M.Wang 2020-7-3 CounterObject内容不参与编辑
+							((CounterObject) mObject).setCounterIndex(Integer.valueOf(mCntIndex.getText().toString()));
+							((CounterObject) mObject).setSteplen(Integer.valueOf(mCntSteplen.getText().toString()));
 						}
 						else if(mObject instanceof BarcodeObject)
 						{
@@ -546,8 +545,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 							((HyperTextObject) mObject).setContent(mContent.getText().toString());
 //							((HyperTextObject) mObject).setContent("A@YB@MC@DD@HE@mF@sG@SH@wI@WJ@2K@3CL@4CCM@5CCC --- @ --- A@YB@MC@DD@HE@mF@sG@SH@wI@WJ@2K@3CL@4CCM@5CCC");
 							((HyperTextObject) mObject).setCounterIndex(mCntIndex.getText().toString());
-							((HyperTextObject) mObject).setCounterStart(mMin.getText().toString());
-							((HyperTextObject) mObject).setCounterEnd(mMax.getText().toString());
+							((HyperTextObject) mObject).setCounterStart(mCounterStart.getText().toString());
+							((HyperTextObject) mObject).setCounterEnd(mCounterEnd.getText().toString());
 							((HyperTextObject) mObject).setShiftTime(0, mShift1.getText().toString());
 							((HyperTextObject) mObject).setShiftValue(0, mShiftVal1.getText().toString());
 							((HyperTextObject) mObject).setShiftTime(1, mShift2.getText().toString());
@@ -712,8 +711,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 					mOffset.setText(String.valueOf(((RealtimeObject) mObject).getOffset()));
 // H.M.Wang 2020-2-17 追加HyperText控件
 				} else if(mObject instanceof HyperTextObject) {
-					mMin.setText(String.valueOf(((HyperTextObject) mObject).getCounterStart()));
-					mMax.setText(String.valueOf(((HyperTextObject) mObject).getCounterEnd()));
+					mCounterStart.setText(String.valueOf(((HyperTextObject) mObject).getCounterStart()));
+					mCounterEnd.setText(String.valueOf(((HyperTextObject) mObject).getCounterEnd()));
 					mCntIndex.setText(String.valueOf(((HyperTextObject)mObject).getCounterIndex()));
 					mShift1.setText( String.valueOf(((HyperTextObject)mObject).getShiftTime(0)));
 					mShiftVal1.setText(((HyperTextObject)mObject).getShiftValue(0));
@@ -735,9 +734,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				{
 					mDigits.setText(String.valueOf( ((CounterObject) mObject).getBits()));
 					// mDir.setText( ((CounterObject) mObject).getDirection());
-					mMin.setText(String.valueOf(((CounterObject) mObject).getStart()));
-					mMax.setText(String.valueOf(((CounterObject) mObject).getEnd()));
-					mCntIndex.setText(String.valueOf(((CounterObject)mObject).mCounterIndex));
+					mCounterStart.setText(String.valueOf(((CounterObject) mObject).getStart()));
+					mCounterEnd.setText(String.valueOf(((CounterObject) mObject).getEnd()));
+					mCntIndex.setText(String.valueOf(((CounterObject)mObject).getmCounterIndex()));
 					mCntSteplen.setText(String.valueOf(((CounterObject)mObject).getSteplen()));
 				}
 				else if(mObject instanceof BarcodeObject)
@@ -805,6 +804,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 // H.M.Wang 2020-6-11 追加HyperText控件
 			mObject instanceof DynamicText ||
 // End of H.M.Wang 2020-6-11 追加HyperText控件
+// H.M.Wang 2020-7-3 CounterObject内容不参与编辑
+				mObject instanceof CounterObject ||
+// End of H.M.Wang 2020-7-3 CounterObject内容不参与编辑
 			mObject instanceof GraphicObject ||
 			mObject instanceof RealtimeSecond ||
 			mObject instanceof ShiftObject ||
@@ -1087,10 +1089,10 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		if (s.toString().length() <= 0) {
 			return;
 		}
-		mMin.setText("0");
+		mCounterStart.setText("0");
 		try {
 			int max = (int) Math.pow(10, Integer.parseInt(mDigits.getText().toString())) - 1;
-			mMax.setText(String.valueOf(max));
+			mCounterEnd.setText(String.valueOf(max));
 		} catch (Exception e) {}
 	}
 

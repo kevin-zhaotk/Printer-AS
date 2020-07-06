@@ -20,23 +20,31 @@ import com.industry.printer.hardware.RTCDevice;
 
 public class CounterObject extends BaseObject {
 	private static final String TAG = CounterObject.class.getSimpleName();
-	
-	public int mBits;
-	public boolean mDirection;
-	public int mStart;
-	public int mEnd;
-	public int mValue;
-	public int mStepLen;
+
+	private enum Direction {
+		INCREASE, DECREASE
+	};
+
+	private int mBits;
+	private int mStart;
+	private int mEnd;
+	private Direction mDirection;
+	private int mValue;
+	private int mStepLen;
 	// 计数器初始值对应设置里10个计数器值的编号
-	public int mCounterIndex;
+	private int mCounterIndex;
 	//public int mCurVal;
 
 	public CounterObject(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_CNT, x);
-		mStart=0;
+		mBits = 5;
+		mStart = 0;
+		mEnd = 99999;
+		mValue = 0;
+		mDirection = Direction.INCREASE;
 		mStepLen=1;
-		mDirection = true;
-		setBits(5);
+		mCounterIndex = 0;
+		mContent = "1";
 	}
 
 	public CounterObject(Context context, BaseObject parent, float x) {
@@ -44,34 +52,43 @@ public class CounterObject extends BaseObject {
 		mParent = parent;
 	}
 
-	public void setBits(int n)
-	{
-		mBits = n;
-		mValue = 1;
-		setContent(BaseObject.intToFormatString(mValue, mBits));
-		mEnd = (int) Math.pow(10, mBits) -1;
+	public void setBits(int bits) {
+		if(mBits == bits) return;
+
+		mBits = bits;
+		Debug.d(TAG, "Set bits: " + mBits);
+
+		int max = (int)Math.pow(10, mBits) - 1;
+
+		mStart = (mDirection == Direction.INCREASE ? (mStart > max ? 0 : mStart) : (mStart > max ? max : mStart));
+		mEnd = (mDirection == Direction.INCREASE ? (mEnd > max ? max : mEnd) : (mEnd > max ? 0 : mEnd));
+
+		mValue = (mDirection == Direction.INCREASE ? Math.max(mValue, mStart) : Math.min(mValue, mStart));
+		mValue = (mDirection == Direction.INCREASE ? Math.min(mValue, mEnd) : Math.max(mValue, mEnd));
+
+		super.setContent(BaseObject.intToFormatString(mValue, mBits));
+
 		// H.M.Wang 2019-10-8 根据位数调整宽度
 		setWidth(mPaint.measureText(getContent()));
 	}
-	
-//	@Override
-//	public void setContent(String content) {
-//		super.setContent(content);
-//		
-//	}
 	
 	public int getBits()
 	{
 		return mBits;
 	}
-	
-	public void setStart(int begin)
-	{
-		mStart = begin;
-// H.M.Wang 2020-2-20 增加计数器边界设置后越界数值的调整
-		mValue = mDirection ? Math.max(mValue, mStart) : Math.min(mValue, mStart);
-		mContent = BaseObject.intToFormatString(mValue, mBits);
-// End of H.M.Wang 2020-2-20 增加计数器边界设置后越界数值的调整
+
+	public void setStart(int begin)	{
+		if(mStart == begin) return;
+
+		int max = (int)Math.pow(10, mBits) - 1;
+		mStart = Math.max(1, Math.min(max, begin));
+		Debug.d(TAG, "Set start: " + mStart);
+
+		mDirection = (mStart <= mEnd ? Direction.INCREASE : Direction.DECREASE);
+		Debug.d(TAG, "direction: " + mDirection);
+
+		mValue = (mDirection == Direction.INCREASE ? Math.max(mValue, mStart) : Math.min(mValue, mStart));
+//		mValue = (mDirection == Direction.INCREASE ? Math.min(mValue, mEnd) : Math.max(mValue, mEnd));
 	}
 	
 	public int getStart()
@@ -79,13 +96,18 @@ public class CounterObject extends BaseObject {
 		return mStart;
 	}
 	
-	public void setEnd(int end)
-	{
-		mEnd = end;
-// H.M.Wang 2020-2-20 增加计数器边界设置后越界数值的调整
-		mValue = mDirection ? Math.min(mValue, mEnd) : Math.max(mValue, mEnd);
-		mContent = BaseObject.intToFormatString(mValue, mBits);
-// End of H.M.Wang 2020-2-20 增加计数器边界设置后越界数值的调整
+	public void setEnd(int end)	{
+		if(mEnd == end) return;
+
+		int max = (int)Math.pow(10, mBits) - 1;
+		mEnd = Math.max(1, Math.min(max, end));
+		Debug.d(TAG, "Set end: " + mEnd);
+
+		mDirection = (mStart <= mEnd ? Direction.INCREASE : Direction.DECREASE);
+		Debug.d(TAG, "direction: " + mDirection);
+
+//		mValue = (mDirection == Direction.INCREASE ? Math.max(mValue, mStart) : Math.min(mValue, mStart));
+		mValue = (mDirection == Direction.INCREASE ? Math.min(mValue, mEnd) : Math.max(mValue, mEnd));
 	}
 	
 	public int getEnd()
@@ -94,154 +116,75 @@ public class CounterObject extends BaseObject {
 	}
 	
 	public void setRange(int start, int end) {
+		if(mStart == start && mEnd == end) return;
 
-		mStart = start;
-		mEnd = end;
-		if (start <= end) {
-			mDirection = true;
-		} else {
-			mDirection = false;
+		int max = (int)Math.pow(10, mBits) - 1;
+		mStart = Math.max(0, Math.min(max, start));
+		mEnd = Math.max(0, Math.min(max, end));
 
-		}
-		Debug.i(TAG, "--->setRange: " + start + ", " + end + ", d: " + mDirection);
+		Debug.d(TAG, "Set range: [" + mStart + ", " + mEnd + "]");
+
+		mDirection = (mStart <= mEnd ? Direction.INCREASE : Direction.DECREASE);
+		Debug.d(TAG, "direction: " + mDirection);
+
+		mValue = (mDirection == Direction.INCREASE ? Math.max(mValue, mStart) : Math.min(mValue, mStart));
+		mValue = (mDirection == Direction.INCREASE ? Math.min(mValue, mEnd) : Math.max(mValue, mEnd));
 	}
 
-	public String getDirection()
-	{
+	public String getDirection() {
 		String[] directions = mContext.getResources().getStringArray(R.array.strDirectArray);
-		return mDirection ? directions[0] : directions[1];
+		return (mDirection == Direction.INCREASE ? directions[0] : directions[1]);
 	}
 	
-	public void setSteplen(int step)
-	{
-		if(step < 1) {
-			mStepLen = 1;
-		} else {
-			mStepLen = step;
-		}
+	public void setSteplen(int step) {
+		mStepLen = (step < 1 ? 1 : step);
+		Debug.d(TAG, "Set step: " + mStepLen);
 	}
 	
 	public int getSteplen()
 	{
 		return mStepLen;
 	}
-	
-	public int getValue()
-	{
-		return mValue;
-	}
-	
-		
-	public void setValue(int value)
-	{
-		Debug.d(TAG, "SetValue = " + value);
-		if( mStart < mEnd) {
-			if(value < mStart || value> mEnd) {
-				mValue = mStart;
-			}
-			else {
-				mValue = value;
-			}
-		} else {
-			if (value > mStart || value < mEnd) {
-				mValue = mStart;
-			} else {
-				mValue = value;
-			}
-		}
-		mContent = BaseObject.intToFormatString(mValue, mBits);
+
+	public void setValue(int value) {
+//		if(mDirection == Direction.INCREASE ? value > mEnd || value < mStart : value < mEnd || value > mStart) return;
+		if(mValue == value) return;
+
+		mValue = Math.min(Math.max(value, Math.min(mStart, mEnd)), Math.max(mStart, mEnd));
+
+		SystemConfigFile.getInstance(mContext).setParamBroadcast(mCounterIndex + SystemConfigFile.INDEX_COUNT_1, mValue);
+		RTCDevice.getInstance(mContext).write(mValue, mCounterIndex);
+
+		Debug.d(TAG, "Set value: " + mValue);
+
+		super.setContent(BaseObject.intToFormatString(mValue, mBits));
 	}
 
 	@Override
 	public void setContent(String content) {
 		try{
-			Debug.d(TAG, "--->setContent content="+content);
-			int value = Integer.parseInt(content);
-			Debug.d(TAG, "setContent value="+value);
-			setValue(value);
+			setValue(Integer.parseInt(content));
+			Debug.d(TAG, "Set content: [" + getContent() + "]");
 		} catch (Exception e) {
-			mValue = mStart;
-			Debug.d(TAG, "--->setContent exception: " + e.getMessage());
+			Debug.e(TAG, "Set Content Exception: " + e.getMessage());
 		}
-		mContent = BaseObject.intToFormatString(mValue, mBits);
-
-//		Debug.d(TAG, "setContent content="+content+", value="+mValue+", mMax="+mMax);
-	}
-/*
-	private String mRemoteContent = "";
-
-	public void setRemoteContent(String content) {
-		// H.M.Wang 2019-12-15 切掉超出位数部分的多余字符
-		content = content.substring(0, Math.min(getBits(), content.length()));
-
-		// H.M.Wang 2019-12-5 将传递内容靠左设置在串口数据当中
-		StringBuilder sb = new StringBuilder();
-
-		int cntLength = 0;
-		if(null != content) {
-			cntLength = content.length();
-			sb.append(content);
-		}
-		for(int i=0; i<getBits() - cntLength; i++) {
-			sb.append(" ");
-		}
-		mRemoteContent = sb.toString();
-		mRemoteContent = mRemoteContent.substring(0, getBits());
-
-		Debug.d(TAG, "Index: " + mIndex + "; RemoteContent: " + mRemoteContent);
 	}
 
-	public String getRemoteContent() {
-		return mRemoteContent;
-	}
-*/
-	public String getNext()
-	{
-		Debug.d(TAG, "--->getNext mContent="+mContent+", mValue="+mValue+", mStart="+mStart+", mEnd="+mEnd+", mSteplen=" + mStepLen + " direction=" + mDirection);
-
-		if(mDirection)	//increase
-		{
-			if(mValue+mStepLen > mEnd || mValue < mStart)
-				mValue=mStart;
-			else
-				mValue += mStepLen;
-		}
-		else	//decrease
-		{
-			if(mValue-mStepLen < mEnd)
-				mValue=mStart;
-			else
-				mValue -= mStepLen;
-		}
-
-		String value = mContent;
-		setContent( BaseObject.intToFormatString(mValue, mBits));
-		Debug.d(TAG, "getNext mContent="+mContent+", mValue="+mValue);
-		SystemConfigFile.getInstance(mContext).setParamBroadcast(mCounterIndex + SystemConfigFile.INDEX_COUNT_1, Integer.valueOf(value));
-		RTCDevice.getInstance(mContext).write(Integer.valueOf(value), mCounterIndex);
-		return value;
+	public void goNext() {
+		int value = (mDirection == Direction.INCREASE ? mValue + mStepLen : mValue - mStepLen);
+		setValue(mDirection == Direction.INCREASE ? (value > mEnd ? mStart : value) : (value < mEnd ? mStart : value));
 	}
 
-	public void rollback() {
-		Debug.d(TAG, "--->rollback value: " + mValue);
-		if(!mDirection)	//increase
-		{
-			if(mValue+mStepLen > mStart || mValue < mEnd)
-				mValue=mStart;
-			else
-				mValue += mStepLen;
-		}
-		else	//decrease
-		{
-			if(mValue-mStepLen < mStart)
-				mValue=mStart;
-			else
-				mValue -= mStepLen;
-		}
-		setContent( BaseObject.intToFormatString(mValue, mBits));
-		Debug.d(TAG, "--->rollback mContent="+mContent+", mValue="+mValue);
+	public void setCounterIndex(int index) {
+		if(index < 0 || index >= 10) return;
+		mCounterIndex = index;
+		Debug.d(TAG, "Set counter index: " + mCounterIndex);
 	}
-	
+
+	public int getmCounterIndex() {
+		return mCounterIndex;
+	}
+
 	public String toString()
 	{
 		float prop = getProportion();

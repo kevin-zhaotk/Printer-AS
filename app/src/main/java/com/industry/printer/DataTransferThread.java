@@ -353,6 +353,12 @@ public class DataTransferThread {
 			}
 		}
 		mNeedUpdate = needUpdate;
+
+// 2020-7-3 标识网络快速打印状态下数据更新
+		if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
+			mDataUpdatedForLanFase = true;
+		}
+// End of 2020-7-3 标识网络快速打印状态下数据更新
 	}
 // End. -----
 
@@ -937,20 +943,22 @@ public class DataTransferThread {
 //		}
 //		return buffer;
 //	}
-	
-	private void rollback() {
-		Debug.d(TAG, "--->rollback");
+
+// H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整
+	private void setCounterNext() {
+		Debug.d(TAG, "--->setCounterNext");
 		if (mDataTask == null) {
 			return;
 		}
 		for (DataTask task : mDataTask) {
 			for (BaseObject object : task.getObjList()) {
 				if (object instanceof CounterObject) {
-					((CounterObject) object).rollback();
+					((CounterObject) object).goNext();
 				}
 			}
 		}
 	}
+// H.M.Wang 2020-7-2 由于调整计数器增量策略，在打印完成时调整
 
 // H.M.Wang 2020-5-6 参数设置页面，在未修改计数器的情况下，点击OK保存后，计数器会跳数，分析是因为设置了	mNeedUpdate=true，重新生成打印缓冲区，重新生成时计数器会自动增量，所以增加了一个重新下发的函数，而不重新生成缓冲区
 	public void resendBufferToFPGA() {
@@ -972,6 +980,10 @@ public class DataTransferThread {
 // 2020-6-30 追加是否为网络快速打印的第一次数据生成标识
 	private boolean mFirstForLanFast = false;
 // End of 2020-6-30 追加是否为网络快速打印的第一次数据生成标识
+
+// 2020-7-3 追加网络快速打印状态下数据是否更新的标识
+	private boolean mDataUpdatedForLanFase = false;
+// End of 2020-7-3 追加网络快速打印状态下数据是否更新的标识
 
 	public class PrintTask extends Thread {
 
@@ -1087,6 +1099,14 @@ public class DataTransferThread {
 				} else if (writable == -1) {
 //					Debug.e(TAG, "--->FPGA error");
 				} else {
+// 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
+					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
+						if(!mDataUpdatedForLanFase) {
+							continue;
+						}
+						mDataUpdatedForLanFase = false;
+					}
+// End of 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
 					Debug.d(TAG, "--->FPGA buffer is empty");
 					Time1 = Time2;
 					Time2 = System.currentTimeMillis();
@@ -1096,6 +1116,10 @@ public class DataTransferThread {
 					mInterval = SystemClock.currentThreadTimeMillis() - last;
 					mHandler.removeMessages(MESSAGE_DATA_UPDATE);
 					mNeedUpdate = false;
+
+// H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整，取消从前在生成打印缓冲区时调整
+					setCounterNext();
+// End of H.M.Wang 2020-7-2 调整计数器增量策略
 
 					synchronized (DataTransferThread.class) {
 ////////////////////////////////////////////////////////
@@ -1169,11 +1193,15 @@ public class DataTransferThread {
 //						// H.M.Wang 2019-12-17 每次重新生成print内容后，都保存print.bin
 //						BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads);
 //						// End.
+						try {sleep(30);}catch(Exception e){};
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 						mHandler.sendEmptyMessageDelayed(MESSAGE_DATA_UPDATE, MESSAGE_EXCEED_TIMEOUT);
 						mNeedUpdate = false;
 // 2020-6-30 网络快速打印时第一次收到网络数据后下发
-					} else if(mFirstForLanFast) {
+// 2020-7-3 追加判断是否有网络快速打印数据更新
+//					} else if(mFirstForLanFast) {
+					} else if(mFirstForLanFast && mDataUpdatedForLanFase) {
+// End of 2020-7-3 追加判断是否有网络快速打印数据更新
 						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
 						Debug.d(TAG, "First print buffer deliver to FPGA. size = " + mPrintBuffer.length);
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
@@ -1191,7 +1219,9 @@ public class DataTransferThread {
 				//Debug.d(TAG, "===>kernel buffer empty, fill it");
 				//TO-DO list 下面需要把打印数据下发
 			}
-			rollback();
+// H.M.Wang 2020-7-2 由于调整计数器增量策略，在打印完成时调整，因此无需rollback
+//			rollback();
+// End of H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整，因此无需rollback
 		}
 	}
 }

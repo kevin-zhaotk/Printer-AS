@@ -405,7 +405,7 @@ public class HyperTextObject extends BaseObject {
 
         for(BaseObject o : mSubObjs) {
             if(o instanceof CounterObject) {
-                ((CounterObject) o).mCounterIndex = mCounterIndex;
+                ((CounterObject) o).setCounterIndex(mCounterIndex);
             }
         }
     }

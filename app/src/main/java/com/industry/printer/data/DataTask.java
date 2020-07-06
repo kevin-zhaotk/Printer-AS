@@ -462,7 +462,10 @@ public class DataTask {
 						var = info.getVarBuffer(((CounterObject) o).getRemoteContent(), true, false);
 					} else {*/
 						info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
-						var = info.getVarBuffer(prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext(), true, false);
+// H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整	，因此生成打印缓冲区的时候，只要取内容即可
+//				var = info.getVarBuffer(prev? ((CounterObject) o).getContent() : ((CounterObject) o).getNext(), true, false);
+						var = info.getVarBuffer(o.getContent(), true, false);
+// End of H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整	，因此生成打印缓冲区的时候，只要取内容即可
 /*					}*/
 //					info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
 					// End. 2019-12-5 -----------
@@ -544,7 +547,9 @@ public class DataTask {
 					} else if (htObj instanceof WeekOfYearObject) {
 						substr = ((WeekOfYearObject) htObj).getContent();
 					} else if (htObj instanceof CounterObject) {
-						substr = ((CounterObject) htObj).getNext();
+// H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整	，因此生成打印缓冲区的时候，只要取内容即可
+						substr = htObj.getContent();
+// End of H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整	，因此生成打印缓冲区的时候，只要取内容即可
 					} else
 						continue;
 					BinInfo info = mVarBinList.get(htObj);

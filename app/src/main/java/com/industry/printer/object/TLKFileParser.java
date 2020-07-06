@@ -282,7 +282,7 @@ public class TLKFileParser  extends TlkFile{
 				if (index < 0 || index >= 10) {
 					index = 0;
 				}
-				((CounterObject) obj).mCounterIndex = index;
+				((CounterObject) obj).setCounterIndex(index);
 				((CounterObject) obj).setValue(conf.getParam(SystemConfigFile.INDEX_COUNT_1 + index));
 				((CounterObject) obj).setSteplen(Integer.parseInt(attr[15]));
 			} else if (BaseObject.OBJECT_TYPE_ELLIPSE.equals(attr[1]))    //ellipse
