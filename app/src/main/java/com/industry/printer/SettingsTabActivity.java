@@ -367,7 +367,9 @@ public static final String TAG="SettingsTabActivity";
 //								try{Thread.sleep(10);}catch(Exception e){};
 //							}
 					FpgaGpioOperation.init();
-					dt.resendBufferToFPGA();
+// H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
+//					dt.resendBufferToFPGA();
+// End of H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
 					break;
 			}
 		}
@@ -408,7 +410,7 @@ public static final String TAG="SettingsTabActivity";
 												Math.round((dt.Time2 - dt.Time1) * 0.85f) - (System.currentTimeMillis() - dt.Time2),
 												0),
 											4000);
-							Debug.d(TAG, "Dalay " + delay + "ms to write to FPGA");
+							Debug.d(TAG, "Delay " + delay + "ms to write to FPGA");
 							if(delay > 0) {
 								mHandler.sendEmptyMessageDelayed(MSG_DELAYED_FPGA_SETTING, delay);
 							} else {

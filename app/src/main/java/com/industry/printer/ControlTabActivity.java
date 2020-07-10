@@ -2570,7 +2570,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //													Thread.sleep(10);
 //												}
 												FpgaGpioOperation.init();
-												mDTransThread.resendBufferToFPGA();
+// H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
+//												mDTransThread.resendBufferToFPGA();
+// End of H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
 // End of H.M.Wang 2019-12-29 修改在打印状态下设置FPGA参数的逻辑
 											}
 											this.sendmsg(Constants.pcOk(msg));
@@ -2598,7 +2600,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //												Thread.sleep(10);
 //											}
 											FpgaGpioOperation.init();
-											mDTransThread.resendBufferToFPGA();
+// H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
+//												mDTransThread.resendBufferToFPGA();
+// End of H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
 // End of H.M.Wang 2019-12-27 重新启动打印
 										}
                                     // End of H.M.Wang 2019-12-25 追加速度和清洗命令
@@ -2619,6 +2623,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 													if(null != dt && dt.isRunning()) {
 														resetCounterIfNeed();
 														dt.mNeedUpdate = true;
+// H.M.Wang 2020-7-9 追加计数器重置标识
+														dt.mCounterReset = true;
+// End of H.M.Wang 2020-7-9 追加计数器重置标识
 													}
 
 													this.sendmsg(Constants.pcOk(msg));

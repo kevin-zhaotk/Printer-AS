@@ -365,7 +365,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     JNIEnv* env = NULL;
     jint result = -1;
 
-    LOGI("SmartCard.so 1.0.260 Loaded.");
+    LOGI("SmartCard.so 1.0.261 Loaded.");
 
     if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
         //__android_log_print(ANDROID_LOG_INFO, JNI_TAG,"ERROR: GetEnv failed\n");

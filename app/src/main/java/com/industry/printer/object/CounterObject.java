@@ -44,7 +44,7 @@ public class CounterObject extends BaseObject {
 		mDirection = Direction.INCREASE;
 		mStepLen=1;
 		mCounterIndex = 0;
-		mContent = "1";
+		mContent = "00000";
 	}
 
 	public CounterObject(Context context, BaseObject parent, float x) {

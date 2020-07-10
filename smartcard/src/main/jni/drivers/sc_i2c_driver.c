@@ -113,78 +113,7 @@ int SC_I2C_DRIVER_close(int fd) {
         0: 成功
         -1：失败
 **********************************************************************************/
-/*
 int SC_I2C_DRIVER_write(int group_id, int device_address, uint8_t reg, uint8_t *data, int length) {
-//    char buf[1024] = {0x00};
-////    memset(buf, 0x00, 1024);
-//    toHexString(data, buf, length, ',');
-//    LOGI(">>> SC_I2C_DRIVER_write: Write [%s](%d bytes) to 0x%02X", buf, length, reg);
-
-    // 检查参数
-    if(reg < 0) {
-        LOGE(">>> SC_I2C_DRIVER_write: Invalid address [0x%02X]", reg);
-        return -1;
-    }
-
-    if(NULL == data || sizeof(data) <= 0) {
-        LOGE(">>> SC_I2C_DRIVER_write: Null or empty data");
-        return -1;
-    }
-
-    int fd = SC_I2C_DRIVER_open(group_id, device_address);
-
-    if(fd < 0) {
-        return -1;
-    }
-
-    if(check_write_i2c_block_data(fd) < 0) {
-        LOGE(">>> SC_I2C_DRIVER_write: I2C_FUNC_SMBUS_WRITE_I2C_BLOCK right failed. %s", strerror(errno));
-        return -1;
-    }
-
-    struct i2c_rdwr_ioctl_data i2c_data;
-    i2c_data.msgs = (struct i2c_msg *)malloc(sizeof(struct i2c_msg));
-
-    char send_buf[length+1];
-
-    i2c_data.nmsgs = 1;
-    i2c_data.msgs[0].len = length+1;                       //目标reg的地址的长度
-    i2c_data.msgs[0].addr = device_address;         //i2c设备地址
-    i2c_data.msgs[0].flags = 0;                     //write flag
-    send_buf[0] = reg;
-    memcpy(&send_buf[1], data, length);
-    i2c_data.msgs[0].buf = send_buf;                //目标reg地址
-
-    int try = 0;
-    time_t s = time(NULL);
-    while(1) {
-        if(ioctl(fd, I2C_RDWR, (unsigned long)&i2c_data) < 0) {
-            usleep(100);
-            try++;
-            LOGI(">>> SC_I2C_DRIVER_write: retry %d", try);
-        } else {
-            LOGI(">>> SC_I2C_DRIVER_write: done.");
-            break;
-        }
-        if(time(NULL)-s > 3) {
-            LOGE(">>> SC_I2C_DRIVER_write: Write data failed. %s", strerror(errno));
-            return -1;
-        }
-    }
-
-    char buf[1024] = {0x00};
-    toHexString(data, buf, length, ',');
-    LOGD(">>> SC_I2C_DRIVER_write: %d bytes written to 0x%02X.\n[%s]", length, reg, buf);
-
-    free(i2c_data.msgs);
-    SC_I2C_DRIVER_close(fd);
-
-    return length;
-}
-*/
-// 第二种实现方法，注意，这个方法还是需要实现打开文件
-int SC_I2C_DRIVER_write(int group_id, int device_address, uint8_t reg, uint8_t *data, int length) {
-//int SC_I2C_DRIVER_write(int fd, uint8_t reg, uint8_t *data, int length) {
 //    char buf[1024] = {0x00};
 ////    memset(buf, 0x00, 1024);
 //    toHexString(data, buf, length, ',');
@@ -220,7 +149,7 @@ int SC_I2C_DRIVER_write(int group_id, int device_address, uint8_t reg, uint8_t *
     memcpy(send_buf + 1, data, length);
 
     int try = 0;
-    while (try < 100) {
+    while (try < 100) {             // Retry upto 100 times
         write_length = write(fd, send_buf, length + 1);
 
         if(write_length >= 0) {
@@ -240,7 +169,6 @@ int SC_I2C_DRIVER_write(int group_id, int device_address, uint8_t reg, uint8_t *
     char buf[1024] = {0x00};
     toHexString(data, buf, write_length-1, ',');
     LOGD(">>> SC_I2C_DRIVER_write: %d bytes written to 0x%02X. Retry = %d\n[%s]", write_length-1, reg, try, buf);
-//    LOGD(">>> SC_I2C_DRIVER_write: [%s](%d bytes) written to 0x%02X", buf, write_length-1, reg);
 
     SC_I2C_DRIVER_close(fd);
 
@@ -261,7 +189,6 @@ int SC_I2C_DRIVER_write(int group_id, int device_address, uint8_t reg, uint8_t *
         >=0: 成功
         -1：失败
 **********************************************************************************/
-/*
 int SC_I2C_DRIVER_read(int group_id, int device_address, uint8_t reg, uint8_t *result, int length) {
 //    LOGI(">>> SC_I2C_DRIVER_read: Read %d bytes from 0x%02X to buffer [0x%08X]", length, reg, (unsigned int )result);
 
@@ -294,89 +221,6 @@ int SC_I2C_DRIVER_read(int group_id, int device_address, uint8_t reg, uint8_t *r
         return -1;
     }
 
-    ioctl(fd, I2C_TIMEOUT, 500);                      //设置超时
-    ioctl(fd, I2C_RETRIES, 100);                      //设置重试次数
-
-//    uint8_t buf1[length] = {0x00};
-//    uint8_t buf2[length] = {0x00};
-
-    struct i2c_rdwr_ioctl_data i2c_data;
-    i2c_data.msgs = (struct i2c_msg *)malloc(2 * sizeof(struct i2c_msg));
-
-    i2c_data.nmsgs = 2;
-    i2c_data.msgs[0].len = 1;                       //目标reg的地址的长度
-    i2c_data.msgs[0].addr = device_address;         //i2c设备地址
-    i2c_data.msgs[0].flags = 0;                     //write flag
-    i2c_data.msgs[0].buf = &reg;                    //目标reg地址
-
-    i2c_data.msgs[1].len = length;                       //目标reg的地址的长度
-    i2c_data.msgs[1].addr = device_address;         //i2c设备地址
-    i2c_data.msgs[1].flags = I2C_M_RD;              //read flag
-    i2c_data.msgs[1].buf = result;                 //分配内存
-
-    int try = 0;
-    time_t s = time(NULL);
-    while(1) {
-        if(ioctl(fd, I2C_RDWR, (unsigned long)&i2c_data) < 0) {
-            usleep(100);
-            try++;
-            LOGI(">>> SC_I2C_DRIVER_read: retry %d", try);
-        } else {
-//            LOGI(">>> SC_I2C_DRIVER_read: done.");
-            break;
-        }
-        if(time(NULL)-s > 3) {
-            LOGE(">>> SC_I2C_DRIVER_read: Read data failed. %s", strerror(errno));
-            return -1;
-        }
-    }
-
-    // Print received data
-    char buf[1024] = {0x00};
-    toHexString(result, buf, length, ',');
-    LOGD(">>> SC_I2C_DRIVER_read: %d bytes read from 0x%02X.\n[%s]", length, reg, buf);
-
-    free(i2c_data.msgs);
-    SC_I2C_DRIVER_close(fd);
-
-    return length;
-}
-*/
-// 第二种实现方法，注意，这个方法还是需要实现打开文件
-int SC_I2C_DRIVER_read(int group_id, int device_address, uint8_t reg, uint8_t *result, int length) {
-//int SC_I2C_DRIVER_read(int fd, uint8_t reg, uint8_t *result, int length) {
-//    LOGI(">>> SC_I2C_DRIVER_read: Read %d bytes from 0x%02X to buffer [0x%08X]", length, reg, (unsigned int )result);
-
-    // 检查参数
-    if(length <= 0) {
-        LOGE(">>> SC_I2C_DRIVER_read: Invalid number [%d]", length);
-        return -1;
-    }
-
-    if(reg < 0) {
-        LOGE(">>> SC_I2C_DRIVER_read: Invalid address [0x%02X]", reg);
-        return -1;
-    }
-
-    if(result == NULL) {
-        LOGE(">>> SC_I2C_DRIVER_read: Null buffer");
-        return -1;
-    }
-
-    int fd;
-
-    fd = SC_I2C_DRIVER_open(group_id, device_address);
-
-    if(fd < 0) {
-        return -1;
-    }
-
-    if(check_read_i2c_block_data(fd) < 0) {
-        LOGE(">>> SC_I2C_DRIVER_read: I2C_FUNC_SMBUS_READ_I2C_BLOCK right failed. %s", strerror(errno));
-        return -1;
-    }
-
-    int read_length = -1;
     int recv_length = -1;
 
     // Write register address to I2C device
@@ -384,40 +228,20 @@ int SC_I2C_DRIVER_read(int group_id, int device_address, uint8_t reg, uint8_t *r
     reg_buf[0] = reg;
 
     int try = 0;
-    while (try < 100) {
+    while (try < 100) {             // Retry upto 100 times
         ssize_t ret = write(fd, reg_buf, 1);
         if(ret < 0) {
 //            LOGE(">>> SC_I2C_DRIVER_read: Write register address failed. %s", strerror(errno));
-            usleep(90);
+            usleep(100);
         } else {
             // Read data from indicated register of the device
-            usleep(10);
+            usleep(100);
             recv_length = read(fd, result, length);
             if(recv_length >= 0) {
                 break;
             } else {
 //                LOGE(">>> SC_I2C_DRIVER_read: Read data failed. %s", strerror(errno));
-                usleep(90);
             }
-/*            recv_length = 0;
-            int try1 = 0;
-            while(recv_length < length && try1 < 100) {
-                usleep(100);
-                read_length = read(fd, result + recv_length, length - recv_length);
-                recv_length += read_length;
-                while(recv_length > 0 && *(result + recv_length - 1) == 0xFF) {
-                    recv_length--;
-                }
-                LOGD(">>> SC_I2C_DRIVER_read: recv_length = %d!", recv_length);
-                try1++;
-            }
-//            if(recv_length >= 0) {
-                LOGD(">>> SC_I2C_DRIVER_read: Read data retry %d.", try1);
-                break;
-//            } else {
-//                LOGE(">>> SC_I2C_DRIVER_read: Read data failed. %s", strerror(errno));
-//            }
-*/
         }
         try++;
     }
@@ -427,13 +251,10 @@ int SC_I2C_DRIVER_read(int group_id, int device_address, uint8_t reg, uint8_t *r
         return -1;
     }
 
-/*    recv_length = length;*/
-
     // Print received data
     char buf[1024] = {0x00};
     toHexString(result, buf, recv_length, ',');
     LOGD(">>> SC_I2C_DRIVER_read: %d bytes read from 0x%02X. Retry = %d\n[%s]", recv_length, reg, try, buf);
-//    LOGD(">>> SC_I2C_DRIVER_read: [%s](%d bytes) read from 0x%02X.", buf, read_length, reg);
 
     SC_I2C_DRIVER_close(fd);
 

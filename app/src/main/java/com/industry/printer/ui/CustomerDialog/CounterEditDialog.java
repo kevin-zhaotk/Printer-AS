@@ -90,6 +90,9 @@ public class CounterEditDialog extends Dialog implements android.view.View.OnCli
                         }
                         if(dt.isRunning() && modified) {
                             dt.mNeedUpdate = true;
+// H.M.Wang 2020-7-9 追加计数器重置标识
+                            dt.mCounterReset = true;
+// End of H.M.Wang 2020-7-9 追加计数器重置标识
                         }
                     }
                     SystemConfigFile.getInstance().setParamBroadcast(mIndex + SystemConfigFile.INDEX_COUNT_1, value);
