@@ -7,6 +7,7 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
 import com.printer.corelib.RFIDData;
 
+@Deprecated
 public class SerialController {
 
 	private final String TAG = SerialController.class.getSimpleName();

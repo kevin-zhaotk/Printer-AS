@@ -1,6 +1,6 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
-LOCAL_CFLAGS := -std=c99
+# LOCAL_CFLAGS := -std=c99
 LOCAL_MODULE := libsmartcard
 LOCAL_MODULE_TAGS := optional
 LOCAL_LDLIBS += -L$(SYSROOT)/usr/lib -llog
@@ -48,6 +48,6 @@ LOCAL_C_INCLUDES += $(LOCAL_PATH)/ifc \
                     $(LOCAL_PATH)/src/hp_smart_card \
                     $(LOCAL_PATH)/src/internal_ifc
 
-LOCAL_C_INCLUDES += system/core/include/cutils
+# LOCAL_C_INCLUDES += system/core/include/cutils
 
 include $(BUILD_SHARED_LIBRARY)

@@ -178,6 +178,9 @@ public class CounterObject extends BaseObject {
 	public void setCounterIndex(int index) {
 		if(index < 0 || index >= 10) return;
 		mCounterIndex = index;
+// H.M.Wang 2020-8-4 变更计数器索引之后，用该计数器的值重新设置本地内容
+		setContent("" + SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_COUNT_1 + index));
+// End of H.M.Wang 2020-8-4 变更计数器索引之后，用该计数器的值重新设置本地内容
 		Debug.d(TAG, "Set counter index: " + mCounterIndex);
 	}
 

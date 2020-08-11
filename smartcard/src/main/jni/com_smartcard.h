@@ -24,7 +24,12 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg);
 /**
  * 检查墨袋参数一致性
  */
-JNIEXPORT jint JNICALL Java_com_Smartcard_chechConsistency(JNIEnv *env, jclass arg, jint card);
+JNIEXPORT jint JNICALL Java_com_Smartcard_checkConsistency(JNIEnv *env, jclass arg);
+
+/**
+ * 读取合法性检查数据，仅为认证使用
+ */
+JNIEXPORT jstring JNICALL Java_com_Smartcard_readConsistency(JNIEnv *env, jclass arg);
 
 /**
  * 检查墨袋是否已经用完
@@ -36,8 +41,14 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_checkOIB(JNIEnv *env, jclass arg, jint
  */
 JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, jint card);
 
+/**
+ * 减锁操作
+ */
 JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jint card);
 
+/**
+ * 读取Level值
+ */
 JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jint card);
 
 

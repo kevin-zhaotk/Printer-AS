@@ -186,7 +186,13 @@ public class MessageObject extends BaseObject {
 		{
             // H.M.Wang 修改下列两行
 //            int ratio = (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) ? 1 : 2 ;
-            int ratio = (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) ? 1 : 2 ;
+// H.M.Wang 2020-7-23 追加32DN打印头
+//			int ratio = (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) ? 1 : 2 ;
+			int ratio =(mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
+						mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
+						mPNozzle == PrinterNozzle.MESSAGE_TYPE_32DN ||
+						mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) ? 1 : 2 ;
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 
 //			str += mId+"^";
 //			str += "00000^00000^00000^00000^0^000^";
@@ -252,7 +258,10 @@ public class MessageObject extends BaseObject {
 			for (int i = 0; i < size.length; i++) {
 				size[i] = mDotSizes[i];
 			}
-		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+// H.M.Wang 2020-7-23 追加32DN打印头
+//		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32DN) {
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 			size = new String[mDot_32_Size.length];
 			for (int i = 0; i < size.length; i++) {
 				size[i] = mDot_32_Size[i];
@@ -331,7 +340,10 @@ public class MessageObject extends BaseObject {
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 			}
-		} else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT ) { //addbylk
+// H.M.Wang 2020-7-23 追加32DN打印头
+//		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT ) { //addbylk
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32DN) {
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 // H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 // H.M.Wang 2020-4-15 追加"5x5"字体
 			if (size.equalsIgnoreCase(mDot_32_Size[0])) {
@@ -421,45 +433,51 @@ public class MessageObject extends BaseObject {
 //			h = 4 * (size/PIXELS_PER_MM);
 //			type = 4;
 //		} else
+
+// H.M.Wang 2020-8-8 在每个判断高度得if语句里面，准确计算的数值后面都+1，目的是为了解决在保存时，由于四舍五入会导致数值偏差，再次读入时会发生错误。如：
 		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 // H.M.Wang 2020-4-15 追加"5x5"字体
-			if (size <= 152f * 5 / 16) {
+			if (size <= 152f * 5 / 16 + 1) {
 				return mDotSizes[0];
-			} else if (size <= 152f * 8 / 16) {
+			} else if (size <= 152f * 8 / 16 + 1) {
 				return mDotSizes[1];
 // H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 //			} else {
 //				return mDotSizes[1];
-            } else if(size <= 152f * 10 / 16) {
+            } else if(size <= 152f * 10 / 16 + 1) {
                 return mDotSizes[2];
-            } else if(size <= 152f * 12 / 16) {
+            } else if(size <= 152f * 12 / 16 + 1) {
                 return mDotSizes[3];
-            } else if(size <= 152f * 14 / 16) {
+            } else if(size <= 152f * 14 / 16 + 1) {
                 return mDotSizes[4];
             } else {
 //				return mDotSizes[4];
                 return mDotSizes[5] + "," + mDotSizes[6] + "," + mDotSizes[7];
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 			}
-		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+// H.M.Wang 2020-7-23 追加32DN打印头
+//		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_32_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32DN) {
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 
-			if (size <= 152f * 5 / 32) {
+			if (size <= 152f * 5 / 32 + 1) {
 				return mDot_32_Size[0];
-			} else if (size <= 152f * 8 / 32) {
+			} else if (size <= 152f * 8 / 32 + 1) {
 				return mDot_32_Size[1];
 // H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
-            } else if (size <= 152f * 10 / 32) {
+            } else if (size <= 152f * 10 / 32 + 1) {
                 return mDot_32_Size[2];
-            } else if (size <= 152f * 12 / 32) {
+            } else if (size <= 152f * 12 / 32 + 1) {
                 return mDot_32_Size[3];
-            } else if (size <= 152f * 14 / 32) {
+            } else if (size <= 152f * 14 / 32 + 1) {
                 return mDot_32_Size[4];
-            } else if (size <= 152f * 16 / 32) {
+            } else if (size <= 152f * 16 / 32 + 1) {
 				return mDot_32_Size[5] + "," + mDot_32_Size[6] + "," + mDot_32_Size[7];
 // H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
-			} else if (size <= 152f * 19 / 32) {
+			} else if (size <= 152f * 19 / 32 + 1) {
 				return mDot_32_Size[8];
-			} else if (size <= 152f * 21.1f / 32) {		// 应该是21，但是由于设置高的时候，取得RealPixel=12.7x21/32=8.334375，
+			} else if (size <= 152f * 21 / 32 + 1) {
+//			} else if (size <= 152f * 21.1f / 32 + 1) {	// 【已经取消21.1f的处理方式，改为+1】应该是21，但是由于设置高的时候，取得RealPixel=12.7x21/32=8.334375，
 														// 再乘以PIXELS_PER_MM(12)= 100.0125，取整=100。而这里计算的152x21/32=99.75，
 														// 出现误差，导致判断错误。所以只好设21.1。实际上这两个方向的计算因为不是完全反运算，
 														// 因此产生误差难免，应该采用完全封闭的反运算才合理
@@ -510,33 +528,35 @@ public class MessageObject extends BaseObject {
 
         // H.M.Wang 追加下列10行
         } else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
-			if (size <= 152f * 5 / 64) {
+			if (size <= 152f * 5 / 64 + 1) {
 				return mDot_64_Size[0];
-			} else if (size <= 152f * 8 / 64) {
+			} else if (size <= 152f * 8 / 64 + 1) {
                 return mDot_64_Size[1];
 // H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
-            } else if (size <= 152f * 10 / 64) {
+            } else if (size <= 152f * 10 / 64 + 1) {
                 return mDot_64_Size[2];
-            } else if (size <= 152f * 12 / 64) {
+            } else if (size <= 152f * 12 / 64 + 1) {
                 return mDot_64_Size[3];
-            } else if (size <= 152f * 14 / 64) {
+            } else if (size <= 152f * 14 / 64 + 1) {
                 return mDot_64_Size[4];
-			} else if (size <= 152f * 16 / 64) {
+			} else if (size <= 152f * 16 / 64 + 1) {
 				return mDot_64_Size[5] + "," + mDot_64_Size[6] + "," + mDot_64_Size[7];
 // H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
-			} else if (size <= 152f * 19 / 64) {
+			} else if (size <= 152f * 19 / 64 + 1) {
 				return mDot_64_Size[8];
-			} else if (size <= 152f * 21.1f / 64) {
+			} else if (size <= 152f * 21 / 64 + 1) {
+//			} else if (size <= 152f * 21.1f / 64 + 1) {
 				return mDot_64_Size[9];
 // End of H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
-			} else if (size <= 152f * 24 / 64) {
+			} else if (size <= 152f * 24 / 64 + 1) {
 				return mDot_64_Size[10];
-			} else if (size <= 152f * 32 / 64) {
+			} else if (size <= 152f * 32 / 64 + 1) {
 				return mDot_64_Size[11];
             } else {
 				return mDot_64_Size[12];
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
             }
+// End of H.M.Wang 2020-8-8 在每个判断高度得if语句里面，准确计算的数值后面都+1，目的是为了解决在保存时，由于四舍五入会导致数值偏差，再次读入时会发生错误。如：
         } else {
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
 // H.M.Wang 2019-9-29 去除ScaleH，否则会由于其采用了308/304而使得计算结果被放大

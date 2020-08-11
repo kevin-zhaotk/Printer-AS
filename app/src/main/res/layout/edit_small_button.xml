@@ -13,7 +13,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:id="@+id/btn_new_tv"
@@ -35,7 +35,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:id="@+id/btn_open_tv"
@@ -57,7 +57,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:id="@+id/btn_save_tv"
@@ -79,7 +79,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:id="@+id/btn_saveas_tv"
@@ -133,7 +133,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:id="@+id/btn_cursor_tv"

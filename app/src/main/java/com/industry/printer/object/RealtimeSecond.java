@@ -75,16 +75,16 @@ public class RealtimeSecond extends BaseObject {
 
         String str_new_content="";
         str_new_content =	mContent;
-        str_new_content =	str_new_content.replace('0', 'H');
-        str_new_content =	str_new_content.replace('1', 'H');
-        str_new_content =	str_new_content.replace('2', 'H');
-        str_new_content =	str_new_content.replace('3', 'H');
-        str_new_content =	str_new_content.replace('4', 'H');
-        str_new_content =	str_new_content.replace('5', 'H');
-        str_new_content =	str_new_content.replace('6', 'H');
-        str_new_content =	str_new_content.replace('7', 'H');
-        str_new_content =	str_new_content.replace('8', 'H');
-        str_new_content =	str_new_content.replace('9', 'H');
+        str_new_content =	str_new_content.replace('0', 'S');
+        str_new_content =	str_new_content.replace('1', 'S');
+        str_new_content =	str_new_content.replace('2', 'S');
+        str_new_content =	str_new_content.replace('3', 'S');
+        str_new_content =	str_new_content.replace('4', 'S');
+        str_new_content =	str_new_content.replace('5', 'S');
+        str_new_content =	str_new_content.replace('6', 'S');
+        str_new_content =	str_new_content.replace('7', 'S');
+        str_new_content =	str_new_content.replace('8', 'S');
+        str_new_content =	str_new_content.replace('9', 'S');
 
         int width = (int)mPaint.measureText(str_new_content);//addbylk �����ߴ�
         Debug.d(TAG, "--->content: " + getContent() + "  width=" + width);

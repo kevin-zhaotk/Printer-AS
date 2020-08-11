@@ -40,6 +40,58 @@ import org.w3c.dom.Text;
 public class BarcodeObject extends BaseObject {
 	private static final String TAG = BarcodeObject.class.getSimpleName();
 
+	/** EAN-8 1D format. */
+	public static final String BARCODE_FORMAT_EAN8 				= "EAN8";
+	/** EAN-13 1D format. */
+	public static final String BARCODE_FORMAT_EAN13 			= "EAN13";
+	/** EAN-128 1D format? Not Found */
+	public static final String BARCODE_FORMAT_EAN128 			= "EAN128";
+	/** Code 128 1D format. */
+	public static final String BARCODE_FORMAT_CODE128 			= "CODE_128";
+	/** Code 39 1D format. */
+	public static final String BARCODE_FORMAT_CODE39 			= "CODE_39";
+	/** UPC-A 1D format. */
+	public static final String BARCODE_FORMAT_UPC_A 			= "UPC_A";
+	/** ITF (Interleaved Two of Five) 1D format. */
+	public static final String BARCODE_FORMAT_ITF_14 			= "ITF_14";
+	/** QR Code 2D barcode format. */
+	public static final String BARCODE_FORMAT_QR 				= "QR";
+	/** Data Matrix 2D barcode format. */
+	public static final String BARCODE_FORMAT_DM 				= "DM";
+
+	/** Data Matrix 2D barcode format. */
+	public static final String BARCODE_FORMAT_DATA_MATRIX 		= "DATA_MATRIX";
+
+	/** Code 93 1D format. */
+	public static final String BARCODE_FORMAT_CODE93 			= "CODE_93";
+	/** CODABAR 1D format. */
+	public static final String BARCODE_FORMAT_CODABAR 			= "CODABAR";
+	/** UPC-E 1D format. */
+	public static final String BARCODE_FORMAT_UPC_E 			= "UPC_E";
+	/** RSS 14 */
+	public static final String BARCODE_FORMAT_RSS14 			= "RSS14";
+	/** RSS EXPANDED */
+	public static final String BARCODE_FORMAT_RSS_EXPANDED 		= "RSS_EXPANDED";
+	/** Aztec 2D barcode format. */
+	public static final String BARCODE_FORMAT_RSS_AZTEC 		= "AZTEC";
+	/** PDF417 format. */
+	public static final String BARCODE_FORMAT_RSS_PDF_417 		= "PDF_417";
+
+	/** MaxiCode 2D barcode format. */
+	// MAXICODE,
+	/** UPC/EAN extension format. Not a stand-alone format. */
+	// UPC_EAN_EXTENSION
+
+	private static final int CODE_EAN8 							= 0;
+	private static final int CODE_EAN13 						= 1;
+	private static final int CODE_EAN128 						= 2;
+	private static final int CODE_CODE128 						= 3;
+	private static final int CODE_CODE39 						= 5;
+	private static final int CODE_UPC_A 						= 6;
+	private static final int CODE_ITF_14 						= 7;
+	private static final int CODE_QR 							= 0;
+	private static final int CODE_DM 							= 8;
+
 	private static final int QUIET_ZONE_SIZE = 4;
 	private static final int STROKE_WIDTH = 3;
 	
@@ -51,6 +103,11 @@ public class BarcodeObject extends BaseObject {
 // H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
 	private boolean mWithFrame;
 // End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+
+// H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+	private HyperTextObject mHTContent = null;
+	private String mOrgContent = "";
+// End of H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
 
 //	public Bitmap mBinmap;
 	
@@ -66,6 +123,11 @@ public class BarcodeObject extends BaseObject {
 // H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
 		mWithFrame = true;
 // End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+
+// H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+		mHTContent = new HyperTextObject(context, x);
+// End of H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+
 		mFormat="CODE_128";
 		if (mSource == true) {
 			setContent("123456789");
@@ -73,9 +135,7 @@ public class BarcodeObject extends BaseObject {
 			setContent("");
 		}
 		mWidth=0;
-		
 	}
-
 	public void setCode(String code)
 	{
 		
@@ -149,9 +209,12 @@ public class BarcodeObject extends BaseObject {
 
 // H.M.Wang 2019-12-15 原来判断是否为二维动态二维码的逻辑可能有问题
 	// H.M.Wang 2019-9-21 二维码有两种QRCode和DynamicQRCode，只有第二种需要隐藏内容编辑窗，为此增加判断动态二维码的函数
-	public boolean isDynamicQRCode() {
+	public boolean isDynamicCode() {
 //		return isQRCode() && mName.equals(mContext.getString(R.string.object_dynamic_qr));
-		return is2D() && mSource;
+// H.M.Wang 2020-7-29 所有条码均可以设置为动态条码
+//		return is2D() && mSource;
+		return mSource;
+// End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码
 	}
 // End. ----
 
@@ -188,15 +251,28 @@ public class BarcodeObject extends BaseObject {
 	public int getTextsize() {
 		return mTextSize;
 	}
+
 	@Override
 	public void setContent(String content)
 	{
-		mContent=content;
+// H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+		mOrgContent = content;
+		mHTContent.setContent(content);
+		mContent = mHTContent.getExpandedContent();
+//		mContent=content;
+// End of H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
 		if (!is2D()) {
 			mWidth = 0;
 		}
 		isNeedRedraw = true;
 	}
+
+// H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本，所以返回原始内容，而非转化内容
+	@Override
+	public String getContent() {
+		return mOrgContent;
+	}
+// End of H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本，所以返回原始内容，而非转化内容
 /*
     // H.M.Wang 修改。取消原来的子元素均等加减1的缩放方法，改为均等缩放
     public void wide() {
@@ -220,12 +296,21 @@ public class BarcodeObject extends BaseObject {
 	public void setSource(boolean dynamic) {
 		mSource  = dynamic;
 		if (dynamic) {
-			mName = mContext.getString(R.string.object_dynamic_qr);
-			setContent("dynamic");
+// H.M.Wang 2020-7-29 所有条码均可以设置为动态条码
+			if (is2D()) {
+				mName = mContext.getString(R.string.object_dynamic_qr);
+			} else {
+				mName = mContext.getString(R.string.object_dynamic_barcode);
+			}
+//			mName = mContext.getString(R.string.object_dynamic_qr);
+// End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码
+// H.M.Wang 2020-8-11 动态条码内容设置为123456
+//			setContent("dynamic");
+			setContent("123456");
+// End of H.M.Wang 2020-8-11 动态条码内容设置为123456
 		} else {
 			mName = mContext.getString(R.string.object_bar);
 		}
-		
 	}
 	
 	@Override
@@ -237,8 +322,16 @@ public class BarcodeObject extends BaseObject {
 				mName = mContext.getString(R.string.object_qr);
 			}
 		} else {
-			mName = mFormat + " " + mContext.getString(R.string.object_bar);
+// H.M.Wang 2020-7-29 所有条码均可以设置为动态条码
+			if (mSource) {
+				mName = mContext.getString(R.string.object_dynamic_barcode);
+			} else {
+				mName = mFormat + " " + mContext.getString(R.string.object_bar);
+			}
+//			mName = mFormat + " " + mContext.getString(R.string.object_bar);
+// End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码
 		}
+
 		return mName;
 	}
 
@@ -264,6 +357,12 @@ public class BarcodeObject extends BaseObject {
 		}
 	}
 
+// H.M.Wang 2020-7-31 追加超文本的计数器打印后调整
+	public void goNext() {
+		mHTContent.goNext();
+	}
+// End of H.M.Wang 2020-7-31 追加超文本的计数器打印后调整
+
 	// H.M.Wang 修改该函数。以对应于纵向和横向的比例变化
 	public Bitmap getScaledBitmap(Context context) {
 		Debug.i(TAG, "getScaledBitmap()");
@@ -272,12 +371,17 @@ public class BarcodeObject extends BaseObject {
 			return mBitmap;
 		}
 
+// H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+		String cnt = mHTContent.getExpandedContent();
+		mContent = cnt;
+// End of H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+
 		isNeedRedraw = false;
 		check();
 		if (!is2D()) {
 			if (mWidth <= 0) {
 // H.M.Wang 2019-9-26 这个宽度的设置，由于参照的元是根据字数直接算的，而不是像其他的元素根据高计算的，因此如果高做了调整，mRatio里面已经考虑了高变化的因素，因此需要将高的因素化解后使用
-                mWidth = mContent.length() * 50 * mRatio * mHeight / 152;
+				mWidth = mContent.length() * 50 * mRatio * mHeight / 152;
 //                mWidth = mContent.length() * 70;
 			}
 // H.M.Wang2019-9-26 恢复使用mWidth和mHeight进行画图
@@ -493,7 +597,10 @@ public class BarcodeObject extends BaseObject {
 		} catch (Exception e) {
 			Debug.d(TAG, "--->exception: " + e.getMessage());
 		}
-		return null;
+// H.M.Wang 2020-8-10 如果条码格式有误，会在这里返回null，但是后续没有对null的情况进行排查，所以会导致异常发生，如EAN8赋值了非数字就会发生这种情形，改为返回一个空的bitmap
+        return Bitmap.createBitmap(w, h, Configs.BITMAP_CONFIG);
+//		return null;
+// End of H.M.Wang 2020-8-10 如果条码格式有误，会在这里返回null，但是后续没有对null的情况进行排查，所以会导致异常发生，如EAN8赋值了非数字就会发生这种情形，改为返回一个空的bitmap
 	}
 
 	private Bitmap drawEAN13(int w, int h) {
@@ -562,7 +669,10 @@ public class BarcodeObject extends BaseObject {
 		} catch (Exception e) {
 			Debug.d(TAG, "--->exception: " + e.getMessage());
 		}
-		return null;
+// H.M.Wang 2020-8-10 如果条码格式有误，会在这里返回null，但是后续没有对null的情况进行排查，所以会导致异常发生，如EAN8赋值了非数字就会发生这种情形，改为返回一个空的bitmap
+        return Bitmap.createBitmap(w, h, Configs.BITMAP_CONFIG);
+//		return null;
+// End of H.M.Wang 2020-8-10 如果条码格式有误，会在这里返回null，但是后续没有对null的情况进行排查，所以会导致异常发生，如EAN8赋值了非数字就会发生这种情形，改为返回一个空的bitmap
 	}
 // End of H.M.Wang 2020-6-19 修改EAN-13和EAN-8的图片输出格式
 
@@ -664,7 +774,10 @@ public class BarcodeObject extends BaseObject {
 		} catch (Exception e) {
 			Debug.d(TAG, "--->exception: " + e.getMessage());
 		}
-		return null;
+// H.M.Wang 2020-8-10 如果条码格式有误，会在这里返回null，但是后续没有对null的情况进行排查，所以会导致异常发生，如EAN8赋值了非数字就会发生这种情形，改为返回一个空的bitmap
+		return Bitmap.createBitmap(w, h, Configs.BITMAP_CONFIG);
+//		return null;
+// End of H.M.Wang 2020-8-10 如果条码格式有误，会在这里返回null，但是后续没有对null的情况进行排查，所以会导致异常发生，如EAN8赋值了非数字就会发生这种情形，改为返回一个空的bitmap
 	}
 
 	public BitMatrix encode(String contents, int width, int height, Map<EncodeHintType, ?> hints)
@@ -780,6 +893,7 @@ public class BarcodeObject extends BaseObject {
 //				}
 //			}
 //		}
+
 		Bitmap bg = Bitmap.createBitmap(totalW, totalH, Configs.BITMAP_CONFIG);
 		Canvas canvas = new Canvas(bg);
 //		Bitmap bitmap = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
@@ -787,14 +901,20 @@ public class BarcodeObject extends BaseObject {
 //		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
 		Debug.d(TAG, "--->mFormat: " + mFormat);
 		Bitmap bitmap = null;
-		if ("QR".equalsIgnoreCase(mFormat)) {
+// H.M.Wang 2020-7-31 动态条码以及超文本内容的条码均需要重新画图，不仅限于二维码
+/*		if ("QR".equalsIgnoreCase(mFormat)) {
 			bitmap = drawQR(mContent, w, w);
 		} else {
 			bitmap = drawDataMatrix(mContent, w, w);
 		}
+*/
+		isNeedRedraw = true;
+		bitmap = getScaledBitmap(mContext);
+// End of H.M.Wang 2020-7-31 动态条码以及超文本内容的条码均需要重新画图，不仅限于二维码
 		canvas.drawColor(Color.WHITE);
 		canvas.drawBitmap(Bitmap.createScaledBitmap(bitmap, w, h, true), 0, y, mPaint);
 		return bg;
+
 	}
 	
 	public int[] getDotcount() {
@@ -810,7 +930,7 @@ public class BarcodeObject extends BaseObject {
 //						mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR));
 		return dots;
 	}
-
+/*
 	protected Bitmap createCodeBitmapFromTextView(String contents,int width,int height, boolean isBin) {
 		int heads = mTask.getHeads();
 		if (heads == 0) {
@@ -840,7 +960,7 @@ public class BarcodeObject extends BaseObject {
         Debug.d(TAG, "===>width=" + width + ", bmp width=" + bitmapCode.getWidth());
         return isBin?Bitmap.createScaledBitmap(bitmapCode, (int) (bitmapCode.getWidth()*div), bitmapCode.getHeight(), true) : bitmapCode;
 	}
-	
+*/
 	protected Bitmap createCodeBitmapFromDraw(String content, int width, int height) {
 		if (TextUtils.isEmpty(content)) {
 			return null;
@@ -948,7 +1068,7 @@ public class BarcodeObject extends BaseObject {
 		
 	}
 	
-	
+/*
 	private static BitMatrix deleteWhite(BitMatrix matrix) {
         int[] rec = matrix.getEnclosingRectangle();
         int resWidth = rec[2] + 1;
@@ -964,7 +1084,7 @@ public class BarcodeObject extends BaseObject {
         }
         return resMatrix;
     }
-
+*/
 
 	private String checkSum(int length) {
 		String code = "";
@@ -1051,7 +1171,7 @@ public class BarcodeObject extends BaseObject {
 		Debug.d(TAG, "--->code: " + code);
 		return code;
 	}
-	
+
 	private String check() {
 		String content = mContent;
 		if ("EAN13".equals(mFormat)) {
@@ -1128,7 +1248,10 @@ public class BarcodeObject extends BaseObject {
 				.append(BaseObject.boolToFormatString(mSource, 8))
 				.append("^")
 				.append("00000000^00000000^00000000^00000000^00000000^00000000^00000000^")
-				.append(mContent);
+// H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+//				.append(mContent);
+				.append(mOrgContent);
+// End of H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
 		} else {
 			builder.append("^")
 			.append(BaseObject.floatToFormatString(getX()*2*prop, 5))			// Tag 2    X开始坐标
@@ -1143,14 +1266,20 @@ public class BarcodeObject extends BaseObject {
 			.append("^")
 			.append(BaseObject.boolToFormatString(mDragable, 3))				// Tag 7    支持拖拉标识
 			.append("^")
-			.append(BaseObject.floatToFormatString(mContent.length(), 3))		// Tag 8    条码字符长度
+// H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+//			.append(BaseObject.floatToFormatString(mContent.length(), 3))		// Tag 8    条码字符长度
+			.append(BaseObject.floatToFormatString(mOrgContent.length(), 3))		// Tag 8    条码字符长度
+// End of H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
 			.append("^")
 			.append(mCode)														// Tag 9    条码类型
 			.append("^")
 			.append("000^")														// Tag 10   字符字体大小
 			.append(BaseObject.boolToFormatString(mShow, 3))					// Tag 11   是否显示字符
 			.append("^")
-			.append(mContent)													// Tag 12   条码字符内容
+// H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+//			.append(mContent)													// Tag 12   条码字符内容
+			.append(mOrgContent)													// Tag 12   条码字符内容
+// End of H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
 			.append("^")
 			.append(BaseObject.boolToFormatString(mSource, 8))					// Tag 13   什么源？
 			.append("^")

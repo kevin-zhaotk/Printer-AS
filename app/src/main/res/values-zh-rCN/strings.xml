@@ -17,7 +17,7 @@
 	<string name="str_btn_clean">清洗</string>
 	<string name="str_btn_open">打开</string>
 	<string name="str_remain_ink">剩余锁值</string>
-	<string name="str_remain_ptimes">打印次数</string>
+	<string name="str_remain_ptimes">打印次数：</string>
 	<string name="str_btn_new">新建</string>
 	<string name="str_btn_save">保存</string>
 	<string name="str_btn_saveprint">保存并打印</string>
@@ -135,6 +135,9 @@
 	<string name="object_msg_name">信息名称</string>
 	<string name="object_qr">二维码</string>
 	<string name="object_dynamic_qr">动态二维码</string>
+<!-- H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+	<string name="object_dynamic_barcode">动态条码</string>
+<!-- End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
 <!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
 	<string name="object_dynamictext">动态文本</string>
 	<string name="object_dtindex">索引</string>
@@ -302,8 +305,11 @@
 	<string name="str_search">搜索</string>
 	
 <!-- 树莓派3 打印界面相关 -->	
-	<string name="str_msg_name">信息名称：</string>
-	<!-- 
+<!-- H.M.Wang 2020-8-11 修改信息，缩短长度 -->
+<!--    <string name="str_msg_name">信息名称：</string>-->
+    <string name="str_msg_name">信息：</string>
+<!-- End of H.M.Wang 2020-8-11 修改信息，缩短长度 -->
+	<!--
 	<string name="str_state_inklevel">墨水量:  %1$d%%</string>
 	-->
 	<string name="str_state_inklevel">墨水量:</string>

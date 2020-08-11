@@ -50,6 +50,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -106,8 +107,10 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public SettingsTabActivity	mSettingsTab;
 	
 	public RelativeLayout mCtrlExtra;
-	public TextView mCtrlTitle;
-	public TextView mCountdown;
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
+//	public TextView mCtrlTitle;
+//	public TextView mCountdown;
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
 	public TextView mEditTitle;
 	public RelativeLayout mSettings;
 	public TextView mSettingTitle;
@@ -131,6 +134,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	
 	private TextView IP_address;// localhost ip
 	private TextView mCode;// localhost ip
+
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
+	private LinearLayout mCtrlTabTimeArea = null;
+	private TextView mDispDate = null;
+	private TextView mDispTime = null;
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
 
 	static {
 		System.loadLibrary("Hardware_jni");
@@ -313,8 +322,10 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	
 	private void initView() {
 		mCtrlExtra = (RelativeLayout) findViewById(R.id.ctrl_extra);
-		mCtrlTitle = (TextView) findViewById(R.id.ctrl_counter_view);
-		mCountdown = (TextView) findViewById(R.id.count_down);
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
+//		mCtrlTitle = (TextView) findViewById(R.id.ctrl_counter_view);
+//		mCountdown = (TextView) findViewById(R.id.count_down);
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
 		mEditTitle = (TextView) findViewById(R.id.edit_message_view);
 		mEditExtra = (RelativeLayout) findViewById(R.id.edit_extra);
 		mDelete = (TextView) findViewById(R.id.delete);
@@ -355,6 +366,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mLoading1s = (ImageView) findViewById(R.id.image1s);
 		mHander.sendEmptyMessageDelayed(SHUT_BLACK_IMAGE, 0);
 		// End -----------------
+
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
+		mCtrlTabTimeArea = (LinearLayout) findViewById(R.id.time_disp_area);
+		mDispDate = (TextView) findViewById(R.id.disp_date);
+		mDispTime = (TextView) findViewById(R.id.disp_time);
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
 
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 //		transaction.replace(R.id.tab_content, mControlTab);
@@ -400,6 +417,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		});
 
 //		transaction.commit();
+		mHander.sendEmptyMessage(REFRESH_TIME_DISPLAY);
+		mCtrlTabTimeArea.setVisibility(View.VISIBLE);
 	}
 
 	@Override
@@ -413,9 +432,17 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				if(arg1 == true) {
 					fts.show(mControlTab);
 					mCtrlExtra.setVisibility(View.VISIBLE);
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
+					mCtrlTabTimeArea.setVisibility(View.VISIBLE);
+//					mHander.sendEmptyMessage(REFRESH_TIME_DISPLAY);
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
 				} else {
 					fts.hide(mControlTab);
 					mCtrlExtra.setVisibility(View.GONE);
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
+					mCtrlTabTimeArea.setVisibility(View.GONE);
+//					mHander.removeMessages(REFRESH_TIME_DISPLAY);
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
 				}
 				
 				Debug.d(TAG, "====>control checked?"+arg1);
@@ -454,14 +481,14 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 					Debug.d(TAG, "--->show SettingTab visible");
 					// mSettingTitle.setVisibility(View.VISIBLE);
 					// mVersion.setVisibility(View.VISIBLE);
-					mHander.sendEmptyMessage(REFRESH_TIME_DISPLAY);
+//					mHander.sendEmptyMessage(REFRESH_TIME_DISPLAY);
 					
 				} else {
 					fts.hide(mSettingsTab);
 					mSettings.setVisibility(View.GONE);
 					//mSettingTitle.setVisibility(View.GONE);
 					//mVersion.setVisibility(View.GONE);
-					mHander.removeMessages(REFRESH_TIME_DISPLAY);
+//					mHander.removeMessages(REFRESH_TIME_DISPLAY);
 				}
 				break;
 		}
@@ -540,6 +567,10 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				int second = calendar.get(Calendar.SECOND);
 				String time = String.format(getResources().getString(R.string.str_time_format), year, month, day, hour, min, second);
 				mSettingTitle.setText(time);
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
+				mDispDate.setText(String.format("%04d-%02d-%02d", year, month, day));
+				mDispTime.setText(String.format("%02d:%02d:%02d", hour, min, second));
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
 				mHander.sendEmptyMessageDelayed(REFRESH_TIME_DISPLAY, 1000);
 				break;
 			case UPDATE_COUNTER:
@@ -639,12 +670,14 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			break;
 		}
 	}
-	
+
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
 	public void setCtrlExtra(int count, int down) {
-		mCtrlTitle.setText(String.valueOf(count));
-		mCountdown.setText(String.valueOf(down));
+//		mCtrlTitle.setText(String.valueOf(count));
+//		mCountdown.setText(String.valueOf(down));
 	}
-	
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
+
 	public void onConfigChange() {
 		mControlTab.onConfigureChanged();
 		mEditSmallTab.onConfigureChanged();

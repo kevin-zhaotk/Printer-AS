@@ -154,6 +154,9 @@ public class DataTask {
 
 		// H.M.Wang 将1.bin写入打印缓冲区，然后将v*.bin写入缓冲区
 		try {
+// H.M.Wang 2020-7-27 由于32DN会对mPrintBuffer进行扩容，如果这里不重新生成，则会使用扩容后的容量，再次被扩容，这使得打印缓冲区持续放大
+			mPrintBuffer = new char[mBgBuffer.length];
+// End of H.M.Wang 2020-7-27 由于32DN会对mPrintBuffer进行扩容，如果这里不重新生成，则会使用扩容后的容量，再次被扩容，这使得打印缓冲区持续放大
 			cReader.read(mPrintBuffer);
 			if (isNeedRefresh()) {
 				// 将v*.bin写入缓冲区
@@ -167,6 +170,16 @@ public class DataTask {
 //			return mPrintBuffer;
 //		}
 // End of H.M.Wang 2020-6-30 这段代码可能会在isPreview=true时，导致后面的处理不能进行
+
+// H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
+		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_32DN) {
+//			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+			mPrintBuffer = evenBitShiftFor32DN();
+//			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+//			Debug.d(TAG, mTask.getPath() + "/print.bin");
+//			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
+		}
+// End of H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 
 		// H.M.Wang 追加下列8行
 //		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT && Configs.getMessageShift(3) == 1) {
@@ -202,7 +215,7 @@ public class DataTask {
 // H.M.Wang 2020-4-18 从DataTransferThread移至此
         if(bSave) {
             FileUtil.deleteFolder("/mnt/sdcard/print.bin");
-            BinCreater.saveBin("/mnt/sdcard/print.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads);
+			BinCreater.saveBin("/mnt/sdcard/print.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads);
         }
 // End of H.M.Wang 2020-4-18 从DataTransferThread移至此
 
@@ -364,8 +377,11 @@ public class DataTask {
 
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			div = 152f/16f;
-		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+// H.M.Wang 2020-7-23 追加32DN打印头
+//		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT || headType == PrinterNozzle.MESSAGE_TYPE_32DN) {
 			div = 152f/32f;
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 
 		// H.M.Wang 追加下列两行
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
@@ -385,11 +401,13 @@ public class DataTask {
 		{
 			Debug.d(TAG, "Name " + o.mName);
 			if (o instanceof BarcodeObject) {
-				Debug.d(TAG, "+++++++++++++>source: " + o.getSource());
-				/* 如果二維碼從QR文件中讀 */
-				if (!o.getSource()) {
-					continue;
-				}
+// H.M.Wang 2020-7-31 该判断的内容相当于非动态二维码不继续执行后续代码，但是由于存在超文本，可能内容会发生变化
+//				Debug.d(TAG, "+++++++++++++>source: " + o.getSource());
+//				/* 如果二維碼從QR文件中讀 */
+//				if (!o.getSource()) {
+//					continue;
+//				}
+// End of H.M.Wang 2020-7-31 该判断的内容相当于非动态二维码不继续执行后续代码，但是由于存在超文本，可能内容会发生变化
 // 2019-12-18 H.M.Wang 当数据源为外部的时候，不去读取内部的QR文件。并且修改content的设置方式，原来的方式如果不从reader读数据，则可能就是“123456789”，新的方式是如果读并且读到，则设置，否则跳过
 //				String content = "123456789";
 //				if (!prev) {
@@ -506,6 +524,10 @@ public class DataTask {
 						substr = ((RealtimeHour) rtSub).getContent();
 					} else if (rtSub instanceof RealtimeMinute) {
 						substr = ((RealtimeMinute) rtSub).getContent();
+// H.M.Wang 2020-8-6 增加SS秒时间格式
+					} else if (rtSub instanceof RealtimeSecond) {
+						substr = ((RealtimeSecond) rtSub).getContent();
+// End of H.M.Wang 2020-8-6 增加SS秒时间格式
 					} else
 						continue;
 					BinInfo info = mVarBinList.get(rtSub);
@@ -692,6 +714,9 @@ public class DataTask {
 		{
 			if((o instanceof CounterObject)
 					|| (o instanceof RealtimeObject)
+// H.M.Wang 2020-7-31 条码支持超文本，因此需要每次更新，具体是否更新看超文本时候有变化
+					|| (o instanceof BarcodeObject)
+// End of H.M.Wang 2020-7-31 条码支持超文本，因此需要每次更新，具体是否更新看超文本时候有变化
 // H.M.Wang 2020-2-16 追加HyperText控件
 					|| (o instanceof HyperTextObject)
 // End of H.M.Wang 2020-2-16 追加HyperText控件
@@ -798,7 +823,13 @@ public class DataTask {
 */
 		int offsetDiv = 1;
 
-		if(object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT || object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2020-7-23 追加32DN打印头
+//		if(object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT || object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+		if( object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
+			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
+			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32DN ||
+			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 			heads = 4;		// 16点，32点和64点，在这里假设按4个头来算，主要是为了就和当前的实现逻辑
 			offsetDiv = 6;	// 打字机位移量除6
 		}
@@ -886,21 +917,50 @@ public class DataTask {
 		64DOT喷头双列的时候，每个Byte的1，3，5，7Bit向后位移4个字节
 	 */
 	public char[] evenBitShiftFor64Dot() {
-		char[] buffer = new char[mPrintBuffer.length + 4 * 4];	// 每行增加4个字节，共增加32个字节
-		char even = 0x5555;
-		char odd = 0xaaaa;
+		int COLUMNS_TO_SHIFT= 4;
+		int CHARS_PER_COLOMN = 4;
+		char[] buffer = new char[mPrintBuffer.length + COLUMNS_TO_SHIFT * CHARS_PER_COLOMN];	// 每行增加4个字节，共增加32个字节(16个char)
 
-//		Debug.d(TAG, "evenBitShiftFor64Dot" );
-//		Debug.d(TAG, "mBinInfo.mColumn = " + mBinInfo.mColumn);
-//		Debug.d(TAG, "mBinInfo.mBytesPerColumn = " + mBinInfo.mBytesPerColumn);
 		for (int i = 0; i < mBinInfo.mColumn; i++) {
-			for (int j = 0; j < 4; j++) {
-				buffer[i * 4 + j] |= (char)(mPrintBuffer[i * 4 + j] & odd);
-				buffer[(i + 4) * 4 + j] |= (char)(mPrintBuffer[i * 4 + j] & even);
+			for (int j = 0; j < CHARS_PER_COLOMN; j++) {
+				buffer[i * CHARS_PER_COLOMN + j] |= (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0xaaaa);
+				buffer[(i + COLUMNS_TO_SHIFT) * CHARS_PER_COLOMN + j] |= (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0x5555);
 			}
 		}
 		return buffer;
 	}
+
+// H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
+	public char[] evenBitShiftFor32DN() {
+		int COLUMNS_TO_SHIFT= 4;
+		int CHARS_PER_COLOMN = 2;
+		char[] buffer = new char[(mPrintBuffer.length + COLUMNS_TO_SHIFT * CHARS_PER_COLOMN) * 2];	// 每行增加4个字节，共增加16个字节(8个char),并且每列16bit后空余16bit，相当于数据区翻倍
+		Arrays.fill(buffer, (char)0x0000);
+		for (int i = 0; i < mBinInfo.mColumn; i++) {
+			char d1 = 0x0000;
+			char d2 = 0x0000;
+			for (int j=CHARS_PER_COLOMN-1; j>=0; j--) {
+				char odd = (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0x5555);
+				char even = (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0xaaaa);
+				for(int k=0; k<8; k++) {
+					d1 *= 2;
+					if(((odd << (2*k+1)) & 0x8000) == 0x8000) {
+						d1++;
+					}
+					d2 *= 2;
+					if(((even << (2*k)) & 0x8000) == 0x8000) {
+						d2++;
+					}
+				}
+			}
+			buffer[2 * i * CHARS_PER_COLOMN] = d1;
+			buffer[2 * i * CHARS_PER_COLOMN + 1] = 0x0000;
+			buffer[(2 * (i + COLUMNS_TO_SHIFT) + 1) * CHARS_PER_COLOMN] = d2;
+			buffer[(2 * (i + COLUMNS_TO_SHIFT) + 1) * CHARS_PER_COLOMN+1] = 0x0000;
+		}
+		return buffer;
+	}
+// End of H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 
 	public BinInfo getInfo() {
 		return mBinInfo;

@@ -1189,6 +1189,11 @@ public class SystemConfigFile{
 			case PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT:
 				nozzle = PrinterNozzle.MESSAGE_TYPE_32_DOT;
 				break;
+// H.M.Wang 2020-7-23 追加32DN打印头
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_32DN:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_32DN;
+				break;
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 			case PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT:
 				nozzle = PrinterNozzle.MESSAGE_TYPE_64_DOT;
 				break;

@@ -17,7 +17,7 @@
 	<string name="str_btn_clean">Purge</string>
 	<string name="str_btn_open">Open</string>
 	<string name="str_remain_ink">Ink</string>
-	<string name="str_remain_ptimes">Total</string>
+	<string name="str_remain_ptimes">Printed: </string>
 	<string name="str_btn_new">New</string>
 	<string name="str_btn_save">Save</string>
 	<string name="str_btn_saveprint">SavePrint</string>
@@ -43,7 +43,7 @@
 	<string name="str_btn_header3">Pen3</string>
 	<string name="str_btn_header4">Pen4</string>
 	<string name="strDate">Date:</string>
-	<string name="strInklevel">Remain </string>
+	<string name="strInklevel">Remain: </string>
 	<string name="strPhotocellState">Photocell</string>
 	<string name="strEncoderState">Encoder</string>
 	<string name="strPrintstate">Printing：</string>
@@ -156,6 +156,9 @@
 	<string name="object_msg_name">Subject</string>
 	<string name="object_qr">QRCode</string>
 	<string name="object_dynamic_qr">DynamicQR</string>
+<!-- H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+	<string name="object_dynamic_barcode">DynamicBarcode</string>
+<!-- End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
 <!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
 	<string name="object_dynamictext">Dynamictext</string>
 	<string name="object_dtindex">Index</string>

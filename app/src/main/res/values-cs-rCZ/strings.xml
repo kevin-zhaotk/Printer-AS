@@ -448,6 +448,9 @@
 	<string name="str_net_error">Chyba síťové komunikace</string>
 	<string name="object_qr">QRkód</string>
 	<string name="object_dynamic_qr">DynamickýQR</string>
+<!-- H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+	<string name="object_dynamic_barcode">DynamickýČárový kód</string>
+<!-- End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
 	<string name="str_setting_clean">čistý</string>
 	<string name="str_fileopt_del">vymazat</string>
 	<string name="str_fileopt_cancel">zrušení</string>

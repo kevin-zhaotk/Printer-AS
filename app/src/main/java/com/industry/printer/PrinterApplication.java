@@ -10,6 +10,7 @@ import com.industry.printer.Utils.PreferenceConstants;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.data.NativeGraphicJni;
 import com.industry.printer.hardware.SmartCard;
+import com.industry.printer.hardware.SmartCardManager;
 
 import android.app.Application;
 import android.content.SharedPreferences;
@@ -98,7 +99,7 @@ public class PrinterApplication extends Application {
                     os.writeBytes("exit\n");
 
 					NativeGraphicJni.loadLibrary();
-					SmartCard.loadLibrary();
+					if(!SmartCardManager.SKIP_SMARTCARD_ACCESS) SmartCard.loadLibrary();
 					SerialPort.loadLibrary();
 
                 } catch (Exception e) {

@@ -7,6 +7,7 @@
 #include <src/sc_ink_mem_access.h>
 #include <src/sc_common_mem_access.h>
 #include <src/sc_supply_mem_access.h>
+#include <malloc.h>
 
 #include "hp_host_smart_card.h"
 #include "drivers/internal_ifc/hp_smart_card_gpio_ifc.h"
@@ -14,6 +15,11 @@
 #include "com_smartcard.h"
 #include "drivers/internal_ifc/sc_gpio_adapter.h"
 #include "src/level_memory_access.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define SC_SUCCESS                              0
 #define SC_INIT_HOST_CARD_NOT_PRESENT           100
@@ -28,9 +34,36 @@
 #define SC_LEVEL_CENSOR_ACCESS_FAILED           202
 #define SC_CONSISTENCY_FAILED                   300
 
-
 #define MAX_INK_VOLUME                          4700
 #define INK_VOLUME_PER_CENTAGE                  (MAX_INK_VOLUME / 100)
+
+HP_SMART_CARD_result_t (*ILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
+        supplyWriteTag9ILGBit01To25,
+        supplyWriteTag9ILGBit26To50,
+        supplyWriteTag9ILGBit51To75,
+        supplyWriteTag9ILGBit76To100
+};
+
+HP_SMART_CARD_result_t (*ILGReadFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t *ilg_bit) = {
+        supplyReadTag9ILGBit01To25,
+        supplyReadTag9ILGBit26To50,
+        supplyReadTag9ILGBit51To75,
+        supplyReadTag9ILGBit76To100
+};
+
+static char* toBinaryString(char* dst, uint32_t src) {
+    uint32_t mask = 0x01000000;
+    for(int i=0; i<25; i++) {
+        if(mask & src) {
+            dst[i] = '1';
+        } else {
+            dst[i] = '0';
+        }
+        mask >>= 1;
+    }
+    dst[25] = 0x00;
+    return dst;
+}
 
 void print_returns(HP_SMART_CARD_result_t result)
 {
@@ -145,7 +178,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
     return SC_SUCCESS;
 }
 
-JNIEXPORT jint JNICALL Java_com_Smartcard_chechConsistency(JNIEnv *env, jclass arg, jint card) {
+JNIEXPORT jint JNICALL Java_com_Smartcard_checkConsistency(JNIEnv *env, jclass arg) {
     HP_SMART_CARD_result_t r = HP_SMART_CARD_OK;
 
 ////////////////////////    return SC_SUCCESS;
@@ -175,7 +208,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_chechConsistency(JNIEnv *env, jclass a
     if (HP_SMART_CARD_OK != r) {
         return SC_BULK_CTRG_ACCESS_FAILED;
     }
-/*
+
     if(ink_designator != supply_designator ||
        ink_formulator_id != supply_formulator_id ||
        ink_family != supply_ink_family ||
@@ -183,22 +216,50 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_chechConsistency(JNIEnv *env, jclass a
        ink_family_member != supply_ink_family_member) {
         return SC_CONSISTENCY_FAILED;
     }
-*/
+
     return SC_SUCCESS;
 }
 
-static char* toBinaryString(char* dst, uint32_t src) {
-    uint32_t mask = 0x01000000;
-    for(int i=0; i<25; i++) {
-        if(mask & src) {
-            dst[i] = '1';
-        } else {
-            dst[i] = '0';
-        }
-        mask >>= 1;
+JNIEXPORT jstring JNICALL Java_com_Smartcard_readConsistency(JNIEnv *env, jclass arg) {
+    char strTemp[1024];
+
+    uint8_t ink_designator, supply_designator;
+    uint8_t ink_formulator_id, supply_formulator_id;
+    uint8_t ink_family, supply_ink_family;
+    uint8_t ink_color_code, supply_ink_color_code;
+    uint8_t ink_family_member, supply_ink_family_member;
+    uint8_t out_of_ink;
+
+    inkReadTag13OEMInkDesignator(HP_SMART_CARD_DEVICE_ID_0, &ink_designator);
+    inkReadTag4FormulatorID(HP_SMART_CARD_DEVICE_ID_0, &ink_formulator_id);
+    inkReadTag4InkFamily(HP_SMART_CARD_DEVICE_ID_0, &ink_family);
+    inkReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_ID_0, &ink_color_code);
+    inkReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_ID_0, &ink_family_member);
+
+    supplyReadTag1OEMInkDesignator(HP_SMART_CARD_DEVICE_ID_1, &supply_designator);
+    supplyReadTag4FormulatorID(HP_SMART_CARD_DEVICE_ID_1, &supply_formulator_id);
+    supplyReadTag4InkFamily(HP_SMART_CARD_DEVICE_ID_1, &supply_ink_family);
+    supplyReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_ID_1, &supply_ink_color_code);
+    supplyReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_ID_1, &supply_ink_family_member);
+
+    HP_SMART_CARD_result_t r = supplyReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_1, &out_of_ink);
+
+    uint32_t value;
+    char buf[4][26];
+    for(int i=0; i<4; i++) {
+        value = 0x00000000;
+        ILGReadFunc[i](HP_SMART_CARD_DEVICE_ID_1, &value);
+        toBinaryString(buf[i], value);
     }
-    dst[25] = 0x00;
-    return dst;
+
+    sprintf(strTemp, "legal:{dev0:{dsg:%d,fml:%d,fam:%d,clr:%d,mem:%d},\ndev1:{dsg:%d,fml:%d,fam:%d,clr:%d,mem:%d}}\nOIB:%d\nILG:%s-%s-%s-%s",
+        ink_designator, ink_formulator_id, ink_family, ink_color_code, ink_family_member,
+        supply_designator, supply_formulator_id, supply_ink_family, supply_ink_color_code, supply_ink_family_member,
+        out_of_ink,
+        buf[3], buf[2], buf[1], buf[0]
+    );
+
+    return (*env)->NewStringUTF(env, strTemp);
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_chechOIB(JNIEnv *env, jclass arg, jint card) {
@@ -244,20 +305,6 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, j
     return x;
 }
 
-HP_SMART_CARD_result_t (*ILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
-        supplyWriteTag9ILGBit01To25,
-        supplyWriteTag9ILGBit26To50,
-        supplyWriteTag9ILGBit51To75,
-        supplyWriteTag9ILGBit76To100
-};
-
-HP_SMART_CARD_result_t (*ILGReadFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t *ilg_bit) = {
-        supplyReadTag9ILGBit01To25,
-        supplyReadTag9ILGBit26To50,
-        supplyReadTag9ILGBit51To75,
-        supplyReadTag9ILGBit76To100
-};
-
 JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jint card) {
 ////////////////////////    return SC_SUCCESS;
 
@@ -293,12 +340,13 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
         }
 
         LOGD(">>> ILG = %s-%s-%s-%s", buf[3], buf[2], buf[1], buf[0]);
+
+        if(100 == p2) {
+            LOGD(">>> OIB");
+            supplyWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_1, 1);
+        }
     }
 
-    if(100 == p2) {
-        LOGD(">>> OIB");
-        supplyWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_1, 1);
-    }
     return SC_SUCCESS;
 }
 
@@ -340,7 +388,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_close(JNIEnv *env, jclass arg) {
 static JNINativeMethod gMethods[] = {
         {"init",					"()I",	                    (void *)Java_com_Smartcard_init},
         {"close",					"()I",						(void *)Java_com_Smartcard_close},
-        {"chechConsistency",	    "(I)I",						(void *)Java_com_Smartcard_chechConsistency},
+        {"checkConsistency",	    "()I",						(void *)Java_com_Smartcard_checkConsistency},
+        {"readConsistency",	        "()Ljava/lang/String;",		(void *)Java_com_Smartcard_readConsistency},
         {"chechOIB",		        "(I)I",						(void *)Java_com_Smartcard_chechOIB},
         {"getLocalInk",		        "(I)I",						(void *)Java_com_Smartcard_getLocalInk},
         {"downLocal",		        "(I)I",						(void *)Java_com_Smartcard_downLocal},
@@ -365,7 +414,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     JNIEnv* env = NULL;
     jint result = -1;
 
-    LOGI("SmartCard.so 1.0.261 Loaded.");
+    LOGI("SmartCard.so 1.0.267 Loaded.");
 
     if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
         //__android_log_print(ANDROID_LOG_INFO, JNI_TAG,"ERROR: GetEnv failed\n");
@@ -383,3 +432,6 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     return result;
 }
 
+#ifdef __cplusplus
+}
+#endif

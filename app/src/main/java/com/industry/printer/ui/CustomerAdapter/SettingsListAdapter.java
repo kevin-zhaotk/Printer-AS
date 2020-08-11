@@ -110,20 +110,22 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 				String count = intent.getStringExtra(SettingsListAdapter.TAG_VALUE);
 
 				// H.M.Wang 2019-12-9 将广播范围扩大到所有参数
-				if( index >= SystemConfigFile.INDEX_COUNT_1 && index <= SystemConfigFile.INDEX_COUNT_10) {
+				// (2020-7-29 发现为了将广播范围扩大到所有参数而注释掉的if语句于2020-5-16被恢复了，这是不对的。
+				// 可能是追加QRLast时的误操作，恢复原样。同时QRLast的添加部分无用，注释掉)
+//				if( index >= SystemConfigFile.INDEX_COUNT_1 && index <= SystemConfigFile.INDEX_COUNT_10) {
 					if(null != mSettingItems[index]) {
 						mSettingItems[index].setValue(count);
 						notifyDataSetChanged();
 					}
-				}
+//				}
 				// End. -----------
 // H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
-				if( index == SystemConfigFile.INDEX_QRCODE_LAST) {
-					if(null != mSettingItems[index]) {
-						mSettingItems[index].setValue(count);
-						notifyDataSetChanged();
-					}
-				}
+//				if( index == SystemConfigFile.INDEX_QRCODE_LAST) {
+//					if(null != mSettingItems[index]) {
+//						mSettingItems[index].setValue(count);
+//						notifyDataSetChanged();
+//					}
+//				}
 // End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 			}
 		}

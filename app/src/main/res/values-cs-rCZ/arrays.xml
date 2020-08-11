@@ -46,6 +46,9 @@
         <item>R6X50</item>
         <!-- End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头 -->
 
+        <!-- H.M.Wang 2020-7-23 追加32DN打印头 -->
+        <item>32DN</item>
+        <!-- End of H.M.Wang 2020-7-23 追加32DN打印头 -->
     </string-array>
 
     <string-array name="strFontArray">
@@ -120,15 +123,23 @@
     </string-array>
 
     <string-array name="strTimeFormat">
-        <item>RRRR-MM-DD</item>
-        <item>MM-DD-RRRR</item>
-        <item>RR-MM-DD</item>
-        <item>MM-DD-RR</item>
-        <item>RRRR/MM/DD</item>
-        <item>MM/DD/RRRR</item>
-        <item>RR/MM/DD</item>
-        <item>MM/DD/RR</item>
-        <item>RRRR</item>
+        <item>YYYY.MM.DD</item>
+        <item>YYYY/MM/DD</item>
+        <item>MM/DD/YYYY</item>
+        <item>DD/MM/YYYY</item>
+        <item>YY-MM-DD</item>
+        <item>MM-DD-YY</item>
+        <item>DD-MM-YY</item>
+        <item>YY/MM/DD</item>
+        <item>MM/DD/YY</item>
+        <item>DD/MM/YY</item>
+        <item>YYYY</item>
+        <item>YY</item>
+        <item>MM</item>
+        <item>DD</item>
+        <item>HH:mm:ss</item>
+        <item>HH:NN</item>
+        <item>SS</item>
     </string-array>
 
     <string-array name="strarrayFontSize">

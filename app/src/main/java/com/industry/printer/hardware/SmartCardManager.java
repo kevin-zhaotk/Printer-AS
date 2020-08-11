@@ -9,11 +9,16 @@ import android.widget.Toast;
 
 import com.industry.printer.ControlTabActivity;
 import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.PrinterApplication;
 import com.industry.printer.R;
 import com.industry.printer.Utils.Debug;
 
 public class SmartCardManager implements IInkDevice {
     private static final String TAG = SmartCardManager.class.getSimpleName();
+
+    public static boolean SKIP_SMARTCARD_ACCESS = false;
+    public static boolean IGNORE_CONSISTENCY_CHECK = false;
+
 
     public final static int MAX_INK_VOLUME              = 4700;
 
@@ -32,6 +37,8 @@ public class SmartCardManager implements IInkDevice {
     private boolean mValid;
     private int     mInkLevel;
 
+    private boolean mBlockAdding = false;
+
     private static int READ_LEVEL_TIMES                 = 1;
     private int[] mReadLevels;
     private int mCurrentLevel;
@@ -39,9 +46,12 @@ public class SmartCardManager implements IInkDevice {
     private AlertDialog mRecvedLevelPromptDlg = null;
 
     private static final int MSG_CHECK_USABILITY        = 100;
-    private static final int MSG_UPDATE_LEVEL           = 101;
+    private static final int MSG_PERIOD_CHECK_LEVEL     = 101;
     private static final int MSG_READ_LEVEL             = 102;
     private static final int MSG_LEVEL_UPDATED          = 103;
+    private static final int MSG_ADD_INK_ON             = 104;
+    private static final int MSG_ADD_INK_OFF            = 105;
+    private static final int MSG_CLEAR_ADDING_BLOCK     = 106;
 
 //    private static final int MSG_CHECK_DOWNTEST       = 1000;
 //    private static final int MSG_B11_LAMP_TEST        = 1001;
@@ -49,24 +59,26 @@ public class SmartCardManager implements IInkDevice {
 
     private final static int UPDATE_LEVEL_INTERVAL      = 1000 * 30;
     private final static int READ_LEVEL_INTERVAL        = 10;
-    private final static int USABILITY_CHECK_INTERVAL   = 1000 * 60 * 3;
+//    private final static int USABILITY_CHECK_INTERVAL   = 1000 * 60 * 3;
+    private final static int USABILITY_CHECK_INTERVAL   = 1000 * 60;
 
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_CHECK_USABILITY:
-                    checkConsistency();
-                    checkOIB();
+//                    checkConsistency();
+//                    checkOIB();
+                    readConsistency();
                     mHandler.sendEmptyMessageDelayed(MSG_CHECK_USABILITY, USABILITY_CHECK_INTERVAL);
                     break;
 //                case MSG_CHECK_DOWNTEST:
 //                    downLocal(HP_BULK_CARTRIDGE);
 //                    mHandler.sendEmptyMessageDelayed(MSG_CHECK_DOWNTEST, 1);
 //                    break;
-                case MSG_UPDATE_LEVEL:
+                case MSG_PERIOD_CHECK_LEVEL:
                     mHandler.obtainMessage(MSG_READ_LEVEL, 0, 0).sendToTarget();
-                    mHandler.sendEmptyMessageDelayed(MSG_UPDATE_LEVEL, UPDATE_LEVEL_INTERVAL);
+                    mHandler.sendEmptyMessageDelayed(MSG_PERIOD_CHECK_LEVEL, UPDATE_LEVEL_INTERVAL);
                     break;
                 case MSG_READ_LEVEL:
                     readLevelValue(msg.arg1);
@@ -87,6 +99,21 @@ public class SmartCardManager implements IInkDevice {
                         mRecvedLevelPromptDlg.show();
                         mRecvedLevelPromptDlg.show();
                     }
+                    break;
+                case MSG_ADD_INK_ON:
+                    Debug.d(TAG, "Add ink opened!");
+                    ExtGpio.writeGpio('b', 11, 1);
+                    mBlockAdding = true;
+                    sendEmptyMessageDelayed(MSG_ADD_INK_OFF, 1500);
+                    sendEmptyMessageDelayed(MSG_CLEAR_ADDING_BLOCK, 2 * 60 * 1000);
+                    break;
+                case MSG_ADD_INK_OFF:
+                    Debug.d(TAG, "Add ink closed!");
+                    ExtGpio.writeGpio('b', 11, 0);
+                    break;
+                case MSG_CLEAR_ADDING_BLOCK:
+                    Debug.d(TAG, "Clear Adding Block!");
+                    mBlockAdding = false;
                     break;
 //                case MSG_B11_LAMP_TEST:
 //                    if(!mLampOn) {
@@ -131,15 +158,23 @@ public class SmartCardManager implements IInkDevice {
 
         mCallback = callback;
 
-        int ret = SmartCard.init();
+        int ret = -1;
+        if(!SKIP_SMARTCARD_ACCESS) {
+            ret = SmartCard.init();
+        } else {
+            ret = SmartCard.SC_SUCCESS;
+        }
+
         if(SmartCard.SC_SUCCESS == ret) {
             mInitialied = true;
             mCallback.sendEmptyMessage(MSG_SMARTCARD_INIT_SUCCESS);
+            checkConsistency();
+            checkOIB();
             mHandler.sendEmptyMessage(MSG_CHECK_USABILITY);
 //            mHandler.sendEmptyMessageDelayed(MSG_CHECK_DOWNTEST, 5000);
 //            mHandler.sendEmptyMessageDelayed(MSG_B11_LAMP_TEST, 10000);
-            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_LEVEL, UPDATE_LEVEL_INTERVAL);
-            mValid = true;
+//            mHandler.sendEmptyMessageDelayed(MSG_PERIOD_CHECK_LEVEL, UPDATE_LEVEL_INTERVAL);
+//            mValid = true;
         } else {
             mValid = false;
             mCallback.obtainMessage(MSG_SMARTCARD_INIT_FAILED, ret, 0, null).sendToTarget();
@@ -148,9 +183,12 @@ public class SmartCardManager implements IInkDevice {
 
     private void checkConsistency() {
         Debug.d(TAG, "---> enter checkConsistency()");
+
+        if(SKIP_SMARTCARD_ACCESS || IGNORE_CONSISTENCY_CHECK) return;
+
         if(mInitialied) {
             synchronized (this) {
-                int ret = SmartCard.chechConsistency(HP_BULK_CARTRIDGE);
+                int ret = SmartCard.checkConsistency();
                 if(SmartCard.SC_SUCCESS != ret) {
                     mValid = false;
                     mCallback.obtainMessage(MSG_SMARTCARD_CHECK_FAILED, ret, 0, null).sendToTarget();
@@ -159,8 +197,29 @@ public class SmartCardManager implements IInkDevice {
         }
     }
 
+    private void readConsistency() {
+        Debug.d(TAG, "---> enter readConsistency()");
+
+        if(SKIP_SMARTCARD_ACCESS || IGNORE_CONSISTENCY_CHECK) return;
+
+        if(mInitialied) {
+            synchronized (this) {
+                String ret = SmartCard.readConsistency();
+                if(null != mRecvedLevelPromptDlg) {
+                    mRecvedLevelPromptDlg.setTitle("Legality");
+                    mRecvedLevelPromptDlg.setMessage(ret);
+                    mRecvedLevelPromptDlg.show();
+                    mRecvedLevelPromptDlg.show();
+                }
+            }
+        }
+    }
+
     private void checkOIB() {
         Debug.d(TAG, "---> enter checkOIB()");
+
+        if(SKIP_SMARTCARD_ACCESS) return;
+
         if(mInitialied) {
             synchronized (this) {
                 int ret = SmartCard.chechOIB(HP_BULK_CARTRIDGE);
@@ -173,7 +232,9 @@ public class SmartCardManager implements IInkDevice {
     }
 
     private void readLevelValue(int count) {
-        if(mInitialied) {
+        if(SKIP_SMARTCARD_ACCESS) {
+            mReadLevels[count] = 14000000;
+        } else if(mInitialied) {
             int level;
             synchronized (this) {
                 level = SmartCard.readLevel(LEVEL_SENSOR);
@@ -196,35 +257,64 @@ public class SmartCardManager implements IInkDevice {
         mCurrentLevel = (int)(sum / READ_LEVEL_TIMES);
         Debug.d(TAG, "Current Level = " + mCurrentLevel);
 
+        if(mCurrentLevel < 12000000 || mCurrentLevel > 16000000) return;
+
         mHandler.sendEmptyMessage(MSG_LEVEL_UPDATED);
+
+        if(mCurrentLevel < 13500000 && !mBlockAdding) {
+            mHandler.sendEmptyMessage(MSG_ADD_INK_ON);
+        }
     }
 
     public void updateLevel() {
-        for(int i=0; i<READ_LEVEL_TIMES; i++) {
-            readLevelValue(i);
-        }
-        levelValueUpdated();
+        mHandler.obtainMessage(MSG_READ_LEVEL, 0, 0).sendToTarget();
     }
 
     @Override
     public boolean checkUID(int heads) {
         Debug.d(TAG, "---> enter checkUID()");
-        if (mValid) {
+
+        if(SKIP_SMARTCARD_ACCESS) {
             mCallback.sendEmptyMessageDelayed(MSG_SMARTCARD_CHECK_SUCCESS, 100);
+            return true;
         } else {
-            mCallback.sendEmptyMessageDelayed(MSG_SMARTCARD_CHECK_FAILED, 100);
+            if (mValid) {
+                checkConsistency();
+            } else {
+                mCallback.sendEmptyMessageDelayed(MSG_SMARTCARD_CHECK_FAILED, 100);
+            }
+
+            if(mValid) {
+                checkOIB();
+            } else {
+                // 如果mValid为false，在checkConsistency函数里面就已经发送异常了，无需再次发送
+            }
+
+            if(mValid) {
+                mInkLevel = SmartCard.getLocalInk(HP_BULK_CARTRIDGE);
+                mCallback.sendEmptyMessageDelayed(MSG_SMARTCARD_CHECK_SUCCESS, 100);
+            } else {
+                // 如果mValid为false，在checkOIB函数里面就已经发送异常了，无需再次发送
+            }
         }
+
         return true;
     }
 
     @Override
     public float getLocalInk(int head) {
         Debug.d(TAG, "---> enter getLocalInk()");
-        if(mInitialied) {
-            synchronized (this) {
-                mInkLevel = SmartCard.getLocalInk(HP_BULK_CARTRIDGE);
+
+        if(mInkLevel == 0) {
+            if(SKIP_SMARTCARD_ACCESS) {
+                mInkLevel = 2000;           // 如果跳过Smartcard访问标识开启，则返回一个恰当值
+            } else if(mInitialied) {
+                synchronized (this) {
+                    mInkLevel = SmartCard.getLocalInk(HP_BULK_CARTRIDGE);
+                }
             }
         }
+
         Debug.d(TAG, "---> Ink Level = " + mInkLevel);
         return mInkLevel;
     }
@@ -258,14 +348,17 @@ public class SmartCardManager implements IInkDevice {
     @Override
     public void downLocal(int dev) {
         Debug.d(TAG, "---> enter downLocal()");
+
+        mInkLevel--;
+
+        if(SKIP_SMARTCARD_ACCESS) return;
+
         if(mInitialied) {
             synchronized (this) {
                 SmartCard.downLocal(HP_BULK_CARTRIDGE);
                 mInkLevel = SmartCard.getLocalInk(HP_BULK_CARTRIDGE);
             }
             checkOIB();
-        } else {
-            mInkLevel--;
         }
     }
 

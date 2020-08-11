@@ -404,12 +404,19 @@ public static final String TAG="SettingsTabActivity";
 						DataTransferThread dt = DataTransferThread.getInstance(mContext);
 						if(null != dt && dt.isRunning()) {
 // 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
-							Debug.d(TAG, "Time1 = " + dt.Time1 + "; Time2 = " + dt.Time2 + "; Now = " + System.currentTimeMillis());
+							Debug.d(TAG, "Time1 = " + dt.Time1 + "; Time2 = " + dt.Time2 + "; Now = " + System.currentTimeMillis() + "; DataRatio = " + dt.DataRatio);
+							int a = (int)(dt.Time2 - dt.Time1);
+							int b = Math.round(a * (1.0f * 3 / (2 * dt.DataRatio + 4)));
+                            int c = (int)(System.currentTimeMillis() - dt.Time2);
+							Debug.d(TAG, "a = " + a + "; b = " + b + "; c = " + c);
 							long delay = Math.min(
 											Math.max(
-												Math.round((dt.Time2 - dt.Time1) * 0.85f) - (System.currentTimeMillis() - dt.Time2),
+// 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
+//                                                    Math.round((dt.Time2 - dt.Time1) * (1.0f * 3 / (2 * dt.DataRatio + 4))) - (System.currentTimeMillis() - dt.Time2),
+                                                    ((b - c) > 0 ? (b - c) : (a + b - c)),
+// End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 												0),
-											4000);
+											40000);
 							Debug.d(TAG, "Delay " + delay + "ms to write to FPGA");
 							if(delay > 0) {
 								mHandler.sendEmptyMessageDelayed(MSG_DELAYED_FPGA_SETTING, delay);

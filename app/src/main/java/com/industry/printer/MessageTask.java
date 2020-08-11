@@ -298,7 +298,13 @@ public class MessageTask {
 
 				// H.M.Wang 修改下列两行
 //				if (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
-				if (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT || getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2020-7-23 追加32DN打印头
+//				if (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT || getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT || getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+				if (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
+					getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
+					getNozzle() == PrinterNozzle.MESSAGE_TYPE_32DN ||
+					getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 
 					for (int i = 0; i < mDots.length; i++) {
 						mDots[i] = mDots[i] * 200;
@@ -614,8 +620,11 @@ public class MessageTask {
 		//實際寬度
 
 		// H.M.Wang 修改下列一行
-        int bWidth = Math.round(width * scaleW);
+// H.M.Wang 2020-8-11 64点内容有时保存时最后却一列问题解决，如果算出来的宽度是12.3，原来直接取整和四舍五入都不能解决问题，只有取天花板才正确
+        int bWidth = (int)(width * scaleW) + 1;
+//        int bWidth = Math.round(width * scaleW);
 //        int bWidth = (int) (width * scaleW);
+// End of H.M.Wang 2020-8-11 64点内容有时保存时最后却一列问题解决，如果算出来的宽度是12.3，原来直接取整和四舍五入都不能解决问题，只有取天花板才正确
 		int bHeight = msgObj.getPNozzle().getHeight();
 //		Debug.d(TAG, "SaveTime: - Start CreateBitmap : " + System.currentTimeMillis());
 		Bitmap bmp = Bitmap.createBitmap(bWidth , bHeight, Configs.BITMAP_CONFIG);
@@ -737,6 +746,9 @@ public class MessageTask {
 		if (msgObj.getResolution() ||
 			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT) ||
 			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT) ||
+// H.M.Wang 2020-7-23 追加32DN打印头
+			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_32DN) ||
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT)) {
 
 			// H.M.Wang 追加一个是否移位的参数

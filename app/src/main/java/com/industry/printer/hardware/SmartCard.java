@@ -36,13 +36,17 @@ public class SmartCard {
 
     static public native int close();
 
-    static public native int chechConsistency(int card);
+    static public native int checkConsistency();
+
+    static public native String readConsistency();
 
     static public native int chechOIB(int card);
 
     static public native int getLocalInk(int card);
 
     static public native int downLocal(int card);
+
+    static public native String readILG(int card);
 
     static public native int readLevel(int card);
 }

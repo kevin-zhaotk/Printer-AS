@@ -19,6 +19,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -102,6 +103,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -208,6 +210,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	private ImageButton mMsgNext;
 	private  ImageButton mMsgPrev;
 
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
+	public TextView mCtrlTitle;
+	public TextView mCountdown;
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
 
 	public SystemConfigFile mSysconfig;
 	/**
@@ -434,8 +440,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		
 		mTVPrinting = (TextView) getView().findViewById(R.id.tv_printState);
 		mTVStopped = (TextView) getView().findViewById(R.id.tv_stopState);
-		
-		
+
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
+		mCtrlTitle = (TextView) getView().findViewById(R.id.ctrl_counter_view);
+		mCountdown = (TextView) getView().findViewById(R.id.count_down);
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
+
 		switchState(STATE_STOPPED);
 		mScrollView = (HorizontalScrollView) getView().findViewById(R.id.preview_scroll);
 		mllPreview = (LinearLayout) getView().findViewById(R.id.ll_preview);
@@ -764,7 +774,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			count = 0;
 		}
 		Debug.d(TAG, "--->refreshCount: " + count);
-		((MainActivity) getActivity()).setCtrlExtra(mCounter, (int) count);
+// H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
+//		((MainActivity) getActivity()).setCtrlExtra(mCounter, (int) count);
+		mCtrlTitle.setText(String.valueOf(mCounter));
+		mCountdown.setText(String.valueOf((int)count));
+// End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
 	}
 	
 	private void setDevNo(String dev) {
@@ -1591,12 +1605,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				mTvOpen.setTextColor(Color.DKGRAY);
 				mTVPrinting.setVisibility(View.VISIBLE);
 				mTVStopped.setVisibility(View.GONE);
-				mBtnClean.setEnabled(false);
-				mTvClean.setTextColor(Color.DKGRAY);
+// 2020-7-21 取消打印状态下清洗按钮无效的设置
+//				mBtnClean.setEnabled(false);
+//				mTvClean.setTextColor(Color.DKGRAY);
+// End of 2020-7-21 取消打印状态下清洗按钮无效的设置
 
 				// mMsgNext.setClickable(false);
 				// mMsgPrev.setClickable(false);
-				ExtGpio.writeGpio('b', 11, 1);
+//				ExtGpio.writeGpio('b', 11, 1);
 				break;
 			case STATE_STOPPED:
 				mBtnStart.setClickable(true);
@@ -1607,12 +1623,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				mTvOpen.setTextColor(Color.BLACK);
 				mTVPrinting.setVisibility(View.GONE);
 				mTVStopped.setVisibility(View.VISIBLE);
-				mBtnClean.setEnabled(true);
-				mTvClean.setTextColor(Color.BLACK);
+// 2020-7-21 取消打印状态下清洗按钮无效的设置
+//				mBtnClean.setEnabled(true);
+//				mTvClean.setTextColor(Color.BLACK);
+// End of 2020-7-21 取消打印状态下清洗按钮无效的设置
 
 				// mMsgNext.setClickable(true);
 				// mMsgPrev.setClickable(true);
-				ExtGpio.writeGpio('b', 11, 0);
+//				ExtGpio.writeGpio('b', 11, 0);
 				break;
 			default:
 				Debug.d(TAG, "--->unknown state");
@@ -2167,7 +2185,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		
 	}
-	
+
+// 2020-7-21 在未开始打印前，网络清洗命令不响应问题解决，追加一个类变量
+	DataTransferThread thread = DataTransferThread.getInstance(mContext);
+// End of 2020-7-21 在未开始打印前，网络清洗命令不响应问题解决，追加一个类变量
+
 	//Soect_____________________________________________________________________________________________________________________________
 			//通讯 开始
 			private void SocketBegin()
@@ -2381,13 +2403,16 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 									}
 // End of H.M.Wang 2019-12-30 收到空命令的时候，返回错误
 
-									if (PCCommand.CMD_SEND_BIN.equalsIgnoreCase(cmd.command)) {  // LAN Printing
+                                    if (PCCommand.CMD_SEND_BIN.equalsIgnoreCase(cmd.command) ||  // LAN Printing
+                                        PCCommand.CMD_SEND_BIN_S.equalsIgnoreCase(cmd.command)) {  // LAN Printing
 
 										cacheBin(Gsocket, msg);
-									} else if (PCCommand.CMD_DEL_LAN_BIN.equalsIgnoreCase(cmd.command)) {
+                                    } else if (PCCommand.CMD_DEL_LAN_BIN.equalsIgnoreCase(cmd.command) ||
+                                                PCCommand.CMD_DEL_LAN_BIN_S.equalsIgnoreCase(cmd.command)) {
 
 		                        	    DataTransferThread.deleteLanBuffer(Integer.valueOf(cmd.content));
-									} else if (PCCommand.CMD_RESET_INDEX.equalsIgnoreCase(cmd.command)) {
+                                    } else if (PCCommand.CMD_RESET_INDEX.equalsIgnoreCase(cmd.command) ||
+                                                PCCommand.CMD_RESET_INDEX_S.equalsIgnoreCase(cmd.command)) {
 
 										if(null != mDTransThread) {
 											mDTransThread.resetIndex();
@@ -2396,7 +2421,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 											sendmsg(Constants.pcErr(msg));
 										}
 // H.M.Wang 2019-12-16 支持网络下发计数器和动态二维码的值
-									} else if (PCCommand.CMD_SET_REMOTE.equalsIgnoreCase(cmd.command)) {
+                                    } else if (PCCommand.CMD_SET_REMOTE.equalsIgnoreCase(cmd.command) ||
+                                                PCCommand.CMD_SET_REMOTE_S.equalsIgnoreCase(cmd.command)) {
     // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
                                         if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
 // H.M.Wang 2020-6-28 追加专门为网络快速打印设置
@@ -2413,7 +2439,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
                                         }
     // End.
 // End. -----
-									} else if(PCCommand.CMD_PRINT.equalsIgnoreCase(cmd.command)) {
+                                    } else if(PCCommand.CMD_PRINT.equalsIgnoreCase(cmd.command) ||
+                                                PCCommand.CMD_PRINT_S.equalsIgnoreCase(cmd.command)) {
 
 										File msgfile = new File(cmd.content);
 										if (!isTlkReady(msgfile)) {
@@ -2440,18 +2467,24 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		         							mHandler.sendMessage(message);
 
 		                            	}
-		                            } 
-		                            else if(PCCommand.CMD_CLEAN.equalsIgnoreCase(cmd.command)) {
+		                            } else if(PCCommand.CMD_CLEAN.equalsIgnoreCase(cmd.command) ||
+		                                        PCCommand.CMD_CLEAN_S.equalsIgnoreCase(cmd.command)) {
 		                            	//200是清洗
 										CleanFlag=1;
 		                            	if(null != mDTransThread) {
 											mDTransThread.purge(mContext);
 											this.sendmsg(Constants.pcOk(msg));
 										} else {
-											sendmsg(Constants.pcErr(msg));
+// 2020-7-21 在未开始打印前，网络清洗命令不响应问题解决
+											thread = DataTransferThread.getInstance(mContext);
+											thread.purge(mContext);
+											this.sendmsg(Constants.pcOk(msg));
+// End of 2020-7-21 在未开始打印前，网络清洗命令不响应问题解决
+//											sendmsg(Constants.pcErr(msg));
 										}
-		                            }
-		                            else if(PCCommand.CMD_SEND_FILE.equalsIgnoreCase(cmd.command)) {
+
+		                            } else if(PCCommand.CMD_SEND_FILE.equalsIgnoreCase(cmd.command) ||
+                                                PCCommand.CMD_SEND_FILE_S.equalsIgnoreCase(cmd.command)) {
 		                            	//300发文件
 		                            	AddPaths="";
 		                            	if(SendFileFlag==0)//发文件等赵工写好了，再测试
@@ -2459,8 +2492,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            		SendFileFlag=1;
 		                            		this.sendmsg(WriteFiles(Gsocket,msg));
 		                            	}
-		                            }
-		                            else if(PCCommand.CMD_READ_COUNTER.equalsIgnoreCase(cmd.command)) {
+		                            } else if(PCCommand.CMD_READ_COUNTER.equalsIgnoreCase(cmd.command) ||
+		                                        PCCommand.CMD_READ_COUNTER_S.equalsIgnoreCase(cmd.command)) {
 		                            	//400取计数器
 // H.M.Wang 2020-4-22 修改读取Counter命令返回格式
 										StringBuilder sb = new StringBuilder();
@@ -2486,8 +2519,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
                                         }
 // End of H.M.Wang 2020-7-1 临时版本，回复原来的回复格式
 */
-		                            }
-		                            else if(PCCommand.CMD_STOP_PRINT.equalsIgnoreCase(cmd.command)) {
+                                    } else if(PCCommand.CMD_STOP_PRINT.equalsIgnoreCase(cmd.command) ||
+                                                PCCommand.CMD_STOP_PRINT_S.equalsIgnoreCase(cmd.command)) {
 		                            	//500停止打印
 		                            	if(StopFlag==1)
 		                            	{
@@ -2525,7 +2558,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            }*/
 // End of H.M.Wang 2020-6-16 这个条件重复，应该注释掉
 
-		                            else if(PCCommand.CMD_MAKE_TLK.equalsIgnoreCase(cmd.command)) {
+                                    else if(PCCommand.CMD_MAKE_TLK.equalsIgnoreCase(cmd.command) ||
+		                                    PCCommand.CMD_MAKE_TLK_S.equalsIgnoreCase(cmd.command)) {
 		                           		//700
 		                    			this.sendmsg(getString(R.string.str_build_tlk_start));
 		                            	String[] parts = msg.split("\\|");
@@ -2537,7 +2571,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            		MakeTlk(parts[3]);
 										}
 		                            }
-		                            else if(PCCommand.CMD_DEL_FILE.equalsIgnoreCase(cmd.command)) {
+                                    else if(PCCommand.CMD_DEL_FILE.equalsIgnoreCase(cmd.command) ||
+		                                    PCCommand.CMD_DEL_FILE_S.equalsIgnoreCase(cmd.command)) {
 		                           		//600字符串长成所需文件
 		                    			if (deleteFile(msg)) {
 		                            		this.sendmsg(Constants.pcOk(msg));
@@ -2545,7 +2580,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                    			this.sendmsg(Constants.pcErr(msg));
 		                            	}
 		                            }
-		                            else if(PCCommand.CMD_DEL_DIR.equalsIgnoreCase(cmd.command)) {
+                                    else if(PCCommand.CMD_DEL_DIR.equalsIgnoreCase(cmd.command) ||
+		                                    PCCommand.CMD_DEL_DIR_S.equalsIgnoreCase(cmd.command)) {
                                         //600字符串长成所需文件
                                         if (deleteDirectory(msg)) {
                                             this.sendmsg(Constants.pcOk(msg));
@@ -2639,6 +2675,74 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 											this.sendmsg(Constants.pcErr(msg));
 										}
 // End of H.M.Wang 2020-7-1 追加一个计数器设置数值命令
+                                    } else if(PCCommand.CMD_SET_TIME.equalsIgnoreCase(cmd.command)) {
+                                        try {
+                                            int cYear = Integer.valueOf(cmd.content.substring(0,2));
+                                            int cMonth = Integer.valueOf(cmd.content.substring(2,4));
+                                            int cDate = Integer.valueOf(cmd.content.substring(4,6));
+                                            int cHour = Integer.valueOf(cmd.content.substring(6,8));
+                                            int cMinute = Integer.valueOf(cmd.content.substring(8,10));
+                                            int cSecond = Integer.valueOf(cmd.content.substring(10,12));
+
+                                            if(cYear < 0 || cYear > 99) {
+                                                Debug.e(TAG, "CMD_SET_TIME command, invalid year.");
+                                                this.sendmsg(Constants.pcErr(msg));
+                                            } else if(cMonth < 1 || cMonth > 12) {
+                                                Debug.e(TAG, "CMD_SET_TIME command, invalid month.");
+                                                this.sendmsg(Constants.pcErr(msg));
+                                            } else if(cDate < 1 || cDate > 31) {
+                                                Debug.e(TAG, "CMD_SET_TIME command, invalid date.");
+                                                this.sendmsg(Constants.pcErr(msg));
+                                            } else if(cHour < 0 || cHour > 23) {
+                                                Debug.e(TAG, "CMD_SET_TIME command, invalid hour.");
+                                                this.sendmsg(Constants.pcErr(msg));
+                                            } else if(cMinute < 0 || cMinute > 59) {
+                                                Debug.e(TAG, "CMD_SET_TIME command, invalid minute.");
+                                                this.sendmsg(Constants.pcErr(msg));
+                                            } else if(cSecond < 0 || cSecond > 59) {
+                                                Debug.e(TAG, "CMD_SET_TIME command, invalid second.");
+                                                this.sendmsg(Constants.pcErr(msg));
+                                            } else {
+                                                Calendar c = Calendar.getInstance();
+
+                                                c.set(cYear + 2000, cMonth-1, cDate, cHour, cMinute, cSecond);
+                                                SystemClock.setCurrentTimeMillis(c.getTimeInMillis());
+                                                RTCDevice rtcDevice = RTCDevice.getInstance(mContext);
+                                                rtcDevice.syncSystemTimeToRTC(mContext);
+                                                Debug.d(TAG, "Set time to: " + (cYear + 2000) + "-" + cMonth + "-" + cDate + " " + cHour + ":" + cMinute + ":" + cSecond);
+												this.sendmsg(Constants.pcOk(msg));
+                                            }
+                                        } catch (Exception e) {
+                                            Debug.e(TAG, "CMD_SET_TIME command, " + e.getMessage() + ".");
+                                            this.sendmsg(Constants.pcErr(msg));
+                                        }
+// H.M.Wang 2020-7-28 追加一个设置参数命令
+									} else if(PCCommand.CMD_SET_PARAMS.equalsIgnoreCase(cmd.command)) {
+										try {
+											int cIndex = Integer.valueOf(cmd.content);
+                                            cIndex--;
+											if(cIndex < 0 || cIndex > 63) {
+												Debug.e(TAG, "Invalid PARAM index.");
+												this.sendmsg(Constants.pcErr(msg));
+											} else {
+												try {
+													int cValue = Integer.valueOf(cmd.note2);
+//													if(cIndex == 3 || cIndex == 0 || cIndex == 1 || cIndex == 32 || (cIndex >= SystemConfigFile.INDEX_COUNT_1 && cIndex <= SystemConfigFile.INDEX_COUNT_10)) {
+														mSysconfig.setParamBroadcast(cIndex, cValue);
+//													} else {
+//														mSysconfig.setParam(cIndex, cValue);
+//													}
+													this.sendmsg(Constants.pcOk(msg));
+												} catch (NumberFormatException e) {
+													Debug.e(TAG, "Invalid PARAM value.");
+													this.sendmsg(Constants.pcErr(msg));
+												}
+											}
+										} catch (NumberFormatException e) {
+											Debug.e(TAG, "Invalid PARAM index.");
+											this.sendmsg(Constants.pcErr(msg));
+										}
+// End of H.M.Wang 2020-7-28 追加一个设置参数命令
 		                            } else {
 		                            	this.sendmsg(Constants.pcErr(msg));
 		                            }

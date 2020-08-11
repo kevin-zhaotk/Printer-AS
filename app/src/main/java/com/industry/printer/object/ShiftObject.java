@@ -280,7 +280,13 @@ public class ShiftObject extends BaseObject {
 
 		// H.M.Wang 修改下列两行
 //		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
-		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2020-7-23 追加32DN打印头
+//		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+		if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
+			head == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
+			head == PrinterNozzle.MESSAGE_TYPE_32DN ||
+			head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 			singleW = width;
 		} else {
 			singleW = Math.round(mWidth * scaleW/mContent.length());

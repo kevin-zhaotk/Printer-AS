@@ -111,6 +111,34 @@
 			 android:layout_marginRight="10dp"
 			 android:layout_marginTop="10dp"
 			 />
+<!-- H.M.Wang 2020-8-11 追加时间显示 -->
+        <LinearLayout
+            android:id="@+id/time_disp_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/msg_transfer"
+			android:orientation="vertical">
+			<TextView
+				android:id="@+id/disp_date"
+				android:layout_width="wrap_content"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				android:textColor="#000000"
+				android:layout_gravity="center"
+				android:textSize="25sp" />
+			<TextView
+				android:id="@+id/disp_time"
+				android:layout_width="wrap_content"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				android:textColor="#000000"
+				android:layout_gravity="center"
+				android:textSize="25sp" />
+		</LinearLayout>
+<!-- End of H.M.Wang 2020-8-11 追加时间显示 -->
+
+
+<!-- H.M.Wang 2020-8-11 转移至Control_Frame
         <RelativeLayout
             android:id="@+id/layout_cnt"
             android:layout_width="match_parent"
@@ -163,7 +191,7 @@
 		        android:gravity="center"
 	        />
 	    </RelativeLayout>
-
+-->
         <ImageButton
             android:id="@+id/msg_transfer"
             android:layout_width="wrap_content"

@@ -116,8 +116,7 @@
         android:layout_width="fill_parent"
         android:layout_height="58dp"
         android:layout_below="@id/ctrl_btn_layout"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="5dp" >
 	     
 	    <TextView 
 	        android:id="@+id/tv_msg_name"
@@ -152,7 +151,61 @@
 			android:textColor="#000000"
 			/>
 <!-- End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的任务的序号 -->
-    </RelativeLayout>
+<!-- H.M.Wang 2020-8-11 将墨量和减锁信息移植这里显示 -->
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_alignParentRight="true"
+			android:orientation="horizontal" >
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:orientation="vertical">
+				<TextView
+					android:id="@+id/cnt_dw_label"
+					android:layout_width="wrap_content"
+					android:layout_height="0dp"
+					android:layout_weight="1"
+					android:gravity="center_vertical"
+					android:textColor="#000000"
+					android:textSize="25sp"
+					android:text="@string/strInklevel" />
+				<TextView
+					android:id="@+id/cnt_cnter_label"
+					android:layout_width="wrap_content"
+					android:layout_height="0dp"
+					android:layout_weight="1"
+					android:gravity="center_vertical"
+					android:textColor="#000000"
+					android:textSize="25sp"
+					android:text="@string/str_remain_ptimes" />
+			</LinearLayout>
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_alignParentRight="true"
+				android:orientation="vertical">
+				<TextView
+					android:id="@+id/count_down"
+					android:layout_width="wrap_content"
+					android:layout_height="0dp"
+					android:layout_weight="1"
+					android:gravity="center_vertical"
+					android:textColor="#000000"
+					android:textSize="25sp"
+					/>
+				<TextView
+					android:id="@+id/ctrl_counter_view"
+					android:layout_width="wrap_content"
+					android:layout_height="0dp"
+					android:layout_weight="1"
+					android:gravity="center_vertical"
+					android:textColor="#000000"
+					android:textSize="25sp" />
+			</LinearLayout>
+		</LinearLayout>
+<!-- End of H.M.Wang 2020-8-11 将墨量和减锁信息移植这里显示 -->
+	</RelativeLayout>
     
     
   

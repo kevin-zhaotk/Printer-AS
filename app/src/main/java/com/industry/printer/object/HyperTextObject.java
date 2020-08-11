@@ -97,6 +97,17 @@ public class HyperTextObject extends BaseObject {
         return super.getContent();
     }
 
+// H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+    public String getExpandedContent() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("");
+        for (BaseObject obj : mSubObjs) {
+            sb.append(obj.getContent());
+        }
+        return sb.toString();
+    }
+// End of H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+
     public Vector<BaseObject> getSubObjs()
     {
         return mSubObjs;
@@ -131,7 +142,7 @@ public class HyperTextObject extends BaseObject {
 //                        ((CounterObject)obj).setStart(mCounterStart);
 //                        ((CounterObject)obj).setEnd(mCounterEnd);
                         ((CounterObject)obj).setRange(mCounterStart, mCounterEnd);;
-                        ((CounterObject)obj).setIndex(mCounterIndex);
+                        ((CounterObject)obj).setCounterIndex(mCounterIndex);
                     }
                 } else if(testStr.startsWith(HYPER_TEXT_4_COUNTER, foundPos)) {
                     tag = HYPER_TEXT_4_COUNTER;
@@ -142,7 +153,7 @@ public class HyperTextObject extends BaseObject {
 //                        ((CounterObject)obj).setStart(mCounterStart);
 //                        ((CounterObject)obj).setEnd(mCounterEnd);
                         ((CounterObject)obj).setRange(mCounterStart, mCounterEnd);;
-                        ((CounterObject)obj).setIndex(mCounterIndex);
+                        ((CounterObject)obj).setCounterIndex(mCounterIndex);
                     }
                 } else if(testStr.startsWith(HYPER_TEXT_3_COUNTER, foundPos)) {
                     tag = HYPER_TEXT_3_COUNTER;
@@ -153,7 +164,7 @@ public class HyperTextObject extends BaseObject {
 //                        ((CounterObject)obj).setStart(mCounterStart);
 //                        ((CounterObject)obj).setEnd(mCounterEnd);
                         ((CounterObject)obj).setRange(mCounterStart, mCounterEnd);;
-                        ((CounterObject)obj).setIndex(mCounterIndex);
+                        ((CounterObject)obj).setCounterIndex(mCounterIndex);
                     }
                 } else if(testStr.startsWith(HYPER_TEXT_2_COUNTER, foundPos)) {
                     tag = HYPER_TEXT_2_COUNTER;
@@ -164,7 +175,7 @@ public class HyperTextObject extends BaseObject {
 //                        ((CounterObject)obj).setStart(mCounterStart);
 //                        ((CounterObject)obj).setEnd(mCounterEnd);
                         ((CounterObject)obj).setRange(mCounterStart, mCounterEnd);;
-                        ((CounterObject)obj).setIndex(mCounterIndex);
+                        ((CounterObject)obj).setCounterIndex(mCounterIndex);
                     }
                 } else if(testStr.startsWith(HYPER_TEXT_WEEK_OF_YEAR, foundPos)) {
                     tag = HYPER_TEXT_WEEK_OF_YEAR;
@@ -445,6 +456,16 @@ public class HyperTextObject extends BaseObject {
     public int getCounterEnd() {
         return mCounterEnd;
     }
+
+// H.M.Wang 2020-7-31 追加超文本的计数器打印后调整
+    public void goNext() {
+        for(BaseObject o : mSubObjs) {
+            if (o instanceof CounterObject) {
+                ((CounterObject) o).goNext();
+            }
+        }
+    }
+// End of H.M.Wang 2020-7-31 追加超文本的计数器打印后调整
 
     public void setShiftTime(int shift, String time) {
         for(BaseObject o : mSubObjs) {

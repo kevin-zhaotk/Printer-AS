@@ -197,7 +197,7 @@ public class TLKFileParser  extends TlkFile{
 			return;
 		}
 		String [] attr = str.split("\\^",0);
-		if (attr == null || attr.length != 22) {
+		if (attr == null || attr.length < 22) {
 			return ;
 		}
 		object.setIndex(StringUtil.parseInt(attr[0]));
@@ -217,7 +217,7 @@ public class TLKFileParser  extends TlkFile{
 		Debug.d(TAG, "*************************");
 		BaseObject obj = null;
 		String [] attr = str.split("\\^",0);
-		if (attr == null || attr.length != 22) {
+		if (attr == null || attr.length < 22) {
 			return null;
 		}
 
@@ -228,7 +228,11 @@ public class TLKFileParser  extends TlkFile{
 				obj = new MessageObject(mContext, 0);
 			/*参数8表示打印头类型*/
 				int type = Integer.parseInt(attr[8]);
-				((MessageObject) obj).setType(PrinterNozzle.getByType(type).mIndex);
+// H.M.Wang 2020-7-27 修改打印头的获取方式，不依据信息中的打印头信息获取，而是依据系统参数设置获取
+//				((MessageObject) obj).setType(PrinterNozzle.getByType(type).mIndex);
+				SystemConfigFile conf = SystemConfigFile.getInstance(mContext);
+				((MessageObject) obj).setType(conf.getParam(SystemConfigFile.INDEX_HEAD_TYPE));
+// End of H.M.Wang 2020-7-27 修改打印头的获取方式，不依据信息中的打印头信息获取，而是依据系统参数设置获取
 				int resolution = Integer.parseInt(attr[9]);
 				((MessageObject) obj).setHighResolution(resolution);
 				((MessageObject) obj).setDotCount(Integer.parseInt(attr[13]));
@@ -242,7 +246,10 @@ public class TLKFileParser  extends TlkFile{
 				mDots[7] = Integer.parseInt(attr[18]);
 				adjustDotCount(Integer.parseInt(attr[13]));
 				((MessageObject) obj).setDotCountPer(mDots);
-				PrinterNozzle nozzle = PrinterNozzle.getByType(type);
+// H.M.Wang 2020-7-27 修改打印头的获取方式，不依据信息中的打印头信息获取，而是依据系统参数设置获取
+//				PrinterNozzle nozzle = PrinterNozzle.getByType(type);
+				PrinterNozzle nozzle = conf.getPNozzle();
+// End of H.M.Wang 2020-7-27 修改打印头的获取方式，不依据信息中的打印头信息获取，而是依据系统参数设置获取
 				setDotsPerClm(nozzle);
 			} else if (BaseObject.OBJECT_TYPE_BARCODE.equals(attr[1])
 					|| BaseObject.OBJECT_TYPE_QR.equals(attr[1]))    //barcode
@@ -283,7 +290,7 @@ public class TLKFileParser  extends TlkFile{
 					index = 0;
 				}
 				((CounterObject) obj).setCounterIndex(index);
-				((CounterObject) obj).setValue(conf.getParam(SystemConfigFile.INDEX_COUNT_1 + index));
+// 值已经在setCounterIndex里面设置，无需再次设置 ((CounterObject) obj).setValue(conf.getParam(SystemConfigFile.INDEX_COUNT_1 + index));
 				((CounterObject) obj).setSteplen(Integer.parseInt(attr[15]));
 			} else if (BaseObject.OBJECT_TYPE_ELLIPSE.equals(attr[1]))    //ellipse
 			{
@@ -322,6 +329,8 @@ public class TLKFileParser  extends TlkFile{
 				obj = new HyperTextObject(mContext, 0);
 				((HyperTextObject) obj).setContent(attr[21]);
 				((HyperTextObject) obj).setCounterIndex(attr[8]);
+				((HyperTextObject) obj).setCounterStart(attr[17]);
+				((HyperTextObject) obj).setCounterEnd(attr[18]);
 				((HyperTextObject) obj).setShiftValue(0, attr[9]);
 				((HyperTextObject) obj).setShiftValue(1, attr[10]);
 				((HyperTextObject) obj).setShiftValue(2, attr[11]);
@@ -330,8 +339,6 @@ public class TLKFileParser  extends TlkFile{
 				((HyperTextObject) obj).setShiftTime(1, attr[14]);
 				((HyperTextObject) obj).setShiftTime(2, attr[15]);
 				((HyperTextObject) obj).setShiftTime(3, attr[16]);
-				((HyperTextObject) obj).setCounterStart(attr[17]);
-				((HyperTextObject) obj).setCounterEnd(attr[18]);
 				((HyperTextObject) obj).setDateOffset(attr[20]);
 // End of H.M.Wang 2020-2-17 追加HyperText控件
 			} else if (BaseObject.OBJECT_TYPE_TEXT.equals(attr[1]))            //text
@@ -534,6 +541,9 @@ public class TLKFileParser  extends TlkFile{
 
 			case MESSAGE_TYPE_16_DOT:
 			case MESSAGE_TYPE_32_DOT:
+// H.M.Wang 2020-7-23 追加32DN打印头
+			case MESSAGE_TYPE_32DN:
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 
 			// H.M.Wang 追加下列一行
 			case MESSAGE_TYPE_64_DOT:

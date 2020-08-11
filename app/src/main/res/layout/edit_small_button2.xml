@@ -13,7 +13,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:id="@+id/btn_detail_tv"
@@ -35,7 +35,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:id="@+id/btn_list_tv"
@@ -57,7 +57,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:id="@+id/btn_insert_tv"

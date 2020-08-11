@@ -370,6 +370,9 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 						break;
 					case MESSAGE_TYPE_16_DOT:
 					case MESSAGE_TYPE_32_DOT:
+// H.M.Wang 2020-7-23 追加32DN打印头
+					case MESSAGE_TYPE_32DN:
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 
 					// H.M.Wang 追加下列一行
 					case MESSAGE_TYPE_64_DOT:
@@ -646,7 +649,9 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 						bar.setY(cur[1]);
 						if (source) {
 							bar.setSource(source);
-							bar.setCode("QR");
+// H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，因此注销下行
+//							bar.setCode("QR");
+// End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，因此注销下行
 						}
 						onInsertObject(bar);
 					} else if (BaseObject.OBJECT_TYPE_GRAPHIC.equalsIgnoreCase(type)) {

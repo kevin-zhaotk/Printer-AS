@@ -27,7 +27,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+				android:background="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:layout_width="match_parent"
@@ -48,7 +48,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:layout_width="match_parent"
@@ -90,7 +90,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:layout_width="match_parent"
@@ -111,7 +111,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:layout_width="match_parent"
@@ -133,7 +133,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_editbtn"
+		        android:src="@drawable/style_btn_state"
 			    />
 			<TextView
 			    android:layout_width="match_parent"

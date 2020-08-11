@@ -148,7 +148,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 // H.M.Wang 2020-2-4 添加Shift控件的位数项目
     private PopWindowAdapter mShiftBitsAdapter;
 // End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
-	private PopWindowAdapter mFormatAdapter;
+// H.M.Wang 2020-8-6 时间格式选择改为对话窗
+//	private PopWindowAdapter mFormatAdapter;
+// End of H.M.Wang 2020-8-6 时间格式选择改为对话窗
 	private PopWindowAdapter mTypeAdapter;
 	private PopWindowAdapter mLineAdapter;
 	private PopWindowAdapter mDirAdapter;
@@ -157,6 +159,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 
 	public final static int MSG_SELECTED_FONT = 1;
 	public final static int MSG_SELECTED_SIZE = 2;
+// H.M.Wang 2020-8-6 时间格式选择改为对话窗
+	public final static int MSG_SELECTED_TIME_FORMAT = 3;
+// End of H.M.Wang 2020-8-6 时间格式选择改为对话窗
 
 	public Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -210,6 +215,16 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 					mFont.setClickable(true);
 				}
 				break;
+// H.M.Wang 2020-8-6 时间格式选择改为对话窗
+			case MSG_SELECTED_TIME_FORMAT:
+				String format = msg.getData().getString("format");
+
+				RealtimeObject rtObj = new RealtimeObject(mContext, 0);
+				rtObj.setFormat(format);
+				mRtFormat.setText(format);
+				mContent.setText(rtObj.getContent());
+				break;
+// End of H.M.Wang 2020-8-6 时间格式选择改为对话窗
 			}
 		}
 	};
@@ -372,7 +387,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				// H.M.Wang 追加这段代码在添加条码的时候不显示字体，追加二维码的时候不显示内容和字体
 				// H.M.Wang 2019-9-21 二维码有两种QRCode和DynamicQRCode，只有第二种需要隐藏内容编辑窗
 //				if(((BarcodeObject)mObject).isQRCode()) {
-				if(((BarcodeObject)mObject).isDynamicQRCode()) {
+				if(((BarcodeObject)mObject).isDynamicCode()) {
 					mContentView.setVisibility(View.GONE);
 					mContent.setVisibility(View.GONE);
 				}
@@ -860,7 +875,9 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 // H.M.Wang 2020-2-4 添加Shift控件的位数项目
          mShiftBitsAdapter = new PopWindowAdapter(mContext, null);
 // End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
-		mFormatAdapter = new PopWindowAdapter(mContext, null);
+// H.M.Wang 2020-8-6 时间格式选择改为对话窗
+//		mFormatAdapter = new PopWindowAdapter(mContext, null);
+// End of H.M.Wang 2020-8-6 时间格式选择改为对话窗
 		mTypeAdapter = new PopWindowAdapter(mContext, null);
 		mLineAdapter = new PopWindowAdapter(mContext, null);
 		// mDirAdapter = new PopWindowAdapter(mContext, null);
@@ -891,12 +908,13 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			mFontAdapter.addItem(font);
 		}
 
+// H.M.Wang 2020-8-6 时间格式选择改为对话窗
+//		String[] formats = mContext.getResources().getStringArray(R.array.strTimeFormat);
+//		for (String format : formats) {
+//			mFormatAdapter.addItem(format);
+//		}
+// End of H.M.Wang 2020-8-6 时间格式选择改为对话窗
 
-		String[] formats = mContext.getResources().getStringArray(R.array.strTimeFormat);
-		for (String format : formats) {
-			mFormatAdapter.addItem(format);
-		}
-		
 		String[] types = mContext.getResources().getStringArray(R.array.strPrinterArray);
 		for (String type : types) {
 			mTypeAdapter.addItem(type);
@@ -960,8 +978,13 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
             break;
 // End of H.M.Wang 2020-2-4 添加Shift控件的位数项目
 		case R.id.rtFormat:
-			mSpiner.setAdapter(mFormatAdapter);
-			mSpiner.showAsDropUp(v);
+// H.M.Wang 2020-8-6 时间格式选择改为对话窗
+//			mSpiner.setAdapter(mFormatAdapter);
+//			mSpiner.showAsDropUp(v);
+			TimeFormatSelectDialog tfDlg = new TimeFormatSelectDialog(mContext, mHandler);
+			tfDlg.setCurrentFormat(mRtFormat.getText().toString());
+			tfDlg.show();
+// End of H.M.Wang 2020-8-6 时间格式选择改为对话窗
 			break;
 		case R.id.spin_line_type:
 			mSpiner.setAdapter(mLineAdapter);
@@ -1028,6 +1051,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			view.setText((String)mFontAdapter.getItem(index));
         } else if (view == mShiftBits) {
             view.setText((String)mShiftBitsAdapter.getItem(index));
+// H.M.Wang 2020-8-6 时间格式选择改为对话窗
+/*
 		} else if (view == mRtFormat) {
 
 			// H.M.Wang追加下列5行，实时根据新的时间格式变更内容区域的显示内容
@@ -1038,6 +1063,8 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			mContent.setText(String.valueOf(rtObj.getContent()));
 
 			view.setText((String)mFormatAdapter.getItem(index));
+*/
+// End of H.M.Wang 2020-8-6 时间格式选择改为对话窗
 		} else if (view == mLineType) {
 			view.setText((String)mLineAdapter.getItem(index));
 		} else if (view == mDir) {

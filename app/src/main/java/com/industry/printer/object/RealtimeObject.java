@@ -61,16 +61,19 @@ public class RealtimeObject extends BaseObject {
 		for(;str != null && str.length()>0;)
 		{
 			if(	!str.startsWith("YY", i) &&
-					!str.startsWith("YYYY", i) &&
-					!str.startsWith("AAAA", i) &&
-					!str.startsWith("RRRR", i) &&
-					!str.startsWith("RR", i) &&
-					!str.startsWith("AA", i) &&
-					!str.startsWith("MM", i) &&
-					!str.startsWith("DD", i) &&
-					!str.startsWith("GG", i) &&
-					!str.startsWith("HH", i) &&
-					!str.startsWith("NN", i))
+				!str.startsWith("YYYY", i) &&
+				!str.startsWith("AAAA", i) &&
+				!str.startsWith("RRRR", i) &&
+				!str.startsWith("RR", i) &&
+				!str.startsWith("AA", i) &&
+				!str.startsWith("MM", i) &&
+				!str.startsWith("DD", i) &&
+				!str.startsWith("GG", i) &&
+				!str.startsWith("HH", i) &&
+				!str.startsWith("NN", i) &&
+// H.M.Wang 2020-8-6 增加SS秒时间格式
+				!str.startsWith("SS", i))
+// End of H.M.Wang 2020-8-6 增加SS秒时间格式
 			{
 				i += 1;
 				continue;
@@ -120,13 +123,20 @@ public class RealtimeObject extends BaseObject {
 				mSubObjs.add(o);
 				i += 2;
 			}
-			else if(str.startsWith("NN", i))
-			{
+			else if(str.startsWith("NN", i) || str.startsWith("mm", i)) {
 // H.M.Wang 2019-9-24 追加分钟的所属信息
 				o = new RealtimeMinute(mContext, this, x);
 //				o = new RealtimeMinute(mContext, x);
 				mSubObjs.add(o);
 				i += 2;
+			}
+// H.M.Wang 2020-8-6 增加SS秒时间格式
+			else if(str.startsWith("SS", i) || str.startsWith("ss", i))
+			{
+				o = new RealtimeSecond(mContext, this, x);
+				mSubObjs.add(o);
+				i += 2;
+// End of H.M.Wang 2020-8-6 增加SS秒时间格式
 			} else {
 				continue;
 			}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/background"
+    >
+
+    <GridView
+        android:id="@+id/timeFormatList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/buttons"
+        android:layout_marginTop="20dp"
+        android:horizontalSpacing="20dp"
+        android:verticalSpacing="20dp"
+        android:numColumns="2"
+        android:background="#00000000"
+        >
+
+    </GridView>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/background"
+        >
+        <TextView
+            android:id="@+id/confirm"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/style_dialog_btn"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:text="@string/str_ok"
+            />
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/style_dialog_btn"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:text="@string/strNativeBtn"
+            />
+
+    </LinearLayout>
+</RelativeLayout>

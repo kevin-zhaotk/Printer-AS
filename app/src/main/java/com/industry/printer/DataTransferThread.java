@@ -39,6 +39,7 @@ import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
 import com.industry.printer.object.DynamicText;
+import com.industry.printer.object.HyperTextObject;
 
 /**
  * class DataTransferThread
@@ -181,11 +182,20 @@ public class DataTransferThread {
 
 		// H.M.Wang 修改下列两行
 //		final boolean dotHd = (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT);
-		final boolean dotHd = (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT);
+// H.M.Wang 2020-7-23 追加32DN打印头
+//		final boolean dotHd = (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT);
+		final boolean dotHd =
+				(head == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
+				head == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
+				head == PrinterNozzle.MESSAGE_TYPE_32DN ||
+				head == PrinterNozzle.MESSAGE_TYPE_64_DOT);
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 
 		if (isRunning()) {
 			FpgaGpioOperation.uninit();
-			finish();
+// 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
+//			finish();
+// End of 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 			FpgaGpioOperation.clean();
 			needRestore = true;
 		}
@@ -216,7 +226,12 @@ public class DataTransferThread {
 //				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
 //				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
 				if (needRestore) {
-					launch(mContext);
+// 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
+//					launch(mContext);
+					FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
+					FpgaGpioOperation.init();
+					resendBufferToFPGA();
+// End of 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 					needRestore = false;
 				}
 				
@@ -250,7 +265,13 @@ public class DataTransferThread {
 
 		// H.M.Wang 修改下列两行
 //		if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT && head != PrinterNozzle.MESSAGE_TYPE_32_DOT) {
-		if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT && head != PrinterNozzle.MESSAGE_TYPE_32_DOT && head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2020-7-23 追加32DN打印头
+//		if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT && head != PrinterNozzle.MESSAGE_TYPE_32_DOT && head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+		if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT &&
+			head != PrinterNozzle.MESSAGE_TYPE_32_DOT &&
+			head != PrinterNozzle.MESSAGE_TYPE_32DN &&
+			head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 			return;
 		}
 
@@ -267,7 +288,10 @@ public class DataTransferThread {
 
 				// H.M.Wang 修改下列两行
 //				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
-				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2020-7-23 追加32DN打印头
+//				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_32DN || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 					purgeFile = "purge/bigdot.bin";
 				}
 				char[] buffer = task.preparePurgeBuffer(purgeFile);
@@ -344,7 +368,7 @@ public class DataTransferThread {
 					needUpdate = true;
 				}
 			} else if(baseObject instanceof BarcodeObject) {
-				if(((BarcodeObject)baseObject).isDynamicQRCode() && recvStrs.length >= 11) {
+				if(((BarcodeObject)baseObject).isDynamicCode() && recvStrs.length >= 11) {
 					Debug.d(TAG, "Dynamic QRCode: " + recvStrs[10]);
 					((BarcodeObject)baseObject).setContent(recvStrs[10]);
 					needUpdate = true;
@@ -356,7 +380,7 @@ public class DataTransferThread {
 
 // 2020-7-3 标识网络快速打印状态下数据更新
 		if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
-			mDataUpdatedForLanFast = true;
+            mDataUpdatedForFastLan = true;
 		}
 // End of 2020-7-3 标识网络快速打印状态下数据更新
 	}
@@ -839,7 +863,13 @@ public class DataTransferThread {
 // H.M.Wang 2020-6-12 16,32,64点头减锁修改为不受分辨率影响
 			final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
 			final PrinterNozzle hType = PrinterNozzle.getInstance(headIndex);
-			if (hType != PrinterNozzle.MESSAGE_TYPE_16_DOT && hType != PrinterNozzle.MESSAGE_TYPE_32_DOT && hType != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2020-7-23 追加32DN打印头
+//			if (hType != PrinterNozzle.MESSAGE_TYPE_16_DOT && hType != PrinterNozzle.MESSAGE_TYPE_32_DOT && hType != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			if (hType != PrinterNozzle.MESSAGE_TYPE_16_DOT &&
+				hType != PrinterNozzle.MESSAGE_TYPE_32_DOT &&
+				hType != PrinterNozzle.MESSAGE_TYPE_32DN &&
+				hType != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// End of H.M.Wang 2020-7-23 追加32DN打印头
 				bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
 			} else {
 				bold = 1;
@@ -954,6 +984,12 @@ public class DataTransferThread {
 			for (BaseObject object : task.getObjList()) {
 				if (object instanceof CounterObject) {
 					((CounterObject) object).goNext();
+// H.M.Wang 2020-7-31 追加超文本及条码当中超文本的计数器打印后调整
+				} else if (object instanceof HyperTextObject) {
+					((HyperTextObject) object).goNext();
+				} else if (object instanceof BarcodeObject) {
+					((BarcodeObject) object).goNext();
+// End of H.M.Wang 2020-7-31 追加超文本及条码当中超文本的计数器打印后调整
 				}
 			}
 		}
@@ -975,6 +1011,9 @@ public class DataTransferThread {
 // 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
 	public long Time1 = 0;
 	public long Time2 = 0;
+// 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
+	public int  DataRatio = 0;
+// End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 // End of 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
 
 // 2020-6-30 追加是否为网络快速打印的第一次数据生成标识
@@ -982,7 +1021,7 @@ public class DataTransferThread {
 // End of 2020-6-30 追加是否为网络快速打印的第一次数据生成标识
 
 // 2020-7-3 追加网络快速打印状态下数据是否更新的标识
-	private boolean mDataUpdatedForLanFast = false;
+	private boolean mDataUpdatedForFastLan = false;
 // End of 2020-7-3 追加网络快速打印状态下数据是否更新的标识
 
 // H.M.Wang 2020-7-9 追加计数器重置标识
@@ -1001,6 +1040,9 @@ public class DataTransferThread {
 // 2020-6-30 网络快速打印的第一次数据生成标识设真
 			if(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
 				mFirstForLanFast = true;
+// H.M.Wang 2020-8-4 这个不设的话，可能上次停止打印时接收到数据后，mDataUpdatedForFastLan被设成true了，导致后面生成打印缓冲区误操作
+				mDataUpdatedForFastLan = false;
+// End of H.M.Wang 2020-8-4 这个不设的话，可能上次停止打印时接收到数据后，mDataUpdatedForFastLan被设成true了，导致后面生成打印缓冲区误操作
 			}
 // End of 2020-6-30 网络快速打印的第一次数据生成标识设真
 
@@ -1069,6 +1111,9 @@ public class DataTransferThread {
 				if(!mFirstForLanFast) {
 					Debug.e(TAG, "--->write data");
 					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+// 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
+					DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
+// End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 				}
 // End of 2020-6-30 网络快速打印的第一次数据生成后不下发
 
@@ -1112,10 +1157,10 @@ public class DataTransferThread {
 				} else {
 // 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
 					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
-						if(!mDataUpdatedForLanFast) {
+						if(!mDataUpdatedForFastLan) {
 							continue;
 						}
-						mDataUpdatedForLanFast = false;
+                        mDataUpdatedForFastLan = false;
 					}
 // End of 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
 					Debug.d(TAG, "--->FPGA buffer is empty");
@@ -1162,6 +1207,9 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-5-19 QR文件打印最后一行后无反应问题。应该先生成打印缓冲区，而不是先判断是否到了终点。顺序不对
 						}
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+// 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
+						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
+// End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
                         Debug.d(TAG, "--->FPGA data sent!");
 
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
@@ -1206,20 +1254,26 @@ public class DataTransferThread {
 //						// End.
 						try {sleep(30);}catch(Exception e){};
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+// 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
+						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
+// End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						mHandler.sendEmptyMessageDelayed(MESSAGE_DATA_UPDATE, MESSAGE_EXCEED_TIMEOUT);
 						mNeedUpdate = false;
 // 2020-6-30 网络快速打印时第一次收到网络数据后下发
 // 2020-7-3 追加判断是否有网络快速打印数据更新
 //					} else if(mFirstForLanFast) {
-					} else if(mFirstForLanFast && mDataUpdatedForLanFast) {
+					} else if(mFirstForLanFast && mDataUpdatedForFastLan) {
 // End of 2020-7-3 追加判断是否有网络快速打印数据更新
 						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
 						Debug.d(TAG, "First print buffer deliver to FPGA. size = " + mPrintBuffer.length);
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+// 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
+						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
+// End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						mNeedUpdate = false;
 						mFirstForLanFast = false;
 // H.M.Wang 2020-7-9 解决开始打印后，首次内容被打印两次的问题
-						mDataUpdatedForLanFast = false;
+                        mDataUpdatedForFastLan = false;
 // End of H.M.Wang 2020-7-9 解决开始打印后，首次内容被打印两次的问题
 // H.M.Wang 2020-7-9 解决开始打印后，仅打印首次内容一次的问题
 						if (mCallback != null) {
@@ -1232,9 +1286,17 @@ public class DataTransferThread {
 						Debug.d(TAG, "Counter reset. rebuild print buffer and deliver to FPGA. size = " + mPrintBuffer.length);
 						try {sleep(30);}catch(Exception e){};
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+// 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
+						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
+// End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						mNeedUpdate = false;
 						mCounterReset = false;
 // End of H.M.Wang 2020-7-9 追加计数器重置标识
+// H.M.Wang 2020-7-14 设置计数器后再次向PC发送0001，要数据
+                        if (mCallback != null) {
+                            mCallback.onComplete(index());
+                        }
+// End of H.M.Wang 2020-7-14 设置计数器后再次向PC发送0001，要数据
 					}
 // End of 2020-6-30 网络快速打印时第一次收到网络数据后下发
 				}

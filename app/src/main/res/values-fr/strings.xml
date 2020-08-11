@@ -127,6 +127,9 @@
 	<string name="object_msg_name">Assujettir</string>
 	<string name="object_qr">QRCode</string>
 	<string name="object_dynamic_qr">DynamicQR</string>
+<!-- H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+	<string name="object_dynamic_barcode">DynamicBarcode</string>
+<!-- End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
 	<!-- Settings frame -->
 	<string name="strParam0">00.Réservé</string>
 	<string name="strPrSpeedname">01.Vitesse</string>

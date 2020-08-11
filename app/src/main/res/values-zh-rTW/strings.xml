@@ -135,6 +135,9 @@
 	<string name="object_msg_name">信息名稱</string>
 	<string name="object_qr">二維碼</string>
 	<string name="object_dynamic_qr">動態二維碼</string>
+<!-- H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+	<string name="object_dynamic_barcode">動態條碼</string>
+<!-- End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
 <!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
 	<string name="object_dynamictext">動態文本</string>
 	<string name="object_dtindex">索引</string>
@@ -284,9 +287,12 @@
 	<string name="str_fileopt_cancel">取消</string>
 	<string name="str_search">搜索</string>
 	
-<!-- 树莓派3 打印界面相关 -->	
-	<string name="str_msg_name">信息名稱：</string>
-	<!-- 
+<!-- 树莓派3 打印界面相关 -->
+<!-- H.M.Wang 2020-8-11 修改信息，缩短长度 -->
+<!--	<string name="str_msg_name">信息名稱：</string>-->
+	<string name="str_msg_name">信息：</string>
+<!-- End of H.M.Wang 2020-8-11 修改信息，缩短长度 -->
+	<!--
 	<string name="str_state_inklevel">墨水量:  %1$d%%</string>
 	-->
 	<string name="str_state_inklevel">墨水量:</string>
