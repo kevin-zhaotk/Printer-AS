@@ -20,11 +20,13 @@ public class RealtimeDate extends BaseObject {
 
 	private static final String TAG = RealtimeDate.class.getSimpleName();
 
+	public String mFormat;
 	public int mOffset;
 //	public BaseObject mParent;
 	
 	public RealtimeDate(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_DL_DATE, x);
+		mFormat = "DD";
 		Time t = new Time();
 		t.set(System.currentTimeMillis());
 		mOffset = 0;
@@ -54,7 +56,8 @@ public class RealtimeDate extends BaseObject {
 
 	@Override
 	public String getMeatureString() {
-		return "00";
+//		return "00";
+		return mFormat;
 	}
 
 	public String toString()

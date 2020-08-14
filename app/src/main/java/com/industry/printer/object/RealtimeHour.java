@@ -16,11 +16,13 @@ import android.text.format.Time;
 public class RealtimeHour extends BaseObject {
 	private static final String TAG = RealtimeHour.class.getSimpleName();
 
+	public String mFormat;
 // H.M.Wang 追加时间对象的所属信息
 //	public BaseObject mParent;
 
 	public RealtimeHour(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_RT_HOUR, x);
+		mFormat = "HH";
 		Time t = new Time();
 		t.set(System.currentTimeMillis());
 		setContent(BaseObject.intToFormatString(t.hour, 2));
@@ -44,7 +46,8 @@ public class RealtimeHour extends BaseObject {
 
 	@Override
 	public String getMeatureString() {
-		return "00";
+//		return "00";
+		return mFormat;
 	}
 
 	////addby kevin

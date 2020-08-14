@@ -20,11 +20,13 @@ import android.util.Log;
 public class RealtimeMonth extends BaseObject {
 
 	public static final String TAG="RealtimeMonth";
+	public String mFormat;
 	public int mOffset;
 //	public BaseObject mParent;
 	
 	public RealtimeMonth(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_DL_MON, x);
+		mFormat = "MM";
 		Time t = new Time();
 		mOffset = 0;
 //		mParent = null;
@@ -53,7 +55,8 @@ public class RealtimeMonth extends BaseObject {
 
 	@Override
 	public String getMeatureString() {
-		return "00";
+//		return "00";
+		return mFormat;
 	}
 
 	public String toString()

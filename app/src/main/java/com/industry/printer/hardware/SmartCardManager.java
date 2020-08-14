@@ -19,7 +19,6 @@ public class SmartCardManager implements IInkDevice {
     public static boolean SKIP_SMARTCARD_ACCESS = false;
     public static boolean IGNORE_CONSISTENCY_CHECK = false;
 
-
     public final static int MAX_INK_VOLUME              = 4700;
 
     public final static int HP_PRINT_CARTRIDGE          = 11;
@@ -52,6 +51,7 @@ public class SmartCardManager implements IInkDevice {
     private static final int MSG_ADD_INK_ON             = 104;
     private static final int MSG_ADD_INK_OFF            = 105;
     private static final int MSG_CLEAR_ADDING_BLOCK     = 106;
+    private static final int MSG_DISP_LOCAL_INK         = 107;
 
 //    private static final int MSG_CHECK_DOWNTEST       = 1000;
 //    private static final int MSG_B11_LAMP_TEST        = 1001;
@@ -115,6 +115,13 @@ public class SmartCardManager implements IInkDevice {
                     Debug.d(TAG, "Clear Adding Block!");
                     mBlockAdding = false;
                     break;
+                case MSG_DISP_LOCAL_INK:
+                    mRecvedLevelPromptDlg.setTitle("Ink Level");
+                    mRecvedLevelPromptDlg.setMessage("" + mInkLevel);
+                    mRecvedLevelPromptDlg.show();
+                    mRecvedLevelPromptDlg.show();
+                    break;
+
 //                case MSG_B11_LAMP_TEST:
 //                    if(!mLampOn) {
 //                        ExtGpio.writeGpio('b', 11, 1);
@@ -274,6 +281,14 @@ public class SmartCardManager implements IInkDevice {
     public boolean checkUID(int heads) {
         Debug.d(TAG, "---> enter checkUID()");
 
+/*        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mInitialied = false;
+                init(mCallback);
+            }
+        }).start();
+*/
         if(SKIP_SMARTCARD_ACCESS) {
             mCallback.sendEmptyMessageDelayed(MSG_SMARTCARD_CHECK_SUCCESS, 100);
             return true;
@@ -316,6 +331,7 @@ public class SmartCardManager implements IInkDevice {
         }
 
         Debug.d(TAG, "---> Ink Level = " + mInkLevel);
+        mHandler.sendEmptyMessage(MSG_DISP_LOCAL_INK);
         return mInkLevel;
     }
 

@@ -17,8 +17,11 @@ import android.text.format.Time;
 public class RealtimeSecond extends BaseObject {
     private static final String TAG = RealtimeSecond.class.getSimpleName();
 
+    public String mFormat;
+
     public RealtimeSecond(Context context, float x) {
         super( context, BaseObject.OBJECT_TYPE_RT_SECOND, x);
+        mFormat = "SS";
         // TODO Auto-generated constructor stub
     }
 
@@ -29,7 +32,8 @@ public class RealtimeSecond extends BaseObject {
 
     @Override
     public String getMeatureString() {
-        return "00";
+//        return "00";
+        return mFormat;
     }
 
     @Override

@@ -352,16 +352,17 @@ public class BaseObject{
 //		if (mWidth == 0 || type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT || type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // H.M.Wang 2020-7-23 追加32DN打印头
 //		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT || type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
-		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
-			type == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
-			type == PrinterNozzle.MESSAGE_TYPE_32DN ||
-			type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2020-8-13 取消大字机不考虑倍率的判断，否则会由于真实时间的字符串宽度和预计算的宽度
+////		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
+////			type == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
+////			type == PrinterNozzle.MESSAGE_TYPE_32DN ||
+////			type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
-			setWidth(1.0f * width);
-		} else {
+////			setWidth(1.0f * width);
+////		} else {
 			// H.M.Wang 修改
 			setWidth(1.0f * width * ratio);
-		}
+////		}
 		bitmap = Bitmap.createBitmap(width , Math.round(mHeight), Configs.BITMAP_CONFIG);
 		Debug.e(TAG,"===--->getBitmap width=" + mWidth + ", mHeight=" + mHeight);
 		mCan = new Canvas(bitmap);

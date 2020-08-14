@@ -16,11 +16,13 @@ import android.text.format.Time;
 public class RealtimeMinute extends BaseObject {
 	private static final String TAG = RealtimeMinute.class.getSimpleName();
 
+	public String mFormat;
 	// H.M.Wang 追加时间对象的所属信息
 //	public BaseObject mParent;
 
 	public RealtimeMinute(Context context, float x) {
 		super(context, BaseObject.OBJECT_TYPE_RT_MIN, x);
+		mFormat = "NN";
 		Time t = new Time();
 		t.set(System.currentTimeMillis());
 		setContent(BaseObject.intToFormatString(t.minute, 2));
@@ -44,7 +46,8 @@ public class RealtimeMinute extends BaseObject {
 
 	@Override
 	public String getMeatureString() {
-		return "00";
+//		return "00";
+		return mFormat;
 	}
 
 	//////addby kevin

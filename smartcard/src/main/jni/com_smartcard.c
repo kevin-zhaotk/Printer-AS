@@ -96,10 +96,12 @@ void cache_monitor_failure_handler(HP_SMART_CARD_device_id_t dev_id,
  */
 JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
 
+    LOGI("Initializing smart card library....\n");
+
+//    LIB_HP_SMART_CARD_shutdown();
+
     HP_SMART_CARD_gpio_init();
     HP_SMART_CARD_i2c_init();
-
-    LOGI("Initializing smart card library....\n");
 
     // Register for assert callback
 //    LIB_HP_SMART_CARD_register_assert_callback(assert_handler);
@@ -414,7 +416,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* reserved)
     JNIEnv* env = NULL;
     jint result = -1;
 
-    LOGI("SmartCard.so 1.0.267 Loaded.");
+    LOGI("SmartCard.so 1.0.269 Loaded.");
 
     if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
         //__android_log_print(ANDROID_LOG_INFO, JNI_TAG,"ERROR: GetEnv failed\n");

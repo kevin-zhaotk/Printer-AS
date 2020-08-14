@@ -3165,6 +3165,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	    	this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|" + mPCCmdId + "|0D0A");
 //			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|0000|0D0A");
 			// End of H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
+// H.M.Wang 2020-8-13 追加串口7协议
+			if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_7) {
+				final SerialHandler serialHandler = SerialHandler.getInstance();
+				serialHandler.sendCommandProcessResult(0, 1, 0, mCounter, "");
+			}
+
+// End of H.M.Wang 2020-8-13 追加串口7协议
 		}
 
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
