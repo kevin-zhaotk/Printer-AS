@@ -716,7 +716,7 @@ HP_SMART_CARD_result_t inkReadTag9ILGBit51To75(HP_SMART_CARD_device_id_t cardId,
 
 // Write HP_SMART_CARD_INK_ILG_BIT_51_75 (Tag 9 - ILG Bits 51-75 - 7, 4, 25)
 HP_SMART_CARD_result_t inkWriteTag9ILGBit51To75(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit_75_51) {
-    return write4Bytes(cardId, HP_SMART_CARD_INK_ILG_BIT_76_100, ilg_bit_75_51);
+    return write4Bytes(cardId, HP_SMART_CARD_INK_ILG_BIT_51_75, ilg_bit_75_51);
 }
 
 // Read HP_SMART_CARD_INK_ILG_BIT_76_100 (Tag 9 - ILG Bits 76-100 - 10, 3, 25)

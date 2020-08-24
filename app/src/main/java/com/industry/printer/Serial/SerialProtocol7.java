@@ -12,13 +12,13 @@ package com.industry.printer.Serial;
  */
 
 public class SerialProtocol7 extends SerialProtocol {
-    public static String TAG = EC_DOD_Protocol.class.getSimpleName();
+    public static String TAG = SerialProtocol7.class.getSimpleName();
 
     private final byte TAG_STX = 0x7E;
 
     private final byte TAG_ETX = 0x7F;
 
-    /* 与串口协议1一致，仅校验位为奇偶校验
+    /* 与串口协议2一致，仅校验位为奇偶校验
         发送方帧格式：
                 -------------------------------------------------------------
                 [STX] 				帧起始标志0x7e	1字节	    固定位置
@@ -28,6 +28,10 @@ public class SerialProtocol7 extends SerialProtocol {
                 [CHKSUM]   		    帧校验   		2字节	    不固定位置,  [ETX]前一位
                 [ETX]           	帧终止标志0x7f    1字节	    不固定位置
                   -------------------------------------------------------------
+        说明：文本格式(0x0013)
+        7E 00 00 13 00 00 00 00 00 00 00 00 31 32 33 34 35 36 2C 31 32 33 34 35 36 00 00 7F
+        == ===== ===== ==================== ================= == ================= ===== ==
+       STX  Addr  Cmd    Text-prefix           Text-body     div    Text-body       CRC  ETX
     */
 /*
     喷码机返回帧格式：
@@ -99,6 +103,16 @@ public class SerialProtocol7 extends SerialProtocol {
         super(serialPort);
     }
 
+    private byte getXorOf(byte[] org) {
+        byte crc = 0x00;
+        for(int i=0; i<org.length; i++) {
+            crc ^= org[i];
+        }
+
+        Debug.d(TAG, "XOR: 0x" + Integer.toHexString(crc));
+        return crc;
+    }
+
     @Override
     protected int parseFrame(ByteArrayBuffer recvMsg) {
         int recvCmd = 0;
@@ -124,16 +138,14 @@ public class SerialProtocol7 extends SerialProtocol {
                 return ERROR_UNKNOWN_CMD;
             }
 
-            short recvCRC = (short)((0x00ff & msg[msg.length + TAG_CHECKSUM_POS + 1]) * 0x0100 + ((0x00ff) & msg[msg.length + TAG_CHECKSUM_POS]));
-//            Debug.d(TAG, "recvCRC = " + Integer.toHexString((0x0000ffff & recvCRC)));
+            byte recvCRC = msg[msg.length + TAG_CHECKSUM_POS];
+            Debug.d(TAG, "recvCRC = 0x" + Integer.toHexString(recvCRC));
             byte[] procData = ByteArrayUtils.pickPartial(msg, 1, msg.length - 4);
 //            Debug.d(TAG, "[" + ByteArrayUtils.toHexString(procData) + "]");
 
-// 暂时取消CRC验证
-//            if(CRC16_X25.getCRCCode(procData) != recvCRC) {
-//                recvCmd |= ERROR_CRC_FAILED;
-//                // return ERROR_CRC_FAILED;
-//            }
+            if(getXorOf(procData) != recvCRC) {
+                return ERROR_CRC_FAILED;
+            }
 
             msg = replaceTransformBytes(msg, true);
 //            Debug.d(TAG, "[" + ByteArrayUtils.toHexString(msg) + "]");
@@ -182,15 +194,10 @@ public class SerialProtocol7 extends SerialProtocol {
 
         sendBuffer.clear();
 
-        byte crc = 0x00;
-        for(int i=0; i<msg.length; i++) {
-            crc ^= msg[i];
-        }
-
         sendBuffer.append(TAG_STX);
         sendBuffer.append(msg, 0, msg.length);
-        sendBuffer.append(crc);
-        sendBuffer.append(crc >>> 8);
+        sendBuffer.append(getXorOf(msg));
+        sendBuffer.append(0);
         sendBuffer.append(TAG_ETX);
 
         Debug.d(TAG, "Created Response: [" + ByteArrayUtils.toHexString(sendBuffer.toByteArray()) + "]");
@@ -272,35 +279,35 @@ public class SerialProtocol7 extends SerialProtocol {
 
     private void dispatchCommands(int cmd, byte[] data) {
         switch (cmd) {
-            case EC_DOD_Protocol.CMD_SET_NOZZLE_HEIGHT:            // 设定喷头喷印高度	0x0002
-            case EC_DOD_Protocol.CMD_GET_NOZZLE_HEIGHT:            // 读取喷头喷印高度	0x0003
-            case EC_DOD_Protocol.CMD_SET_DOT_INTERVAL:             // 设定喷头喷印点距	0x0004
-            case EC_DOD_Protocol.CMD_GET_DOT_INTERVAL:             // 读取喷头喷印点距	0x0005
-            case EC_DOD_Protocol.CMD_SET_DROP_SIZE:                // 设定喷头喷印墨滴大小	0x0006
-            case EC_DOD_Protocol.CMD_GET_DROP_SIZE:                // 读取喷头墨滴大小	0x0007
-            case EC_DOD_Protocol.CMD_GET_PRINT_DELAY:              // 读取喷头喷印延时	0x0009
-            case EC_DOD_Protocol.CMD_GET_MOVE_SPEED:               // 读取物体移动速度	0x000b
-            case EC_DOD_Protocol.CMD_SET_EYE_STATUS:               // 设定喷头电眼状态	0x000c
-            case EC_DOD_Protocol.CMD_GET_EYE_STATUS:               // 读取喷头电眼状态	0x000d
-            case EC_DOD_Protocol.CMD_SET_SYNC_STATUS:              // 设定喷头同步器状态	0x000e
-            case EC_DOD_Protocol.CMD_GET_SYNC_STATUS:              // 读取喷头同步器状态	0x000f
-            case EC_DOD_Protocol.CMD_GET_REVERSE:                  // 读取喷头翻转喷印	0x0011
-            case EC_DOD_Protocol.CMD_GET_USABLE_IDS:               // 获取当前文件中可用的ID	0x0012
-            case EC_DOD_Protocol.CMD_SAVE_CURRENT_INFO:            // 保存当前信息	0x0014
-            case EC_DOD_Protocol.CMD_START_PRINT_A:                // A喷头喷印	0x0017
-            case EC_DOD_Protocol.CMD_START_PRINT_B:                // B喷头喷印	0x0018
-            case EC_DOD_Protocol.CMD_STOP_PRINT_A:                 // A喷印完成	0x0019
-            case EC_DOD_Protocol.CMD_STOP_PRINT_B:                 // B喷印完成	0x0020
+            case CMD_SET_NOZZLE_HEIGHT:            // 设定喷头喷印高度	0x0002
+            case CMD_GET_NOZZLE_HEIGHT:            // 读取喷头喷印高度	0x0003
+            case CMD_SET_DOT_INTERVAL:             // 设定喷头喷印点距	0x0004
+            case CMD_GET_DOT_INTERVAL:             // 读取喷头喷印点距	0x0005
+            case CMD_SET_DROP_SIZE:                // 设定喷头喷印墨滴大小	0x0006
+            case CMD_GET_DROP_SIZE:                // 读取喷头墨滴大小	0x0007
+            case CMD_GET_PRINT_DELAY:              // 读取喷头喷印延时	0x0009
+            case CMD_GET_MOVE_SPEED:               // 读取物体移动速度	0x000b
+            case CMD_SET_EYE_STATUS:               // 设定喷头电眼状态	0x000c
+            case CMD_GET_EYE_STATUS:               // 读取喷头电眼状态	0x000d
+            case CMD_SET_SYNC_STATUS:              // 设定喷头同步器状态	0x000e
+            case CMD_GET_SYNC_STATUS:              // 读取喷头同步器状态	0x000f
+            case CMD_GET_REVERSE:                  // 读取喷头翻转喷印	0x0011
+            case CMD_GET_USABLE_IDS:               // 获取当前文件中可用的ID	0x0012
+            case CMD_SAVE_CURRENT_INFO:            // 保存当前信息	0x0014
+            case CMD_START_PRINT_A:                // A喷头喷印	0x0017
+            case CMD_START_PRINT_B:                // B喷头喷印	0x0018
+            case CMD_STOP_PRINT_A:                 // A喷印完成	0x0019
+            case CMD_STOP_PRINT_B:                 // B喷印完成	0x0020
                 sendCommandProcessResult(cmd, 1, 0, 1, "");
 //                mSerialPort.writeStringSerial( "<!-- Not Support Command -->");
                 break;
-            case EC_DOD_Protocol.CMD_CHECK_CHANNEL:                // 检查信道	0x0001
-            case EC_DOD_Protocol.CMD_SET_PRINT_DELAY:              // 设定喷头喷印延时	0x0008
-            case EC_DOD_Protocol.CMD_SET_MOVE_SPEED:               // 设定物体移动速度	0x000a
-            case EC_DOD_Protocol.CMD_SET_REVERSE:                  // 设定喷头翻转喷印	0x0010
-            case EC_DOD_Protocol.CMD_TEXT:                         // 发送一条文本	0x0013
-            case EC_DOD_Protocol.CMD_START_PRINT:                  // 启动喷码机开始喷印	0x0015
-            case EC_DOD_Protocol.CMD_STOP_PRINT:                   // 停机命令	0x0016
+            case CMD_CHECK_CHANNEL:                // 检查信道	0x0001
+            case CMD_SET_PRINT_DELAY:              // 设定喷头喷印延时	0x0008
+            case CMD_SET_MOVE_SPEED:               // 设定物体移动速度	0x000a
+            case CMD_SET_REVERSE:                  // 设定喷头翻转喷印	0x0010
+            case CMD_TEXT:                         // 发送一条文本	0x0013
+            case CMD_START_PRINT:                  // 启动喷码机开始喷印	0x0015
+            case CMD_STOP_PRINT:                   // 停机命令	0x0016
                 procCommands(cmd, data);
                 break;
             default:

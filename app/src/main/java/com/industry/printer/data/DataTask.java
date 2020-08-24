@@ -181,6 +181,16 @@ public class DataTask {
 		}
 // End of H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 
+// H.M.Wang 2020-8-17 追加32SN打印头
+		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_32SN) {
+//			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+			mPrintBuffer = evenBitShiftFor32SN();
+//			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+//			Debug.d(TAG, mTask.getPath() + "/print.bin");
+//			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
+		}
+// End of H.M.Wang 2020-8-17 追加32SN打印头
+
 		// H.M.Wang 追加下列8行
 //		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT && Configs.getMessageShift(3) == 1) {
 		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
@@ -379,7 +389,10 @@ public class DataTask {
 			div = 152f/16f;
 // H.M.Wang 2020-7-23 追加32DN打印头
 //		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
-		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT || headType == PrinterNozzle.MESSAGE_TYPE_32DN) {
+// H.M.Wang 2020-8-17 追加32SN打印头
+//		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT || headType == PrinterNozzle.MESSAGE_TYPE_32DN) {
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT || headType == PrinterNozzle.MESSAGE_TYPE_32DN || headType == PrinterNozzle.MESSAGE_TYPE_32SN) {
+// End of H.M.Wang 2020-8-17 追加32SN打印头
 			div = 152f/32f;
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 
@@ -445,6 +458,9 @@ public class DataTask {
 // H.M.Wang 2020-6-9 追加串口6协议
 					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_6 ||
 // End of H.M.Wang 2020-6-9 追加串口6协议
+// H.M.Wang 2020-7-17 追加串口7协议
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_7 ||
+// End of H.M.Wang 2020-7-17 追加串口7协议
 // H.M.Wang 2020-6-29 追加网络快速打印数据源
 					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN ) {
 // H.M.Wang 2020-6-29 追加网络快速打印数据源
@@ -828,6 +844,9 @@ public class DataTask {
 		if( object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
 			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
 			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32DN ||
+// H.M.Wang 2020-8-17 追加32SN打印头
+			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32SN ||
+// End of H.M.Wang 2020-8-17 追加32SN打印头
 			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 			heads = 4;		// 16点，32点和64点，在这里假设按4个头来算，主要是为了就和当前的实现逻辑
@@ -961,6 +980,22 @@ public class DataTask {
 		return buffer;
 	}
 // End of H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
+
+// H.M.Wang 2020-8-17 追加32SN打印头
+	public char[] evenBitShiftFor32SN() {
+		int CHARS_PER_COLOMN = 2;
+		char[] buffer = new char[mPrintBuffer.length * 2];			// 每16位原内容之后插入16位的空格
+		Arrays.fill(buffer, (char)0x0000);
+		for (int i = 0; i < mBinInfo.mColumn; i++) {
+			for (int j=0; j<CHARS_PER_COLOMN; j++) {
+				buffer[2 * (i * CHARS_PER_COLOMN + j)] = mPrintBuffer[i * CHARS_PER_COLOMN + j];
+				buffer[2 * (i * CHARS_PER_COLOMN + j) + 1] = 0x0000;
+			}
+		}
+		return buffer;
+	}
+// End of H.M.Wang 2020-8-17 追加32SN打印头
+
 
 	public BinInfo getInfo() {
 		return mBinInfo;

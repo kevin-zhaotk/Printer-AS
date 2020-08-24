@@ -86,9 +86,11 @@ import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog;
 import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog.OpenFrom;
 
 import android.app.ActionBar.LayoutParams;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -520,7 +522,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			@Override
 			public void onCommandReceived(int cmd, byte[] data) {
 				if( SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
-					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2 ) {
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2 ||
+// H.M.Wang 2020-7-17 追加串口7协议
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_7) {
+// End of H.M.Wang 2020-7-17 追加串口7协议
 					Debug.d(TAG, "CMD = " + Integer.toHexString(cmd) + "; DATA = [" + ByteArrayUtils.toHexString(data) + "]");
 					switch (cmd) {
 						case EC_DOD_Protocol.CMD_CHECK_CHANNEL:                // 检查信道	0x0001
@@ -1152,7 +1157,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				case SmartCardManager.MSG_SMARTCARD_CHECK_SUCCESS:
 				case RFIDManager.MSG_RFID_CHECK_SUCCESS:
 				case MESSAGE_PRINT_START:
-					Debug.d(TAG, "--->Print check success");
+					Debug.d(TAG, "--->Print check success = " + msg.what);
 					if (mDTransThread != null && mDTransThread.isRunning()) {
 						// H.M.Wang注释掉一行
 //						handleError(R.string.str_print_printing, pcMsg);
@@ -1251,6 +1256,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					StopFlag=0;
 					PrinterFlag=0;
 // End of H.M.Wang 2020-6-24 停止打印时清空网络打印标识
+
+					if(mInkManager instanceof SmartCardManager) {
+						((SmartCardManager)mInkManager).shutdown();
+					}
+
 					break;
 				case MESSAGE_PRINT_END:
 					FpgaGpioOperation.uninit();
@@ -1886,11 +1896,25 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		// ExtGpio.playClick();
 		switch (v.getId()) {
 			case R.id.StartPrint:
+// H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
+				DataTransferThread thread = DataTransferThread.getInstance(mContext);
+				if(thread.isPurging) {
+					ToastUtil.show(mContext, R.string.str_under_purging);
+					break;
+				}
+// End of H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
 //	死机			mInkManager.checkRfid();
 //	拔出墨盒仍然返回有效数值56643			mInkManager.getLocalInk(0);
 				mHandler.sendEmptyMessage(MESSAGE_OPEN_TLKFILE);
 				break;
 			case R.id.StopPrint:
+// H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
+				thread = DataTransferThread.getInstance(mContext);
+				if(thread.isPurging) {
+					ToastUtil.show(mContext, R.string.str_under_purging);
+					break;
+				}
+// End of H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
 				// mHandler.removeMessages(MESSAGE_PAOMADENG_TEST);
 				mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
@@ -1903,8 +1927,35 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				break;
 			/*娓呮礂鎵撳嵃澶达紙涓�涓壒娈婄殑鎵撳嵃浠诲姟锛夛紝闇�瑕佸崟鐙殑璁剧疆锛氬弬鏁�2蹇呴』涓� 4锛屽弬鏁�4涓�200锛� 鍙傛暟5涓�20锛�*/
 			case R.id.btnFlush:
-				DataTransferThread thread = DataTransferThread.getInstance(mContext);
-				thread.purge(mContext);
+// H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
+				thread = DataTransferThread.getInstance(mContext);
+				if(thread.isPurging) {
+					ToastUtil.show(mContext, R.string.str_under_purging);
+					break;
+				}
+// End of H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
+
+// H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗
+				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+				builder.setTitle(R.string.str_btn_clean)
+						.setMessage(R.string.str_clean_confirm)
+						.setPositiveButton(R.string.str_ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								DataTransferThread thread = DataTransferThread.getInstance(mContext);
+								thread.purge(mContext);
+								dialog.dismiss();
+							}
+						})
+						.setNegativeButton(R.string.str_btn_cancel, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+							}
+						})
+						.create()
+						.show();
+// End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗
 				break;
 			case R.id.btnBinfile:
 				MessageBrowserDialog dialog = new MessageBrowserDialog(mContext, OpenFrom.OPEN_PRINT, mObjPath);
@@ -3149,7 +3200,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			Debug.d(TAG, "--->onComplete: msg = " + msg);
 			PrintWriter pout = null;
 			// H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
-			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0001|" + mPCCmdId + "|0D0A");
+// H.M.Wang 2020-8-24 返回打印任务名称
+//			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0001|" + mPCCmdId + "|0D0A");
+			this.sendMsg("000B|0000|1000|" + index + "|0000|" + mObjPath + "|0001|" + mPCCmdId + "|0D0A");
+// End of H.M.Wang 2020-8-24 返回打印任务名称
 //			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|0000|0D0A");
 			// End of H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
 //	        try {
@@ -3162,7 +3216,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		public void onPrinted(int index) {
 			// H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
-	    	this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|" + mPCCmdId + "|0D0A");
+// H.M.Wang 2020-8-24 返回打印任务名称
+//			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|" + mPCCmdId + "|0D0A");
+			this.sendMsg("000B|0000|1000|" + index + "|0000|" + mObjPath + "|0000|" + mPCCmdId + "|0D0A");
+// End of H.M.Wang 2020-8-24 返回打印任务名称
 //			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|0000|0D0A");
 			// End of H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
 // H.M.Wang 2020-8-13 追加串口7协议

@@ -15,6 +15,10 @@
 	<string name="str_btn_start">Start</string>
 	<string name="str_btn_stop">Stop</string>
 	<string name="str_btn_clean">Purge</string>
+<!-- H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
+	<string name="str_clean_confirm">Confirm to purge</string>
+	<string name="str_under_purging">Purging, please try later.</string>
+<!-- End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
 	<string name="str_btn_open">Open</string>
 	<string name="str_remain_ink">Ink</string>
 	<string name="str_remain_ptimes">Printed: </string>

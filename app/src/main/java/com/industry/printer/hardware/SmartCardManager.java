@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.industry.printer.BuildConfig;
 import com.industry.printer.ControlTabActivity;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PrinterApplication;
@@ -53,10 +54,6 @@ public class SmartCardManager implements IInkDevice {
     private static final int MSG_CLEAR_ADDING_BLOCK     = 106;
     private static final int MSG_DISP_LOCAL_INK         = 107;
 
-//    private static final int MSG_CHECK_DOWNTEST       = 1000;
-//    private static final int MSG_B11_LAMP_TEST        = 1001;
-//    private boolean mLampOn = false;
-
     private final static int UPDATE_LEVEL_INTERVAL      = 1000 * 30;
     private final static int READ_LEVEL_INTERVAL        = 10;
 //    private final static int USABILITY_CHECK_INTERVAL   = 1000 * 60 * 3;
@@ -72,10 +69,6 @@ public class SmartCardManager implements IInkDevice {
                     readConsistency();
                     mHandler.sendEmptyMessageDelayed(MSG_CHECK_USABILITY, USABILITY_CHECK_INTERVAL);
                     break;
-//                case MSG_CHECK_DOWNTEST:
-//                    downLocal(HP_BULK_CARTRIDGE);
-//                    mHandler.sendEmptyMessageDelayed(MSG_CHECK_DOWNTEST, 1);
-//                    break;
                 case MSG_PERIOD_CHECK_LEVEL:
                     mHandler.obtainMessage(MSG_READ_LEVEL, 0, 0).sendToTarget();
                     mHandler.sendEmptyMessageDelayed(MSG_PERIOD_CHECK_LEVEL, UPDATE_LEVEL_INTERVAL);
@@ -89,16 +82,11 @@ public class SmartCardManager implements IInkDevice {
                     }
                     break;
                 case MSG_LEVEL_UPDATED:
-//                    Toast.makeText(mContext, "Current Level: " + mCurrentLevel, Toast.LENGTH_LONG).show();
-                    if(null != mRecvedLevelPromptDlg) {
-//                        if(mCurrentLevel < 100000 || mCurrentLevel > 150000) {
-//                            mRecvedLevelPromptDlg.setMessage("< Invalid Level Value >");
-//                        } else {
-                            mRecvedLevelPromptDlg.setMessage("Level: " + mCurrentLevel);
-//                        }
-                        mRecvedLevelPromptDlg.show();
-                        mRecvedLevelPromptDlg.show();
-                    }
+//                    if(null != mRecvedLevelPromptDlg) {
+//                        mRecvedLevelPromptDlg.setMessage("Level: " + mCurrentLevel);
+//                        mRecvedLevelPromptDlg.show();
+//                        mRecvedLevelPromptDlg.show();
+//                    }
                     break;
                 case MSG_ADD_INK_ON:
                     Debug.d(TAG, "Add ink opened!");
@@ -116,33 +104,23 @@ public class SmartCardManager implements IInkDevice {
                     mBlockAdding = false;
                     break;
                 case MSG_DISP_LOCAL_INK:
-                    mRecvedLevelPromptDlg.setTitle("Ink Level");
-                    mRecvedLevelPromptDlg.setMessage("" + mInkLevel);
-                    mRecvedLevelPromptDlg.show();
-                    mRecvedLevelPromptDlg.show();
+//                    mRecvedLevelPromptDlg.setTitle("Ink Level");
+//                    mRecvedLevelPromptDlg.setMessage("" + mInkLevel);
+//                    mRecvedLevelPromptDlg.show();
+//                    mRecvedLevelPromptDlg.show();
                     break;
-
-//                case MSG_B11_LAMP_TEST:
-//                    if(!mLampOn) {
-//                        ExtGpio.writeGpio('b', 11, 1);
-//                        mLampOn = true;
-//                        mHandler.sendEmptyMessageDelayed(MSG_B11_LAMP, 1000);
-//                    } else {
-//                        ExtGpio.writeGpio('b', 11, 0);
-//                        mLampOn = false;
-//                        mHandler.sendEmptyMessageDelayed(MSG_B11_LAMP, 10000);
-//                    }
-//                    break;
             }
         }
     };
 
     public SmartCardManager(Context context) {
+        Debug.d(TAG, "APK VERSION_CODE: " + BuildConfig.VERSION_CODE);
         Debug.d(TAG, "---> enter SmartCardManager()");
         mContext = context;
         mValid = true;
         mInitialied = false;
         mInkLevel = 0;
+        mCallback = null;
 
         mReadLevels = new int[READ_LEVEL_TIMES];
 
@@ -163,6 +141,11 @@ public class SmartCardManager implements IInkDevice {
 
         if(mInitialied) return;
 
+        boolean isOpeningInit = false;
+
+        if(mCallback == null) {
+            isOpeningInit = true;
+        }
         mCallback = callback;
 
         int ret = -1;
@@ -174,17 +157,24 @@ public class SmartCardManager implements IInkDevice {
 
         if(SmartCard.SC_SUCCESS == ret) {
             mInitialied = true;
-            mCallback.sendEmptyMessage(MSG_SMARTCARD_INIT_SUCCESS);
-            checkConsistency();
+//            checkConsistency();
             checkOIB();
+            mInkLevel = SmartCard.getLocalInk(HP_BULK_CARTRIDGE);
+
+            if(isOpeningInit) {
+                shutdown();
+                if(mValid) mCallback.sendEmptyMessage(MSG_SMARTCARD_INIT_SUCCESS);
+            } else {
+                if(mValid) mCallback.sendEmptyMessage(MSG_SMARTCARD_CHECK_SUCCESS);
+            }
             mHandler.sendEmptyMessage(MSG_CHECK_USABILITY);
-//            mHandler.sendEmptyMessageDelayed(MSG_CHECK_DOWNTEST, 5000);
-//            mHandler.sendEmptyMessageDelayed(MSG_B11_LAMP_TEST, 10000);
-//            mHandler.sendEmptyMessageDelayed(MSG_PERIOD_CHECK_LEVEL, UPDATE_LEVEL_INTERVAL);
-//            mValid = true;
         } else {
-            mValid = false;
-            mCallback.obtainMessage(MSG_SMARTCARD_INIT_FAILED, ret, 0, null).sendToTarget();
+            mInitialied = false;
+            if(isOpeningInit) {
+                mCallback.obtainMessage(MSG_SMARTCARD_INIT_FAILED, ret, 0, null).sendToTarget();
+            } else {
+                mCallback.obtainMessage(MSG_SMARTCARD_CHECK_FAILED, ret, 0, null).sendToTarget();
+            }
         }
     }
 
@@ -193,7 +183,7 @@ public class SmartCardManager implements IInkDevice {
 
         if(SKIP_SMARTCARD_ACCESS || IGNORE_CONSISTENCY_CHECK) return;
 
-        if(mInitialied) {
+        if(mInitialied && mValid) {
             synchronized (this) {
                 int ret = SmartCard.checkConsistency();
                 if(SmartCard.SC_SUCCESS != ret) {
@@ -209,6 +199,7 @@ public class SmartCardManager implements IInkDevice {
 
         if(SKIP_SMARTCARD_ACCESS || IGNORE_CONSISTENCY_CHECK) return;
 
+//        if(mInitialied && mValid) {
         if(mInitialied) {
             synchronized (this) {
                 String ret = SmartCard.readConsistency();
@@ -227,7 +218,7 @@ public class SmartCardManager implements IInkDevice {
 
         if(SKIP_SMARTCARD_ACCESS) return;
 
-        if(mInitialied) {
+        if(mInitialied && mValid) {
             synchronized (this) {
                 int ret = SmartCard.chechOIB(HP_BULK_CARTRIDGE);
                 if(0 != ret) {
@@ -281,39 +272,18 @@ public class SmartCardManager implements IInkDevice {
     public boolean checkUID(int heads) {
         Debug.d(TAG, "---> enter checkUID()");
 
-/*        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mInitialied = false;
-                init(mCallback);
-            }
-        }).start();
-*/
-        if(SKIP_SMARTCARD_ACCESS) {
-            mCallback.sendEmptyMessageDelayed(MSG_SMARTCARD_CHECK_SUCCESS, 100);
-            return true;
-        } else {
-            if (mValid) {
-                checkConsistency();
-            } else {
-                mCallback.sendEmptyMessageDelayed(MSG_SMARTCARD_CHECK_FAILED, 100);
-            }
-
-            if(mValid) {
-                checkOIB();
-            } else {
-                // 如果mValid为false，在checkConsistency函数里面就已经发送异常了，无需再次发送
-            }
-
-            if(mValid) {
-                mInkLevel = SmartCard.getLocalInk(HP_BULK_CARTRIDGE);
-                mCallback.sendEmptyMessageDelayed(MSG_SMARTCARD_CHECK_SUCCESS, 100);
-            } else {
-                // 如果mValid为false，在checkOIB函数里面就已经发送异常了，无需再次发送
-            }
-        }
+        init(mCallback);
 
         return true;
+    }
+
+    public void shutdown() {
+        if(mInitialied) {
+            mInitialied = false;
+            synchronized (this) {
+                SmartCard.shutdown();
+            }
+        }
     }
 
     @Override
@@ -323,7 +293,7 @@ public class SmartCardManager implements IInkDevice {
         if(mInkLevel == 0) {
             if(SKIP_SMARTCARD_ACCESS) {
                 mInkLevel = 2000;           // 如果跳过Smartcard访问标识开启，则返回一个恰当值
-            } else if(mInitialied) {
+            } else if(mInitialied && mValid) {
                 synchronized (this) {
                     mInkLevel = SmartCard.getLocalInk(HP_BULK_CARTRIDGE);
                 }
@@ -338,7 +308,7 @@ public class SmartCardManager implements IInkDevice {
     @Override
     public float getLocalInkPercentage(int head) {
         Debug.d(TAG, "---> enter getLocalInkPercentage()");
-        return (100.0f * getLocalInk(1) / MAX_INK_VOLUME);
+        return (100.0f * mInkLevel / MAX_INK_VOLUME);
     }
 
     @Override
@@ -369,7 +339,7 @@ public class SmartCardManager implements IInkDevice {
 
         if(SKIP_SMARTCARD_ACCESS) return;
 
-        if(mInitialied) {
+        if(mInitialied && mValid) {
             synchronized (this) {
                 SmartCard.downLocal(HP_BULK_CARTRIDGE);
                 mInkLevel = SmartCard.getLocalInk(HP_BULK_CARTRIDGE);

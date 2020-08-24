@@ -21,9 +21,11 @@ import com.industry.printer.ui.CustomerDialog.CustomerDialogBase.OnNagitiveListe
 import com.industry.printer.ui.CustomerDialog.PasswordDialog;
 
 import android.R.integer;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -481,12 +483,39 @@ public static final String TAG="SettingsTabActivity";
 				break;
 
 			case R.id.btn_setting_clean:
-				DataTransferThread dThread = DataTransferThread.getInstance(mContext);
-				if (dThread.isCleaning) {
-					dThread.interruptClean();
-				} else {
-					dThread.clean(mContext);
+// H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
+				DataTransferThread thread = DataTransferThread.getInstance(mContext);
+				if(thread.isPurging) {
+					ToastUtil.show(mContext, R.string.str_under_purging);
+					break;
 				}
+// End of H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
+
+// H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗
+				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+				builder.setTitle(R.string.str_btn_clean)
+						.setMessage(R.string.str_clean_confirm)
+						.setPositiveButton(R.string.str_ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								DataTransferThread dThread = DataTransferThread.getInstance(mContext);
+								if (dThread.isCleaning) {
+									dThread.interruptClean();
+								} else {
+									dThread.clean(mContext);
+								}
+								dialog.dismiss();
+							}
+						})
+						.setNegativeButton(R.string.str_btn_cancel, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+							}
+						})
+						.create()
+						.show();
+// End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗
 				break;
 			default :
 				Debug.d(TAG, "===>unknown view clicked");

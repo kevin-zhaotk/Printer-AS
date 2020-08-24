@@ -16,6 +16,8 @@ extern "C" {
 #define LEVEL_SENSOR            21
 /* Added by H.M.Wang 2019-10-17 end */
 
+JNIEXPORT jint JNICALL Java_com_Smartcard_shutdown(JNIEnv *env, jclass arg);
+
 /*
  * 初始化HP智能卡设备，包括HOST卡，COMPONENT卡以及LEVEL
  */

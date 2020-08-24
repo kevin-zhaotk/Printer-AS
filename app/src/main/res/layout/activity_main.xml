@@ -144,17 +144,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/top_btn_height_half"
             android:gravity="center"
-            android:layout_toLeftOf="@+id/msg_transfer"
-
-            >
+            android:layout_toLeftOf="@+id/msg_transfer" >
             <TextView
                 android:id="@+id/cnt_dw_label"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textColor="#000000"
                 android:textSize="25sp"
-                android:text="@string/str_remain_ink"
-                />
+                android:text="@string/str_remain_ink" />
 	        <TextView
 	            android:id="@+id/count_down"
 	            android:layout_width="wrap_content"
@@ -162,24 +159,21 @@
 	            android:layout_toRightOf="@id/cnt_dw_label"
 	            android:layout_marginLeft="20dp"
 	            android:textColor="#000000"
-	            android:textSize="25sp"
-	        />
+	            android:textSize="25sp" />
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/top_btn_height_half"
             android:layout_toLeftOf="@+id/msg_transfer"
             android:layout_below="@id/layout_cnt"
-            android:gravity="center"
-            >
+            android:gravity="center" >
             <TextView
                 android:id="@+id/cnt_cnter_label"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textColor="#000000"
                 android:textSize="25sp"
-                android:text="@string/str_remain_ptimes"
-                />
+                android:text="@string/str_remain_ptimes" />
 	        <TextView
 		        android:id="@+id/ctrl_counter_view"
 		        android:layout_width="wrap_content"
@@ -188,8 +182,7 @@
 		        android:layout_marginLeft="20dp"
 		        android:textColor="#000000"
 		        android:textSize="25sp"
-		        android:gravity="center"
-	        />
+		        android:gravity="center" />
 	    </RelativeLayout>
 -->
         <ImageButton

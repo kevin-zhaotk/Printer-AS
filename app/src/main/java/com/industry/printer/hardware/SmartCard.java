@@ -34,8 +34,6 @@ public class SmartCard {
      **/
     static public native int init();
 
-    static public native int close();
-
     static public native int checkConsistency();
 
     static public native String readConsistency();
@@ -46,7 +44,8 @@ public class SmartCard {
 
     static public native int downLocal(int card);
 
-    static public native String readILG(int card);
-
     static public native int readLevel(int card);
+
+    static public native int shutdown();
+
 }

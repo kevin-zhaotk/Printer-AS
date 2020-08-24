@@ -169,6 +169,9 @@ public class DynamicText extends BaseObject {
         if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
             head == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
             head == PrinterNozzle.MESSAGE_TYPE_32DN ||
+// H.M.Wang 2020-8-17 追加32SN打印头
+            head == PrinterNozzle.MESSAGE_TYPE_32SN ||
+// End of H.M.Wang 2020-8-17 追加32SN打印头
             head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 

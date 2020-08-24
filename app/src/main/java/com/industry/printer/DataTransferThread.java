@@ -175,7 +175,10 @@ public class DataTransferThread {
 	}
 	
 	boolean needRestore = false;
-	
+// H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
+	boolean isPurging = false;
+// End of H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
+
 	public void purge(final Context context) {
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
 		final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
@@ -189,6 +192,9 @@ public class DataTransferThread {
 				(head == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
 				head == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
 				head == PrinterNozzle.MESSAGE_TYPE_32DN ||
+// H.M.Wang 2020-8-18 追加32SN打印头
+                head == PrinterNozzle.MESSAGE_TYPE_32SN ||
+// End of H.M.Wang 2020-8-18 追加32SN打印头
 				head == PrinterNozzle.MESSAGE_TYPE_64_DOT);
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 
@@ -205,6 +211,8 @@ public class DataTransferThread {
 			
 			@Override
 			public void run() {
+				isPurging = true;
+
 				DataTask task = new DataTask(context, null);
 				Debug.e(TAG, "--->task: " + task + "   dotHD: " + dotHd);
 				
@@ -215,10 +223,12 @@ public class DataTransferThread {
 				
 				char[] buffer = task.preparePurgeBuffer(purgeFile);
 
-				if (dotHd) {
-					purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
-					return;
-				}
+// H.M.Wang 2020-8-21 取消大字机清洗后直接退出，该恢复打印的还是应该恢复打印
+//				if (dotHd) {
+//					purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
+//					return;
+//				}
+// End of H.M.Wang 2020-8-21 取消大字机清洗后直接退出，该恢复打印的还是应该恢复打印
 
 				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
 //				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
@@ -235,7 +245,7 @@ public class DataTransferThread {
 // End of 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 					needRestore = false;
 				}
-				
+				isPurging = false;
 			}
 		
 		});
@@ -271,6 +281,9 @@ public class DataTransferThread {
 		if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT &&
 			head != PrinterNozzle.MESSAGE_TYPE_32_DOT &&
 			head != PrinterNozzle.MESSAGE_TYPE_32DN &&
+// H.M.Wang 2020-8-18 追加32SN打印头
+            head != PrinterNozzle.MESSAGE_TYPE_32SN &&
+// End of H.M.Wang 2020-8-18 追加32SN打印头
 			head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 			return;
@@ -291,7 +304,13 @@ public class DataTransferThread {
 //				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 // H.M.Wang 2020-7-23 追加32DN打印头
 //				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
-				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_32DN || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
+                    head == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
+                    head == PrinterNozzle.MESSAGE_TYPE_32DN ||
+// H.M.Wang 2020-8-18 追加32SN打印头
+                    head == PrinterNozzle.MESSAGE_TYPE_32SN ||
+// End of H.M.Wang 2020-8-18 追加32SN打印头
+                    head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 					purgeFile = "purge/bigdot.bin";
 				}
@@ -611,12 +630,12 @@ public class DataTransferThread {
 							}
 						}
 
-						Debug.d(TAG, "CMD = " + cmd + "; Data = [" + data + "]");
 						String datastring = new String(data, 7, data.length - 7);
-						Debug.d(TAG, "CMD = " + cmd + "; Data = [" + data + "]");
-						setRemoteTextFitCounter(datastring);
-						Debug.d(TAG, "CMD = " + cmd + "; Data = [" + data + "]");
-						serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 1, 0, 0, "");
+						setRemoteTextSeparated(datastring);
+						serialHandler.sendCommandProcessResult(SerialProtocol7.CMD_TEXT, 1, 0, 0, "");
+						// H.M.Wang 2019-12-7 反转命令立即生效
+					} else if (cmd == SerialProtocol7.CMD_SET_REVERSE) {
+						mNeedUpdate = true;
 					}
 // End of H.M.Wang 2020-8-13 追加串口7协议
 				}
@@ -887,6 +906,9 @@ public class DataTransferThread {
 			if (hType != PrinterNozzle.MESSAGE_TYPE_16_DOT &&
 				hType != PrinterNozzle.MESSAGE_TYPE_32_DOT &&
 				hType != PrinterNozzle.MESSAGE_TYPE_32DN &&
+// H.M.Wang 2020-8-18 追加32SN打印头
+                hType != PrinterNozzle.MESSAGE_TYPE_32SN &&
+// End of H.M.Wang 2020-8-18 追加32SN打印头
 				hType != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 				bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;

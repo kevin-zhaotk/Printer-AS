@@ -28,7 +28,7 @@ HP_SMART_CARD_result_t writeByte(HP_SMART_CARD_device_id_t cardId, uint8_t field
     if (HP_SMART_CARD_OK == result) {
         LOGD(">>> Write %s = 0x%02x", FIELD_NAME[cardId](fieldId), data);
 
-        usleep(1000);                 // 1 ms delay
+        usleep(2000000);                 // 1 ms delay
         result = LIB_HP_SMART_CARD_flush();
         if (HP_SMART_CARD_OK != result) {
             LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));
@@ -56,7 +56,7 @@ HP_SMART_CARD_result_t write2Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fie
     if (HP_SMART_CARD_OK == result) {
         LOGD(">>> Write %s = 0x%04x", FIELD_NAME[cardId](fieldId), data);
 
-        usleep(1000);                 // 1 ms delay
+        usleep(2000000);                 // 1 ms delay
         result = LIB_HP_SMART_CARD_flush();
         if (HP_SMART_CARD_OK != result) {
             LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));
@@ -84,7 +84,7 @@ HP_SMART_CARD_result_t write4Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fie
     if (HP_SMART_CARD_OK == result) {
         LOGD(">>> Write %s = 0x%08x", FIELD_NAME[cardId](fieldId), data);
 
-        usleep(1000);                 // 1 ms delay
+        usleep(2000000);                 // 1 ms delay
         result = LIB_HP_SMART_CARD_flush();
         if (HP_SMART_CARD_OK != result) {
             LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));

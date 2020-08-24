@@ -15,6 +15,10 @@
 	<string name="str_btn_start">開始</string>
 	<string name="str_btn_stop">停止</string>
 	<string name="str_btn_clean">清洗</string>
+<!-- H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
+	<string name="str_clean_confirm">點擊OK開始清洗</string>
+	<string name="str_under_purging">正在清洗，請稍後再試</string>
+<!-- End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
 	<string name="str_btn_open">打開</string>
 	<string name="str_remain_ink">剩餘鎖值</string>
 	<string name="str_remain_ptimes">打印次數</string>

@@ -27,8 +27,12 @@ public enum PrinterNozzle {
     // End of H.M.Wang 2020-4-17 追加12.7R5头类型
 
 // H.M.Wang 2020-7-23 追加32DN打印头
-    MESSAGE_TYPE_32DN(MessageType.NOZZLE_INDEX_32DN, NozzleType.NOZZLE_TYPE_32DN, 1, 1);
+    MESSAGE_TYPE_32DN(MessageType.NOZZLE_INDEX_32DN, NozzleType.NOZZLE_TYPE_32DN, 1, 1),
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+
+// H.M.Wang 2020-8-14 追加32SN打印头
+    MESSAGE_TYPE_32SN(MessageType.NOZZLE_INDEX_32SN, NozzleType.NOZZLE_TYPE_32SN, 1, 1);
+// End of H.M.Wang 2020-8-14 追加32SN打印头
 
     public final int mIndex;
     public final int mType;
@@ -72,6 +76,9 @@ public enum PrinterNozzle {
 // H.M.Wang 2020-7-23 追加32DN打印头
             case NozzleType.NOZZLE_TYPE_32DN:
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2020-8-18 追加32SN打印头
+            case NozzleType.NOZZLE_TYPE_32SN:
+// End of H.M.Wang 2020-8-18 追加32SN打印头
             // H.M.Wang 追加下列一行
             case NozzleType.NOZZLE_TYPE_64_DOT:
                 reverseEnable = false;
@@ -107,6 +114,9 @@ public enum PrinterNozzle {
 // H.M.Wang 2020-7-23 追加32DN打印头
             case NozzleType.NOZZLE_TYPE_32DN:
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2020-8-18 追加32SN打印头
+            case NozzleType.NOZZLE_TYPE_32SN:
+// End of H.M.Wang 2020-8-18 追加32SN打印头
                 // H.M.Wang 追加下列一行
             case NozzleType.NOZZLE_TYPE_64_DOT:
 
@@ -151,6 +161,9 @@ public enum PrinterNozzle {
 // H.M.Wang 2020-7-23 追加32DN打印头
             case NozzleType.NOZZLE_TYPE_32DN:
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2020-8-18 追加32SN打印头
+            case NozzleType.NOZZLE_TYPE_32SN:
+// End of H.M.Wang 2020-8-18 追加32SN打印头
                 mHeight = 32;
                 break;
 
@@ -228,6 +241,9 @@ public enum PrinterNozzle {
 // H.M.Wang 2020-7-23 追加32DN打印头
             case NozzleType.NOZZLE_TYPE_32DN:
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2020-8-18 追加32SN打印头
+            case NozzleType.NOZZLE_TYPE_32SN:
+// End of H.M.Wang 2020-8-18 追加32SN打印头
                 scaleW = 32f/152;
                 scaleH = 32f/152;
                 break;
@@ -288,6 +304,9 @@ public enum PrinterNozzle {
 // H.M.Wang 2020-7-23 追加32DN打印头
             case NozzleType.NOZZLE_TYPE_32DN:
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2020-8-18 追加32SN打印头
+            case NozzleType.NOZZLE_TYPE_32SN:
+// End of H.M.Wang 2020-8-18 追加32SN打印头
                 ratio = 32f / 304;
                 break;
             case NozzleType.NOZZLE_TYPE_64_DOT:
@@ -381,6 +400,10 @@ public enum PrinterNozzle {
             case MessageType.NOZZLE_INDEX_32DN:
                 return MESSAGE_TYPE_32DN;
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2020-8-17 追加32SN打印头
+            case MessageType.NOZZLE_INDEX_32SN:
+                return MESSAGE_TYPE_32SN;
+// End of H.M.Wang 2020-8-17 追加32SN打印头
 
             // H.M.Wang 追加下列两行
             case MessageType.NOZZLE_INDEX_64_DOT:
@@ -430,6 +453,10 @@ public enum PrinterNozzle {
             case NozzleType.NOZZLE_TYPE_32DN:
                 return MESSAGE_TYPE_32DN;
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2020-8-17 追加32SN打印头
+            case NozzleType.NOZZLE_TYPE_32SN:
+                return MESSAGE_TYPE_32SN;
+// End of H.M.Wang 2020-8-17 追加32SN打印头
             // H.M.Wang 追加下列两行
             case NozzleType.NOZZLE_TYPE_64_DOT:
                 return MESSAGE_TYPE_64_DOT;
@@ -487,6 +514,9 @@ public enum PrinterNozzle {
 // H.M.Wang 2020-7-23 追加32DN打印头
         public static final int NOZZLE_INDEX_32DN = 13;
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2020-8-14 追加32SN打印头
+        public static final int NOZZLE_INDEX_32SN = 14;
+// End of H.M.Wang 2020-8-14 追加32SN打印头
 
     }
 
@@ -516,6 +546,9 @@ public enum PrinterNozzle {
 // H.M.Wang 2020-7-23 追加32DN打印头
         public static final int NOZZLE_TYPE_32DN = 32;
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2020-8-14 追加32SN打印头
+        public static final int NOZZLE_TYPE_32SN = 33;
+// End of H.M.Wang 2020-8-14 追加32SN打印头
 
     }
 }
