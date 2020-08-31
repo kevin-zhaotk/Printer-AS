@@ -17,6 +17,7 @@
 *********************************************************************************/
 
 #include <stdio.h>
+#include <unistd.h>
 #include "internal_ifc/sc_gpio_adapter.h"
 #include "internal_ifc/sc_gpio_driver.h"
 #include "../common_log.h"
@@ -112,6 +113,8 @@ uint8_t SC_GPIO_ADAPTER_select_38_xlater(int pg5, int pg8, int pg9) {
     } else {
         ret3 = SP_GPIO_DRIVER_set_value(GPIO_PORT_PG9, GPIO_DISABLE);
     }
+
+    usleep(5000);
 
     return ((ret1 == -1 || ret2 == -1 || ret3 == -1) ? SC_GPIO_ADAPTER_FAIL : SC_GPIO_ADAPTER_SUCCESS);
 }

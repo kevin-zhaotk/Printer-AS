@@ -40,9 +40,9 @@
 	<string name="str_btn_header4">打印頭4</string>
 	<string name="strDate">日期:</string>
 	<string name="strInklevel">"剩餘次數: "</string>
-	<string name="strPhotocellState">光電：</string>
-	<string name="strEncoderState">編碼器：</string>
-	<string name="strPrintstate">打印狀態：</string>
+	<string name="strPhotocellState">光電: </string>
+	<string name="strEncoderState">編碼器: </string>
+	<string name="strPrintstate">打印狀態: </string>
 	<string name="strPrinting">打印中...</string>
 	<string name="strPrintok">準備就緒</string>
 	<string name="strOn">開</string>
@@ -293,8 +293,8 @@
 	
 <!-- 树莓派3 打印界面相关 -->
 <!-- H.M.Wang 2020-8-11 修改信息，缩短长度 -->
-<!--	<string name="str_msg_name">信息名稱：</string>-->
-	<string name="str_msg_name">信息：</string>
+<!--	<string name="str_msg_name">信息名稱: </string>-->
+	<string name="str_msg_name">信息: </string>
 <!-- End of H.M.Wang 2020-8-11 修改信息，缩短长度 -->
 	<!--
 	<string name="str_state_inklevel">墨水量:  %1$d%%</string>
@@ -406,7 +406,7 @@
 	<string name="str_system_setting">系統設置</string>
 	<string name="str_upgrade_progress">系統升級中....</string>
 	<string name="str_time_format">%1$02d:%2$02d:%3$02d %4$02d:%5$02d:%6$02d</string>
-	<string name="str_toast_ink_unvalid">墨點大小超出範圍，重置爲默認值：800</string>
+	<string name="str_toast_ink_unvalid">墨點大小超出範圍，重置爲默認值: 800</string>
 	<string name="str_toast_photoelectricity_delay">光電延時超出範圍，重置爲默認值:100</string>
 	<string name="str_toast_photoelectricity_antishake">光電防抖超出範圍，重置爲默認值:20</string>
 	<string name="str_toast_timingprint">定時打印超出範圍，重置爲默認值:1000</string>
@@ -424,7 +424,7 @@
 	<string name="str_edit_line4">第四行:</string>
 	<string name="str_notice_save">請輸入文件名:</string>
 	<string name="str_notice_no_objects">沒有可保存的對象</string>
-	<string name="str_file_title">信息：</string>
+	<string name="str_file_title">信息: </string>
 	<string name="str_file_hint">保存編號</string>
 	<string name="str_page_prev">上翻</string>
 	<string name="str_page_next">下翻</string>
@@ -434,7 +434,7 @@
 	<string name="str_btn_detail">屬性</string>
 	<string name="cursor">光標</string>
 <!-- 树莓派3  -->
-	<string name="str_dialog_msgnote">請選擇信息行數：</string>
+	<string name="str_dialog_msgnote">請選擇信息行數: </string>
 	<string name="str_no_upgrade">已經是最新版本</string>
 	<string name="str_cnt_min">起始值</string>
 	<string name="str_cnt_max">結束值</string>

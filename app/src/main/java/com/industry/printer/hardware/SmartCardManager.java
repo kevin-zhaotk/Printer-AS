@@ -65,7 +65,7 @@ public class SmartCardManager implements IInkDevice {
             switch (msg.what) {
                 case MSG_CHECK_USABILITY:
 //                    checkConsistency();
-//                    checkOIB();
+//                    checkOIB(HP_BULK_CARTRIDGE);
                     readConsistency();
                     mHandler.sendEmptyMessageDelayed(MSG_CHECK_USABILITY, USABILITY_CHECK_INTERVAL);
                     break;
@@ -119,7 +119,7 @@ public class SmartCardManager implements IInkDevice {
         mContext = context;
         mValid = true;
         mInitialied = false;
-        mInkLevel = 0;
+        mInkLevel = -1;
         mCallback = null;
 
         mReadLevels = new int[READ_LEVEL_TIMES];
@@ -158,7 +158,7 @@ public class SmartCardManager implements IInkDevice {
         if(SmartCard.SC_SUCCESS == ret) {
             mInitialied = true;
 //            checkConsistency();
-            checkOIB();
+            checkOIB(HP_BULK_CARTRIDGE);
             mInkLevel = SmartCard.getLocalInk(HP_BULK_CARTRIDGE);
 
             if(isOpeningInit) {
@@ -213,14 +213,14 @@ public class SmartCardManager implements IInkDevice {
         }
     }
 
-    private void checkOIB() {
-        Debug.d(TAG, "---> enter checkOIB()");
+    private void checkOIB(int cardType) {
+        Debug.d(TAG, "---> enter checkOIB(" + cardType + ")");
 
         if(SKIP_SMARTCARD_ACCESS) return;
 
         if(mInitialied && mValid) {
             synchronized (this) {
-                int ret = SmartCard.chechOIB(HP_BULK_CARTRIDGE);
+                int ret = SmartCard.chechOIB(cardType);
                 if(0 != ret) {
                     mValid = false;
                     mCallback.obtainMessage(MSG_SMARTCARD_CHECK_FAILED, SmartCard.SC_OUT_OF_INK_ERROR, 0, null).sendToTarget();
@@ -290,7 +290,7 @@ public class SmartCardManager implements IInkDevice {
     public float getLocalInk(int head) {
         Debug.d(TAG, "---> enter getLocalInk()");
 
-        if(mInkLevel == 0) {
+        if(mInkLevel == -1) {
             if(SKIP_SMARTCARD_ACCESS) {
                 mInkLevel = 2000;           // 如果跳过Smartcard访问标识开启，则返回一个恰当值
             } else if(mInitialied && mValid) {
@@ -344,7 +344,7 @@ public class SmartCardManager implements IInkDevice {
                 SmartCard.downLocal(HP_BULK_CARTRIDGE);
                 mInkLevel = SmartCard.getLocalInk(HP_BULK_CARTRIDGE);
             }
-            checkOIB();
+            checkOIB(HP_BULK_CARTRIDGE);
         }
     }
 

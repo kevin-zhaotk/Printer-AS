@@ -315,6 +315,8 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 	private ArrayList<Integer> sort(String[] src) {
 		ArrayList<Integer> indexs = new ArrayList<Integer>();
 
+        if(null == src) return indexs;
+
 // H.M.Wang 2020-5-19 增加文件名长度优先的排序，长度一致时按字符排序
 		for (int i=0; i<src.length; i++) {
 			int start = 0;
@@ -360,7 +362,7 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 	}
 
 	private int find(ArrayList<Integer> index, String find) {
-		if(null == find || find.isEmpty()) {
+		if(null == find || find.isEmpty() || null == index || index.size() <= 0) {
 			return 0;
 		}
 

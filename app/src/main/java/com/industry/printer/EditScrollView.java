@@ -92,6 +92,9 @@ public class EditScrollView extends View {
 
 				// H.M.Wang 追加下列一行
 				case MESSAGE_TYPE_64_DOT:
+// H.M.Wang 2020-8-26 追加64SN打印头
+				case MESSAGE_TYPE_64SN:
+// End of H.M.Wang 2020-8-26 追加64SN打印头
 
 					break;
 				case MESSAGE_TYPE_25_4:

@@ -53,6 +53,10 @@
         <!-- H.M.Wang 2020-8-18 追加32SN打印头 -->
         <item>32SN</item>
         <!-- End of H.M.Wang 2020-8-18 追加32SN打印头 -->
+
+        <!-- H.M.Wang 2020-8-26 追加64SN打印头 -->
+        <item>64SN</item>
+        <!-- End of H.M.Wang 2020-8-26 追加64SN打印头 -->
     </string-array>
 
     <string-array name="strFontArray">

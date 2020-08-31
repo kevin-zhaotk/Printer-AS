@@ -376,9 +376,11 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 // H.M.Wang 2020-8-18 追加32SN打印头
 					case MESSAGE_TYPE_32SN:
 // End of H.M.Wang 2020-8-18 追加32SN打印头
-
 					// H.M.Wang 追加下列一行
 					case MESSAGE_TYPE_64_DOT:
+// H.M.Wang 2020-8-26 追加64SN打印头
+					case MESSAGE_TYPE_64SN:
+// End of H.M.Wang 2020-8-26 追加64SN打印头
 
 						mEditLayout.setBackgroundResource(R.drawable.background);
 						break;

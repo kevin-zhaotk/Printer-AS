@@ -1202,6 +1202,11 @@ public class SystemConfigFile{
 				nozzle = PrinterNozzle.MESSAGE_TYPE_32SN;
 				break;
 // End of H.M.Wang 2020-8-14 追加32SN打印头
+// H.M.Wang 2020-8-26 追加64SN打印头
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_64SN:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_64SN;
+				break;
+// End of H.M.Wang 2020-8-26 追加64SN打印头
 			case PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT:
 				nozzle = PrinterNozzle.MESSAGE_TYPE_64_DOT;
 				break;

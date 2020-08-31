@@ -550,6 +550,9 @@ public class TLKFileParser  extends TlkFile{
 
 			// H.M.Wang 追加下列一行
 			case MESSAGE_TYPE_64_DOT:
+// H.M.Wang 2020-8-26 追加64SN打印头
+			case MESSAGE_TYPE_64SN:
+// End of H.M.Wang 2020-8-26 追加64SN打印头
 
 				dots = 152f;
 				mProportion = dots/Configs.gDots;

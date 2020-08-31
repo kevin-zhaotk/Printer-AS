@@ -1,6 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 # LOCAL_CFLAGS := -std=c99
+LOCAL_CFLAGS := -D SINGLE_THREADED
 LOCAL_MODULE := libsmartcard
 LOCAL_MODULE_TAGS := optional
 LOCAL_LDLIBS += -L$(SYSROOT)/usr/lib -llog

@@ -21,7 +21,7 @@
 <!-- End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
 	<string name="str_btn_open">打开</string>
 	<string name="str_remain_ink">剩余锁值</string>
-	<string name="str_remain_ptimes">打印次数：</string>
+	<string name="str_remain_ptimes">打印次数: </string>
 	<string name="str_btn_new">新建</string>
 	<string name="str_btn_save">保存</string>
 	<string name="str_btn_saveprint">保存并打印</string>
@@ -40,9 +40,9 @@
 	<string name="str_btn_header4">打印头4</string>
 	<string name="strDate">日期:</string>
 	<string name="strInklevel">剩余次数: </string>
-	<string name="strPhotocellState">光电：</string>
-	<string name="strEncoderState">编码器：</string>
-	<string name="strPrintstate">打印状态：</string>
+	<string name="strPhotocellState">光电: </string>
+	<string name="strEncoderState">编码器: </string>
+	<string name="strPrintstate">打印状态: </string>
 	<string name="strPrinting">打印中...</string>
 	<string name="strPrintok">准备就绪</string>
 	<string name="strOn">开</string>
@@ -310,8 +310,8 @@
 	
 <!-- 树莓派3 打印界面相关 -->	
 <!-- H.M.Wang 2020-8-11 修改信息，缩短长度 -->
-<!--    <string name="str_msg_name">信息名称：</string>-->
-    <string name="str_msg_name">信息：</string>
+<!--    <string name="str_msg_name">信息名称: </string>-->
+    <string name="str_msg_name">信息: </string>
 <!-- End of H.M.Wang 2020-8-11 修改信息，缩短长度 -->
 	<!--
 	<string name="str_state_inklevel">墨水量:  %1$d%%</string>
@@ -427,7 +427,7 @@
 	<string name="str_system_setting">系统设置</string>
 	<string name="str_upgrade_progress">系统升级中....</string>
 	<string name="str_time_format">%1$02d:%2$02d:%3$02d %4$02d:%5$02d:%6$02d</string>
-	<string name="str_toast_ink_unvalid">墨点大小超出范围,设为默认值：800</string>
+	<string name="str_toast_ink_unvalid">墨点大小超出范围,设为默认值: 800</string>
 	<string name="str_toast_photoelectricity_delay">光电延时超出范围，设为默认值:100</string>
 	<string name="str_toast_photoelectricity_antishake">光电防抖超出范围，设为默认值:20</string>
 	<string name="str_toast_timingprint">定时打印超出范围，设为默认值:1000</string>
@@ -445,7 +445,7 @@
 	<string name="str_edit_line4">第四行:</string>
 	<string name="str_notice_save">请输入文件名:</string>
 	<string name="str_notice_no_objects">没有可保存的对象</string>
-	<string name="str_file_title">信息：</string>
+	<string name="str_file_title">信息: </string>
 	<string name="str_file_hint">保存编号</string>
 	<string name="str_page_prev">上翻</string>
 	<string name="str_page_next">下翻</string>
@@ -455,7 +455,7 @@
 	<string name="str_btn_detail">属性</string>
 	<string name="cursor">光标</string>
 <!-- 树莓派3  -->
-	<string name="str_dialog_msgnote">请选择信息行数：</string>
+	<string name="str_dialog_msgnote">请选择信息行数: </string>
 	<string name="str_no_upgrade">已经是最新版本</string>
 	<string name="str_cnt_min">起始值</string>
 	<string name="str_cnt_max">结束值</string>

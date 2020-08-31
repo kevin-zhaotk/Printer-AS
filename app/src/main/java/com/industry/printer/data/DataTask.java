@@ -174,7 +174,7 @@ public class DataTask {
 // H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_32DN) {
 //			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
-			mPrintBuffer = evenBitShiftFor32DN();
+			mPrintBuffer = bitShiftFor32DN();
 //			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
 //			Debug.d(TAG, mTask.getPath() + "/print.bin");
 //			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
@@ -184,7 +184,7 @@ public class DataTask {
 // H.M.Wang 2020-8-17 追加32SN打印头
 		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_32SN) {
 //			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
-			mPrintBuffer = evenBitShiftFor32SN();
+			mPrintBuffer = bitShiftFor32SN();
 //			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
 //			Debug.d(TAG, mTask.getPath() + "/print.bin");
 //			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
@@ -200,6 +200,16 @@ public class DataTask {
 //			Debug.d(TAG, mTask.getPath() + "/print.bin");
 //			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
 		}
+
+// H.M.Wang 2020-8-26 追加64SN打印头
+		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64SN) {
+//			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+			mPrintBuffer = bitShiftFor64SN();
+//			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+//			Debug.d(TAG, mTask.getPath() + "/print.bin");
+//			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
+		}
+// End of H.M.Wang 2020-8-26 追加64SN打印头
 
 //		BinCreater.saveBin("/mnt/sdcard/print1.bin", mPrintBuffer, 32);
 		Debug.d(TAG, "--->BytesPerColumn: " + mBinInfo.mBytesPerColumn);
@@ -397,7 +407,10 @@ public class DataTask {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 
 		// H.M.Wang 追加下列两行
-		} else if (headType == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2020-8-26 追加64SN打印头
+//		} else if (headType == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_64_DOT || headType == PrinterNozzle.MESSAGE_TYPE_64SN) {
+// H.M.Wang 2020-8-26 追加64SN打印头
 			div = 152f/64f;
 
 		}
@@ -847,6 +860,9 @@ public class DataTask {
 // H.M.Wang 2020-8-17 追加32SN打印头
 			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32SN ||
 // End of H.M.Wang 2020-8-17 追加32SN打印头
+// H.M.Wang 2020-8-26 追加64SN打印头
+			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64SN ||
+// End of H.M.Wang 2020-8-26 追加64SN打印头
 			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 			heads = 4;		// 16点，32点和64点，在这里假设按4个头来算，主要是为了就和当前的实现逻辑
@@ -950,7 +966,7 @@ public class DataTask {
 	}
 
 // H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
-	public char[] evenBitShiftFor32DN() {
+	public char[] bitShiftFor32DN() {
 		int COLUMNS_TO_SHIFT= 4;
 		int CHARS_PER_COLOMN = 2;
 		char[] buffer = new char[(mPrintBuffer.length + COLUMNS_TO_SHIFT * CHARS_PER_COLOMN) * 2];	// 每行增加4个字节，共增加16个字节(8个char),并且每列16bit后空余16bit，相当于数据区翻倍
@@ -982,20 +998,30 @@ public class DataTask {
 // End of H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 
 // H.M.Wang 2020-8-17 追加32SN打印头
-	public char[] evenBitShiftFor32SN() {
-		int CHARS_PER_COLOMN = 2;
+	public char[] bitShiftFor32SN() {
 		char[] buffer = new char[mPrintBuffer.length * 2];			// 每16位原内容之后插入16位的空格
 		Arrays.fill(buffer, (char)0x0000);
-		for (int i = 0; i < mBinInfo.mColumn; i++) {
-			for (int j=0; j<CHARS_PER_COLOMN; j++) {
-				buffer[2 * (i * CHARS_PER_COLOMN + j)] = mPrintBuffer[i * CHARS_PER_COLOMN + j];
-				buffer[2 * (i * CHARS_PER_COLOMN + j) + 1] = 0x0000;
-			}
+		for (int i=0; i<mPrintBuffer.length; i++) {
+			buffer[2 * i] = mPrintBuffer[i];
+			buffer[2 * i + 1] = 0x0000;
 		}
 		return buffer;
 	}
 // End of H.M.Wang 2020-8-17 追加32SN打印头
 
+// H.M.Wang 2020-8-26 追加64SN打印头
+public char[] bitShiftFor64SN() {
+	char[] buffer = new char[mPrintBuffer.length * 2];			// 每32位原内容之后插入32位的空格
+	Arrays.fill(buffer, (char)0x0000);
+	for (int i=0; i<mPrintBuffer.length; i+=2) {
+		buffer[2 * i] = mPrintBuffer[i];
+		buffer[2 * i + 1] = mPrintBuffer[i + 1];
+		buffer[2 * i + 2] = 0x0000;
+		buffer[2 * i + 3] = 0x0000;
+	}
+	return buffer;
+}
+// End of H.M.Wang 2020-8-26 追加64SN打印头
 
 	public BinInfo getInfo() {
 		return mBinInfo;
