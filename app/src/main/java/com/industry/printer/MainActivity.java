@@ -65,16 +65,11 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.Utils.KZFileObserver;
 import com.industry.printer.Utils.PlatformInfo;
-import com.industry.printer.Utils.SystemFs;
-import com.industry.printer.Utils.SystemPropertiesProxy;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.Utils.ZipUtil;
 import com.industry.printer.hardware.BarcodeScanParser;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
-import com.industry.printer.Serial.SerialPort;
-import com.industry.printer.hardware.SmartCard;
-import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
 import com.industry.printer.ui.CustomerDialog.DialogListener;
 import com.industry.printer.ui.CustomerDialog.ImportDialog;
@@ -342,7 +337,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		try {
 			// InputStreamReader sReader = new InputStreamReader(getAssets().open("Version"));
 			// BufferedReader reader = new BufferedReader(sReader);
-			String ver = SystemPropertiesProxy.get(this, "ro.build.version.incremental", "1970");
+//			String ver = SystemPropertiesProxy.get(this, "ro.build.version.incremental", "1970");
 			PackageInfo packageInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
 			mVersion.setText(packageInfo.versionName);
 		} catch (Exception e) {

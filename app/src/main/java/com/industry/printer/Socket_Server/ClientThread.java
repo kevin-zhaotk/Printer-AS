@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+@Deprecated
 public class ClientThread implements Runnable {
     private Socket s;
     private Socket [] s_array=new Socket[20];

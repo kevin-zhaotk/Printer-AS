@@ -7,6 +7,7 @@ package com.industry.printer.Utils;
  * @author kevin
  *
  */
+@Deprecated
 public class TypeConverter {
 
 	public static final String TAG = TypeConverter.class.getSimpleName();

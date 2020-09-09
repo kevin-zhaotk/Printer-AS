@@ -87,6 +87,7 @@ public class RealtimeYear extends BaseObject {
 
 	@Override
 	public String getMeatureString() {
+// 如果取00为标准字符计算宽度，在生成预览画面的时候可能会出现字符被切掉的问题
 //		return (mFormat.equals("YY") ? "00" : (mFormat.equals("YYYY") ? "0000" : ""));
 		return mFormat;
 	}

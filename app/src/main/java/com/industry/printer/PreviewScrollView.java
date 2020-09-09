@@ -27,6 +27,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+@Deprecated
 public class PreviewScrollView extends View {
 
 	public static final String TAG="PreviewScrollView";
@@ -66,7 +67,7 @@ public class PreviewScrollView extends View {
 			return;
 		}
 		Bitmap bmp = Bitmap.createBitmap(src, w, h, Configs.BITMAP_CONFIG);
-		mPreBitmap = bmp.createScaledBitmap(bmp, w, Configs.gFixedRows, true);
+//		mPreBitmap = bmp.createScaledBitmap(bmp, w, Configs.gFixedRows, true);
 		BinFromBitmap.recyleBitmap(bmp);
 		//mPreBitmap = Bitmap.createScaledBitmap(mPreBitmap, w, 150, true);
 		

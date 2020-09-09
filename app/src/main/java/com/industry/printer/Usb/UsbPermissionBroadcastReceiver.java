@@ -7,6 +7,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
+@Deprecated
 public class UsbPermissionBroadcastReceiver extends BroadcastReceiver {
 
 	public static final String TAG="UsbPermissionBroadcastReceiver";

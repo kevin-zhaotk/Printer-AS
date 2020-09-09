@@ -1,4 +1,4 @@
-package com.printer.corelib;
+package com.industry.printer.Rfid;
 
 public class EncryptionMethod {
 

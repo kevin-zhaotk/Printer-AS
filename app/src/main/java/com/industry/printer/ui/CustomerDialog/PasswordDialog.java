@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.industry.printer.R;
-import com.printer.corelib.Debug;
+import com.industry.printer.Utils.Debug;
 
 public class PasswordDialog extends CustomerDialogBase implements View.OnClickListener {
 

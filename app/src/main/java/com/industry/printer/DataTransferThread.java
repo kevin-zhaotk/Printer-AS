@@ -1196,7 +1196,7 @@ public class DataTransferThread {
 
 			boolean isFirst = true;
 			while(mRunning == true) {
-
+				long startMillis = System.currentTimeMillis();
 				int writable = FpgaGpioOperation.pollState();
 
 				if (writable == 0) { //timeout
@@ -1279,8 +1279,6 @@ public class DataTransferThread {
 						if (mCallback != null) {
 							mCallback.onComplete(index());
 						}
-
-						/**  save log */
 						LogIntercepter.getInstance(mContext).execute(getCurData());
 					}
 				}
@@ -1354,6 +1352,9 @@ public class DataTransferThread {
 					}
 // End of 2020-6-30 网络快速打印时第一次收到网络数据后下发
 				}
+
+				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis));
+
 				try {
 					Thread.sleep(10);
 				} catch (InterruptedException e) {

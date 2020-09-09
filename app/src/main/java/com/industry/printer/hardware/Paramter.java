@@ -1,4 +1,6 @@
-package com.printer.corelib;
+package com.industry.printer.hardware;
+
+import com.industry.printer.Utils.Debug;
 
 public class Paramter {
 

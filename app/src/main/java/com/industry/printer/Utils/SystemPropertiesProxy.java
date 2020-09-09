@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import android.content.Context;
 import dalvik.system.DexFile;
 
-
+@Deprecated
 public class SystemPropertiesProxy
 {
 

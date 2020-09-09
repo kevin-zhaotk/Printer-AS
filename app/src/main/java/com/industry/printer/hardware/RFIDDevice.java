@@ -23,29 +23,22 @@
 
 package com.industry.printer.hardware;
 
-import java.io.ByteArrayInputStream;
-import java.io.Closeable;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 import org.apache.http.util.ByteArrayBuffer;
 
-import android.R.bool;
-import android.R.integer;
 import android.os.SystemClock;
 
-import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 //import com.industry.printer.Utils.EncryptionMethod;
 import com.industry.printer.Utils.PlatformInfo;
-import com.industry.printer.Utils.RFIDAsyncTask;
-import com.industry.printer.Utils.RFIDAsyncTask.RfidCallback;
+import com.industry.printer.Rfid.RFIDAsyncTask;
+import com.industry.printer.Rfid.RFIDAsyncTask.RfidCallback;
 
-import com.printer.corelib.RFIDData;
-import com.printer.corelib.EncryptionMethod;
+import com.industry.printer.Rfid.RFIDData;
+import com.industry.printer.Rfid.EncryptionMethod;
 
 public class RFIDDevice implements RfidCallback{
 

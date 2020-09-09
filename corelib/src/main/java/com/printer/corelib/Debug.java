@@ -2,6 +2,7 @@ package com.printer.corelib;
 
 import android.util.Log;
 
+@Deprecated
 public class Debug {
 	
 	public static final String TAG="Printer";

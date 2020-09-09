@@ -13,7 +13,6 @@ import java.util.List;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.SystemFs;
 import com.industry.printer.hardware.RTCDevice;
 
 import android.content.Context;

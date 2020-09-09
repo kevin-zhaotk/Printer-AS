@@ -170,7 +170,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public PreviewAdapter mMessageAdapter;
 	public ListView mMessageList;
 	
-	public PreviewScrollView mPreview;
+//	public PreviewScrollView mPreview;
 	public ArrayList<BaseObject> mObjList;
 	
 	public static int mFd;
@@ -406,7 +406,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
         mGroupIndex = (TextView) getView().findViewById(R.id.group_index);
 // End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 
-		mPreview = (PreviewScrollView ) getView().findViewById(R.id.sv_preview);
+//		mPreview = (PreviewScrollView ) getView().findViewById(R.id.sv_preview);
 		
 		mBtnStart = (RelativeLayout) getView().findViewById(R.id.StartPrint);
 		mBtnStart.setOnClickListener(this);
@@ -510,7 +510,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		/****鍒濆鍖朢FID****/
 		mInkManager = InkManagerFactory.inkManager(mContext);
 		mHandler.sendEmptyMessageDelayed(RFIDManager.MSG_RFID_INIT, 1000);
-		
+
 		refreshCount();
 		SocketBegin();// Beging Socket service start;
 		Querydb=new Printer_Database(mContext);
@@ -1647,7 +1647,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 	}
 	
-	
+/*
 	public void startPreview()
 	{
 		Debug.d(TAG, "===>startPreview");
@@ -1667,7 +1667,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		
 	}
-
+*/
 	public void onCheckUsbSerial()
 	{
 		mSerialdev = null;

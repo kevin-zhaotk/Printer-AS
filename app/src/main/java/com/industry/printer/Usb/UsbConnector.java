@@ -8,6 +8,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
+@Deprecated
 public class UsbConnector {
 	
 	public static final String TAG="UsbConnector";

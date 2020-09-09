@@ -325,7 +325,10 @@ public class BaseObject{
 ////		if (!isCorrect) {
 ////			mFont = DEFAULT_FONT;
 ////		}
-		mFont = verifyFont();
+// H.M.Wang 2020-9-2 调用setFont函数，使得每次mFont的变化，都会产生重新计算宽度
+//		mFont = verifyFont();
+		setFont(verifyFont());
+// End of H.M.Wang 2020-9-2 调用setFont函数，使得每次mFont的变化，都会产生重新计算宽度
 		Debug.d(TAG,"--->draw font = " + mFont +"  h: " + mHeight);
 		try {
 			mPaint.setTypeface(FontCache.get(mContext, mFont));
@@ -352,17 +355,22 @@ public class BaseObject{
 //		if (mWidth == 0 || type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT || type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // H.M.Wang 2020-7-23 追加32DN打印头
 //		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT || type == PrinterNozzle.MESSAGE_TYPE_32_DOT || type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+
+// H.M.Wang 2020-9-2 暂时恢复大字机时不调整宽度的设置，因为32点生成32高的计数器时，宽度计算不正确
 // H.M.Wang 2020-8-13 取消大字机不考虑倍率的判断，否则会由于真实时间的字符串宽度和预计算的宽度
-////		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
-////			type == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
-////			type == PrinterNozzle.MESSAGE_TYPE_32DN ||
-////			type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+		if (type == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
+			type == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
+			type == PrinterNozzle.MESSAGE_TYPE_32DN ||
+			type == PrinterNozzle.MESSAGE_TYPE_32SN ||
+			type == PrinterNozzle.MESSAGE_TYPE_64SN ||
+			type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
-////			setWidth(1.0f * width);
-////		} else {
+			setWidth(1.0f * width);
+		} else {
 			// H.M.Wang 修改
 			setWidth(1.0f * width * ratio);
-////		}
+		}
+// End of H.M.Wang 2020-9-2 暂时恢复大字机时不调整宽度的设置，因为32点生成32高的计数器时，宽度计算不正确
 		bitmap = Bitmap.createBitmap(width , Math.round(mHeight), Configs.BITMAP_CONFIG);
 		Debug.e(TAG,"===--->getBitmap width=" + mWidth + ", mHeight=" + mHeight);
 		mCan = new Canvas(bitmap);
@@ -1079,11 +1087,18 @@ public class BaseObject{
 	
 	public void setFont(String font)
 	{
-		if(font== null)
+// H.M.Wang 2020-8-31 只有字体发生变化的时候再重新设置字体，并且重新计算宽度
+//		if(font== null)
+		if(font== null || font == mFont)
+// End of H.M.Wang 2020-8-31 只有字体发生变化的时候再重新设置字体，并且重新计算宽度
 			return;
+
 		mFont = font;
 		try {
 			mPaint.setTypeface(FontCache.get(mContext, mFont));
+// H.M.Wang 2020-8-31 临时追加重新计算宽度，可能有副作用
+			setWidth(mPaint.measureText(getContent()));
+// End of H.M.Wang 2020-8-31 临时追加重新计算宽度，可能有副作用
 		} catch (Exception e) {}
 		isNeedRedraw = true;
 		Debug.d(TAG, "--->setFont: " + mFont);
@@ -1091,7 +1106,10 @@ public class BaseObject{
 	
 	public String getFont()
 	{
-		mFont = verifyFont();
+// H.M.Wang 2020-9-2 调用setFont函数，使得每次mFont的变化，都会产生重新计算宽度
+//		mFont = verifyFont();
+		setFont(verifyFont());
+// End of H.M.Wang 2020-9-2 调用setFont函数，使得每次mFont的变化，都会产生重新计算宽度
 		return mFont;
 	}
 	public void setLineWidth(int width)

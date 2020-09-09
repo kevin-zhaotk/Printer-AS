@@ -315,6 +315,19 @@ public class RealtimeObject extends BaseObject {
 //		this.setHeight(height);
 //	}
 
+// H.M.Wang 2020-9-3 在BaseObject类中的draw函数会重新计算变量的宽度。如果没有这个函数，会以当前内容作为参考文本，如果是RealtimeObject。原来是按着"YY-MM-DD"计算的宽度，后来就按"20-09-03"计算了，宽度发生变化，结果会发生内容覆盖
+//	追加此函数以避免
+	@Override
+	public String getMeatureString() {
+		StringBuilder sb = new StringBuilder();
+		for (BaseObject o : mSubObjs) {
+			sb.append(o.getMeatureString());
+		}
+		return sb.toString();
+	}
+// End of H.M.Wang 2020-9-3 在BaseObject类中的draw函数会重新计算变量的宽度。如果没有这个函数，会以当前内容作为参考文本，如果是RealtimeObject。原来是按着"YY-MM-DD"计算的宽度，后来就按"20-09-03"计算了，宽度发生变化，结果会发生内容覆盖
+//	追加此函数以避免
+
 	// H.M.Wang 2019-9-25 该类对象重新根据高度重新设置宽度的时候，主要根据子项目的内容来设置，跟自己的内容无关
 	@Override
 	public void resizeByHeight() {

@@ -1,15 +1,12 @@
 package com.industry.printer.Rfid;
 
 import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.RFIDAsyncTask.RfidCallback;
+import com.industry.printer.Rfid.RFIDAsyncTask.RfidCallback;
 import com.industry.printer.hardware.IInkDevice;
 import com.industry.printer.hardware.InkManagerFactory;
-import com.printer.corelib.RFIDData;
 import com.industry.printer.hardware.RFIDDevice;
 import com.industry.printer.hardware.RFIDManager;
 
-import android.R.bool;
-import android.R.integer;
 import android.content.Context;
 import android.os.SystemClock;
 

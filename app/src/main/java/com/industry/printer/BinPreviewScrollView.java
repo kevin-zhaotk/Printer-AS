@@ -13,7 +13,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 
-
+@Deprecated
 public class BinPreviewScrollView extends View {
 
 	public static final String TAG="BinPreviewScrollView";

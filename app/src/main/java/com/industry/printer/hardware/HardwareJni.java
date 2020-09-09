@@ -1,9 +1,5 @@
 package com.industry.printer.hardware;
 
-import javax.security.auth.PrivateCredentialPermission;
-
-import com.industry.printer.Utils.SystemFs;
-
 public class HardwareJni {
 	
 	

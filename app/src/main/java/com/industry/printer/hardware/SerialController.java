@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
-import com.printer.corelib.RFIDData;
+import com.industry.printer.Rfid.RFIDData;
 
 @Deprecated
 public class SerialController {

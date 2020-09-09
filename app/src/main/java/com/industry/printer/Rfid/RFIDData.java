@@ -1,11 +1,10 @@
-package com.printer.corelib;
+package com.industry.printer.Rfid;
 
 import java.nio.ByteBuffer;
 
 import org.apache.http.util.ByteArrayBuffer;
 
-
-import android.R.string;
+import com.industry.printer.Utils.Debug;
 
 public class RFIDData {
 

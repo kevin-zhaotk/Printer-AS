@@ -201,15 +201,17 @@ public class DataTask {
 //			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
 		}
 
-// H.M.Wang 2020-8-26 追加64SN打印头
-		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64SN) {
-//			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
-			mPrintBuffer = bitShiftFor64SN();
-//			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
-//			Debug.d(TAG, mTask.getPath() + "/print.bin");
-//			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
-		}
+// H.M.Wang 2020-9-6 取消64SN的打印缓冲区转换
+//// H.M.Wang 2020-8-26 追加64SN打印头
+//		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64SN) {
+////			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+//			mPrintBuffer = bitShiftFor64SN();
+////			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
+////			Debug.d(TAG, mTask.getPath() + "/print.bin");
+////			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
+//		}
 // End of H.M.Wang 2020-8-26 追加64SN打印头
+// End of H.M.Wang 2020-9-6 取消64SN的打印缓冲区转换
 
 //		BinCreater.saveBin("/mnt/sdcard/print1.bin", mPrintBuffer, 32);
 		Debug.d(TAG, "--->BytesPerColumn: " + mBinInfo.mBytesPerColumn);

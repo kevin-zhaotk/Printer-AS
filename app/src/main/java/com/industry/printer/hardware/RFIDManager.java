@@ -2,22 +2,17 @@ package com.industry.printer.hardware;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
 
-import android.R.integer;
 import android.content.Context;
-import android.graphics.Bitmap.Config;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.industry.printer.DataTransferThread;
 import com.industry.printer.ThreadPoolManager;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
-import com.industry.printer.Utils.RFIDAsyncTask.RfidCallback;
-import com.printer.corelib.RFIDData;
+import com.industry.printer.Rfid.RFIDAsyncTask.RfidCallback;
+import com.industry.printer.Rfid.RFIDData;
 
 public class RFIDManager implements RfidCallback, IInkDevice {
 	
@@ -245,6 +240,8 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 	/** implement IInkDevice*/
 	@Override
 	public float getLocalInk(int dev) {
+		Debug.d(TAG, "---> enter getLocalInk()");
+
 		if (dev >= mRfidDevices.size()) {
 			return 0;
 		}

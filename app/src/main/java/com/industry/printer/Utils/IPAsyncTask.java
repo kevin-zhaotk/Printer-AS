@@ -3,6 +3,7 @@ package com.industry.printer.Utils;
 import android.os.AsyncTask;
 import android.os.Handler;
 
+@Deprecated
 public class IPAsyncTask extends AsyncTask<Void, Void, Void> {
 
 	private Handler mCallback;

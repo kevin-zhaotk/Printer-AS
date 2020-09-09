@@ -39,7 +39,7 @@ import android.widget.Toast;
 
 
 
-
+@Deprecated
 public class Adapter_Net_Scan extends BaseAdapter{
 	
 	Activity mConext;
