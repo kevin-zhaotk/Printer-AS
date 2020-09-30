@@ -39,7 +39,7 @@ HP_SMART_CARD_result_t supplyReadTag1ManufactureYear(HP_SMART_CARD_device_id_t c
 
     if (HP_SMART_CARD_OK == result) {
         *manufacture_year = buf * 1 + 2006;
-        LOGD(">>> HPSCS_SN_MFG_YEAR = %d", *manufacture_year);
+//        LOGD(">>> HPSCS_SN_MFG_YEAR = %d", *manufacture_year);
     }
     return result;
 }
@@ -83,7 +83,7 @@ HP_SMART_CARD_result_t supplyReadTag1MaxUsableCartridgeVolume(HP_SMART_CARD_devi
 
     if (HP_SMART_CARD_OK == result) {
         *max_usable_cartridge_volume = buf * 0.1 + 0;
-        LOGD(">>> HPSCS_MAX_USABLE_CARTRIDGE_VOLUME = %f", *max_usable_cartridge_volume);
+//        LOGD(">>> HPSCS_MAX_USABLE_CARTRIDGE_VOLUME = %f", *max_usable_cartridge_volume);
     }
     return result;
 }
@@ -108,7 +108,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSManufactureYear(HP_SMART_CARD_device_id
 
     if (HP_SMART_CARD_OK == result) {
         *manufacture_year = buf * 1 + 2006;
-        LOGD(">>> HPSCS_PILS_MFG_YEAR = %d", *manufacture_year);
+//        LOGD(">>> HPSCS_PILS_MFG_YEAR = %d", *manufacture_year);
     }
     return result;
 }
@@ -137,7 +137,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSSensorGain(HP_SMART_CARD_device_id_t ca
 
     if (HP_SMART_CARD_OK == result) {
         *sensor_gain = buf * 0.1 + 12;
-        LOGD(">>> HPSCS_PILS_SENSOR_GAIN = %f", *sensor_gain);
+//        LOGD(">>> HPSCS_PILS_SENSOR_GAIN = %f", *sensor_gain);
     }
     return result;
 }
@@ -151,7 +151,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSPhase3Available(HP_SMART_CARD_device_id
 
     if (HP_SMART_CARD_OK == result) {
         *available = buf * 0.25 + 0;
-        LOGD(">>> HPSCS_PILS_PHASE3_AVAIL = %f", *available);
+//        LOGD(">>> HPSCS_PILS_PHASE3_AVAIL = %f", *available);
     }
     return result;
 }
@@ -165,7 +165,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSPoint1AbsVolume(HP_SMART_CARD_device_id
 
     if (HP_SMART_CARD_OK == result) {
         *volume = buf * 2 + 0;
-        LOGD(">>> HPSCS_PILS_PT1_ABS_VOLUME = %d", *volume);
+//        LOGD(">>> HPSCS_PILS_PT1_ABS_VOLUME = %d", *volume);
     }
     return result;
 }
@@ -179,7 +179,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSPoint2AbsVolume(HP_SMART_CARD_device_id
 
     if (HP_SMART_CARD_OK == result) {
         *volume = buf * 2 + 0;
-        LOGD(">>> HPSCS_PILS_PT2_ABS_VOLUME = %d", *volume);
+//        LOGD(">>> HPSCS_PILS_PT2_ABS_VOLUME = %d", *volume);
     }
     return result;
 }
@@ -193,7 +193,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSPoint3AbsVolume(HP_SMART_CARD_device_id
 
     if (HP_SMART_CARD_OK == result) {
         *volume = buf * 0.5 + 0;
-        LOGD(">>> HPSCS_PILS_PT3_ABS_VOLUME = %f", *volume);
+//        LOGD(">>> HPSCS_PILS_PT3_ABS_VOLUME = %f", *volume);
     }
     return result;
 }
@@ -207,7 +207,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSPoint1Pressure(HP_SMART_CARD_device_id_
 
     if (HP_SMART_CARD_OK == result) {
         *pressure = buf * 0.005 + 0;
-        LOGD(">>> HPSCS_PILS_PT1_PRESSURE = %f", *pressure);
+//        LOGD(">>> HPSCS_PILS_PT1_PRESSURE = %f", *pressure);
     }
     return result;
 }
@@ -221,7 +221,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSPoint2Pressure(HP_SMART_CARD_device_id_
 
     if (HP_SMART_CARD_OK == result) {
         *pressure = buf * 0.005 + 0;
-        LOGD(">>> HPSCS_PILS_PT2_PRESSURE = %f", *pressure);
+//        LOGD(">>> HPSCS_PILS_PT2_PRESSURE = %f", *pressure);
     }
     return result;
 }
@@ -235,7 +235,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSPoint3Pressure(HP_SMART_CARD_device_id_
 
     if (HP_SMART_CARD_OK == result) {
         *pressure = buf * 0.005 + 0;
-        LOGD(">>> HPSCS_PILS_PT3_PRESSURE = %f", *pressure);
+//        LOGD(">>> HPSCS_PILS_PT3_PRESSURE = %f", *pressure);
     }
     return result;
 }
@@ -249,7 +249,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSPoint2Multiplier(HP_SMART_CARD_device_i
 
     if (HP_SMART_CARD_OK == result) {
         *multiplier = buf * 0.2 + 10;
-        LOGD(">>> HPSCS_PILS_2_MULTIPLIER = %f", *multiplier);
+//        LOGD(">>> HPSCS_PILS_2_MULTIPLIER = %f", *multiplier);
     }
     return result;
 }
@@ -273,7 +273,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSTempco(HP_SMART_CARD_device_id_t cardId
 
     if (HP_SMART_CARD_OK == result) {
         *tempco = buf * 0.01 - 0.32;
-        LOGD(">>> HPSCS_PILS_TEMP_COEFFICIENT = %f", *tempco);
+//        LOGD(">>> HPSCS_PILS_TEMP_COEFFICIENT = %f", *tempco);
     }
     return result;
 }
@@ -287,7 +287,7 @@ HP_SMART_CARD_result_t supplyReadTag2PILSRefillEmptyLimit(HP_SMART_CARD_device_i
 
     if (HP_SMART_CARD_OK == result) {
         *limit = buf * 3 + 10;
-        LOGD(">>> HPSCS_PILS_REFILL_EMPTY_LIMIT = %d", *limit);
+//        LOGD(">>> HPSCS_PILS_REFILL_EMPTY_LIMIT = %d", *limit);
     }
     return result;
 }
@@ -325,7 +325,7 @@ HP_SMART_CARD_result_t supplyReadTag3CartridgeFillYear(HP_SMART_CARD_device_id_t
 
     if (HP_SMART_CARD_OK == result) {
         *fill_year = buf * 1 + 2006;
-        LOGD(">>> HPSCS_FILL_YEAR = %d", *fill_year);
+//        LOGD(">>> HPSCS_FILL_YEAR = %d", *fill_year);
     }
     return result;
 }
@@ -425,7 +425,7 @@ HP_SMART_CARD_result_t supplyReadTag4Density(HP_SMART_CARD_device_id_t cardId, f
 
     if (HP_SMART_CARD_OK == result) {
         *ink_density = 0.001 * buf + 0.7;
-        LOGD(">>> HPSCS_INK_DENSITY = %f", *ink_density);
+//        LOGD(">>> HPSCS_INK_DENSITY = %f", *ink_density);
     }
     return result;
 }
@@ -472,7 +472,7 @@ HP_SMART_CARD_result_t supplyReadTag4UsableInkWeight(HP_SMART_CARD_device_id_t c
 
     if (HP_SMART_CARD_OK == result) {
         *ink_usable_weigh = buf * 0.1 + 0;
-        LOGD(">>> HPSCS_INK_USABLE_INK_WEIGHT = %f", *ink_usable_weigh);
+//        LOGD(">>> HPSCS_INK_USABLE_INK_WEIGHT = %f", *ink_usable_weigh);
     }
     return result;
 }
@@ -540,7 +540,7 @@ HP_SMART_CARD_result_t supplyReadTag61stPlatformMFGYear(HP_SMART_CARD_device_id_
 
     if (HP_SMART_CARD_OK == result) {
         *mfg_year = buf * 1 + 2006;
-        LOGD(">>> HPSCS_FIRST_PLATFORM_MFG_YEAR = %d", *mfg_year);
+//        LOGD(">>> HPSCS_FIRST_PLATFORM_MFG_YEAR = %d", *mfg_year);
     }
     return result;
 }
@@ -610,7 +610,7 @@ HP_SMART_CARD_result_t supplyReadTag61stInstallYear(HP_SMART_CARD_device_id_t ca
 
     if (HP_SMART_CARD_OK == result) {
         *first_install_year = buf * 1 + 2006;
-        LOGD(">>> HPSCS_FIRST_INSTALL_YEAR = %d", *first_install_year);
+//        LOGD(">>> HPSCS_FIRST_INSTALL_YEAR = %d", *first_install_year);
     }
     return result;
 }
@@ -901,7 +901,7 @@ HP_SMART_CARD_result_t supplyReadTag11CartridgeMRUYear(HP_SMART_CARD_device_id_t
 
     if (HP_SMART_CARD_OK == result) {
         *cartridge_mru_year = buf * 1 + 2006;
-        LOGD(">>> HPSCS_CARTRIDGE_MRU_YEAR = %d", *cartridge_mru_year);
+//        LOGD(">>> HPSCS_CARTRIDGE_MRU_YEAR = %d", *cartridge_mru_year);
     }
     return result;
 }
@@ -951,7 +951,7 @@ HP_SMART_CARD_result_t supplyReadTag11MRUPlatformMFGYear(HP_SMART_CARD_device_id
 
     if (HP_SMART_CARD_OK == result) {
         *mru_platform_mfg_year = buf * 1 + 2006;
-        LOGD(">>> HPSCS_MRU_PLATFORM_MFG_YEAR = %d", *mru_platform_mfg_year);
+//        LOGD(">>> HPSCS_MRU_PLATFORM_MFG_YEAR = %d", *mru_platform_mfg_year);
     }
     return result;
 }

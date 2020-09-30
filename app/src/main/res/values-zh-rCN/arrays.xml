@@ -22,6 +22,7 @@
         <item>串口协议6</item>
         <item>快速网络打印</item>
         <item>串口协议7</item>
+        <item>网络心跳</item>
     </string-array>
 <!-- End of H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
 

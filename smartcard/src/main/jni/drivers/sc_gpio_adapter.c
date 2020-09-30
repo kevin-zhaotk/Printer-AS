@@ -96,6 +96,17 @@ uint8_t SC_GPIO_ADAPTER_read_value(HP_SMART_CARD_gpio_line_t line) {
 uint8_t SC_GPIO_ADAPTER_select_38_xlater(int pg5, int pg8, int pg9) {
 //    LOGI(">>> SC_GPIO_ADAPTER_select_38_xlater: %d, %d, %d", pg5, pg8, pg9);
 
+// H.M.Wang 2020-9-27 通过切换RFID的方式实现38译码器的功能
+    if(pg5 == 0x00 && pg8 == 0x01 && pg9 == 0x00) {
+        return SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD1);
+    } else if(pg5 == 0x01 && pg8 == 0x01 && pg9 == 0x00) {
+        return SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD4);
+    } else if(pg5 == 0x00 && pg8 == 0x00 && pg9 == 0x00) {
+        return SP_GPIO_DRIVER_select_card(GPIO_IDLE);
+    } else {
+        return SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD2);
+    }
+/*
     int ret1 = -1, ret2 = -1, ret3 = -1;
 
     if(!pg5) {
@@ -114,8 +125,10 @@ uint8_t SC_GPIO_ADAPTER_select_38_xlater(int pg5, int pg8, int pg9) {
         ret3 = SP_GPIO_DRIVER_set_value(GPIO_PORT_PG9, GPIO_DISABLE);
     }
 
-    usleep(5000);
+    usleep(500);
 
     return ((ret1 == -1 || ret2 == -1 || ret3 == -1) ? SC_GPIO_ADAPTER_FAIL : SC_GPIO_ADAPTER_SUCCESS);
+*/
+// End of H.M.Wang 2020-9-27 通过切换RFID的方式实现38译码器的功能
 }
 

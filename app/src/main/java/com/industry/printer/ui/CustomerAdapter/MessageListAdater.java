@@ -167,7 +167,7 @@ public class MessageListAdater extends BaseAdapter {
 		return this;
 	}
 
-	public void setmTotalContents(String[] contents) {
+	public void setTotalContents(String[] contents) {
 		mTotalContents = contents;
 	}
 

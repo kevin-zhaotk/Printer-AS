@@ -24,6 +24,12 @@ public class Configs {
 
 	public static final boolean DEBUG=true;
 
+// H.M.Wang 2020-9-15 追加Smart卡管理员标志，当该标志为真，并且工作于Smart卡模式的时候，启动写入Smart卡验证码工作模式
+	public static final boolean SMARTCARDMANAGER = false;
+	public static final int CLIENT_UNIQUE_CODE = 1001;
+// End of H.M.Wang 2020-9-15 追加Smart卡管理员标志，当该标志为真，并且工作于Smart卡模式的时候，启动写入Smart卡验证码工作模式
+
+
 	/**
 	 * 该版本打印是否需要忽略rfid
 	 * if RFID is ignored, RFID scan  at start-time repeats upto 10 times if scan failed;

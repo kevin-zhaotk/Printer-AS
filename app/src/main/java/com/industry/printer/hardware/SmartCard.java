@@ -24,6 +24,7 @@ public class SmartCard {
     public final static int SC_LEVEL_CENSOR_ACCESS_FAILED   = 202;
     public final static int SC_CONSISTENCY_FAILED           = 300;
     public final static int SC_OUT_OF_INK_ERROR             = 301;
+    public final static int SC_CHECKSUM_FAILED              = 400;
 
     public static void loadLibrary() {
         Debug.d("SmartCard", "Loading smartcard library...");
@@ -33,6 +34,10 @@ public class SmartCard {
      * SmartCard JNI APIs
      **/
     static public native int init();
+
+    static public native int writeCheckSum(int card, int clientUniqueCode);
+
+    static public native int checkSum(int card, int clientUniqueCode);
 
     static public native int checkConsistency();
 

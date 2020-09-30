@@ -79,7 +79,10 @@ static int _cmd_rsp(smart_dev_t smart_dev,
     pkt.delay_till_rsp_usec = cmd_processing_time_usec;
     pkt.rsp_p               = rsp;
     pkt.body_p              = ersp_params;
-    pkt.max_body_len        = MIN(max_rsp_len + CMAC_LEN, MAX_DATA_LENGTH);
+// H.M.Wang 2020-9-24 +CMAC_LEN后如果接收到的长度因为信号干扰，结果超出必要长度，可能会多读出CMAC_LEN个字节，这样可能造成堆栈溢出，导致程序重启
+//    pkt.max_body_len        = MIN(max_rsp_len + CMAC_LEN, MAX_DATA_LENGTH);
+    pkt.max_body_len        = MIN(max_rsp_len, MAX_DATA_LENGTH);
+// End of H.M.Wang 2020-9-24 +CMAC_LEN...
     pkt.body_len            = &sz_ersp_params;
     pkt.smart_dev           = smart_dev;
 

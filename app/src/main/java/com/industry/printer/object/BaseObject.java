@@ -26,6 +26,7 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.cache.FontCache;
 import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.data.BinFromBitmap;
+import com.industry.printer.object.data.BitmapWriter;
 
 public class BaseObject{
 	private static final String TAG = BaseObject.class.getSimpleName();
@@ -501,19 +502,19 @@ public class BaseObject{
 	 * @return
 	 */
 	public int makeVarBin(Context ctx, float scaleW, float scaleH, int dstH) {
-		int dots[] = new int[1];
+		int dots[];
 		int singleW;
-		Paint paint = new Paint();
 		int height = Math.round(mHeight * scaleH);
-		paint.setTextSize(height);
-		paint.setAntiAlias(true); //去除锯齿  
-		paint.setFilterBitmap(true); //对位图进行滤波处理
-		
+
+		Paint paint = new Paint();
 		try {
 			paint.setTypeface(FontCache.get(ctx, mFont));
 		} catch (Exception e) {
 			
 		}
+		paint.setTextSize(height);
+		paint.setAntiAlias(true); //去除锯齿
+		paint.setFilterBitmap(true); //对位图进行滤波处理
 
 //		Debug.d(TAG, "SaveTime: - Start makeVarBin : " + System.currentTimeMillis());
 		int width = Math.round(paint.measureText("8"));
@@ -581,7 +582,7 @@ public class BaseObject{
 				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
 				mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR));
 
-		Debug.d(TAG, "--->id: " + mId + " index:  " + mIndex);
+		Debug.d(TAG, "--->dots: " + dots[0]);
 		maker.save(ConfigPath.getVBinAbsolute(mTask.getName(), mIndex));
 		//
 		BinFromBitmap.recyleBitmap(gBmp);

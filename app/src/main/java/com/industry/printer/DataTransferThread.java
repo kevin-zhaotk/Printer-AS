@@ -386,25 +386,29 @@ public class DataTransferThread {
 		int strIndex = 0;
 		boolean needUpdate = false;
 
-		ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
-		for(BaseObject baseObject: objList) {
-			if(baseObject instanceof DynamicText) {
+// H.M.Wang 2020-9-10 协议收到的数值对群组也有效
+		for(DataTask dataTask : mDataTask) {
+			ArrayList<BaseObject> objList = dataTask.getObjList();
+			for(BaseObject baseObject: objList) {
+				if(baseObject instanceof DynamicText) {
 // H.M.Wang 2019-12-15 支持串口文本通过间隔符分割，对于计数器的文本如果超过位数，多余部分切割功能移至计数器Object类，不在这里处理
-				if(strIndex < recvStrs.length) {
-					Debug.d(TAG, "DynamicText[" + strIndex + "]: " + recvStrs[strIndex]);
-					baseObject.setContent(recvStrs[strIndex]);
-					strIndex++;
-					needUpdate = true;
-				}
-			} else if(baseObject instanceof BarcodeObject) {
-				if(((BarcodeObject)baseObject).isDynamicCode() && recvStrs.length >= 11) {
-					Debug.d(TAG, "Dynamic QRCode: " + recvStrs[10]);
-					((BarcodeObject)baseObject).setContent(recvStrs[10]);
-					needUpdate = true;
-				}
+					if(strIndex < recvStrs.length) {
+						Debug.d(TAG, "DynamicText[" + strIndex + "]: " + recvStrs[strIndex]);
+						baseObject.setContent(recvStrs[strIndex]);
+						strIndex++;
+						needUpdate = true;
+					}
+				} else if(baseObject instanceof BarcodeObject) {
+					if(((BarcodeObject)baseObject).isDynamicCode() && recvStrs.length >= 11) {
+						Debug.d(TAG, "Dynamic QRCode: " + recvStrs[10]);
+						((BarcodeObject)baseObject).setContent(recvStrs[10]);
+						needUpdate = true;
+					}
 // End. -----
+				}
 			}
 		}
+// End of H.M.Wang 2020-9-10 协议收到的数值对群组也有效
 		mNeedUpdate = needUpdate;
 
 // 2020-7-3 标识网络快速打印状态下数据更新
@@ -433,21 +437,26 @@ public class DataTransferThread {
 		int counterIndex = 0;
 		boolean needUpdate = false;
 
-		ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
-		for(BaseObject baseObject: objList) {
-			if(baseObject instanceof DynamicText) {
-				if(strIndex < data.length()) {
-					int readLen = Math.min(((DynamicText)baseObject).getBits(), data.length() - strIndex);
-					Debug.d(TAG, "DynamicText[" + counterIndex + "]: " + data.substring(strIndex, strIndex + readLen));
-					baseObject.setContent(data.substring(strIndex, strIndex + readLen));
-					strIndex += readLen;
-					needUpdate = true;
-				} else {
-					Debug.d(TAG, "DynamicText[" + counterIndex + "]: ");
+// H.M.Wang 2020-9-10 协议收到的数值对群组也有效
+		for(DataTask dataTask : mDataTask) {
+			ArrayList<BaseObject> objList = dataTask.getObjList();
+			for(BaseObject baseObject: objList) {
+				if(baseObject instanceof DynamicText) {
+					if(strIndex < data.length()) {
+						int readLen = Math.min(((DynamicText)baseObject).getBits(), data.length() - strIndex);
+						Debug.d(TAG, "DynamicText[" + counterIndex + "]: " + data.substring(strIndex, strIndex + readLen));
+						baseObject.setContent(data.substring(strIndex, strIndex + readLen));
+						strIndex += readLen;
+						needUpdate = true;
+					} else {
+						Debug.d(TAG, "DynamicText[" + counterIndex + "]: ");
+					}
+					counterIndex++;
 				}
-				counterIndex++;
 			}
 		}
+// End of H.M.Wang 2020-9-10 协议收到的数值对群组也有效
+
 		mNeedUpdate = needUpdate;
 	}
 // End. -----
@@ -468,15 +477,19 @@ public class DataTransferThread {
 
 		boolean needUpdate = false;
 
-		ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
-		for(BaseObject baseObject: objList) {
-			if(baseObject instanceof DynamicText) {
-				Debug.d(TAG, "DynamicText[0]: " + data);
-				baseObject.setContent(data);
-				needUpdate = true;
-				break;
+// H.M.Wang 2020-9-10 协议收到的数值对群组也有效
+		for(DataTask dataTask : mDataTask) {
+			ArrayList<BaseObject> objList = dataTask.getObjList();
+			for(BaseObject baseObject: objList) {
+				if(baseObject instanceof DynamicText) {
+					Debug.d(TAG, "DynamicText[0]: " + data);
+					baseObject.setContent(data);
+					needUpdate = true;
+					break;
+				}
 			}
 		}
+// End of H.M.Wang 2020-9-10 协议收到的数值对群组也有效
 		mNeedUpdate = needUpdate;
 	}
 // End. -----
@@ -1199,6 +1212,8 @@ public class DataTransferThread {
 				long startMillis = System.currentTimeMillis();
 				int writable = FpgaGpioOperation.pollState();
 
+				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
+
 				if (writable == 0) { //timeout
 //					Debug.e(TAG, "--->FPGA timeout");
 //					if (isLanPrint() && pcReset == true) {
@@ -1209,6 +1224,7 @@ public class DataTransferThread {
 				} else if (writable == -1) {
 //					Debug.e(TAG, "--->FPGA error");
 				} else {
+					Debug.d(TAG, "--->FPGA buffer is empty");
 // 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
 					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
 						if(!mDataUpdatedForFastLan) {
@@ -1217,7 +1233,6 @@ public class DataTransferThread {
                         mDataUpdatedForFastLan = false;
 					}
 // End of 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
-					Debug.d(TAG, "--->FPGA buffer is empty");
 					Time1 = Time2;
 					Time2 = System.currentTimeMillis();
 					if (mCallback != null) {
@@ -1260,7 +1275,9 @@ public class DataTransferThread {
 //							mPrintBuffer = mDataTask.get(index()).getPrintBuffer();
 // End of H.M.Wang 2020-5-19 QR文件打印最后一行后无反应问题。应该先生成打印缓冲区，而不是先判断是否到了终点。顺序不对
 						}
+
 						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
 // End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
@@ -1353,7 +1370,7 @@ public class DataTransferThread {
 // End of 2020-6-30 网络快速打印时第一次收到网络数据后下发
 				}
 
-				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis));
+				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
 
 				try {
 					Thread.sleep(10);

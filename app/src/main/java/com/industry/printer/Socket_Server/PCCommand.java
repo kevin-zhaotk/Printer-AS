@@ -71,6 +71,10 @@ public class PCCommand {
     public static final String CMD_SET_PARAMS = "Settings";
 // End of H.M.Wang 2020-7-28 追加一个设置参数命令
 
+// H.M.Wang 2020-9-28 追加一个心跳协议
+    public static final String CMD_HEARTBEAT = "Heartbeat";
+// End of H.M.Wang 2020-9-28 追加一个心跳协议
+
     /** 包头 */
     public String header;
 

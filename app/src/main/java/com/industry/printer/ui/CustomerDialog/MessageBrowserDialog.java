@@ -105,7 +105,7 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 					mFileAdapter.setContentIndex(mDispIndex);
 					break;
 				case MSG_LOADED:
-					mFileAdapter.setmTotalContents(mTotalContents);
+					mFileAdapter.setTotalContents(mTotalContents);
 					mDispIndex = new ArrayList<Integer>(mTotalIndex);
 					mFileAdapter.setContentIndex(mDispIndex);
 					int scrollToPosition = find(mDispIndex, mCurrentMsg);
@@ -406,12 +406,18 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 				mTotalContents = rootpath.list(new FilenameFilter() {
 					@Override
 					public boolean accept(File arg0, String arg1) {
+//						Debug.d(TAG, arg0.getAbsolutePath() + ":" + arg1);
 						if (mFrom == OpenFrom.OPEN_EDIT && arg1.startsWith("G-")) {
 							return false;
 						}
-						if(!arg0.isDirectory()) {
+// H.M.Wang 2020-9-21 追加TLK文件合法性判断，是否为目录，是否包含1.tlk文件
+						if(!(new File(arg0.getAbsolutePath() + File.separator + arg1)).isDirectory()) {
 							return false;
 						}
+						if(!(new File(arg0.getAbsolutePath() + File.separator + arg1 + File.separator + "1.tlk")).exists()) {
+							return false;
+						}
+// End of H.M.Wang 2020-9-21 追加TLK文件合法性判断，是否为目录，是否包含1.tlk文件
 						return true;
 					}
 				});

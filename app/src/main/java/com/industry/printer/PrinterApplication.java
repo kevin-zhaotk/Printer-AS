@@ -99,7 +99,7 @@ public class PrinterApplication extends Application {
                     os.writeBytes("exit\n");
 
 					NativeGraphicJni.loadLibrary();
-					if(!SmartCardManager.SKIP_SMARTCARD_ACCESS) SmartCard.loadLibrary();
+					if(SmartCardManager.SMARTCARD_ACCESS) SmartCard.loadLibrary();
 					SerialPort.loadLibrary();
 
                 } catch (Exception e) {

@@ -24,6 +24,16 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_shutdown(JNIEnv *env, jclass arg);
 JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg);
 
 /**
+ * 写入验证码
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_writeCheckSum(JNIEnv *env, jclass arg, jint card, jint clientUniqueCode);
+
+/**
+ * 验证
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_checkSum(JNIEnv *env, jclass arg, jint card, jint clientUniqueCode);
+
+/**
  * 检查墨袋参数一致性
  */
 JNIEXPORT jint JNICALL Java_com_Smartcard_checkConsistency(JNIEnv *env, jclass arg);

@@ -97,7 +97,7 @@ public class MessageGroupsortDialog extends CustomerDialogBase implements View.O
         mListview.setAdapter(mFileAdapter);
         mListview.setOnItemClickListener(this);
         // mListview.setOnItemSelectedListener();
-        mFileAdapter.setmTotalContents(mTotalContents);
+        mFileAdapter.setTotalContents(mTotalContents);
         mFileAdapter.setContentIndex(mDispIndex);
     }
 

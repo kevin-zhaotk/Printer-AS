@@ -46,8 +46,6 @@
 #define GPIO_PIN_PG9_ENABLE     (0x6090)
 #define GPIO_PIN_PG9_DIAABLE    (0x6091)
 
-/*
-*/
 static int ioctlValue(int port) {
     int gpio_ioctl_value = 0;
 
@@ -73,139 +71,7 @@ static int ioctlValue(int port) {
 }
 
 /*********************************************************************************
-    SP_GPIO_DRIVER_set_value
-----------------------------------------------------------------------------------
-    @描述
-        给GPIO端口设置值。
-    @参数
-        port: GPIO端口
-        value: 设置值
-    @返回值
-        SC_GPIO_DRIVER_SUCCESS(0): 关闭成功
-        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
-**********************************************************************************/
-
-int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
-//    LOGI(">>> SP_GPIO_DRIVER_set_value[%d] to port[%d]", value, port);
-
-    int fd = SC_GPIO_DRIVER_open(GPIO_DEVICE);
-
-    if(fd == SC_GPIO_DRIVER_FAIL) {
-        return SC_GPIO_DRIVER_FAIL;
-    }
-
-    int ret = SC_GPIO_DRIVER_ioctl(fd, GPIO_DEVICE_IOCTL_WRITE, ioctlValue(port) + (value & 0x0001));
-
-    SC_GPIO_DRIVER_close(fd);
-
-    return ret;
-/*
-    FILE *fp;
-    char s[50]="";
-    char s1[50]="";
-
-    if((fp = fopen("/sys/class/gpio/export", "w")) == NULL) {
-        LOGE(">>> SP_GPIO_DRIVER_set_value error when open port [/sys/class/gpio/export]! [%s]", strerror(errno));
-        return SC_GPIO_DRIVER_FAIL;
-    }
-
-    fprintf(fp, "%d", port);
-    fclose(fp);
-
-    sprintf(s, "/sys/class/gpio/gpio%d/direction", port);
-
-    if((fp = fopen(s, "wb+")) == NULL) {
-        LOGE(">>> SP_GPIO_DRIVER_set_value error when set direction! [%s]", strerror(errno));
-        return SC_GPIO_DRIVER_FAIL;
-    }
-    fprintf(fp, "out");
-    fclose(fp);
-
-    sprintf(s1, "/sys/class/gpio/gpio%d/value", port);
-
-    if((fp = fopen(s1, "wb+")) == NULL) {
-        LOGE(">>> SP_GPIO_DRIVER_set_value error when set value! [%s]", strerror(errno));
-        return SC_GPIO_DRIVER_FAIL;
-    }
-
-    fprintf(fp, "%d", value);
-    fclose(fp);
-//    LOGD(">>> SP_GPIO_DRIVER_set_value set [%d] to port [%d], done!", value, port);
-
-    return SC_GPIO_DRIVER_SUCCESS;
-*/
-}
-
-/*********************************************************************************
-    SP_GPIO_DRIVER_get_value
-----------------------------------------------------------------------------------
-    @描述
-        从GPIO端口读取值。
-    @参数
-        port: GPIO端口
-    @返回值
-        value: 读取的值
-        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
-**********************************************************************************/
-
-int SP_GPIO_DRIVER_get_value(int port) {
-//    LOGI(">>> SP_GPIO_DRIVER_get_value from port [%d]", port);
-
-    int fd = SC_GPIO_DRIVER_open(GPIO_DEVICE);
-
-    if(fd == SC_GPIO_DRIVER_FAIL) {
-        return SC_GPIO_DRIVER_FAIL;
-    }
-
-    int read = SC_GPIO_DRIVER_read(fd, 0);
-
-    usleep(50000);
-
-    SC_GPIO_DRIVER_close(fd);
-
-    return read;
-/*
-    uint8_t value;
-
-    FILE *fp;
-    char s[50]="";
-    char s1[50]="";
-
-    if((fp = fopen("/sys/class/gpio/export", "w")) == NULL) {
-        LOGE(">>> SP_GPIO_DRIVER_get_value error when open port [/sys/class/gpio/export]! [%s]", strerror(errno));
-        return SC_GPIO_DRIVER_FAIL;
-    }
-
-    fprintf(fp, "%d", port);
-    fclose(fp);
-
-    sprintf(s, "/sys/class/gpio/gpio%d/direction", port);
-
-    if((fp = fopen(s, "wb+")) == NULL) {
-        LOGE(">>> SP_GPIO_DRIVER_get_value error when set direction! [%s]", strerror(errno));
-        return SC_GPIO_DRIVER_FAIL;
-    }
-    fprintf(fp, "in");
-    fclose(fp);
-
-    sprintf(s1, "/sys/class/gpio/gpio%d/value", port);
-
-    if((fp = fopen(s1, "wb+")) == NULL) {
-        LOGE(">>> SP_GPIO_DRIVER_get_value error when read value! [%s]", strerror(errno));
-        return SC_GPIO_DRIVER_FAIL;
-    }
-
-    size_t ret = fread(&value, sizeof(value), 1, fp);
-
-    value &= 0x01;
-
-//    LOGD(">>> SP_GPIO_DRIVER_get_value: %d", value);
-    return (ret > 0 ? value : SC_GPIO_DRIVER_FAIL);
-*/
-}
-
-/*********************************************************************************
-    SC_GPIO_DRIVER_open(取消)
+    SC_GPIO_DRIVER_open
 ----------------------------------------------------------------------------------
     @描述
         打开一个GPIO端口。
@@ -216,7 +82,7 @@ int SP_GPIO_DRIVER_get_value(int port) {
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
 
-int SC_GPIO_DRIVER_open(char *dev) {
+static int SC_GPIO_DRIVER_open(char *dev) {
 //    LOGI(">>> SC_GPIO_DRIVER_open: %s", dev);
 
     if(dev == NULL)	{
@@ -270,7 +136,7 @@ int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count) {
 }
 */
 /*********************************************************************************
-    SC_GPIO_DRIVER_ioctl（取消）
+    SC_GPIO_DRIVER_ioctl
 ----------------------------------------------------------------------------------
     @描述
         向一个GPIO端口发送输入输出控制字。
@@ -283,7 +149,7 @@ int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count) {
         SC_GPIO_DRIVER_FAIL(<=-1)：失败，及失败原因
 **********************************************************************************/
 
-int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
+static int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
 //    LOGI(">>> SC_GPIO_DRIVER_ioctl: File: %d; Command: 0x%02X; Value: [0x%04X]", fd, cmd, arg1);
 
     if(fd < 0) {
@@ -327,7 +193,7 @@ int SC_GPIO_DRIVER_poll(int fd) {
 */
 
 /*********************************************************************************
-    SC_GPIO_DRIVER_read（取消）
+    SC_GPIO_DRIVER_read
 ----------------------------------------------------------------------------------
     @描述
         从一个GPIO端口读取数值。
@@ -339,7 +205,7 @@ int SC_GPIO_DRIVER_poll(int fd) {
         SC_GPIO_DRIVER_FAIL(-1)：失败
 **********************************************************************************/
 
-int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
+static int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
 //    LOGI(">>> SC_GPIO_DRIVER_read: File: %d; Pin: %d", fd, pin);
 
     if(fd <= 0) {
@@ -362,7 +228,7 @@ int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
 }
 
 /*********************************************************************************
-    SC_GPIO_DRIVER_close（取消）
+    SC_GPIO_DRIVER_close
 ----------------------------------------------------------------------------------
     @描述
         关闭一个GPIO端口。
@@ -373,7 +239,7 @@ int SC_GPIO_DRIVER_read(int fd, uint8_t pin) {
         SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
 **********************************************************************************/
 
-int SC_GPIO_DRIVER_close(int fd) {
+static int SC_GPIO_DRIVER_close(int fd) {
 //    LOGI(">>> SC_GPIO_DRIVER_close: %d", fd);
 
     if(fd <= 0) {
@@ -390,4 +256,94 @@ int SC_GPIO_DRIVER_close(int fd) {
 
     return ret;
 }
+
+/*********************************************************************************
+    SP_GPIO_DRIVER_set_value
+----------------------------------------------------------------------------------
+    @描述
+        给GPIO端口设置值。
+    @参数
+        port: GPIO端口
+        value: 设置值
+    @返回值
+        SC_GPIO_DRIVER_SUCCESS(0): 关闭成功
+        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
+**********************************************************************************/
+
+int SP_GPIO_DRIVER_set_value(int port, uint8_t value) {
+//    LOGI(">>> SP_GPIO_DRIVER_set_value[%d] to port[%d]", value, port);
+
+    int fd = SC_GPIO_DRIVER_open(GPIO_DEVICE);
+
+    if(fd == SC_GPIO_DRIVER_FAIL) {
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    int ret = SC_GPIO_DRIVER_ioctl(fd, GPIO_DEVICE_IOCTL_WRITE, ioctlValue(port) + (value & 0x0001));
+
+    SC_GPIO_DRIVER_close(fd);
+
+    return ret;
+}
+
+/*********************************************************************************
+    SP_GPIO_DRIVER_get_value
+----------------------------------------------------------------------------------
+    @描述
+        从GPIO端口读取值。
+    @参数
+        port: GPIO端口
+    @返回值
+        value: 读取的值
+        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
+**********************************************************************************/
+
+int SP_GPIO_DRIVER_get_value(int port) {
+//    LOGI(">>> SP_GPIO_DRIVER_get_value from port [%d]", port);
+
+    int fd = SC_GPIO_DRIVER_open(GPIO_DEVICE);
+
+    if(fd == SC_GPIO_DRIVER_FAIL) {
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    int read = SC_GPIO_DRIVER_read(fd, 0);
+
+    // 这个睡50ms目的是因为PG7读不到，立即返回Host卡可能没就绪，因此强制延时50ms
+    usleep(50000);
+
+    SC_GPIO_DRIVER_close(fd);
+
+    return read;
+}
+
+/*********************************************************************************
+    SP_GPIO_DRIVER_select_card
+----------------------------------------------------------------------------------
+    @描述
+        通过RFID选卡的方式，等效实现38译码器的选通。暂时是为了规避Smart卡专用img的问题而采取
+        的尝试措施
+    @参数
+        card: 与选择的卡号
+    @返回值
+        SC_GPIO_DRIVER_SUCCESS(0): 选卡成功
+        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
+**********************************************************************************/
+
+int SP_GPIO_DRIVER_select_card(int card) {
+//    LOGI(">>> SP_GPIO_DRIVER_get_value from port [%d]", port);
+
+    int fd = SC_GPIO_DRIVER_open(GPIO_DEVICE);
+
+    if(fd == SC_GPIO_DRIVER_FAIL) {
+        return SC_GPIO_DRIVER_FAIL;
+    }
+
+    int ret = SC_GPIO_DRIVER_ioctl(fd, card, 0);
+
+    SC_GPIO_DRIVER_close(fd);
+
+    return ret;
+}
+
 

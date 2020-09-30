@@ -145,8 +145,11 @@ public class SystemConfigFile{
 	public static final int DATA_SOURCE_FAST_LAN 	= 10;		// 快速网络打印
 // End of H.M.Wang 2020-6-28 追加专门为网络快速打印设置
 // H.M.Wang 2020-8-13 追加串口协议7
-	public static final int DATA_SOURCE_RS231_7 	= 11;		// 数据源使用串口协议1。与串口协议1一致，仅校验位奇偶校验
+	public static final int DATA_SOURCE_RS231_7 	= 11;		// 数据源使用串口协议7。与串口协议1一致，仅校验位奇偶校验
 // End of H.M.Wang 2020-8-13 追加串口协议7
+// H.M.Wang 2020-9-30 追加网络心跳数据源
+	public static final int DATA_SOURCE_LAN_HEART 	= 12;		// 接收网络心跳信号，2s内未接到报警
+// End of H.M.Wang 2020-9-30 追加网络心跳数据源
 
 // H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
 	public static final int DIRECTION_NORMAL = 0;

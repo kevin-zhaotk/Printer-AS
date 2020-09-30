@@ -123,7 +123,9 @@ HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read(HP_SMART_CARD_device_id_t devi
 //    if(LIB_HP_SMART_CARD_device_present(device_id) != HP_SMART_CARD_OK) {
 //        return HP_SMART_CARD_I2C_FAILED;
 //    }
-    return HP_SMART_CARD_i2c_read_direct(DeviceIDtoAddr(device_id), addr, data, num_bytes_to_read);
+    HP_SMART_CARD_i2c_result_t ret = HP_SMART_CARD_i2c_read_direct(DeviceIDtoAddr(device_id), addr, data, num_bytes_to_read);
+    SC_GPIO_ADAPTER_select_38_xlater(I2C_BUS_HANGUP);
+    return ret;
 }
 
 static HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read_direct(uint8_t i2c_addr,
@@ -196,7 +198,9 @@ HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write(HP_SMART_CARD_device_id_t dev
 //    if(LIB_HP_SMART_CARD_device_present(device_id) != HP_SMART_CARD_OK) {
 //        return HP_SMART_CARD_I2C_FAILED;
 //    }
-    return HP_SMART_CARD_i2c_write_direct(DeviceIDtoAddr(device_id), addr, data, num_bytes_to_write);
+    HP_SMART_CARD_i2c_result_t ret = HP_SMART_CARD_i2c_write_direct(DeviceIDtoAddr(device_id), addr, data, num_bytes_to_write);
+    SC_GPIO_ADAPTER_select_38_xlater(I2C_BUS_HANGUP);
+    return ret;
 }
 
 static HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write_direct(uint8_t i2c_addr,

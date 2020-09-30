@@ -8,6 +8,7 @@
    Made in U.S.A.
  */
 
+#include <common_log.h>
 #include "hp_assert.h"
 #include "hp_debug_log_internal.h"
 #include "hp_generic_macros.h"
@@ -212,7 +213,6 @@ static HW_SMART_CARD_status_t _start_session(HW_SMART_CARD_device_t *device_p)
                         sk_id.host_div[3], sk_id.host_div[2], sk_id.host_div[1], sk_id.host_div[0],
                         sk_id.session_div[2], sk_id.session_div[1], sk_id.session_div[0]);
 
-
         return(HW_SMART_CARD_aux_failure_e);
     }
 
@@ -233,6 +233,7 @@ static HW_SMART_CARD_status_t _start_session_if_needed(HW_SMART_CARD_device_t *d
     {
         return HW_SMART_CARD_success_e;
     }
+
     return _start_session(device_p);
 }
 

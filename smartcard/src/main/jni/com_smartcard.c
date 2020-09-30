@@ -8,6 +8,7 @@
 #include <src/sc_common_mem_access.h>
 #include <src/sc_supply_mem_access.h>
 #include <malloc.h>
+#include <drivers/internal_ifc/sc_gpio_driver.h>
 
 #include "hp_host_smart_card.h"
 #include "drivers/internal_ifc/hp_smart_card_gpio_ifc.h"
@@ -37,11 +38,12 @@ extern "C"
 #define SC_BULK_CTRG_ACCESS_FAILED              201
 #define SC_LEVEL_CENSOR_ACCESS_FAILED           202
 #define SC_CONSISTENCY_FAILED                   300
+#define SC_CHECKSUM_FAILED                      400
 
 #define MAX_INK_VOLUME                          4700
 #define INK_VOLUME_PER_CENTAGE                  (MAX_INK_VOLUME / 100)
 
-#define VERSION_CODE                            "1.0.301"
+#define VERSION_CODE                            "1.0.330"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -115,6 +117,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_shutdown(JNIEnv *env, jclass arg) {
     LOGI("Shutting down smart card library....\n");
 
     LIB_HP_SMART_CARD_shutdown();
+
+    return SC_SUCCESS;
 }
 
 /*
@@ -195,8 +199,126 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
     }
     LOGD(">>> Write config: 0x%04X", config);
 
+    SC_GPIO_ADAPTER_select_38_xlater(I2C_BUS_HANGUP);
+
     return SC_SUCCESS;
 }
+
+static uint32_t calculateCheckSum(jint clientUniqueCode) {
+    uint16_t manu_year = 0;
+    supplyReadTag1ManufactureYear(HP_SMART_CARD_DEVICE_ID_1, &manu_year);
+//    LOGD(">>>> HPSCS_SN_MFG_YEAR = %u", manu_year);
+
+    uint8_t manu_woy = 0;
+    supplyReadTag1ManufactureWeekOfYear(HP_SMART_CARD_DEVICE_ID_1, &manu_woy);
+//    LOGD(">>>> HPSCS_SN_WEEK = %u", manu_woy);
+
+    uint8_t manu_dow = 0;
+    supplyReadTag1ManufactureDayOfWeek(HP_SMART_CARD_DEVICE_ID_1, &manu_dow);
+//    LOGD(">>>> HPSCS_SN_DOW = %u", manu_dow);
+
+    uint8_t manu_hod = 0;
+    supplyReadTag1ManufactureHourOfDay(HP_SMART_CARD_DEVICE_ID_1, &manu_hod);
+//    LOGD(">>>> HPSCS_SN_HOD = %u", manu_hod);
+
+    uint8_t manu_moh = 0;
+    supplyReadTag1ManufactureMinuteOfHour(HP_SMART_CARD_DEVICE_ID_1, &manu_moh);
+//    LOGD(">>>> HPSCS_SN_MOH = %u", manu_moh);
+
+    uint8_t manu_som = 0;
+    supplyReadTag1ManufactureSecondOfMinute(HP_SMART_CARD_DEVICE_ID_1, &manu_som);
+//    LOGD(">>>> HPSCS_SN_SOM = %u", manu_som);
+
+    uint16_t fill_year = 0;
+    supplyReadTag3CartridgeFillYear(HP_SMART_CARD_DEVICE_ID_1, &fill_year);
+//    LOGD(">>>> HPSCS_FILL_YEAR = %u", fill_year);
+
+    uint8_t fill_woy = 0;
+    supplyReadTag3CartridgeFillWeekOfYear(HP_SMART_CARD_DEVICE_ID_1, &fill_woy);
+//    LOGD(">>>> HPSCS_FILL_WEEK = %u", fill_woy);
+
+    uint8_t fill_dow = 0;
+    supplyReadTag3CartridgeFillDayOfWeek(HP_SMART_CARD_DEVICE_ID_1, &fill_dow);
+//    LOGD(">>>> HPSCS_FILL_DOW = %u", fill_dow);
+
+    uint8_t fill_hod = 0;
+    supplyReadTag3CartridgeFillHourOfDay(HP_SMART_CARD_DEVICE_ID_1, &fill_hod);
+//    LOGD(">>>> HPSCS_FILL_HOD = %u", fill_hod);
+
+    uint8_t fill_moh = 0;
+    supplyReadTag3CartridgeFillMinuteOfHour(HP_SMART_CARD_DEVICE_ID_1, &fill_moh);
+//    LOGD(">>>> HPSCS_FILL_MOH = %u", fill_moh);
+
+    uint8_t fill_som = 0;
+    supplyReadTag3CartridgeFillSecondOfMinute(HP_SMART_CARD_DEVICE_ID_1, &fill_som);
+//    LOGD(">>>> HPSCS_FILL_SOM = %u", fill_som);
+
+    uint32_t sum = clientUniqueCode;
+
+    sum += manu_year;
+    sum += manu_woy;
+    sum += manu_dow;
+    sum += manu_hod;
+    sum += manu_moh;
+    sum += manu_som;
+
+    sum *= 10000;
+
+    sum += fill_year;
+    sum += fill_woy;
+    sum += fill_dow;
+    sum += fill_hod;
+    sum += fill_moh;
+    sum += fill_som;
+
+    uint32_t par = sum % 47;
+    uint32_t check_sum = par * 100000000 + sum;
+    check_sum ^= 0x55555555;
+//    LOGD(">>>> CHECK_SUM = 0x%08X", check_sum);
+
+    return check_sum;
+}
+
+/**
+ * 写入验证码
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_writeCheckSum(JNIEnv *env, jclass arg, jint card, jint clientUniqueCode) {
+    uint32_t check_sum = calculateCheckSum(clientUniqueCode);
+
+    if(HP_PRINT_CARTRIDGE == card) {
+        return inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_ID_0, check_sum);
+    } else if(HP_BULK_CARTRIDGE == card) {
+        return supplyWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_ID_1, check_sum);
+    }
+    return SC_CHECKSUM_FAILED;
+}
+
+/**
+ * 读取验证码
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_checkSum(JNIEnv *env, jclass arg, jint card, jint clientUniqueCode) {
+    uint32_t check_sum = calculateCheckSum(clientUniqueCode);
+
+    uint32_t read_check_sum = -1;
+    if(HP_PRINT_CARTRIDGE == card) {
+        if (HP_SMART_CARD_OK != inkReadTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_ID_0, &read_check_sum)) {
+            return SC_CHECKSUM_FAILED;
+        }
+    } else if(HP_BULK_CARTRIDGE == card) {
+        if (HP_SMART_CARD_OK != supplyReadTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_ID_1, &read_check_sum)) {
+            return SC_CHECKSUM_FAILED;
+        }
+    }
+
+//    LOGD(">>>> READ CHECK_SUM = 0x%08X", read_check_sum);
+
+    if(check_sum != read_check_sum) {
+        return SC_CHECKSUM_FAILED;
+    }
+
+    return SC_SUCCESS;
+}
+
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_checkConsistency(JNIEnv *env, jclass arg) {
     uint8_t ink_designator, supply_designator;
@@ -440,6 +562,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jin
         chData = 0;
     }
 
+    SC_GPIO_ADAPTER_select_38_xlater(I2C_BUS_HANGUP);
+
     LOGD(">>> Level data read: 0x%08X", chData);
 
     return chData;
@@ -450,6 +574,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jin
  */
 static JNINativeMethod gMethods[] = {
         {"init",					"()I",	                    (void *)Java_com_Smartcard_init},
+        {"writeCheckSum",	        "(II)I",					(void *)Java_com_Smartcard_writeCheckSum},
+        {"checkSum",	            "(II)I",					(void *)Java_com_Smartcard_checkSum},
         {"checkConsistency",	    "()I",						(void *)Java_com_Smartcard_checkConsistency},
         {"readConsistency",	        "()Ljava/lang/String;",		(void *)Java_com_Smartcard_readConsistency},
         {"chechOIB",		        "(I)I",						(void *)Java_com_Smartcard_chechOIB},

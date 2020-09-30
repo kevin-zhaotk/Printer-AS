@@ -103,7 +103,10 @@ public class BinFromBitmap extends BinCreater {
 			pixels = NativeGraphicJni.ShiftImage(pixels, mWidth, mHeight, head, 308, 320);
 		}
 
-		mBinBits = NativeGraphicJni.Binarize(pixels, mWidth, mHeight, head, 220);
+// H.M.Wang 2020-9-10 大字机5x5字体的时候，vbin的全白问题，原来的220阈值有点低，修改为240
+		mBinBits = NativeGraphicJni.Binarize(pixels, mWidth, mHeight, head, 240);
+// H.M.Wang 2020-9-10 大字机5x5字体的时候，...
+
 		mDots = NativeGraphicJni.GetDots();
 
 		// H.M.Wang 增加1行

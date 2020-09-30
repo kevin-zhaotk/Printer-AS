@@ -36,6 +36,18 @@ extern "C" {
 #define GPIO_ENABLE             0x00
 #define GPIO_DISABLE            0x01
 
+// H.M.Wang 2020-9-25 为了使用rfidSwitch的方法选通38译码器做的追加
+#define GPIO_RFID_CARD1         0x03
+#define GPIO_RFID_CARD2         0x04
+#define GPIO_RFID_CARD3         0x05
+#define GPIO_RFID_CARD4         0x06
+#define GPIO_RFID_CARD5         0x07
+#define GPIO_RFID_CARD6         0x08
+#define GPIO_RFID_CARD7         0x09
+#define GPIO_RFID_CARD8         0x0A
+#define GPIO_IDLE               0x0B
+// End of H.M.Wang 2020-9-25 为了使用rfidSwitch的方法选通38译码器做的追加
+
 //-----------------------------------------------------------------------------
 // Function Prototypes
 
@@ -69,79 +81,19 @@ int SP_GPIO_DRIVER_set_value(int port, uint8_t value);
 int SP_GPIO_DRIVER_get_value(int port);
 
 /*********************************************************************************
-    SC_GPIO_DRIVER_open(取消)
+    SP_GPIO_DRIVER_select_card
 ----------------------------------------------------------------------------------
     @描述
-        打开一个GPIO端口。
+        通过RFID选卡的方式，等效实现38译码器的选通。暂时是为了规避Smart卡专用img的问题而采取
+        的尝试措施
     @参数
-        dev: GPIO驱动设备命
+        card: 与选择的卡号
     @返回值
-        >0: 文件描述符
-        SC_GPIO_DRIVER_FAIL(-1)：失败
+        SC_GPIO_DRIVER_SUCCESS(0): 选卡成功
+        SC_GPIO_DRIVER_FAIL(-1)：失败。错误信息保存在errno
 **********************************************************************************/
 
-int SC_GPIO_DRIVER_open(char *dev);
-
-/*********************************************************************************
-    SC_GPIO_DRIVER_write(取消)
-----------------------------------------------------------------------------------
-    @描述
-        向一个GPIO端口写数据。
-    @参数
-        fd: GPIO端口的文件描述符
-        data_buf: 向GPIO端口写入的数据
-        count: 数据长度
-    @返回值
-        >0: 写入数据的长度
-        SC_GPIO_DRIVER_FAIL(-1)：失败
-**********************************************************************************/
-
-//int SC_GPIO_DRIVER_write(int fd, char *data_buf, int count);
-
-/*********************************************************************************
-    SC_GPIO_DRIVER_ioctl(取消)
-----------------------------------------------------------------------------------
-    @描述
-        向一个GPIO端口发送输入输出控制字。
-    @参数
-        fd: GPIO端口的文件描述符
-        cmd: 控制字名称
-        arg1: 控制字值
-    @返回值
-        SC_GPIO_DRIVER_SUCCESS(0): 设置成功
-        SC_GPIO_DRIVER_FAIL(<=-1)：失败，及失败原因
-**********************************************************************************/
-
-int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1);
-
-/*********************************************************************************
-    SC_GPIO_DRIVER_read(取消)
-----------------------------------------------------------------------------------
-    @描述
-        从一个GPIO端口读取数值。
-    @参数
-        fd: GPIO端口的文件描述符
-        pin: GPIO pin
-    @返回值
-        >0: 读取的数值
-        SC_GPIO_DRIVER_FAIL(-1)：失败
-**********************************************************************************/
-
-int SC_GPIO_DRIVER_read(int fd, uint8_t pin);
-
-/*********************************************************************************
-    SC_GPIO_DRIVER_close(取消)
-----------------------------------------------------------------------------------
-    @描述
-        关闭一个GPIO端口。
-    @参数
-        fd: GPIO端口的文件描述符
-    @返回值
-        SC_GPIO_DRIVER_SUCCESS(0): 关闭成功
-        SC_GPIO_DRIVER_FAIL(-1)：失败
-**********************************************************************************/
-
-int SC_GPIO_DRIVER_close(int fd);
+int SP_GPIO_DRIVER_select_card(int card);
 
 #ifdef __cplusplus
 }

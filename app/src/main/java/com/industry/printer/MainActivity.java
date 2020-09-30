@@ -28,6 +28,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.os.Build;
@@ -56,6 +57,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.industry.printer.FileFormat.QRReader;
 import com.industry.printer.FileFormat.SystemConfigFile;
@@ -70,6 +72,8 @@ import com.industry.printer.Utils.ZipUtil;
 import com.industry.printer.hardware.BarcodeScanParser;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
+import com.industry.printer.hardware.SmartCard;
+import com.industry.printer.hardware.SmartCardManager;
 import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
 import com.industry.printer.ui.CustomerDialog.DialogListener;
 import com.industry.printer.ui.CustomerDialog.ImportDialog;
@@ -149,6 +153,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		}
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		//setLocale();
+
 		setContentView(R.layout.activity_main);
 		IP_address=(TextView)findViewById(R.id.IP_address);
 		mCode = (TextView) findViewById(R.id.code);
@@ -674,6 +679,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 // End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
 
 	public void onConfigChange() {
+// H.M.Wang 2020-9-15 追加是否为空判断，如果工作于写入Smart卡验证码模式，这些变量为空
+		if(null == mControlTab || null == mEditSmallTab || null == mSettingsTab) return;
+// End of H.M.Wang 2020-9-15 追加是否为空判断，如果工作于写入Smart卡验证码模式，这些变量为空
 		mControlTab.onConfigureChanged();
 		mEditSmallTab.onConfigureChanged();
 		mSettingsTab.onConfigureChanged();

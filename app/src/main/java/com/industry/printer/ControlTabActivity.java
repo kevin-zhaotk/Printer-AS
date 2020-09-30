@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -123,6 +125,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import static com.industry.printer.hardware.SmartCard.checkConsistency;
+import static com.industry.printer.hardware.SmartCard.readConsistency;
 
 public class ControlTabActivity extends Fragment implements OnClickListener, InkLevelListener, OnTouchListener, DataTransferThread.Callback {
 	public static final String TAG="ControlTabActivity";
@@ -364,8 +369,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		private int SendFileFlag=0;
 		private int CleanFlag=0;
 		private int StopFlag=0;
-		private Socket Gsocket;  
-		
+		private Socket Gsocket;
+
+// H.M.Wang 2020-9-28 追加一个心跳协议
+		Timer mHeartBeatTimer = null;
+		private long mLastHeartBeat = System.currentTimeMillis();
+// End of H.M.Wang 2020-9-28 追加一个心跳协议
+
 		//Socket___________________________________________________________________________________________
 	
 	public ControlTabActivity() {
@@ -412,7 +422,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		mBtnStart.setOnClickListener(this);
 		mBtnStart.setOnTouchListener(this);
 		mTvStart = (TextView) getView().findViewById(R.id.tv_start);
-		
+		if(PlatformInfo.DEVICE_SMARTCARD.equals(PlatformInfo.getInkDevice()) &&	Configs.SMARTCARDMANAGER) {
+			mTvStart.setBackgroundColor(Color.RED);
+		}
+
 		mBtnStop = (RelativeLayout) getView().findViewById(R.id.StopPrint);
 		mBtnStop.setOnClickListener(this);
 		mBtnStop.setOnTouchListener(this);
@@ -584,6 +597,36 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			Toast.makeText(mContext, "Launching Print...", Toast.LENGTH_SHORT).show();
 			mHandler.sendEmptyMessageDelayed(MESSAGE_OPEN_TLKFILE, 1000);
 		}
+
+// H.M.Wang 2020-9-28 追加一个心跳协议
+		mLastHeartBeat = System.currentTimeMillis();
+		mHeartBeatTimer = new Timer();
+		mHeartBeatTimer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				if(mSysconfig.getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN_HEART) {
+					if(System.currentTimeMillis() - mLastHeartBeat > 2000L) {
+						mBtnStart.post(new Runnable() {
+							@Override
+							public void run() {
+								ToastUtil.show(mContext, "No Lan Heart Beat!!!");
+							}
+						});
+						try{
+							ExtGpio.playClick();
+							Thread.sleep(50);
+							ExtGpio.playClick();
+							Thread.sleep(50);
+							ExtGpio.playClick();
+						} catch (Exception e) {
+							Debug.e(TAG, e.getMessage());
+						}
+					}
+				}
+			}
+		}, 0L, 2000L);
+
+// End of H.M.Wang 2020-9-28 追加一个心跳协议
 		// End ---------------------------------
 	}
 
@@ -1280,12 +1323,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					// mInkManager.write(mHandler);
 					break;
 				case MESSAGE_COUNT_CHANGE:
-					mCounter++;
+/*					mCounter++;
 					refreshCount();
 					//PrinterDBHelper db = PrinterDBHelper.getInstance(mContext);
 					//db.updateCount(mContext, (int) mCounter);
 					RTCDevice device = RTCDevice.getInstance(mContext);
 					device.writeCounter(mContext, mCounter);
+*/
+					refreshCount();
 					break;
 				case MESSAGE_REFRESH_POWERSTAT:
 					refreshPower();
@@ -1622,7 +1667,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 				// mMsgNext.setClickable(false);
 				// mMsgPrev.setClickable(false);
-//				ExtGpio.writeGpio('b', 11, 1);
+// H.M.Wang 2020-9-15 如果不是工作在Smart卡模式，则继续使用该管脚作为打印信号使用
+				if(!(mInkManager instanceof SmartCardManager)) {
+					ExtGpio.writeGpio('b', 11, 1);
+				}
+// End of H.M.Wang 2020-9-15 如果不是工作在Smart卡模式，则继续使用该管脚作为打印信号使用
 				break;
 			case STATE_STOPPED:
 				mBtnStart.setClickable(true);
@@ -1640,7 +1689,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 				// mMsgNext.setClickable(true);
 				// mMsgPrev.setClickable(true);
-//				ExtGpio.writeGpio('b', 11, 0);
+// H.M.Wang 2020-9-15 如果不是工作在Smart卡模式，则继续使用该管脚作为打印信号使用
+				if(!(mInkManager instanceof SmartCardManager)) {
+					ExtGpio.writeGpio('b', 11, 0);
+				}
+// End of H.M.Wang 2020-9-15 如果不是工作在Smart卡模式，则继续使用该管脚作为打印信号使用
 				break;
 			default:
 				Debug.d(TAG, "--->unknown state");
@@ -1896,6 +1949,23 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		// ExtGpio.playClick();
 		switch (v.getId()) {
 			case R.id.StartPrint:
+// H.M.Wang 2020-9-15 追加在条件满足的情况下，启动写入Smart卡验证码工作模式
+				if(PlatformInfo.DEVICE_SMARTCARD.equals(PlatformInfo.getInkDevice()) &&	Configs.SMARTCARDMANAGER) {
+					int ret = SmartCard.init();
+					if(SmartCard.SC_SUCCESS == ret) {
+						if(SmartCard.SC_SUCCESS == SmartCard.writeCheckSum(SmartCardManager.WORK_BULK_CARTRIDGE, mSysconfig.getParam(0))) {
+							ToastUtil.show(mContext, "Done.");
+						} else {
+							ToastUtil.show(mContext, "Failed.");
+						}
+						SmartCard.shutdown();
+					} else {
+						ToastUtil.show(mContext, "Failed.");
+					}
+					break;
+				}
+// End of H.M.Wang 2020-9-15 追加在条件满足的情况下，启动写入Smart卡验证码工作模式
+
 // H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
 				DataTransferThread thread = DataTransferThread.getInstance(mContext);
 				if(thread.isPurging) {
@@ -2170,6 +2240,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	@Override
 	public void onCountChanged() {
+		mCounter++;
+		RTCDevice device = RTCDevice.getInstance(mContext);
+		device.writeCounter(mContext, mCounter);
+
 		mHandler.sendEmptyMessage(MESSAGE_COUNT_CHANGE);
 	}
 
@@ -2794,6 +2868,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 											this.sendmsg(Constants.pcErr(msg));
 										}
 // End of H.M.Wang 2020-7-28 追加一个设置参数命令
+// H.M.Wang 2020-9-28 追加一个心跳协议
+									} else if(PCCommand.CMD_HEARTBEAT.equalsIgnoreCase(cmd.command)) {
+										mLastHeartBeat = System.currentTimeMillis();
+										this.sendmsg(Constants.pcOk(msg));
+// End of H.M.Wang 2020-9-28 追加一个心跳协议
 		                            } else {
 		                            	this.sendmsg(Constants.pcErr(msg));
 		                            }
