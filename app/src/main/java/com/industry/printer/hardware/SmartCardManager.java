@@ -51,6 +51,8 @@ public class SmartCardManager implements IInkDevice {
     private static final int MSG_SHOW_CONSISTENCY       = 101;
     private static final int MSG_SHOW_LEVEL             = 102;
     private static final int MSG_SHOW_LOCAL_INK         = 103;
+    private static final int MSG_SHOW_INIT_TIMES        = 104;
+    private int mInitTimes = 0;
 
 //    private final static int UPDATE_LEVEL_INTERVAL      = 1000 * 30;
     private final static int READ_LEVEL_INTERVAL        = 10;
@@ -101,6 +103,19 @@ public class SmartCardManager implements IInkDevice {
 //                        mRecvedLevelPromptDlg.show();
 //                    }
                     break;
+                case MSG_SHOW_INIT_TIMES:
+                    if(null != mRecvedLevelPromptDlg) {
+                        if(null != msg.obj) {
+                            mRecvedLevelPromptDlg.setTitle("Initialization Times");
+                            mRecvedLevelPromptDlg.setMessage("Times: " + mInitTimes);
+                        } else {
+                            mRecvedLevelPromptDlg.setTitle("Initialization Failed");
+                            mRecvedLevelPromptDlg.setMessage("After " + mInitTimes + " times");
+                        }
+                        mRecvedLevelPromptDlg.show();
+                        mRecvedLevelPromptDlg.show();
+                    }
+                    break;
             }
         }
     };
@@ -133,6 +148,35 @@ public class SmartCardManager implements IInkDevice {
     @Override
     public void init(final Handler callback) {
         Debug.d(TAG, "---> enter init()");
+
+        mCallback = callback;
+/*
+        Timer tm = new Timer();
+        tm.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                int ret = -1;
+                if(SMARTCARD_ACCESS) {
+                    synchronized (this) {
+                        ret = SmartCard.init();
+                    }
+                } else {
+                    ret = SmartCard.SC_SUCCESS;
+                }
+                if(SmartCard.SC_SUCCESS == ret) {
+                    mInitialied = true;
+                    mInkLevel = (int)getLocalInk(0);
+                    downLocal(0);
+                    shutdown();
+                    mInitTimes++;
+                    mHandler.obtainMessage(MSG_SHOW_INIT_TIMES, this).sendToTarget();
+                    if(null != mCallback) mCallback.sendEmptyMessage(MSG_SMARTCARD_INIT_SUCCESS);
+                } else {
+                    mHandler.obtainMessage(MSG_SHOW_INIT_TIMES, null).sendToTarget();
+                }
+            }
+        }, (long)3000L, (long)500L);
+*/
 
         if(mInitialied) return;
 
@@ -188,6 +232,7 @@ public class SmartCardManager implements IInkDevice {
                 }
             }
         }).start();
+
     }
 
     private void checkConsistency() {
@@ -452,16 +497,16 @@ public class SmartCardManager implements IInkDevice {
         if(!SMARTCARD_ACCESS) return;
 
         if(mInitialied && mValid) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
                     synchronized (this) {
                         SmartCard.downLocal(WORK_BULK_CARTRIDGE);
                     }
                     mInkLevel = (int)getLocalInk(WORK_BULK_CARTRIDGE);
                     checkOIB(WORK_BULK_CARTRIDGE);
-                }
-            }).start();
+//                }
+//            }).start();
         }
     }
 

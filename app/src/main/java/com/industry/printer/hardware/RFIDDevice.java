@@ -61,7 +61,7 @@ public class RFIDDevice implements RfidCallback{
 	
 	/*校驗特徵值*/
 	public static final int FEATURE_HIGH = 100;
-	public static final int FEATURE_LOW = 1;
+	public static final int FEATURE_LOW = 128;
 	
 	/*墨水量上下限*/
 	public static final int INK_LEVEL_MAX = 100000;
@@ -918,7 +918,10 @@ public class RFIDDevice implements RfidCallback{
 			return false;
 		}
 		Debug.e(TAG, "--->RFID getFeatureCode: " + mFeature[1] + ", " +mFeature[2]);
-		if (mFeature[1] == FEATURE_HIGH && mFeature[2] == FEATURE_LOW) {
+// H.M.Wang 2020-10-10 考虑有符号的情形(>128时)
+//		if (mFeature[1] == FEATURE_HIGH && mFeature[2] == FEATURE_LOW) {
+		if ((mFeature[1] ^ (byte)FEATURE_HIGH) == 0x00 && (mFeature[2] ^ (byte)FEATURE_LOW) == 0x00) {
+// H.M.Wang 2020-10-10 考虑有符号的情形(>128时)
 			return true;
 		}
 		return false;
@@ -938,7 +941,10 @@ public class RFIDDevice implements RfidCallback{
 	public boolean isReady() {
 		if (mFeature == null) {
 			return false;
-		} else if (mFeature[1] != FEATURE_HIGH || mFeature[2] != FEATURE_LOW) {
+// H.M.Wang 2020-10-10 考虑有符号的情形(>128时)
+//		} else if (mFeature[1] != FEATURE_HIGH || mFeature[2] != FEATURE_LOW) {
+		} else if ((mFeature[1] ^ (byte)FEATURE_HIGH) != 0x00 || (mFeature[2] ^ (byte)FEATURE_LOW) != 0x00) {
+// H.M.Wang 2020-10-10 考虑有符号的情形(>128时)
 			return false;
 		}
 		return true;
