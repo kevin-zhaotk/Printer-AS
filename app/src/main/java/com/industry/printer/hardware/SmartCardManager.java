@@ -19,7 +19,8 @@ public class SmartCardManager implements IInkDevice {
 
     public static boolean SMARTCARD_ACCESS = true;
     public static boolean CONSISTENCY_CHECK = false;
-    public static boolean CHECK_SUM = false;
+    public static boolean OIB_CHECK = false;
+    public static boolean SUM_CHECK = false;
 
     private final static int MAX_INK_VOLUME             = 4700;
 
@@ -52,7 +53,7 @@ public class SmartCardManager implements IInkDevice {
     private static final int MSG_SHOW_LEVEL             = 102;
     private static final int MSG_SHOW_LOCAL_INK         = 103;
     private static final int MSG_SHOW_INIT_TIMES        = 104;
-    private int mInitTimes = 0;
+    private int mWrittenTimes = 0;
 
 //    private final static int UPDATE_LEVEL_INTERVAL      = 1000 * 30;
     private final static int READ_LEVEL_INTERVAL        = 10;
@@ -106,11 +107,11 @@ public class SmartCardManager implements IInkDevice {
                 case MSG_SHOW_INIT_TIMES:
                     if(null != mRecvedLevelPromptDlg) {
                         if(null != msg.obj) {
-                            mRecvedLevelPromptDlg.setTitle("Initialization Times");
-                            mRecvedLevelPromptDlg.setMessage("Times: " + mInitTimes);
+                            mRecvedLevelPromptDlg.setTitle("Written Times");
+                            mRecvedLevelPromptDlg.setMessage("Times: " + mWrittenTimes);
                         } else {
-                            mRecvedLevelPromptDlg.setTitle("Initialization Failed");
-                            mRecvedLevelPromptDlg.setMessage("After " + mInitTimes + " times");
+                            mRecvedLevelPromptDlg.setTitle("Writing Failed");
+                            mRecvedLevelPromptDlg.setMessage("After " + mWrittenTimes + " times");
                         }
                         mRecvedLevelPromptDlg.show();
                         mRecvedLevelPromptDlg.show();
@@ -149,8 +150,9 @@ public class SmartCardManager implements IInkDevice {
     public void init(final Handler callback) {
         Debug.d(TAG, "---> enter init()");
 
+        if(mInitialied) return;
+
         mCallback = callback;
-/*
         Timer tm = new Timer();
         tm.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -168,18 +170,16 @@ public class SmartCardManager implements IInkDevice {
                     mInkLevel = (int)getLocalInk(0);
                     downLocal(0);
                     shutdown();
-                    mInitTimes++;
+                    mWrittenTimes++;
                     mHandler.obtainMessage(MSG_SHOW_INIT_TIMES, this).sendToTarget();
                     if(null != mCallback) mCallback.sendEmptyMessage(MSG_SMARTCARD_INIT_SUCCESS);
                 } else {
                     mHandler.obtainMessage(MSG_SHOW_INIT_TIMES, null).sendToTarget();
                 }
             }
-        }, (long)3000L, (long)500L);
-*/
+        }, 3000L, 2000L);
 
-        if(mInitialied) return;
-
+/*
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -216,10 +216,14 @@ public class SmartCardManager implements IInkDevice {
                             mTimer.scheduleAtFixedRate(new TimerTask() {
                                 @Override
                                 public void run() {
-                                    checkConsistency();
-                                    readConsistency();
+//                                    checkConsistency();
+//                                    readConsistency();
+                                    downLocal(0);
+                                    mWrittenTimes++;
+                                    mHandler.obtainMessage(MSG_SHOW_INIT_TIMES, this).sendToTarget();
+//                            }, (long)3000, (long)MSG_READ_CONSISTENCY_INTERVAL);
                                 }
-                            }, (long)5000, (long)MSG_READ_CONSISTENCY_INTERVAL);
+                            }, 0L, 500L);
                         }
                     }
                 } else {
@@ -232,7 +236,7 @@ public class SmartCardManager implements IInkDevice {
                 }
             }
         }).start();
-
+*/
     }
 
     private void checkConsistency() {
@@ -271,7 +275,7 @@ public class SmartCardManager implements IInkDevice {
     private void checkOIB(int cardType) {
         Debug.d(TAG, "---> enter checkOIB(" + cardType + ")");
 
-        if(!SMARTCARD_ACCESS) return;
+        if(!SMARTCARD_ACCESS || !OIB_CHECK) return;
 
         synchronized (this) {
             if(mInitialied && mValid) {
@@ -287,7 +291,7 @@ public class SmartCardManager implements IInkDevice {
     private void checkSum(int cardType) {
         Debug.d(TAG, "---> enter checkSum(" + cardType + ")");
 
-        if(Configs.SMARTCARDMANAGER || !CHECK_SUM) return;
+        if(Configs.SMARTCARDMANAGER || !SUM_CHECK) return;
         if(!SMARTCARD_ACCESS) return;
 
         synchronized (this) {
@@ -502,8 +506,8 @@ public class SmartCardManager implements IInkDevice {
 //                public void run() {
                     synchronized (this) {
                         SmartCard.downLocal(WORK_BULK_CARTRIDGE);
+                        mInkLevel = SmartCard.getLocalInk(WORK_BULK_CARTRIDGE);
                     }
-                    mInkLevel = (int)getLocalInk(WORK_BULK_CARTRIDGE);
                     checkOIB(WORK_BULK_CARTRIDGE);
 //                }
 //            }).start();

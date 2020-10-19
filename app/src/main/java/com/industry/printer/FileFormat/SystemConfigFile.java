@@ -111,6 +111,9 @@ public class SystemConfigFile{
 	public static final int INDEX_DAY_START = 16;
 	
 	public static final int INDEX_HEAD_TYPE = 30;
+
+    public static final int INDEX_DOT_SIZE = 32;
+
 	public static final int INDEX_SLANT = 35;
 
 // H.M.Wang 2019-9-28 增加1带多参数索引

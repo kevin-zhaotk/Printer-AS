@@ -30,6 +30,7 @@ import com.industry.printer.Serial.SerialProtocol7;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.data.DataTask;
+import com.industry.printer.data.NativeGraphicJni;
 import com.industry.printer.hardware.BarcodeScanParser;
 import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.hardware.IInkDevice;
@@ -917,6 +918,8 @@ public class DataTransferThread {
 			return 65536 * 8;						// 无打印内容时可能错误减记
 		}
 
+		float rate = 1.0f;
+
 		if (config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY) <= 0) {
 			bold = 1;
 		} else {
@@ -939,7 +942,10 @@ public class DataTransferThread {
 				bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
 			} else {
 				bold = 1;
+// H.M.Wang 2020-10.17 大字机墨水消耗计算， 加入墨点大小修正
+				rate = ((config.getParam(SystemConfigFile.INDEX_DOT_SIZE)-450)*4+1000)/1200;
 			}
+// End of H.M.Wang 2020-10.17 大字机墨水消耗计算， 加入墨点大小修正
 // End of H.M.Wang 2020-6-12 16,32,64点头减锁修改为不受分辨率影响
 		}
 
@@ -958,7 +964,7 @@ public class DataTransferThread {
 
 		Debug.d(TAG, "--->dotCount[" + head + "]: " + dotCount + "  bold=" + bold);
 
-		return Configs.DOTS_PER_PRINT/(dotCount * bold);
+		return (int)(Configs.DOTS_PER_PRINT/(dotCount * bold)/rate);
 	}
 	
 	public int getHeads() {
@@ -1125,7 +1131,8 @@ public class DataTransferThread {
 				// H.M.Wang 2019-10-10 追加计算打印区对应于各个头的打印点数
 				DataTask t = mDataTask.get(index());
 //				Debug.d(TAG, "GetPrintDots Start Time: " + System.currentTimeMillis());
-/*				int[] dots = NativeGraphicJni.GetPrintDots(mPrintBuffer, mPrintBuffer.length, t.getInfo().mCharsPerHFeed, t.getPNozzle().mHeads);
+// H.M.Wang 2020-10-18 重新开放打印前计算墨点数
+				int[] dots = NativeGraphicJni.GetPrintDots(mPrintBuffer, mPrintBuffer.length, t.getInfo().mCharsPerHFeed, t.getPNozzle().mHeads);
 
 				int totalDot = 0;
 				for (int j = 0; j < dots.length; j++) {
@@ -1134,7 +1141,12 @@ public class DataTransferThread {
 					final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
 					final PrinterNozzle head = PrinterNozzle.getInstance(headIndex);
 
-					if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT && head != PrinterNozzle.MESSAGE_TYPE_32_DOT && head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+					if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT &&
+						head != PrinterNozzle.MESSAGE_TYPE_32_DOT &&
+						head != PrinterNozzle.MESSAGE_TYPE_32DN &&
+						head != PrinterNozzle.MESSAGE_TYPE_32SN &&
+						head != PrinterNozzle.MESSAGE_TYPE_64SN &&
+						head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 						dots[j] *= 2;
 					} else {
 						dots[j] *= 200;
@@ -1143,7 +1155,7 @@ public class DataTransferThread {
 				}
 				t.setDots(totalDot);
 				t.setDotsEach(dots);
-*/
+// End of H.M.Wang 2020-10-18 重新开放打印前计算墨点数
 //				Debug.d(TAG, "GetPrintDots Done Time: " + System.currentTimeMillis());
 
 				final StringBuilder sb = new StringBuilder();

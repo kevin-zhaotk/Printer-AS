@@ -43,7 +43,7 @@ extern "C"
 #define MAX_INK_VOLUME                          4700
 #define INK_VOLUME_PER_CENTAGE                  (MAX_INK_VOLUME / 100)
 
-#define VERSION_CODE                            "1.0.330"
+#define VERSION_CODE                            "1.0.336"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -419,9 +419,10 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_chechOIB(JNIEnv *env, jclass arg, jint
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, jint card) {
-    if(Java_com_Smartcard_chechOIB(env, arg, card) == 1) {
-        return 0;
-    }
+// 该判断另外逻辑处理，本函数如实返回读数
+//    if(Java_com_Smartcard_chechOIB(env, arg, card) == 1) {
+//        return 0;
+//    }
 
     HP_SMART_CARD_result_t ret = HP_SMART_CARD_ERROR;
     uint32_t ilg = 100;

@@ -2717,7 +2717,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
                                     } else if(PCCommand.CMD_SET_DOTSIZE.equalsIgnoreCase(cmd.command)) {
                                         try {
 // H.M.Wang 2019-12-27 暂时取消3.7倍的系数。修改设置参数为23。取值范围0-6000。 2019-12-28 内部保存在参数33
-                                            SystemConfigFile.getInstance().setParamBroadcast(32, Math.max(0, Math.min(6000, Integer.parseInt(cmd.content))));
+                                            SystemConfigFile.getInstance().setParamBroadcast(SystemConfigFile.INDEX_DOT_SIZE, Math.max(0, Math.min(6000, Integer.parseInt(cmd.content))));
 //                                            SystemConfigFile.getInstance().setParamBroadcast(0, Math.round(3.7f * Integer.parseInt(cmd.content)));
 // End of H.M.Wang 2019-12-27 暂时取消3.7倍的系数。修改设置参数为23。取值范围0-6000
                                             SystemConfigFile.getInstance().saveConfig();
