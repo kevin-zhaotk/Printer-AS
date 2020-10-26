@@ -316,6 +316,7 @@ public class MessageTask {
 						mDots[i] = mDots[i] * 200;
 					}
 				}
+				Debug.d(TAG, "mDots[0] = " + mDots[0] + "; [1] = " + mDots[1] + "; [2] = " + mDots[2]);
 				((MessageObject) o).setDotCountPer(mDots);
 				((MessageObject) o).setDotCount(dotTotal());
 				break;
@@ -771,7 +772,8 @@ public class MessageTask {
 				((getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
 				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
 				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||
-				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR))					);
+				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR)));
+			Debug.d(TAG, "mDots[0] = " + mDots[0] + "; [1] = " + mDots[1] + "; [2] = " + mDots[2]);
 		}
 //		Debug.d(TAG, "SaveTime: - End maker.extract : " + System.currentTimeMillis());
 

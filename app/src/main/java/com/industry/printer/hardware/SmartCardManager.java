@@ -19,7 +19,7 @@ public class SmartCardManager implements IInkDevice {
 
     public static boolean SMARTCARD_ACCESS = true;
     public static boolean CONSISTENCY_CHECK = false;
-    public static boolean OIB_CHECK = false;
+    public static boolean OIB_CHECK = true;
     public static boolean SUM_CHECK = false;
 
     private final static int MAX_INK_VOLUME             = 4700;
@@ -151,7 +151,7 @@ public class SmartCardManager implements IInkDevice {
         Debug.d(TAG, "---> enter init()");
 
         if(mInitialied) return;
-
+/*
         mCallback = callback;
         Timer tm = new Timer();
         tm.scheduleAtFixedRate(new TimerTask() {
@@ -178,8 +178,7 @@ public class SmartCardManager implements IInkDevice {
                 }
             }
         }, 3000L, 2000L);
-
-/*
+*/
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -216,14 +215,15 @@ public class SmartCardManager implements IInkDevice {
                             mTimer.scheduleAtFixedRate(new TimerTask() {
                                 @Override
                                 public void run() {
-//                                    checkConsistency();
-//                                    readConsistency();
-                                    downLocal(0);
-                                    mWrittenTimes++;
-                                    mHandler.obtainMessage(MSG_SHOW_INIT_TIMES, this).sendToTarget();
-//                            }, (long)3000, (long)MSG_READ_CONSISTENCY_INTERVAL);
+                                    checkConsistency();
+                                    readConsistency();
+//                                    downLocal(0);
+//                                    mWrittenTimes++;
+//                                    mHandler.obtainMessage(MSG_SHOW_INIT_TIMES, this).sendToTarget();
+
                                 }
-                            }, 0L, 500L);
+                            }, (long)3000, (long)MSG_READ_CONSISTENCY_INTERVAL);
+//                            }, 0L, 500L);
                         }
                     }
                 } else {
@@ -236,7 +236,6 @@ public class SmartCardManager implements IInkDevice {
                 }
             }
         }).start();
-*/
     }
 
     private void checkConsistency() {

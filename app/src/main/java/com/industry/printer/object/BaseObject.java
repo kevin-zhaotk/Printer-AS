@@ -501,6 +501,7 @@ public class BaseObject{
 	 * @param dstH  背景圖高度
 	 * @return
 	 */
+
 	public int makeVarBin(Context ctx, float scaleW, float scaleH, int dstH) {
 		int dots[];
 		int singleW;
@@ -562,8 +563,7 @@ public class BaseObject{
 		Canvas gCan = new Canvas(gBmp);
 		
 		gCan.drawColor(Color.WHITE);	/*white background*/
-		for(int i =0; i<=9; i++)
-		{
+		for(int i =0; i<=9; i++) {
 			can.drawColor(Color.WHITE);
 			can.drawText(String.valueOf(i), 0, height - fm.descent, paint);
 			// H.M.Wang 修改 20190905

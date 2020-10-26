@@ -292,8 +292,44 @@ public class DataTask {
 		}
 // End of H.M.Wang 2020-4-18 追加12.7R5头
 
+// H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
+		calDots();
+// End of H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
+
 		return mBuffer;
 	}
+
+// H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
+	private void calDots(){
+		Debug.d(TAG, "GetPrintDots Start Time: " + System.currentTimeMillis());
+// H.M.Wang 2020-10-18 重新开放打印前计算墨点数
+		int[] dots = NativeGraphicJni.GetPrintDots(mPrintBuffer, mPrintBuffer.length, getInfo().mCharsPerHFeed, getPNozzle().mHeads);
+
+		int totalDot = 0;
+		for (int j = 0; j < dots.length; j++) {
+			// H.M.Wang 2019-10-11 获得的点数乘2
+			SystemConfigFile config = SystemConfigFile.getInstance(mContext);
+			final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+			final PrinterNozzle head = PrinterNozzle.getInstance(headIndex);
+
+			if (head != PrinterNozzle.MESSAGE_TYPE_16_DOT &&
+                head != PrinterNozzle.MESSAGE_TYPE_32_DOT &&
+                head != PrinterNozzle.MESSAGE_TYPE_32DN &&
+                head != PrinterNozzle.MESSAGE_TYPE_32SN &&
+                head != PrinterNozzle.MESSAGE_TYPE_64SN &&
+                head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+                dots[j] *= 2;
+			} else {
+				dots[j] *= 200;
+			}
+			totalDot += dots[j];
+		}
+		setDots(totalDot);
+		setDotsEach(dots);
+// End of H.M.Wang 2020-10-18 重新开放打印前计算墨点数
+		Debug.d(TAG, "GetPrintDots Done Time: " + System.currentTimeMillis());
+	}
+// End of H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
 
 	private boolean isNeedRebuild() {
 		MessageObject object = mTask.getMsgObject();

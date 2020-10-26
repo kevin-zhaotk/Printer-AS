@@ -203,7 +203,7 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		mMsgTask = new MessageTask(mContext);
 
 		MessageObject msgObject = new MessageObject(mContext, 0);
-		msgObject.setType(SystemConfigFile.getInstance(mContext).getParam(30));
+		msgObject.setType(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE));
 		mMsgTask.addObject(msgObject);  //
 		mRelatively = (RelativeLayout) getView().findViewById(R.id.edit_view);
 		mMsgManager = new MessageDisplayManager(mContext, mRelatively, mMsgTask);
@@ -879,7 +879,7 @@ public class EditTabSmallActivity extends Fragment implements OnClickListener, O
 		mObjName = null;
 		mMsgManager.removeAll();
 		MessageObject msgObject = new MessageObject(mContext, 0);
-		msgObject.setType(SystemConfigFile.getInstance(mContext).getParam(30));
+		msgObject.setType(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE));
 		Message message = mObjRefreshHandler.obtainMessage(OBJECT_INSERT);
 		message.obj = msgObject;
 		message.sendToTarget();

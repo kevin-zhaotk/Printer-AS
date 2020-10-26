@@ -243,7 +243,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
 
     maxfd = 1;
     timeout.tv_sec = 0;
-    timeout.tv_usec = 10;
+    timeout.tv_usec = 100;
 
     char recv_buf[MAX_RETRIVAL_BUFFER_LEN];
     memset(recv_buf, 0x00, MAX_RETRIVAL_BUFFER_LEN);
@@ -255,7 +255,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
         FD_ZERO(&set);
         FD_SET(fd, &set);
 
-        usleep(10000);
+//        usleep(100000);
         select(maxfd, &set, NULL, NULL, &timeout);
         if(FD_ISSET(fd, &set)) {
             char temp_buf[MAX_TEMP_BUFFER_LEN];
@@ -330,7 +330,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_write
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
-    LOGI("SerialPort.so 1.0.50 Loaded.");
+    LOGI("SerialPort.so 1.0.51 Loaded.");
 
 
     return JNI_VERSION_1_4;     //这里很重要，必须返回版本，否则加载会失败。

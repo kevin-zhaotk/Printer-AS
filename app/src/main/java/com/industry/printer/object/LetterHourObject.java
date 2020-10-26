@@ -91,32 +91,32 @@ public class LetterHourObject extends BaseObject {
 		Paint paint = new Paint();
 		int height = (int) (mHeight * scaleH);
 		paint.setTextSize(height);
-		paint.setAntiAlias(true); //去除锯齿  
+		paint.setAntiAlias(true); //去除锯齿
 		paint.setFilterBitmap(true); //对位图进行滤波处理
 		//buffer減半，因此scaleW要除以2
 		scaleW =scaleW / 2;
-		
+
 		try {
 			paint.setTypeface(FontCache.get(ctx, mFont));
 		} catch (Exception e) {
-			
+
 		}
-		
+
 		int width = (int)paint.measureText("H");
 		FontMetrics fm = paint.getFontMetrics();
-		
+
 		/*draw Bitmap of single digit*/
 		Bitmap bmp = Bitmap.createBitmap(width, height, Configs.BITMAP_CONFIG);
 		Canvas can = new Canvas(bmp);
-		
+
 		/*draw 0-9 totally 10 digits Bitmap*/
 		singleW = (int)(mWidth * scaleW);
 		Debug.d(TAG, "--->singleW=" + singleW);
-		
+
 		/* 最終生成v.bin使用的bitmap */
 		Bitmap gBmp = Bitmap.createBitmap(singleW*HOUR_LETTER.length, dstH, Configs.BITMAP_CONFIG);
 		Canvas gCan = new Canvas(gBmp);
-		
+
 		gCan.drawColor(Color.WHITE);	/*white background*/
 		for(int i =0; i< HOUR_LETTER.length; i++)
 		{
@@ -125,7 +125,7 @@ public class LetterHourObject extends BaseObject {
 			gCan.drawBitmap(Bitmap.createScaledBitmap(bmp, singleW, height, false), i*singleW, (int)getY() * scaleH, paint);
 		}
 		BinFromBitmap.recyleBitmap(bmp);
-		
+
 		BinFileMaker maker = new BinFileMaker(mContext);
 
 		// H.M.Wang 追加一个是否移位的参数
@@ -139,9 +139,8 @@ public class LetterHourObject extends BaseObject {
 		dots[0] = (dots[0]* getContent().length()/24) + 1;
 		return dots[0];
 	}
-	
 
-//////addbylk 
+//////addbylk
 	@Override	 
 	public Bitmap getpreviewbmp()
 	{	Debug.e(TAG, "1===== " + getContent() );

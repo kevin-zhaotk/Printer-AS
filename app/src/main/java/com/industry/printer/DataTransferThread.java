@@ -312,15 +312,15 @@ public class DataTransferThread {
 // H.M.Wang 2020-7-23 追加32DN打印头
 //				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
-                    head == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
-                    head == PrinterNozzle.MESSAGE_TYPE_32DN ||
+					head == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
+					head == PrinterNozzle.MESSAGE_TYPE_32DN ||
 // H.M.Wang 2020-8-18 追加32SN打印头
-                    head == PrinterNozzle.MESSAGE_TYPE_32SN ||
+					head == PrinterNozzle.MESSAGE_TYPE_32SN ||
 // End of H.M.Wang 2020-8-18 追加32SN打印头
 // H.M.Wang 2020-8-26 追加64SN打印头
-                    head == PrinterNozzle.MESSAGE_TYPE_64SN ||
+					head == PrinterNozzle.MESSAGE_TYPE_64SN ||
 // End of H.M.Wang 2020-8-26 追加64SN打印头
-                    head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+					head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 					purgeFile = "purge/bigdot.bin";
 				}
@@ -863,6 +863,9 @@ public class DataTransferThread {
 	 * @return true 墨水量需要减1； false 墨水量不变
 	 */
 	private void countDown() {
+// H.M.Wang 2020-10-23 修改计算Threshold的算法，改为以打印群组的所有任务的点数为准，单独任务作为一个元素的特殊群组
+		if(mIndex > 0) return;
+// End of H.M.Wang 2020-10-23 修改计算Threshold的算法，改为以打印群组的所有任务的点数为准，单独任务作为一个元素的特殊群组
 		for (int i = 0; i < mScheduler.count(); i++) {
 			// H.M.Wang 2019-10-10 添加初值是否为0的判断，如果为0，则判定为还没有初始化，首先进行初始化
 			if(mcountdown[i] == 0) mcountdown[i] = getInkThreshold(i);
@@ -875,6 +878,8 @@ public class DataTransferThread {
 				mInkListener.onInkLevelDown(i);
 			}
 		}
+		mInkListener.onCountChanged();
+		mScheduler.schedule();
 	}
 	
 	public int getCount(int head) {
@@ -883,7 +888,10 @@ public class DataTransferThread {
 		}
 		return mcountdown[head];
 	}
-	
+
+// H.M.Wang 2020-10-23 修改计算Threshold的算法，改为以打印群组的所有任务的点数为准，单独任务作为一个元素的特殊群组
+	private int[] mPrintDots = new int[8];
+// End of H.M.Wang 2020-10-23 修改计算Threshold的算法，改为以打印群组的所有任务的点数为准，单独任务作为一个元素的特殊群组
 	/**
 	 * 通过dot count计算RFID减1的阀值
 	 * @param head 喷头索引
@@ -905,14 +913,26 @@ public class DataTransferThread {
 //			dotCount = getDotCount(mDataTask.get(index), 0);		// 使用第一个头的数据
 //		}
 
+// H.M.Wang 2020-10-23 修改计算Threshold的算法，改为以打印群组的所有任务的点数为准，单独任务作为一个元素的特殊群组
 // Kevin.Zhao 2019-11-12 1带多用12，13，14表示1带2，1带3，1带4....
-		int dotCount = getDotCount(mDataTask.get(index), config.getMainHeads(head));
+//		int dotCount = getDotCount(mDataTask.get(index), config.getMainHeads(head));
+		head = config.getMainHeads(head);
+		for(int i=0; i<8; i++) {
+			mPrintDots[i] = 0;
+			for(int j=0; j<mDataTask.size(); j++) {
+				mPrintDots[i] += getDotCount(mDataTask.get(j), i);
+				Debug.d(TAG, "--->dotCount[" + i + "]: " + mPrintDots[i] + "  task=" + j);
+			}
+		}
 
-		Debug.d(TAG, "--->dotCount[" + head + "]: " + dotCount + "  bold=" + bold);
+		Debug.d(TAG, "--->dotCount[" + head + "]: " + mPrintDots[head] + "  bold=" + bold);
+
+// H.M.Wang 2020-10-23 修改计算Threshold的算法，改为以打印群组的所有任务的点数为准，单独任务作为一个元素的特殊群组
+
 
 //		dotCount = dotCount/config.getHeadFactor();		// ??????为什么要除以头数
 		// Debug.d(TAG, "--->getInkThreshold  head: " + head + "   index = " + index + " dataTask: " + mDataTask.size());
-		if (dotCount <= 0) {
+		if (mPrintDots[head] <= 0) {
 // H.M.Wang 2019-9-28 当该打印头没有数据可打印的时候，原来返回1，会产生错误效果，返回一个尽量大的数以避免之
 //			return 1;
 			return 65536 * 8;						// 无打印内容时可能错误减记
@@ -943,7 +963,7 @@ public class DataTransferThread {
 			} else {
 				bold = 1;
 // H.M.Wang 2020-10.17 大字机墨水消耗计算， 加入墨点大小修正
-				rate = ((config.getParam(SystemConfigFile.INDEX_DOT_SIZE)-450)*4+1000)/1200;
+				rate = Math.max(0.5f, ((1.0f * config.getParam(SystemConfigFile.INDEX_DOT_SIZE)-450)*4+1000)/1200);
 			}
 // End of H.M.Wang 2020-10.17 大字机墨水消耗计算， 加入墨点大小修正
 // End of H.M.Wang 2020-6-12 16,32,64点头减锁修改为不受分辨率影响
@@ -957,14 +977,14 @@ public class DataTransferThread {
 			config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
 //		if(mDataTask.get(index).getPNozzle() == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
 // End of H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
-            dotCount *= (PrinterNozzle.R6_PRINT_COPY_NUM - 1);
+			mPrintDots[head] *= (PrinterNozzle.R6_PRINT_COPY_NUM - 1);
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
         }
 // End of H.M.Wang 2020-4-19 追加12.7R5头。dotcount放大相应倍数
 
-		Debug.d(TAG, "--->dotCount[" + head + "]: " + dotCount + "  bold=" + bold);
+		Debug.d(TAG, "--->dotCount[" + head + "]: " + mPrintDots[head] + "  bold=" + bold + "  dotrate=" + rate);
 
-		return (int)(Configs.DOTS_PER_PRINT/(dotCount * bold)/rate);
+		return (int)(1.0f * Configs.DOTS_PER_PRINT/(mPrintDots[head] * bold)/rate);
 	}
 	
 	public int getHeads() {
@@ -1128,9 +1148,11 @@ public class DataTransferThread {
 				setLanBuffer(mContext, index(), mPrintBuffer);
 			} else {
 				Debug.d(TAG, "--->print buffer ready");
+
 				// H.M.Wang 2019-10-10 追加计算打印区对应于各个头的打印点数
-				DataTask t = mDataTask.get(index());
-//				Debug.d(TAG, "GetPrintDots Start Time: " + System.currentTimeMillis());
+// H.M.Wang 2020-10-23 计算点数移到DataTask的getPrintBuffer函数内
+/*				DataTask t = mDataTask.get(index());
+				Debug.d(TAG, "GetPrintDots Start Time: " + System.currentTimeMillis());
 // H.M.Wang 2020-10-18 重新开放打印前计算墨点数
 				int[] dots = NativeGraphicJni.GetPrintDots(mPrintBuffer, mPrintBuffer.length, t.getInfo().mCharsPerHFeed, t.getPNozzle().mHeads);
 
@@ -1147,7 +1169,7 @@ public class DataTransferThread {
 						head != PrinterNozzle.MESSAGE_TYPE_32SN &&
 						head != PrinterNozzle.MESSAGE_TYPE_64SN &&
 						head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
-						dots[j] *= 2;
+//						dots[j] *= 2;
 					} else {
 						dots[j] *= 200;
 					}
@@ -1156,7 +1178,9 @@ public class DataTransferThread {
 				t.setDots(totalDot);
 				t.setDotsEach(dots);
 // End of H.M.Wang 2020-10-18 重新开放打印前计算墨点数
-//				Debug.d(TAG, "GetPrintDots Done Time: " + System.currentTimeMillis());
+				Debug.d(TAG, "GetPrintDots Done Time: " + System.currentTimeMillis());
+*/
+// End of H.M.Wang 2020-10-23 计算点数移到DataTask的getPrintBuffer函数内
 
 				final StringBuilder sb = new StringBuilder();
 				sb.append("Dots per Head: [");
@@ -1170,10 +1194,10 @@ public class DataTransferThread {
 					if(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
 						SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
 //						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
-						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R6_PRINT_COPY_NUM - 1));
+						sb.append(mPrintDots[i<6?0:i]*(PrinterNozzle.R6_PRINT_COPY_NUM - 1));
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 					} else {
-						sb.append(t.getDots(i));
+						sb.append(mPrintDots[i]);
 					}
 // 2020-5-11
 				}
@@ -1224,7 +1248,7 @@ public class DataTransferThread {
 				long startMillis = System.currentTimeMillis();
 				int writable = FpgaGpioOperation.pollState();
 
-				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
+//				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
 
 				if (writable == 0) { //timeout
 //					Debug.e(TAG, "--->FPGA timeout");
@@ -1303,8 +1327,8 @@ public class DataTransferThread {
 
 						last = SystemClock.currentThreadTimeMillis();
 						countDown();
-						mInkListener.onCountChanged();
-						mScheduler.schedule();
+//						mInkListener.onCountChanged();
+//						mScheduler.schedule();
 						if (mCallback != null) {
 							mCallback.onComplete(index());
 						}
@@ -1382,7 +1406,7 @@ public class DataTransferThread {
 // End of 2020-6-30 网络快速打印时第一次收到网络数据后下发
 				}
 
-				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
+//				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
 
 				try {
 					Thread.sleep(10);
