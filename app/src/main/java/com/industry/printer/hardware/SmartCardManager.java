@@ -22,7 +22,7 @@ public class SmartCardManager implements IInkDevice {
     public static boolean OIB_CHECK = true;
     public static boolean SUM_CHECK = false;
 
-    private final static int MAX_INK_VOLUME             = 4700;
+    private final static int MAX_INK_VOLUME             = 5400;
 
     private final static int HP_PRINT_CARTRIDGE         = 11;
     private final static int HP_BULK_CARTRIDGE          = 12;

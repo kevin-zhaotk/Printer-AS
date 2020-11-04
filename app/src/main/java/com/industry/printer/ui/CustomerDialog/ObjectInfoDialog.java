@@ -584,7 +584,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 							} catch (NumberFormatException e) {
 								((DynamicText) mObject).setBits(0);
 							}
-//							((DynamicText) mObject).setContent(mContent.getText().toString());
+							((DynamicText) mObject).setContent(mContent.getText().toString());
 // End of H.M.Wang 2020-6-10 追加DynamicText控件
 						} else if (mObject instanceof GraphicObject) {
 
@@ -743,6 +743,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				} else if(mObject instanceof DynamicText) {
 					mIndex.setText(String.valueOf(((DynamicText) mObject).getDtIndex()));
 					mDigits.setText(String.valueOf( ((DynamicText) mObject).getBits()));
+					mContent.setText(String.valueOf( ((DynamicText) mObject).getContent()));
 // End of H.M.Wang 2020-6-10 追加DynamicText控件
 				}
 				else if(mObject instanceof CounterObject)
@@ -817,7 +818,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 		
 		if(mObject instanceof RealtimeObject ||
 // H.M.Wang 2020-6-11 追加HyperText控件
-			mObject instanceof DynamicText ||
+//			mObject instanceof DynamicText ||
 // End of H.M.Wang 2020-6-11 追加HyperText控件
 // H.M.Wang 2020-7-3 CounterObject内容不参与编辑
 				mObject instanceof CounterObject ||

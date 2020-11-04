@@ -21,6 +21,7 @@ import rx.schedulers.Schedulers;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -30,11 +31,13 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.inputmethodservice.InputMethodService;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.KeyEventCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -176,6 +179,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 //	                    inputManager.setInputMethod(getApplicationContext(), inputMethodInfo.getId());
 //	            }
 //	    }
+
         mTabGroup = (RadioGroup) findViewById(R.id.tab_group);
 	    mRadioCtl = (RadioButton) findViewById(R.id.btn_control);
 	    mRadioCtl.setOnCheckedChangeListener(this);
@@ -250,7 +254,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 					
 				}
 			});
-		 
+
+        BarcodeScanParser.setContext(this);
+
 		/*App 鍚姩浠ュ悗锛屾壃澹板櫒鍝嶄袱澹�*/
 		new Thread() {
 			@Override
@@ -641,9 +647,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 //		return super.onKeyDown(keyCode, event);
-		char eventString = event.getDisplayLabel();
 
-		BarcodeScanParser.append(eventString);
+		BarcodeScanParser.append(keyCode, event.isShiftPressed());
 //		mCode.setText(Global.readCode());
 		if (event.getDeviceId() == 10) return false;
 		return super.onKeyDown(keyCode, event);

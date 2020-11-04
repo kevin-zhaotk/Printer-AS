@@ -592,6 +592,8 @@ public class BaseObject{
 //		Debug.d(TAG, "SaveTime: - End makeVarBin : " + System.currentTimeMillis());
 		return dots[0];
 	}
+
+	@Deprecated
 	public int drawVarBitmap()
 	{
 		Debug.d(TAG, "***************begin  id: " + mId + " index:  " + mIndex);
@@ -734,6 +736,7 @@ public class BaseObject{
 	 * generateVarBuffer - generate the variable bin buffer, Contained in the HashMap
 	 * 设计： 
 	 */
+	@Deprecated
 	public void generateVarBuffer()
 	{
 		if (TextUtils.isEmpty(mContent)) {

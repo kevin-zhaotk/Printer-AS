@@ -18,11 +18,12 @@
         <item>RS232-2</item>
         <item>RS232-3</item>
         <item>RS232-4</item>
-        <item>RS232-5</item>
+        <item>Scaner-1</item>
         <item>RS232-6</item>
         <item>Fast Lan</item>
         <item>RS232-7</item>
         <item>Lan Heart</item>
+        <item>Scaner-2</item>
     </string-array>
 <!-- End of H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
 

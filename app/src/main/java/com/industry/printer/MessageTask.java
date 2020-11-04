@@ -642,7 +642,7 @@ public class MessageTask {
 		{
 //			Debug.d(TAG, "SaveTime: - Start System.gc()" + System.currentTimeMillis());
 			// H.M.Wang 增加1行
-			System.gc();
+//			System.gc();
 //			Debug.d(TAG, "SaveTime: - Start DrawObject(" + o.mName + ") : " + System.currentTimeMillis());
 			if((o instanceof MessageObject)	)
 				continue;

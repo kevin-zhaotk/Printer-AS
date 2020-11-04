@@ -31,9 +31,9 @@ public class SerialHandler {
     public static SerialHandler getInstance() {
         if(null == mSerialHandler) {
             mSerialHandler = new SerialHandler();
-            if(!mSerialHandler.isInitialized()) {
+//            if(!mSerialHandler.isInitialized()) {
                 mSerialHandler.init();
-            }
+//            }
         }
         return mSerialHandler;
     }
@@ -79,7 +79,7 @@ public class SerialHandler {
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_4) {
             XK3190_A30_Protocol p = new XK3190_A30_Protocol(mSerialPort);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
-        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_5) {
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1) {
             SerialProtocol5 p = new SerialProtocol5(mSerialPort);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // H.M.Wang 2020-6-9 追加串口6协议
@@ -92,6 +92,11 @@ public class SerialHandler {
             SerialProtocol7 p = new SerialProtocol7(mSerialPort);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // End of H.M.Wang 2020-8-13 追加串口7协议
+// H.M.Wang 2020-10-30 追加扫描2串口协议
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER2) {
+            Scaner2Protocol p = new Scaner2Protocol(mSerialPort);
+            p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
+// End of H.M.Wang 2020-10-30 追加扫描2串口协议
         }
     }
 
@@ -116,7 +121,7 @@ public class SerialHandler {
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_4) {
             XK3190_A30_Protocol p = new XK3190_A30_Protocol(mSerialPort);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
-        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_5) {
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1) {
             SerialProtocol5 p = new SerialProtocol5(mSerialPort);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
 // H.M.Wang 2020-6-9 追加串口6协议
@@ -129,6 +134,11 @@ public class SerialHandler {
             SerialProtocol7 p = new SerialProtocol7(mSerialPort);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
 // End of H.M.Wang 2020-8-13 追加串口7协议
+// H.M.Wang 2020-10-30 追加扫描2串口协议
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER2) {
+            Scaner2Protocol p = new Scaner2Protocol(mSerialPort);
+            p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
+// End of H.M.Wang 2020-10-30 追加扫描2串口协议
         }
     }
 }

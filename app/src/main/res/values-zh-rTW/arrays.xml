@@ -18,11 +18,12 @@
         <item>串口協議2</item>
         <item>串口協議3</item>
         <item>串口協議4</item>
-        <item>串口協議5</item>
+        <item>掃描1</item>
         <item>串口協議6</item>
         <item>快速網路打印</item>
         <item>串口協議7</item>
         <item>網路心跳</item>
+        <item>掃描2</item>
     </string-array>
 <!-- End of H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
 

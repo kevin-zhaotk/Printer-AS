@@ -140,7 +140,7 @@ public class SystemConfigFile{
 	public static final int DATA_SOURCE_RS231_2 	= 5;		// 数据源使用串口协议2。EC_DOD协议，用逗号等分隔符分开各计数器的内容。每个计数器的接收位数大于计数器的预设位数时剪切
 	public static final int DATA_SOURCE_RS231_3 	= 6;		// 数据源使用串口协议3。平文直接填充第一个计数器。超出计数器位数部分剪切
 	public static final int DATA_SOURCE_RS231_4 	= 7;		// 数据源使用串口协议4。XK3190协议
-	public static final int DATA_SOURCE_RS231_5 	= 8;		// 数据源使用串口协议5。接收33位字符串，第2位与第33位必须一致，截取7组数据，添加到DT0-DT6，DT7通过DT6从QR.txt当中检索得到
+	public static final int DATA_SOURCE_SCANER1 	= 8;		// 数据源使用串口协议5。接收33位字符串，第2位与第33位必须一致，截取7组数据，添加到DT0-DT6，DT7通过DT6从QR.txt当中检索得到(作为扫码枪的替代输入源)
 // H.M.Wang 2020-6-9 追加串口6协议
 	public static final int DATA_SOURCE_RS231_6 	= 9;		// 数据源使用串口协议6。接收19位字符串，第8, 9, 10, 11, 13, 14分别设置给DT0-DT5
 // End of H.M.Wang 2020-6-9 追加串口6协议
@@ -153,6 +153,9 @@ public class SystemConfigFile{
 // H.M.Wang 2020-9-30 追加网络心跳数据源
 	public static final int DATA_SOURCE_LAN_HEART 	= 12;		// 接收网络心跳信号，2s内未接到报警
 // End of H.M.Wang 2020-9-30 追加网络心跳数据源
+// H.M.Wang 2020-10-30 追加扫描2串口协议
+	public static final int DATA_SOURCE_SCANER2 	= 13;		// 扫描2等效串口协议，由4条信息构成，以#为间隔符，间隔符可以变更，4条信息分别设置给DT0-DT3，对群组有效
+// End of H.M.Wang 2020-10-30 追加扫描2串口协议
 
 // H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
 	public static final int DIRECTION_NORMAL = 0;

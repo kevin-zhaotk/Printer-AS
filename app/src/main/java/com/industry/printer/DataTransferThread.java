@@ -1,5 +1,7 @@
 package com.industry.printer;
 
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +18,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.view.KeyEvent;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.industry.printer.FileFormat.PackageListReader;
@@ -24,11 +30,13 @@ import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Rfid.IInkScheduler;
 import com.industry.printer.Rfid.InkSchedulerFactory;
 import com.industry.printer.Serial.EC_DOD_Protocol;
+import com.industry.printer.Serial.Scaner2Protocol;
 import com.industry.printer.Serial.SerialHandler;
 import com.industry.printer.Serial.SerialProtocol;
 import com.industry.printer.Serial.SerialProtocol7;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.data.DataTask;
 import com.industry.printer.data.NativeGraphicJni;
 import com.industry.printer.hardware.BarcodeScanParser;
@@ -42,6 +50,7 @@ import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
 import com.industry.printer.object.DynamicText;
 import com.industry.printer.object.HyperTextObject;
+import com.industry.printer.ui.CustomerDialog.RemoteMsgPrompt;
 
 /**
  * class DataTransferThread
@@ -376,9 +385,9 @@ public class DataTransferThread {
 			@Override
 			public void run() {
 				if(null != mRemoteRecvedPromptDlg) {
-					mRemoteRecvedPromptDlg.setMessage(data);
 					mRemoteRecvedPromptDlg.show();		// 不知道为啥，hide之后，必须要show两次才能够及时显示出来
-					mRemoteRecvedPromptDlg.show();
+					mRemoteRecvedPromptDlg.setMessage(data);
+//					mRemoteRecvedPromptDlg.show();
 				}
 			}
 		});
@@ -427,9 +436,9 @@ public class DataTransferThread {
 			@Override
 			public void run() {
 				if(null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
 					mRemoteRecvedPromptDlg.setMessage(data);
-					mRemoteRecvedPromptDlg.show();
-					mRemoteRecvedPromptDlg.show();
 				}
 			}
 		});
@@ -469,9 +478,9 @@ public class DataTransferThread {
 			@Override
 			public void run() {
 				if(null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
 					mRemoteRecvedPromptDlg.setMessage(data);
-					mRemoteRecvedPromptDlg.show();
-					mRemoteRecvedPromptDlg.show();
 				}
 			}
 		});
@@ -497,13 +506,19 @@ public class DataTransferThread {
 
 	public void setScanDataToDt(final String data) {
 		Debug.d(TAG, "String from Remote = [" + data + "]");
+		if(data.length() != 33) {                               // 扫描到的字符串长度为32+1
+			return;
+		} else if(data.charAt(1) != data.charAt(32)) {          // 最后一位与第二位的值需要一致
+			return;
+		}
+
 		mHandler.post(new Runnable() {
 			@Override
 			public void run() {
 				if(null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
 					mRemoteRecvedPromptDlg.setMessage(data);
-					mRemoteRecvedPromptDlg.show();
-					mRemoteRecvedPromptDlg.show();
 				}
 			}
 		});
@@ -558,12 +573,18 @@ public class DataTransferThread {
 			@Override
 			public void run() {
 				if (null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
 					mRemoteRecvedPromptDlg.setMessage(data);
-					mRemoteRecvedPromptDlg.show();
-					mRemoteRecvedPromptDlg.show();
 				}
 			}
 		});
+
+        if(data.length() != 33) {                               // 扫描到的字符串长度为32+1
+			ToastUtil.show(mContext, R.string.invalid_protocol);
+			return;
+		}
+
 // H.M.Wang 2020-6-7 修改支持包号->批号检索功能
 		String[] dts = new String[6];
 // End of H.M.Wang 2020-6-7 修改支持包号->批号检索功能
@@ -582,15 +603,51 @@ public class DataTransferThread {
 					int dtIndex = ((DynamicText)baseObject).getDtIndex();
 					if(dtIndex >= 0 && dtIndex < 6) {
 						baseObject.setContent(dts[dtIndex]);
-						mNeedUpdate = true;
+					} else {
+						baseObject.setContent("");
 					}
+					mNeedUpdate = true;
 				}
 			}
 		}
 	}
 // End of H.M.Wang 2020-6-9 追加串口6协议
 
-	private AlertDialog mRemoteRecvedPromptDlg = null;
+// H.M.Wang 2020-10-30 追加扫描2串口协议
+	public void setScan2DataToDt(final String data) {
+		Debug.d(TAG, "String from Remote = [" + data + "]");
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if(null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
+					mRemoteRecvedPromptDlg.setMessage(data);
+				}
+			}
+		});
+
+		String[] recvStrs = data.split(Scaner2Protocol.TEXT_SEPERATOR);
+
+		for(DataTask dataTask : mDataTask) {
+			ArrayList<BaseObject> objList = dataTask.getObjList();
+			for(BaseObject baseObject: objList) {
+				if(baseObject instanceof DynamicText) {
+                    int dtIndex = ((DynamicText)baseObject).getDtIndex();
+                    if(dtIndex >= 0 && dtIndex < recvStrs.length) {
+                        baseObject.setContent(recvStrs[dtIndex]);
+                    } else {
+						baseObject.setContent("");
+					}
+					mNeedUpdate = true;
+				}
+			}
+		}
+	}
+// End of H.M.Wang 2020-10-30 追加扫描2串口协议
+
+//	private AlertDialog mRemoteRecvedPromptDlg = null;
+	private RemoteMsgPrompt mRemoteRecvedPromptDlg = null;
 
 	public boolean launch(Context ctx) {
 		// H.M.Wang 2019-12-31 设置mContext，以避免因为mContext=null而导致程序崩溃
@@ -633,7 +690,7 @@ public class DataTransferThread {
 					String datastring = new String(data, 0, data.length);
 					setRemoteTextDirect(datastring);
 					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
-				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_5) {
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1) {
 					String datastring = new String(data, 0, data.length);
 					setScanDataToDt(datastring);
 					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
@@ -661,26 +718,68 @@ public class DataTransferThread {
 						mNeedUpdate = true;
 					}
 // End of H.M.Wang 2020-8-13 追加串口7协议
+// H.M.Wang 2020-10-30 追加扫描2串口协议
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER2) {
+					String datastring = new String(data, 0, data.length);
+					setScan2DataToDt(datastring);
+					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
+// End of H.M.Wang 2020-10-30 追加扫描2串口协议
 				}
 			}
 		});
 
 		// End of H.M.Wang 2019-12-19 支持多种串口协议的修改
+// H.M.Wang 2020-10-30 追加数据源判断，启动扫描处理，因为有两个处理从一个扫码枪途径获取数据
+		if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1) {
+			BarcodeScanParser.setListener(new BarcodeScanParser.OnScanCodeListener() {
+				@Override
+				public void onCodeReceived(String code) {
+					setScanDataToDt(code);
+				}
+			});
+		} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER2) {
+			BarcodeScanParser.setListener(new BarcodeScanParser.OnScanCodeListener() {
+				@Override
+				public void onCodeReceived(String code) {
+					setScan2DataToDt(code);
+				}
+			});
+		}
+// End of H.M.Wang 2020-10-30 追加数据源判断，启动扫描处理，因为有两个处理从一个扫码枪途径获取数据
 
-		BarcodeScanParser.setListener(new BarcodeScanParser.OnScanCodeListener() {
-			@Override
-			public void onCodeReceived(String code) {
-				setScanDataToDt(code);
-			}
-		});
-
+/*
 		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 		mRemoteRecvedPromptDlg = builder.setTitle(R.string.strRecvedRemote).setMessage("").setPositiveButton(R.string.str_ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+//				WindowManager.LayoutParams attrs = mRemoteRecvedPromptDlg.getWindow().getAttributes();
+//				attrs.width = WindowManager.LayoutParams.MATCH_PARENT;// attrs.width =580;
+//				attrs.height = WindowManager.LayoutParams.MATCH_PARENT;// attrs.height = 600;
+//				mRemoteRecvedPromptDlg.getWindow().setAttributes(attrs);
+
+				LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+				layoutParams.setMargins(30,30,30,30);//4个参数按顺序分别是左上右下
+
+				mRemoteRecvedPromptDlg.getWindow().getDecorView().setLayoutParams(layoutParams);
+
+				try {
+					Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+					mAlert.setAccessible(true);
+					Object mAlertController = mAlert.get(dialog);
+					Field mMessage = mAlertController.getClass().getDeclaredField("mMessageView");
+					mMessage.setAccessible(true);
+					TextView mMessageView = (TextView) mMessage.get(mAlertController);
+					mMessageView.setTextSize(mMessageView.getTextSize() + 20);
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (NoSuchFieldException e) {
+					e.printStackTrace();
+				}
 				mRemoteRecvedPromptDlg.hide();
 			}
 		}).create();
+*/
+		mRemoteRecvedPromptDlg = new RemoteMsgPrompt(mContext);
 // H.M.Wang 2020-6-3 解决提示对话窗在显示时，扫码枪的信息被其劫持，而无法识别的问题
         mRemoteRecvedPromptDlg.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
@@ -689,7 +788,7 @@ public class DataTransferThread {
 					if(keyCode == KeyEvent.KEYCODE_ENTER) {
 						return true;
 					} else {
-						BarcodeScanParser.append(event.getDisplayLabel());
+						BarcodeScanParser.append(keyCode, event.isShiftPressed());
 					}
 				}
                 return false;

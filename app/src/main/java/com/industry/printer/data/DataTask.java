@@ -435,6 +435,8 @@ public class DataTask {
 
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			div = 152f/16f;
+			scaleW = 152f/16;
+			scaleH = 152f/16;
 // H.M.Wang 2020-7-23 追加32DN打印头
 //		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 // H.M.Wang 2020-8-17 追加32SN打印头
@@ -442,6 +444,8 @@ public class DataTask {
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_32_DOT || headType == PrinterNozzle.MESSAGE_TYPE_32DN || headType == PrinterNozzle.MESSAGE_TYPE_32SN) {
 // End of H.M.Wang 2020-8-17 追加32SN打印头
 			div = 152f/32f;
+			scaleW = 152f/32;
+			scaleH = 152f/32;
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 
 		// H.M.Wang 追加下列两行
@@ -450,7 +454,8 @@ public class DataTask {
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_64_DOT || headType == PrinterNozzle.MESSAGE_TYPE_64SN) {
 // H.M.Wang 2020-8-26 追加64SN打印头
 			div = 152f/64f;
-
+			scaleW = 152f/64;
+			scaleH = 152f/64;
 		}
 		/**if high resolution message, do not divide width by 2 */
 		if (msg.getResolution()) {
@@ -500,12 +505,18 @@ public class DataTask {
 // H.M.Wang 2020-5-22 串口数据启用DynamicText，取消代用CounterObject
             } else if(o instanceof DynamicText) {
 				Debug.d(TAG, "--->object index=" + o.getIndex());
+
+                Bitmap bmp = ((DynamicText)o).getPrintBitmap((int)(o.getWidth()/scaleW), (int)(o.getHeight()/scaleH), headType.getHeight());
+                BinInfo info = new BinInfo(mContext, bmp, mExtendStat);
+                BinInfo.overlap(mPrintBuffer, info.getBgBuffer(), (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
+
+/*
 				BinInfo info = null;
 				if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
 					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
 					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2 ||
 					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_3 ||
-					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_5 ||
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1 ||
 // H.M.Wang 2020-6-9 追加串口6协议
 					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_6 ||
 // End of H.M.Wang 2020-6-9 追加串口6协议
@@ -524,8 +535,10 @@ public class DataTask {
 					info = new BinInfo(ConfigPath.getVBinAbsolute(mTask.getName(), o.getIndex()), mTask, mExtendStat);
 					var = info.getVarBuffer(o.getContent(), true, false);
 				}
+
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
-			} else if(o instanceof CounterObject)
+*/
+            } else if(o instanceof CounterObject)
 			{
 // 2019-12-17 H.M.Wang 彻底取消原来的事先保存与Object对应的BinInfo的做法，因为修改为通过useSerialContent()来判断是何种打印方式的话，每次都有可能发生变化
 				// H.M.Wang 2019-10-27 修改。适应从串口来的打印数据

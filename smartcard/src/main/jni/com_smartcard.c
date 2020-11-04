@@ -40,10 +40,10 @@ extern "C"
 #define SC_CONSISTENCY_FAILED                   300
 #define SC_CHECKSUM_FAILED                      400
 
-#define MAX_INK_VOLUME                          4700
+#define MAX_INK_VOLUME                          5400
 #define INK_VOLUME_PER_CENTAGE                  (MAX_INK_VOLUME / 100)
 
-#define VERSION_CODE                            "1.0.336"
+#define VERSION_CODE                            "1.0.337"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,

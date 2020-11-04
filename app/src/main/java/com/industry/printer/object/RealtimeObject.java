@@ -237,6 +237,7 @@ public class RealtimeObject extends BaseObject {
 		return bmp;
 	}
 
+	@Deprecated
 	@Override
 	public int drawVarBitmap() {
 		int dot = 0;
@@ -248,7 +249,7 @@ public class RealtimeObject extends BaseObject {
 		}
 		return dot;
 	}
-	
+
 	@Override
 	public int makeVarBin(Context ctx, float scaleW, float scaleH, int dstH) {
 		int dot = 0;

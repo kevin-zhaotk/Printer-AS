@@ -566,4 +566,10 @@
 	<string name="str_net_counts">Counts</string>
 	<string name="str_net_int">Ink</string>
 	<string name="str_net_commands">Command</string>
+
+	<string name="invalid_message">Invalid Message</string>
+	<string name="invalid_code">Invalid Code</string>
+	<string name="invalid_protocol">Invalid Protocol</string>
+	<string name="decoding">Decoding...</string>
+
 </resources>

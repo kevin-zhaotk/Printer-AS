@@ -20,6 +20,7 @@ import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.Utils.StringUtil;
+import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.object.TLKFileParser;
 import com.industry.printer.ui.CustomerAdapter.ListViewButtonAdapter;
 import com.industry.printer.ui.CustomerAdapter.MessageListAdater;
@@ -273,6 +274,19 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Debug.d(TAG, "--->onItemClick");
+// H.M.Wang 2020-10-30 2020-9-21 追加TLK文件合法性判断，是否为目录，是否包含1.tlk文件
+		String tlkPath = ConfigPath.getTlkPath() + File.separator + mTotalContents[mDispIndex.get(position)];
+		File msg = new File(tlkPath);
+		if(!msg.isDirectory()) {
+			ToastUtil.show(getContext(), R.string.invalid_message);
+			return;
+		}
+		if(!(new File(tlkPath + File.separator + "1.tlk")).exists()) {
+			ToastUtil.show(getContext(), R.string.invalid_message);
+			return;
+		}
+// End of H.M.Wang 2020-10-30 2020-9-21 追加TLK文件合法性判断，是否为目录，是否包含1.tlk文件
+
 		mFileAdapter.setSelected(position);
 		mFileAdapter.notifyDataSetChanged();
 		if (!mMultiMode) {
@@ -410,14 +424,6 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 						if (mFrom == OpenFrom.OPEN_EDIT && arg1.startsWith("G-")) {
 							return false;
 						}
-// H.M.Wang 2020-9-21 追加TLK文件合法性判断，是否为目录，是否包含1.tlk文件
-						if(!(new File(arg0.getAbsolutePath() + File.separator + arg1)).isDirectory()) {
-							return false;
-						}
-						if(!(new File(arg0.getAbsolutePath() + File.separator + arg1 + File.separator + "1.tlk")).exists()) {
-							return false;
-						}
-// End of H.M.Wang 2020-9-21 追加TLK文件合法性判断，是否为目录，是否包含1.tlk文件
 						return true;
 					}
 				});
