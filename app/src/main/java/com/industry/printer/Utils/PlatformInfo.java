@@ -107,8 +107,9 @@ public class PlatformInfo {
 	 * read system property
 	 * @return
 	 */
+// H.M.Wang 2020-11-17 暂时恢复原来的方法
 // H.M.Wang 2020-11-15 修改InkDevice的确定方法，不适用build.prop获取，而是根据SmartCard的初始化错误信息来判断
-/*	public static String getInkDevice() {
+	public static String getInkDevice() {
 		// return SystemProperties.get(PROPERTY_PRODUCT);
 		//String product = null;
 		if(!StringUtil.isEmpty(mInkDevice)) {
@@ -124,7 +125,8 @@ public class PlatformInfo {
 		Debug.d(TAG, "===>InkDevice: " + mInkDevice);
 		return mInkDevice;
 	}
-*/
+
+/*
 	public static String getInkDevice() {
 		if(null == mInkDevice) {
 			int ret = SmartCard.exist();
@@ -136,10 +138,7 @@ public class PlatformInfo {
 		}
 		return mInkDevice;
 	}
-
-	public static void setInkDevice(String inkDevice) {
-		mInkDevice = inkDevice;
-	}
+*/
 // H.M.Wang 2020-11-15 修改InkDevice的确定方法，不适用build.prop获取，而是根据SmartCard的初始化错误信息来判断
 
 	public static boolean isFriendlyProduct() {
