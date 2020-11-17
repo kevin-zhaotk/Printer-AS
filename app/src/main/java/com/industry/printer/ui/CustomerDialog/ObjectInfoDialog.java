@@ -54,6 +54,8 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 public class ObjectInfoDialog extends Dialog implements android.view.View.OnClickListener, IOnItemClickListener, OnCheckedChangeListener
 	, OnTouchListener, TextWatcher {
 	
@@ -585,6 +587,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 								((DynamicText) mObject).setBits(0);
 							}
 							((DynamicText) mObject).setContent(mContent.getText().toString());
+							((DynamicText) mObject).adjustWidth();
 // End of H.M.Wang 2020-6-10 追加DynamicText控件
 						} else if (mObject instanceof GraphicObject) {
 
@@ -1107,7 +1110,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 
 	@Override
 	public boolean onTouch(View arg0, MotionEvent arg1) {
-		InputMethodManager im = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+		InputMethodManager im = (InputMethodManager) mContext.getSystemService(INPUT_METHOD_SERVICE);
         im.hideSoftInputFromWindow(arg0.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 		return false;
 	}

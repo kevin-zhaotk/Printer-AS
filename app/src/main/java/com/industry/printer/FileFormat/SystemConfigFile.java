@@ -131,31 +131,32 @@ public class SystemConfigFile{
 	public static final int INDEX_LOG_ENABLE = 59;
 
 	public static final int INDEX_PARAM_63 = 62;
-
+// H.M.Wang 11-13 调整各项目的排列顺序，使得相同接近的数据源排在一起。同时调整arrays.xml的数据源排列顺序
 	public static final int DATA_SOURCE_DISABLED 	= 0;		// 数据源禁用
 	public static final int DATA_SOURCE_BIN 		= 1;		// 数据源使用BIN
 	public static final int DATA_SOURCE_FILE 		= 2;		// 数据源使用文件
 	public static final int DATA_SOURCE_LAN 		= 3;		// 数据源使用以太网数据
-	public static final int DATA_SOURCE_RS231_1 	= 4;		// 数据源使用串口协议1。EC_DOD协议，按位数紧凑填充前面的计数器。位数不足时，后续计数器不填充，位数超出所有计数器的位数总和时，后面的剪切
-	public static final int DATA_SOURCE_RS231_2 	= 5;		// 数据源使用串口协议2。EC_DOD协议，用逗号等分隔符分开各计数器的内容。每个计数器的接收位数大于计数器的预设位数时剪切
-	public static final int DATA_SOURCE_RS231_3 	= 6;		// 数据源使用串口协议3。平文直接填充第一个计数器。超出计数器位数部分剪切
-	public static final int DATA_SOURCE_RS231_4 	= 7;		// 数据源使用串口协议4。XK3190协议
-	public static final int DATA_SOURCE_SCANER1 	= 8;		// 数据源使用串口协议5。接收33位字符串，第2位与第33位必须一致，截取7组数据，添加到DT0-DT6，DT7通过DT6从QR.txt当中检索得到(作为扫码枪的替代输入源)
+	public static final int DATA_SOURCE_RS231_1 	= 8;		// 数据源使用串口协议1。EC_DOD协议，按位数紧凑填充前面的计数器。位数不足时，后续计数器不填充，位数超出所有计数器的位数总和时，后面的剪切
+	public static final int DATA_SOURCE_RS231_2 	= 9;		// 数据源使用串口协议2。EC_DOD协议，用逗号等分隔符分开各计数器的内容。每个计数器的接收位数大于计数器的预设位数时剪切
+	public static final int DATA_SOURCE_RS231_3 	= 10;		// 数据源使用串口协议3。平文直接填充第一个计数器。超出计数器位数部分剪切
+	public static final int DATA_SOURCE_RS231_4 	= 11;		// 数据源使用串口协议4。XK3190协议
+	public static final int DATA_SOURCE_SCANER1 	= 6;		// 数据源使用串口协议5。接收33位字符串，第2位与第33位必须一致，截取7组数据，添加到DT0-DT6，DT7通过DT6从QR.txt当中检索得到(作为扫码枪的替代输入源)
 // H.M.Wang 2020-6-9 追加串口6协议
-	public static final int DATA_SOURCE_RS231_6 	= 9;		// 数据源使用串口协议6。接收19位字符串，第8, 9, 10, 11, 13, 14分别设置给DT0-DT5
+	public static final int DATA_SOURCE_RS231_6 	= 12;		// 数据源使用串口协议6。接收19位字符串，第8, 9, 10, 11, 13, 14分别设置给DT0-DT5
 // End of H.M.Wang 2020-6-9 追加串口6协议
 // H.M.Wang 2020-6-28 追加专门为网络快速打印设置
-	public static final int DATA_SOURCE_FAST_LAN 	= 10;		// 快速网络打印
+	public static final int DATA_SOURCE_FAST_LAN 	= 4;		// 快速网络打印
 // End of H.M.Wang 2020-6-28 追加专门为网络快速打印设置
 // H.M.Wang 2020-8-13 追加串口协议7
-	public static final int DATA_SOURCE_RS231_7 	= 11;		// 数据源使用串口协议7。与串口协议1一致，仅校验位奇偶校验
+	public static final int DATA_SOURCE_RS231_7 	= 13;		// 数据源使用串口协议7。与串口协议1一致，仅校验位奇偶校验
 // End of H.M.Wang 2020-8-13 追加串口协议7
 // H.M.Wang 2020-9-30 追加网络心跳数据源
-	public static final int DATA_SOURCE_LAN_HEART 	= 12;		// 接收网络心跳信号，2s内未接到报警
+	public static final int DATA_SOURCE_LAN_HEART 	= 5;		// 接收网络心跳信号，2s内未接到报警
 // End of H.M.Wang 2020-9-30 追加网络心跳数据源
 // H.M.Wang 2020-10-30 追加扫描2串口协议
-	public static final int DATA_SOURCE_SCANER2 	= 13;		// 扫描2等效串口协议，由4条信息构成，以#为间隔符，间隔符可以变更，4条信息分别设置给DT0-DT3，对群组有效
+	public static final int DATA_SOURCE_SCANER2 	= 7;		// 扫描2等效串口协议，由4条信息构成，以#为间隔符，间隔符可以变更，4条信息分别设置给DT0-DT3，对群组有效
 // End of H.M.Wang 2020-10-30 追加扫描2串口协议
+// End of H.M.Wang 11-13 调整各项目的排列顺序，使得相同接近的数据源排在一起。同时调整arrays.xml的数据源排列顺序
 
 // H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
 	public static final int DIRECTION_NORMAL = 0;

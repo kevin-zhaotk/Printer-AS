@@ -318,7 +318,16 @@ public class SerialProtocol7 extends SerialProtocol {
 
     @Override
     public void sendCommandProcessResult(int cmd, int ack, int devStatus, int cmdStatus, String message) {
-        byte[] retMsg = createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
+// H.M.Wang 2020-11-16 成功时返回H06，失败时返回H03
+//        byte[] retMsg = createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
+        byte[] retMsg = null;
+
+        if(cmdStatus == 0) {    // Success
+            retMsg = "H06".getBytes();
+        } else {
+            retMsg = "H03".getBytes();
+        }
+// H.M.Wang 2020-11-16 成功时返回H06，失败时返回H03
         super.sendCommandProcessResult(retMsg);
     }
 }

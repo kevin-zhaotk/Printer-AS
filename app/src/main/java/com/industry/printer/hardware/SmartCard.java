@@ -33,6 +33,8 @@ public class SmartCard {
     /**
      * SmartCard JNI APIs
      **/
+    static public native int exist();
+
     static public native int init();
 
     static public native int writeCheckSum(int card, int clientUniqueCode);
@@ -43,11 +45,13 @@ public class SmartCard {
 
     static public native String readConsistency();
 
-    static public native int chechOIB(int card);
+    static public native int checkOIB(int card);
 
     static public native int getLocalInk(int card);
 
     static public native int downLocal(int card);
+
+    static public native int writeOIB(int card);
 
     static public native int readLevel(int card);
 

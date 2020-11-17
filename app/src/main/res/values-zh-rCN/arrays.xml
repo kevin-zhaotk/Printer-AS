@@ -14,16 +14,16 @@
         <item>BIN</item>
         <item>文件</item>
         <item>以太网数据</item>
+        <item>快速网络打印</item>
+        <item>网络心跳</item>
+        <item>扫描1</item>
+        <item>扫描2</item>
         <item>串口协议1</item>
         <item>串口协议2</item>
         <item>串口协议3</item>
         <item>串口协议4</item>
-        <item>扫描1</item>
         <item>串口协议6</item>
-        <item>快速网络打印</item>
         <item>串口协议7</item>
-        <item>网络心跳</item>
-        <item>扫描2</item>
     </string-array>
 <!-- End of H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
 

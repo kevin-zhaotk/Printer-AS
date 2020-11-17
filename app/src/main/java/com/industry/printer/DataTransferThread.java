@@ -314,9 +314,9 @@ public class DataTransferThread {
 				isCleaning = true;
 				DataTask task = new DataTask(context, null);
 				Debug.e(TAG, "--->task: " + task);
-				String purgeFile = "purge/single.bin";
+//				String purgeFile = "purge/single.bin";
 
-				// H.M.Wang 修改下列两行
+/*				// H.M.Wang 修改下列两行
 //				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT) {
 // H.M.Wang 2020-7-23 追加32DN打印头
 //				if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT || head == PrinterNozzle.MESSAGE_TYPE_32_DOT || head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
@@ -330,30 +330,31 @@ public class DataTransferThread {
 					head == PrinterNozzle.MESSAGE_TYPE_64SN ||
 // End of H.M.Wang 2020-8-26 追加64SN打印头
 					head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
-// End of H.M.Wang 2020-7-23 追加32DN打印头
-					purgeFile = "purge/bigdot.bin";
-				}
+// End of H.M.Wang 2020-7-23 追加32DN打印头*/
+				String purgeFile = "purge/bigdot.bin";
+//				}
 				char[] buffer = task.preparePurgeBuffer(purgeFile);
 				
-				for (int i = 0; i < 20; i++) {
+				for (int i = 0; i < 30; i++) {
 					Debug.e(TAG, "--->buffer len: " + buffer.length);
 					
 					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE1);
 					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 					try {
 //						Thread.sleep(3000 * 5);
-						mPurgeLock.tryLock(15, TimeUnit.SECONDS);
-						break;
+						mPurgeLock.tryLock(5, TimeUnit.SECONDS);
+//						break;
 					} catch (InterruptedException e) {
 						// e.printStackTrace();
 						// mPurgeLock.unlock();
 					}
+
 					FpgaGpioOperation.clean();
 					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE2);
 					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 					try {
-						mPurgeLock.tryLock(15, TimeUnit.SECONDS);
-						break;
+						mPurgeLock.tryLock(5, TimeUnit.SECONDS);
+//						break;
 					} catch (InterruptedException e) {
 						// e.printStackTrace();
 					}
@@ -747,6 +748,7 @@ public class DataTransferThread {
 		}
 // End of H.M.Wang 2020-10-30 追加数据源判断，启动扫描处理，因为有两个处理从一个扫码枪途径获取数据
 
+// H.M.Wang 2020-11-4 取消使用标准对话窗，改为自己定义对话窗，这样可以自由设置文字大小
 /*
 		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 		mRemoteRecvedPromptDlg = builder.setTitle(R.string.strRecvedRemote).setMessage("").setPositiveButton(R.string.str_ok, new DialogInterface.OnClickListener() {
@@ -780,6 +782,8 @@ public class DataTransferThread {
 		}).create();
 */
 		mRemoteRecvedPromptDlg = new RemoteMsgPrompt(mContext);
+// End of H.M.Wang 2020-11-4 取消使用标准对话窗，改为自己定义对话窗，这样可以自由设置文字大小
+
 // H.M.Wang 2020-6-3 解决提示对话窗在显示时，扫码枪的信息被其劫持，而无法识别的问题
         mRemoteRecvedPromptDlg.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
@@ -1435,6 +1439,10 @@ public class DataTransferThread {
 					}
 				}
 
+// H.M.Wang 2020-11-13 追加内容是否变化的判断
+//				mNeedUpdate |= mDataTask.get(index()).contentChanged();
+// End of H.M.Wang 2020-11-13 追加内容是否变化的判断
+
 				if(mNeedUpdate == true) {
 // H.M.Wang 2020-6-28 修改打印数据缓冲区更新策略，当网络快速打印的时候不再根据数据更新重新生成打印缓冲区
 					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) != SystemConfigFile.DATA_SOURCE_FAST_LAN) {
@@ -1456,8 +1464,12 @@ public class DataTransferThread {
 //						// H.M.Wang 2019-12-17 每次重新生成print内容后，都保存print.bin
 //						BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads);
 //						// End.
-						try {sleep(30);}catch(Exception e){};
-						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+//						try {sleep(30);}catch(Exception e){};
+// H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
+						if(FpgaGpioOperation.pollState() == 0) {
+							FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+						}
+// End of H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
 // End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
@@ -1470,7 +1482,11 @@ public class DataTransferThread {
 // End of 2020-7-3 追加判断是否有网络快速打印数据更新
 						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
 						Debug.d(TAG, "First print buffer deliver to FPGA. size = " + mPrintBuffer.length);
-						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+// H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
+						if(FpgaGpioOperation.pollState() == 0) {
+							FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+						}
+// End of H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
 // End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
@@ -1489,7 +1505,11 @@ public class DataTransferThread {
 						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
 						Debug.d(TAG, "Counter reset. rebuild print buffer and deliver to FPGA. size = " + mPrintBuffer.length);
 						try {sleep(30);}catch(Exception e){};
-						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+// H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
+						if(FpgaGpioOperation.pollState() == 0) {
+							FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+						}
+// End of H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
 // End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)

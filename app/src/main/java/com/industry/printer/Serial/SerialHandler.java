@@ -108,6 +108,7 @@ public class SerialHandler {
         mPrintCmdListeners = l;
     }
 
+    // cmdStatus = 0: Success; cmdStatus = 1: Failed
     public void sendCommandProcessResult(int cmd, int ack, int devStatus, int cmdStatus, String message) {
         if(!isInitialized()) return;
 

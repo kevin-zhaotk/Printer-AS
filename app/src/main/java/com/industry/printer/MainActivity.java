@@ -37,7 +37,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.KeyEventCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -75,8 +74,6 @@ import com.industry.printer.Utils.ZipUtil;
 import com.industry.printer.hardware.BarcodeScanParser;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
-import com.industry.printer.hardware.SmartCard;
-import com.industry.printer.hardware.SmartCardManager;
 import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
 import com.industry.printer.ui.CustomerDialog.DialogListener;
 import com.industry.printer.ui.CustomerDialog.ImportDialog;
@@ -648,6 +645,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 //		return super.onKeyDown(keyCode, event);
 
+		Debug.d(TAG, "Device: " + event.getDeviceId());
 		BarcodeScanParser.append(keyCode, event.isShiftPressed());
 //		mCode.setText(Global.readCode());
 		if (event.getDeviceId() == 10) return false;

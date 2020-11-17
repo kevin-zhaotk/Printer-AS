@@ -23,7 +23,7 @@ public class RTCDevice {
 	public static native int close(int fd);
 	public static native void syncSystemTimeToRTC(int fd);	//write
 	public static native void syncSystemTimeFromRTC(int fd); //read
-	
+
 	private static final String TAG = RTCDevice.class.getSimpleName();
 	public static final String RTC_DEV = "/dev/rtc1"; 
 

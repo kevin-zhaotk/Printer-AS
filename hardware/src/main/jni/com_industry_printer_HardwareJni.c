@@ -151,6 +151,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 			goto fail;
 		}
     }
+
     /* success -- return valid version number */
     result = JNI_VERSION_1_4;
 

@@ -8,6 +8,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
+import com.industry.printer.hardware.SmartCard;
+
 
 //import android.os.SystemProperties;
 /**
@@ -105,7 +107,8 @@ public class PlatformInfo {
 	 * read system property
 	 * @return
 	 */
-	public static String getInkDevice() {
+// H.M.Wang 2020-11-15 修改InkDevice的确定方法，不适用build.prop获取，而是根据SmartCard的初始化错误信息来判断
+/*	public static String getInkDevice() {
 		// return SystemProperties.get(PROPERTY_PRODUCT);
 		//String product = null;
 		if(!StringUtil.isEmpty(mInkDevice)) {
@@ -121,6 +124,23 @@ public class PlatformInfo {
 		Debug.d(TAG, "===>InkDevice: " + mInkDevice);
 		return mInkDevice;
 	}
+*/
+	public static String getInkDevice() {
+		if(null == mInkDevice) {
+			int ret = SmartCard.exist();
+			if(SmartCard.SC_INIT_HOST_CARD_NOT_PRESENT == ret) {
+				mInkDevice = "";
+			} else {
+				mInkDevice = DEVICE_SMARTCARD;
+			}
+		}
+		return mInkDevice;
+	}
+
+	public static void setInkDevice(String inkDevice) {
+		mInkDevice = inkDevice;
+	}
+// H.M.Wang 2020-11-15 修改InkDevice的确定方法，不适用build.prop获取，而是根据SmartCard的初始化错误信息来判断
 
 	public static boolean isFriendlyProduct() {
 		

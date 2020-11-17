@@ -250,7 +250,7 @@ public class BarcodeScanParser {
 //        }
         } else {
             if(mContext != null) {
-                ToastUtil.show(mContext, R.string.invalid_code);
+//                ToastUtil.show(mContext, R.string.invalid_code);
             }
         }
         mCodes.delete(0, mCodes.length());

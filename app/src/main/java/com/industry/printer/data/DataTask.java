@@ -372,6 +372,18 @@ public class DataTask {
 		return false;
 	}
 
+// H.M.Wang 2020-11-13 追加这个函数，当日，时和分有变化时重新生成打印缓冲区
+    public boolean contentChanged() {
+        boolean changed = false;
+
+        for (BaseObject object : mObjList) {
+            changed |= object.contentChanged();
+        }
+
+        return changed;
+    }
+// End of H.M.Wang 2020-11-13 追加这个函数，当日，时和分有变化时重新生成打印缓冲区
+
 	public void refreshVariables(boolean prev)
 	{
 		float scaleW = 2, scaleH = 1;
@@ -405,7 +417,8 @@ public class DataTask {
 //		}
 
 		PrinterNozzle headType = mTask.getNozzle();
-
+// H.M.Wang 2020-10-29 取消在计算scale的计算，采用Nozzle类里面的计算值
+/*
 		if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
 // H.M.Wang 修改
 //			div = 1;
@@ -457,6 +470,12 @@ public class DataTask {
 			scaleW = 152f/64;
 			scaleH = 152f/64;
 		}
+*/
+		scaleW = 1.0f * headType.getFactorScale() / headType.getScaleW();
+		div = scaleW;
+		scaleH = 1.0f / headType.getScaleW();
+// End of H.M.Wang 2020-10-29 取消在计算scale的计算，采用Nozzle类里面的计算值
+
 		/**if high resolution message, do not divide width by 2 */
 		if (msg.getResolution()) {
 			Debug.d(TAG, "--->High Resolution");
@@ -505,8 +524,8 @@ public class DataTask {
 // H.M.Wang 2020-5-22 串口数据启用DynamicText，取消代用CounterObject
             } else if(o instanceof DynamicText) {
 				Debug.d(TAG, "--->object index=" + o.getIndex());
-
-                Bitmap bmp = ((DynamicText)o).getPrintBitmap((int)(o.getWidth()/scaleW), (int)(o.getHeight()/scaleH), headType.getHeight());
+// H.M.Wang 2020-10-29 修改DynamicText实时生成打印缓冲区，而不是使用Vbin贴图
+                Bitmap bmp = ((DynamicText)o).getPrintBitmap(scaleW, scaleH, headType.getHeight());
                 BinInfo info = new BinInfo(mContext, bmp, mExtendStat);
                 BinInfo.overlap(mPrintBuffer, info.getBgBuffer(), (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
 
@@ -538,6 +557,7 @@ public class DataTask {
 
 				BinInfo.overlap(mPrintBuffer, var, (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
 */
+// End of H.M.Wang 2020-10-29 修改DynamicText实时生成打印缓冲区，而不是使用Vbin贴图
             } else if(o instanceof CounterObject)
 			{
 // 2019-12-17 H.M.Wang 彻底取消原来的事先保存与Object对应的BinInfo的做法，因为修改为通过useSerialContent()来判断是何种打印方式的话，每次都有可能发生变化

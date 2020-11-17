@@ -18,6 +18,8 @@ extern "C" {
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_shutdown(JNIEnv *env, jclass arg);
 
+JNIEXPORT jint JNICALL Java_com_Smartcard_exist(JNIEnv *env, jclass arg);
+
 /*
  * 初始化HP智能卡设备，包括HOST卡，COMPONENT卡以及LEVEL
  */
@@ -58,6 +60,10 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, j
  */
 JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jint card);
 
+/**
+ * 写OIB(本人认为没有这个必要）
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_writeOIB(JNIEnv *env, jclass arg, jint card);
 /**
  * 读取Level值
  */

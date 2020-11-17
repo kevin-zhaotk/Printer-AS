@@ -16,7 +16,8 @@
 	<string name="str_btn_stop">停止</string>
 	<string name="str_btn_clean">清洗</string>
 <!-- H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
-	<string name="str_clean_confirm">点击OK开始清洗</string>
+	<string name="str_purge_confirm">点击OK开始清洗</string>
+	<string name="str_clean_confirm">长清洗将持续大约5分钟，继续吗？</string>
 	<string name="str_under_purging">正在清洗，请稍后再试</string>
 <!-- End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
 	<string name="str_btn_open">打开</string>
@@ -511,7 +512,7 @@
 	<string name="str_information">确认执行?</string>
 	<string name="str_net_device_ink">锁值</string>
 	<string name="str_net_error">网络配置错误</string>
-	<string name="str_setting_clean">清洗</string>
+	<string name="str_setting_clean">长清洗</string>
 	<string name="all_print">打印全部</string>
 	<string name="all_purge">清洗全部</string>
 	<string name="all_stop">全部停止</string>

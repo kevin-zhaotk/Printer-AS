@@ -730,6 +730,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		mRfid += 1;
 
 		int heads = mSysconfig.getPNozzle().mHeads * mSysconfig.getHeadFactor();
+// M.M.Wang 2020-11-16 增加墨盒墨量显示
+		if(mInkManager instanceof SmartCardManager) {
+			heads = 2;
+		}
+// End of M.M.Wang 2020-11-16 增加墨盒墨量显示
 
 		if (mRfid >= RFIDManager.TOTAL_RFID_DEVICES || mRfid >= heads) {
 			mRfid = 0;
@@ -755,7 +760,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if(mInkManager instanceof RFIDManager) {
 			level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");
 		} else {
-			level = String.format("%.1f", ink) + "%";
+			level = (ink >= 100f ? "100%" : (String.format("%.1f", ink) + "%"));
 		}
 
 		if (!mInkManager.isValid(mRfid)) {
@@ -773,9 +778,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
 
 		} else if (ink > 0){
+// H.M.Wang 2020-11-17 这个设置导致多个RFID头墨量显示时，会把开始打印按键错误激活
 			// H.M.Wang RFID恢复正常，打开打印
-			mBtnStart.setClickable(true);
-			mTvStart.setTextColor(Color.BLACK);
+//			mBtnStart.setClickable(true);
+//			mTvStart.setTextColor(Color.BLACK);
+// End of H.M.Wang 2020-11-17 这个设置导致
 
 			//mInkLevel.clearAnimation();
 			mInkLevel.setBackgroundColor(0x436EEE);
@@ -1339,7 +1346,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					switchRfid();
 					break;
 				case RFIDManager.MSG_RFID_INIT:
-					mInkManager.init(mHandler);
+                    mInkManager.init(mHandler);
 // H.M.Wang 2020-5-18 取消初始化时调用墨水量显示更新，否则RFID的时候会显示红底101--字样
 //					refreshInk();
 // End of H.M.Wang 2020-5-18 取消初始化时调用墨水量显示更新，否则RFID的时候会显示红底101--字样
@@ -1347,7 +1354,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				case SmartCardManager.MSG_SMARTCARD_INIT_SUCCESS:
 					Debug.i(TAG, "Smartcard Initialization Success!");
 // H.M.Wang 2020-5-18 取消初始化时调用墨水量显示更新，待Smartcard初始化成功后更新墨水量显示，以满足及时更新Smartcard状态下的墨水量显示
-					refreshInk();
+					if (mRfidInit == false) {
+						switchRfid();
+						refreshCount();
+						mRfidInit = true;
+					}
+//					refreshInk();
 // End of H.M.Wang 2020-5-18 取消初始化时调用墨水量显示更新，待Smartcard初始化成功后更新墨水量显示，以满足及时更新Smartcard状态下的墨水量显示
 					break;
 				case RFIDManager.MSG_RFID_INIT_SUCCESS:
@@ -1654,8 +1666,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			case STATE_PRINTING:
 				mBtnStart.setClickable(false);
 				mTvStart.setTextColor(Color.DKGRAY);
-//				mBtnStop.setClickable(true);
-//				mTvStop.setTextColor(Color.BLACK);
+				mBtnStop.setClickable(true);
+				mTvStop.setTextColor(Color.BLACK);
 				mBtnOpenfile.setClickable(false);
 				mTvOpen.setTextColor(Color.DKGRAY);
 				mTVPrinting.setVisibility(View.VISIBLE);
@@ -1676,8 +1688,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			case STATE_STOPPED:
 				mBtnStart.setClickable(true);
 				mTvStart.setTextColor(Color.BLACK);
-//				mBtnStop.setClickable(false);
-//				mTvStop.setTextColor(Color.DKGRAY);
+				mBtnStop.setClickable(false);
+				mTvStop.setTextColor(Color.DKGRAY);
 				mBtnOpenfile.setClickable(true);
 				mTvOpen.setTextColor(Color.BLACK);
 				mTVPrinting.setVisibility(View.GONE);
@@ -2008,7 +2020,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 // H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗
 				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 				builder.setTitle(R.string.str_btn_clean)
-						.setMessage(R.string.str_clean_confirm)
+						.setMessage(R.string.str_purge_confirm)
 						.setPositiveButton(R.string.str_ok, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {

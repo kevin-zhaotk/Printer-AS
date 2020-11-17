@@ -25,7 +25,7 @@ public class DynamicText extends BaseObject {
         super(ctx, OBJECT_TYPE_DYN_TEXT, x);
         mBits = 5;
         mDtIndex = 0;
-        mContent = "#####";
+        mContent = "";
     }
 
     public DynamicText(Context context, BaseObject parent, float x) {
@@ -42,6 +42,14 @@ public class DynamicText extends BaseObject {
             } else {
                 sb.append('中');
             }
+        }
+        return sb.toString();
+    }
+
+    private String getDefaultContent() {
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<mBits; i++) {
+            sb.append('#');
         }
         return sb.toString();
     }
@@ -64,7 +72,7 @@ public class DynamicText extends BaseObject {
 //        在measureText之前，必须setTypeface和setTextSize，否则可能不准确，由于原来代码当中，在draw函数里面重新测量宽度，这里如果设置宽度，由于如果上述两个设置内容有变，或者设置不全，会带来不良结果。因此这里取消设置，
 //        mPaint.setTextSize(getfeed());
 //        setWidth(mPaint.measureText(getMeatureString()));
-        adjustWidth();
+//        adjustWidth();
     }
 
     public void adjustWidth() {
@@ -77,7 +85,7 @@ public class DynamicText extends BaseObject {
 
     @Override
     public String getContent() {
-        return getValidString(mContent);
+        return (mContent.isEmpty() ? getDefaultContent() : getValidString(mContent));
     }
 
     public void setBits(int n) {
@@ -132,12 +140,18 @@ public class DynamicText extends BaseObject {
         return result;
     }
 
-    public Bitmap getPrintBitmap(int scaledW, int scaledH, int printH) {
-        Debug.d(TAG,"getPrintBitmap scaledW = " + scaledW + ", scaledH = " + scaledH + ", printH = " + printH);
+    public Bitmap getPrintBitmap(float scaledW, float scaledH, int dstHeight) {
+//        Debug.d(TAG,"getPrintBitmap scaledW = " + scaledW + ", scaledH = " + scaledH + ", dstHeight = " + dstHeight);
+//        Debug.d(TAG,"Original width = " + mWidth + ", height = " + mHeight + ", ratio = " + mRatio);
+
         Paint paint = new Paint();
 
+        // 将内部高度调整为打印高度
+        float drawY = getY() / scaledH;
+        float drawHeight = mHeight / scaledH;
+
+        paint.setTextSize(drawHeight);
         paint.setColor(Color.BLACK);
-        paint.setTextSize(scaledH);
         paint.setAntiAlias(true); //去除锯齿
         paint.setFilterBitmap(true); //对位图进行滤波处理
         try {
@@ -146,26 +160,60 @@ public class DynamicText extends BaseObject {
 
         }
 
-//        int width = Math.round(paint.measureText(getContent()));
+        // 将系统标准打印宽度调整为必要宽度，考虑人为的调整宽度(mRatio)和特种头的宽度调整(HP头宽度减半)
+//        float ratio = mRatio * scaledH / scaledW;
+//        int drawWidth = Math.round(paint.measureText(getContent()) * ratio);
 
-        Bitmap bmp = Bitmap.createBitmap(scaledW , printH, Configs.BITMAP_CONFIG);
+        int charWidth = (int)(paint.measureText(getContent()));
+        int drawWidth = (int)(mWidth / scaledW);
+//        Debug.d(TAG,"drawWidth = " + drawWidth + ", charWidth = " + charWidth);
+
+        PrinterNozzle head = mTask.getNozzle();
+
+        if (head == PrinterNozzle.MESSAGE_TYPE_16_DOT ||
+            head == PrinterNozzle.MESSAGE_TYPE_32_DOT ||
+            head == PrinterNozzle.MESSAGE_TYPE_32DN ||
+            head == PrinterNozzle.MESSAGE_TYPE_32SN ||
+            head == PrinterNozzle.MESSAGE_TYPE_64SN ||
+            head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+            paint.setTextScaleX(1.0f);
+        } else {
+            paint.setTextScaleX(1.0f * drawWidth / charWidth);
+        }
+
         Paint.FontMetrics fm = paint.getFontMetrics();
 
-        mCan = new Canvas(bmp);
-        mCan.drawColor(Color.WHITE);
-        mCan.drawText(mContent, 0, scaledH - fm.descent, paint);
+        // 按调整了大小的高度进行正常图片绘制
+        Bitmap drawBmp = Bitmap.createBitmap(drawWidth, dstHeight, Configs.BITMAP_CONFIG);
+        Debug.d(TAG,"Create bitmap at width = " + drawWidth + ", height = " + dstHeight);
+        Canvas drawCanvas = new Canvas(drawBmp);
+        drawCanvas.drawColor(Color.WHITE);
+        drawCanvas.drawText(mContent, 0, drawY + drawHeight - fm.descent, paint);
 
-        Bitmap retBmp = null;
-        if(mRatio != 1.0f) {
-            Debug.d(TAG,"Scaled to width = " + scaledW * mRatio + ", height = " + scaledH);
-            retBmp = Bitmap.createScaledBitmap(bmp, (int)(scaledW * mRatio), printH, false);
-            bmp.recycle();
-        } else {
-            retBmp = bmp;
+/*
+        // 对横向比例手动调整（手动调整大小）和横向缩放比例（如HP头需要缩放到原来的一半）进行调整
+        int resizeWidth = Math.round(drawWidth / scaledW * mRatio);
+        Bitmap resizeBmp = Bitmap.createScaledBitmap(drawBmp, resizeWidth, drawHeight, false);
+
+        if(resizeBmp != drawBmp) {
+            drawBmp.recycle();
         }
-//        BitmapWriter.saveBitmap(bmp, "/mnt/sdcard", "bmp.bmp");
+*/
+/*
+        // 重新会知道目标画布上，主要是为了解决绘制的图片仅占画布高度的一部分，如16点生成的图片要放在32点的画布上
+        Bitmap retBmp = drawBmp;
+        if(drawHeight != dstHeight) {
+            Debug.d(TAG,"Redraw to bitmap of width = " + drawWidth + ", height = " + dstHeight);
+            retBmp = Bitmap.createBitmap(drawWidth, dstHeight, Configs.BITMAP_CONFIG);
+            Canvas retCanvas = new Canvas(retBmp);
+            retCanvas.drawColor(Color.WHITE);
+            retCanvas.drawBitmap(drawBmp, 0, 0, paint);
+            drawBmp.recycle();
+        }
 
         return retBmp;
+*/
+        return drawBmp;
     }
 
     @Override

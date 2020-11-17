@@ -37,15 +37,20 @@ extern "C" {
 #define GPIO_DISABLE            0x01
 
 // H.M.Wang 2020-9-25 为了使用rfidSwitch的方法选通38译码器做的追加
-#define GPIO_RFID_CARD1         0x03
+#define GPIO_RFID_CARD1         0x03        // Print Cartridge. PG5-9(011)，PG9未使用
 #define GPIO_RFID_CARD2         0x04
 #define GPIO_RFID_CARD3         0x05
-#define GPIO_RFID_CARD4         0x06
+#define GPIO_RFID_CARD4         0x06        // Bulk Cartridge. PG5-9(110)，PG9未使用
 #define GPIO_RFID_CARD5         0x07
 #define GPIO_RFID_CARD6         0x08
 #define GPIO_RFID_CARD7         0x09
 #define GPIO_RFID_CARD8         0x0A
-#define GPIO_IDLE               0x0B
+#define GPIO_IDLE               0x0B        // Level. PG5-9(000)，PG9未使用
+
+// 参照原来的定义，是一样的
+//#define SELECT_LEVEL        0x00, 0x00, 0x00
+//#define SELECT_PRNT_CTRG    0x00, 0x01, 0x00
+//#define SELECT_BULK_CTRG    0x01, 0x01, 0x00
 // End of H.M.Wang 2020-9-25 为了使用rfidSwitch的方法选通38译码器做的追加
 
 //-----------------------------------------------------------------------------

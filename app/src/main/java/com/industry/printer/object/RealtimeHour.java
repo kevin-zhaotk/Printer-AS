@@ -34,6 +34,21 @@ public class RealtimeHour extends BaseObject {
 		mParent = parent;
 	}
 
+// H.M.Wang 2020-11-13 追加这个函数，目的是提供一个内容是否变化的模板，当日，时和分有变化时重新生成打印缓冲区
+	@Override
+	public boolean contentChanged() {
+		Time t = new Time();
+
+		t.set(System.currentTimeMillis());
+
+		if(!mContent.equals(BaseObject.intToFormatString(t.hour, 2))) {
+			Debug.d(TAG, "Hour changed.");
+		}
+
+		return !mContent.equals(BaseObject.intToFormatString(t.hour, 2));
+	}
+// End of H.M.Wang 2020-11-13 追加这个函数，目的是提供一个内容是否变化的模板，当日，时和分有变化时重新生成打印缓冲区
+
 	@Override
 	public String getContent()
 	{

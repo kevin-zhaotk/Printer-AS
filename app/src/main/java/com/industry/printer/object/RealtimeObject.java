@@ -12,6 +12,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.text.format.Time;
 
 public class RealtimeObject extends BaseObject {
 
@@ -445,7 +446,20 @@ public class RealtimeObject extends BaseObject {
 		isNeedRedraw = true;
 		meature();
 	}
-	
+
+// H.M.Wang 2020-11-13 追加这个函数，目的是提供一个内容是否变化的模板，当日，时和分有变化时重新生成打印缓冲区
+	@Override
+	public boolean contentChanged() {
+		boolean changed = false;
+
+		for (BaseObject object : mSubObjs) {
+			changed |= object.contentChanged();
+		}
+
+		return changed;
+	}
+// End of H.M.Wang 2020-11-13 追加这个函数，目的是提供一个内容是否变化的模板，当日，时和分有变化时重新生成打印缓冲区
+
 	@Override
 	public String getContent() {
 		mContent = "";
