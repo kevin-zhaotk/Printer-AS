@@ -18,7 +18,7 @@ public class SerialProtocol7 extends SerialProtocol {
 
     private final byte TAG_ETX = 0x7F;
 
-    /* 与串口协议2一致，仅校验位为奇偶校验
+    /* 与串口协议1一致，仅校验位为奇偶校验
         发送方帧格式：
                 -------------------------------------------------------------
                 [STX] 				帧起始标志0x7e	1字节	    固定位置
@@ -168,38 +168,46 @@ public class SerialProtocol7 extends SerialProtocol {
 
         ByteArrayBuffer sendBuffer = new ByteArrayBuffer(0);
 
-        // 添加地址
-        sendBuffer.append(0x00);
-        sendBuffer.append(0x00);
+// H.M.Wang 2020-11-16 成功时返回H06，失败时返回H03
+        if(cmdStatus == 0) {    // Success
+            sendBuffer.append(0x06);
+        } else if(cmdStatus == 2){
+            // 添加地址
+            sendBuffer.append(0x00);
+            sendBuffer.append(0x00);
 
-        // 添加命令
-        sendBuffer.append(0x000000ff & cmd);
-        sendBuffer.append(0x000000ff & (cmd >> 8));
+            // 添加命令
+            sendBuffer.append(0x000000ff & cmd);
+            sendBuffer.append(0x000000ff & (cmd >> 8));
 
-        // 添加ACK/NAK
-        sendBuffer.append(ack);
+            // 添加ACK/NAK
+            sendBuffer.append(ack);
 
-        // 添加设备状态
-        sendBuffer.append(devStatus);
+            // 添加设备状态
+            sendBuffer.append(devStatus);
 
-        // 添加命令状态
-        sendBuffer.append(cmdStatus);
+            // 添加命令状态
+            sendBuffer.append(cmdStatus);
 
-        // 添加回送字串
-        sendBuffer.append(msg, 0, msg.length);
+            // 添加回送字串
+            sendBuffer.append(msg, 0, msg.length);
 
-        msg = replaceTransformBytes(sendBuffer.toByteArray(), false);
+            msg = replaceTransformBytes(sendBuffer.toByteArray(), false);
 
 //        Debug.d(TAG, "[" + ByteArrayUtils.toHexString(msg) + "]");
 
-        sendBuffer.clear();
+            sendBuffer.clear();
 
-        sendBuffer.append(TAG_STX);
-        sendBuffer.append(msg, 0, msg.length);
-        sendBuffer.append(getXorOf(msg));
-        sendBuffer.append(0);
-        sendBuffer.append(TAG_ETX);
+            sendBuffer.append(TAG_STX);
+            sendBuffer.append(msg, 0, msg.length);
+            sendBuffer.append(getXorOf(msg));
+            sendBuffer.append(0);
+            sendBuffer.append(TAG_ETX);
+        } else {
+            sendBuffer.append(0x03);
+        }
 
+// End of H.M.Wang 2020-11-16 成功时返回H06，失败时返回H03
         Debug.d(TAG, "Created Response: [" + ByteArrayUtils.toHexString(sendBuffer.toByteArray()) + "]");
         return sendBuffer.toByteArray();
     }
@@ -318,16 +326,7 @@ public class SerialProtocol7 extends SerialProtocol {
 
     @Override
     public void sendCommandProcessResult(int cmd, int ack, int devStatus, int cmdStatus, String message) {
-// H.M.Wang 2020-11-16 成功时返回H06，失败时返回H03
-//        byte[] retMsg = createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
-        byte[] retMsg = null;
-
-        if(cmdStatus == 0) {    // Success
-            retMsg = "H06".getBytes();
-        } else {
-            retMsg = "H03".getBytes();
-        }
-// H.M.Wang 2020-11-16 成功时返回H06，失败时返回H03
+        byte[] retMsg = createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
         super.sendCommandProcessResult(retMsg);
     }
 }

@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.industry.printer.BuildConfig;
+import com.industry.printer.ControlTabActivity;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
@@ -18,13 +19,13 @@ public class SmartCardManager implements IInkDevice {
     private static final String TAG = SmartCardManager.class.getSimpleName();
 
     public static boolean SMARTCARD_ACCESS = true;
-    public static boolean CONSISTENCY_CHECK = true;
-    public static boolean OIB_CHECK = true;
+    public static boolean CONSISTENCY_CHECK = false;
+    public static boolean OIB_CHECK = false;
     public static boolean SUM_CHECK = false;
 
-    private final static int MAX_INK_VOLUME             = 4000;
+    private final static int MAX_BAG_INK_VOLUME         = 4000;
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
-    private final static int MAX_BOX_INK_VOLUME         = 300;
+    private final static int MAX_PEN_INK_VOLUME         = 300;
     private final static int DATA_SEPERATER             = 100000;      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 // End of M.M.Wang 2020-11-16 增加墨盒墨量显示
 
@@ -42,9 +43,9 @@ public class SmartCardManager implements IInkDevice {
     private Context mContext;
     private Handler mCallback;
     private boolean mValid;
-    private int     mInkLevel;
+    private int     mBagInkLevel;
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
-    private int     mBoxInkLevel;
+    private int     mPenInkLevel;
 // End of M.M.Wang 2020-11-16 增加墨盒墨量显示
 
     private boolean mBlockAdding = false;
@@ -134,7 +135,7 @@ public class SmartCardManager implements IInkDevice {
         mContext = context;
         mValid = true;
         mInitialied = false;
-        mInkLevel = -1;
+        mBagInkLevel = -1;
         mCallback = null;
 
         mReadLevels = new int[READ_LEVEL_TIMES];
@@ -375,7 +376,7 @@ public class SmartCardManager implements IInkDevice {
 
         if(avgLevel < 13500000) {
             if(!mBlockAdding) {
-                if(mInkAddedTimes >= 3) {
+                if(mInkAddedTimes >= 10) {
                     mAddInkFailed = true;
                     new Thread() {
                         @Override
@@ -392,12 +393,15 @@ public class SmartCardManager implements IInkDevice {
                         }
                     }.start();
 // H.M.Wang 2020-11-13 当墨量<5%时，如果3次加墨失败则写OIB，本人认为这个操作不太好
-                    if(getLocalInkPercentage(0) < 0x05f) {
+                    if(getLocalInkPercentage(0) < 0.05f) {
                         synchronized (this) {
                             SmartCard.writeOIB(WORK_BULK_CARTRIDGE);
                         }
                     }
 // End of H.M.Wang 2020-11-13 当墨量<5%时，如果3次加墨失败则写OIB，本人认为这个操作不太好
+// H.M.Wang 2020-11-24 追加加墨10次失败后停止打印
+                    if(null != mCallback) mCallback.sendEmptyMessage(ControlTabActivity.MESSAGE_PRINT_STOP);
+// End of H.M.Wang 2020-11-24 追加加墨10次失败后停止打印
                 } else {
                     addInkOn();
 
@@ -462,28 +466,28 @@ public class SmartCardManager implements IInkDevice {
     public float getLocalInk(int head) {
         Debug.d(TAG, "---> enter getLocalInk()");
 
-        if(mInkLevel == -1) {
+        if(mBagInkLevel == -1) {
             if(mInitialied && mValid) {
                 if(!SMARTCARD_ACCESS) {
-                    mInkLevel = MAX_INK_VOLUME / 2;           // 如果跳过Smartcard访问标识开启，则返回一个恰当值
+                    mBagInkLevel = MAX_BAG_INK_VOLUME / 2;           // 如果跳过Smartcard访问标识开启，则返回一个恰当值
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
-                    mBoxInkLevel = MAX_BOX_INK_VOLUME / 2;
+                    mPenInkLevel = MAX_PEN_INK_VOLUME / 2;
 // End of M.M.Wang 2020-11-16 增加墨盒墨量显示
                 } else {
                     synchronized (this) {
-                        mInkLevel = SmartCard.getLocalInk(WORK_BULK_CARTRIDGE);
+                        mBagInkLevel = SmartCard.getLocalInk(WORK_BULK_CARTRIDGE);
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
-                        mBoxInkLevel = MAX_BOX_INK_VOLUME - mInkLevel / DATA_SEPERATER;
-                        mInkLevel = MAX_INK_VOLUME - mInkLevel % DATA_SEPERATER;
+                        mPenInkLevel = MAX_PEN_INK_VOLUME - mBagInkLevel / DATA_SEPERATER;
+                        mBagInkLevel = MAX_BAG_INK_VOLUME - mBagInkLevel % DATA_SEPERATER;
 // End of M.M.Wang 2020-11-16 增加墨盒墨量显示
                     }
                 }
             }
         }
 
-        Debug.d(TAG, "---> Ink Level = " + mInkLevel);
+        Debug.d(TAG, "---> Ink Level = " + mBagInkLevel);
         mHandler.sendEmptyMessage(MSG_SHOW_LOCAL_INK);
-        return (mInkLevel == -1 ? 1.0f * MAX_INK_VOLUME : 1.0f * mInkLevel);
+        return (mBagInkLevel == -1 ? 1.0f * MAX_BAG_INK_VOLUME : 1.0f * mBagInkLevel);
     }
 
     @Override
@@ -491,9 +495,11 @@ public class SmartCardManager implements IInkDevice {
         Debug.d(TAG, "---> enter getLocalInkPercentage()");
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
         if(head == 0) {
-            return (100.0f * mInkLevel / MAX_INK_VOLUME);
+            Debug.d(TAG, "---> Bag % : " + 100.0f * mBagInkLevel / MAX_BAG_INK_VOLUME);
+            return (100.0f * mBagInkLevel / MAX_BAG_INK_VOLUME);
         } else {
-            return (100.0f * mBoxInkLevel / MAX_BOX_INK_VOLUME);
+            Debug.d(TAG, "---> Pen % : " + 100.0f * mPenInkLevel / MAX_PEN_INK_VOLUME);
+            return (100.0f * mPenInkLevel / MAX_PEN_INK_VOLUME);
         }
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
     }
@@ -522,7 +528,7 @@ public class SmartCardManager implements IInkDevice {
     public void downLocal(int dev) {
         Debug.d(TAG, "---> enter downLocal()");
 
-        mInkLevel--;
+        mBagInkLevel--;
 
         if(!SMARTCARD_ACCESS) return;
 
@@ -532,10 +538,10 @@ public class SmartCardManager implements IInkDevice {
 //                public void run() {
                     synchronized (this) {
                         SmartCard.downLocal(WORK_BULK_CARTRIDGE);
-                        mInkLevel = SmartCard.getLocalInk(WORK_BULK_CARTRIDGE);
+                        mBagInkLevel = SmartCard.getLocalInk(WORK_BULK_CARTRIDGE);
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
-                        mBoxInkLevel = MAX_BOX_INK_VOLUME - mInkLevel / DATA_SEPERATER;
-                        mInkLevel = MAX_INK_VOLUME - mInkLevel % DATA_SEPERATER;
+                        mPenInkLevel = MAX_PEN_INK_VOLUME - mBagInkLevel / DATA_SEPERATER;
+                        mBagInkLevel = MAX_BAG_INK_VOLUME - mBagInkLevel % DATA_SEPERATER;
 // End of M.M.Wang 2020-11-16 增加墨盒墨量显示
                     }
                     checkOIB(WORK_BULK_CARTRIDGE);

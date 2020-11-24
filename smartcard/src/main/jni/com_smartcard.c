@@ -40,12 +40,13 @@ extern "C"
 #define SC_CONSISTENCY_FAILED                   300
 #define SC_CHECKSUM_FAILED                      400
 
-#define MAX_INK_VOLUME                          4000
-#define INK_VOLUME_PER_CENTAGE                  (MAX_INK_VOLUME / 100)
+#define MAX_BAG_INK_VOLUME                      4000
+#define MAX_PEN_INK_VOLUME                      300
+#define INK_VOLUME_PER_CENTAGE                  (MAX_BAG_INK_VOLUME / 100)
 
 #define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.342"
+#define VERSION_CODE                            "1.0.343"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -74,6 +75,8 @@ HP_SMART_CARD_result_t (*supplyILGReadFunc[4])(HP_SMART_CARD_device_id_t cardId,
         supplyReadTag9ILGBit51To75,
         supplyReadTag9ILGBit76To100
 };
+
+static void adjustLocalInkValue(jint card);
 
 static char* toBinaryString(char* dst, uint32_t src) {
     uint32_t mask = 0x01000000;
@@ -200,6 +203,13 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
     } else {
         return SC_BULK_CTRG_ACCESS_FAILED;
     }
+
+    adjustLocalInkValue(HP_SMART_CARD_DEVICE_ID_0);
+    adjustLocalInkValue(HP_SMART_CARD_DEVICE_ID_1);
+
+// 初始化的时候将墨盒和墨袋的计数器清零（为了测试）
+//    inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, 0);
+//    supplyWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, 0);
 
     SC_GPIO_ADAPTER_select_38_xlater(SELECT_LEVEL);
 
@@ -445,12 +455,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_checkOIB(JNIEnv *env, jclass arg, jint
     return out_of_ink;
 }
 
-JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, jint card) {
-// 该判断另外逻辑处理，本函数如实返回读数
-//    if(Java_com_Smartcard_checkOIB(env, arg, card) == 1) {
-//        return 0;
-//    }
-
+static void adjustLocalInkValue(jint card) {
     HP_SMART_CARD_result_t ret = HP_SMART_CARD_ERROR;
     uint32_t ilg = 100;
 
@@ -504,11 +509,30 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, j
     } else if(HP_BULK_CARTRIDGE == card) {
         supplyWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, value);
     }
+}
 
-//    LOGD(">>> Ink Level = %d", MAX_INK_VOLUME - value);
+JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, jint card) {
+// 该判断另外逻辑处理，本函数如实返回读数
+//    if(Java_com_Smartcard_checkOIB(env, arg, card) == 1) {
+//        return 0;
+//    }
+
+    HP_SMART_CARD_result_t ret = HP_SMART_CARD_ERROR;
+
+    uint32_t x = MAX_BAG_INK_VOLUME;
+    if(HP_PRINT_CARTRIDGE == card) {
+        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, &x);
+    } else if(HP_BULK_CARTRIDGE == card) {
+        ret = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, &x);
+    }
+
+    uint32_t y = MAX_PEN_INK_VOLUME;
+    ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, &y);
+
+    uint32_t value = (y / DATA_SEPERATER) * DATA_SEPERATER + x % DATA_SEPERATER;
+
     LOGD(">>> Ink Level = %d", value);
 
-//    return MAX_INK_VOLUME - value;
     return value;
 }
 
@@ -591,7 +615,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
         y++;
         x = (y * DATA_SEPERATER) + (x % DATA_SEPERATER);
 
-        inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, y);
+        inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, x);
         writeILG(HP_SMART_CARD_DEVICE_ID_0, (y/3 - 1));
         if(100 <= y/3) {
             LOGD(">>> Print Cartridge OIB");

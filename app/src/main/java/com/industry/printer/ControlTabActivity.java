@@ -760,7 +760,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if(mInkManager instanceof RFIDManager) {
 			level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");
 		} else {
-			level = (ink >= 100f ? "100%" : (String.format("%.1f", ink) + "%"));
+			level = (mRfid == 0 ? "B" : "P") + "-" + (ink >= 100f ? "100%" : (String.format("%.1f", ink) + "%"));
 		}
 
 		if (!mInkManager.isValid(mRfid)) {
@@ -3316,9 +3316,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 // H.M.Wang 2020-8-13 追加串口7协议
 			if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_7) {
 				final SerialHandler serialHandler = SerialHandler.getInstance();
-				serialHandler.sendCommandProcessResult(0, 1, 0, mCounter, "");
+// H.M.Wang 2020-11-18 cmdStatus=2,表示打印完成，msg里面放mCounter
+				serialHandler.sendCommandProcessResult(0, 1, 0, 2, String.valueOf(mCounter));
+// End of H.M.Wang 2020-11-18 cmdStatus=2,表示打印完成，msg里面放mCounter
 			}
-
 // End of H.M.Wang 2020-8-13 追加串口7协议
 		}
 
