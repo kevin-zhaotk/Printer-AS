@@ -335,14 +335,14 @@ public class DataTransferThread {
 //				}
 				char[] buffer = task.preparePurgeBuffer(purgeFile);
 				
-				for (int i = 0; i < 30; i++) {
+				for (int i = 0; i < 15; i++) {
 					Debug.e(TAG, "--->buffer len: " + buffer.length);
 					
 					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE1);
 					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 					try {
 //						Thread.sleep(3000 * 5);
-						mPurgeLock.tryLock(5, TimeUnit.SECONDS);
+						mPurgeLock.tryLock(10, TimeUnit.SECONDS);
 //						break;
 					} catch (InterruptedException e) {
 						// e.printStackTrace();
@@ -353,7 +353,7 @@ public class DataTransferThread {
 					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE2);
 					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 					try {
-						mPurgeLock.tryLock(5, TimeUnit.SECONDS);
+						mPurgeLock.tryLock(10, TimeUnit.SECONDS);
 //						break;
 					} catch (InterruptedException e) {
 						// e.printStackTrace();

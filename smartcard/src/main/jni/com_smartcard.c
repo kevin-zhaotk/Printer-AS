@@ -40,13 +40,13 @@ extern "C"
 #define SC_CONSISTENCY_FAILED                   300
 #define SC_CHECKSUM_FAILED                      400
 
-#define MAX_BAG_INK_VOLUME                      4000
+#define MAX_BAG_INK_VOLUME                      3600
 #define MAX_PEN_INK_VOLUME                      300
 #define INK_VOLUME_PER_CENTAGE                  (MAX_BAG_INK_VOLUME / 100)
 
 #define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.343"
+#define VERSION_CODE                            "1.0.344"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,

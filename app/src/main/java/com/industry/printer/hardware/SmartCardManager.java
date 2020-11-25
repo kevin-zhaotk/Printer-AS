@@ -23,7 +23,7 @@ public class SmartCardManager implements IInkDevice {
     public static boolean OIB_CHECK = false;
     public static boolean SUM_CHECK = false;
 
-    private final static int MAX_BAG_INK_VOLUME         = 4000;
+    private final static int MAX_BAG_INK_VOLUME         = 3600;
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
     private final static int MAX_PEN_INK_VOLUME         = 300;
     private final static int DATA_SEPERATER             = 100000;      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
