@@ -776,8 +776,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			mTvStart.setTextColor(Color.DKGRAY);
 
 			mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
-
-		} else if (ink > 0){
+// H.M.Wang 2020-11-27 追加当墨量小于5%的时候，黄底字报警
+		} else if (ink >= 5.0f){
+// End of H.M.Wang 2020-11-27 追加当墨量小于5%的时候，黄底字报警
 // H.M.Wang 2020-11-17 这个设置导致多个RFID头墨量显示时，会把开始打印按键错误激活
 			// H.M.Wang RFID恢复正常，打开打印
 //			mBtnStart.setClickable(true);
@@ -786,6 +787,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 			//mInkLevel.clearAnimation();
 			mInkLevel.setBackgroundColor(0x436EEE);
+			mInkLevel.setText(level);
+		} else if (ink > 0.0f){
+			mInkLevel.setBackgroundColor(Color.YELLOW);
 			mInkLevel.setText(level);
 		} else {
 			mInkLevel.setBackgroundColor(Color.RED);
@@ -796,18 +800,20 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			}
 			
 		}
+
 		// Debug.e(TAG, "--->ink = " + ink + ", " + (ink <= 1.0f) + ", " + (ink > 0f));
 		// Debug.e(TAG, "--->ink = " + ink + ", " + (ink <= 0f));
-		if (ink <= 1.0f && ink > 0f && mInkLow == false) {
+// H.M.Wang 2020-11-27 追加当墨量小于5%的时候，黄底字报警
+		if (ink < 5.0f && ink > 0f && mInkLow == false) {
+// End of H.M.Wang 2020-11-27 追加当墨量小于5%的时候，黄底字报警
 			mInkLow = true;
-			mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_LOW, 5000);
+			mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_LOW, 200);
 		} else if (ink <= 0f && mInkZero == false) {
 			mInkZero = true;
 			mHandler.removeMessages(MESSAGE_RFID_LOW);
 			if (!Configs.READING) {
-				mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_ZERO, 2000);
+				mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_ZERO, 200);
 			}
-			
 		} else {
 			mFlagAlarming = false;
 		}
@@ -1418,7 +1424,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					break;
 				case MESSAGE_RFID_LOW:
 					Debug.e(TAG, "--->low: play error");
+// H.M.Wang 2020-11-27 追加当墨量小于5%的时候，出声报警
 					mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
+// End of H.M.Wang 2020-11-27 追加当墨量小于5%的时候，出声报警
 					mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_LOW, 5000);
 					break;
 				case MESSAGE_RFID_ZERO:

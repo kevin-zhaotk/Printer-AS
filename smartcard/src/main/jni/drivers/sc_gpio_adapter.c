@@ -98,7 +98,10 @@ uint8_t SC_GPIO_ADAPTER_select_38_xlater(int pg5, int pg8, int pg9) {
 
 // H.M.Wang 2020-9-27 通过切换RFID的方式实现38译码器的功能
     if(pg5 == 0x00 && pg8 == 0x01 && pg9 == 0x00) {     // Print Cartridge
-        return SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD1);
+// H.M.Wang 2020-11-27 修改38译码器出口，新的墨盒插槽已经将墨盒和墨位的38译码器出口调整为相同的一个了
+        return SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD1);     // 墨位和墨盒走38译码器的不同出口
+//        return SP_GPIO_DRIVER_select_card(GPIO_IDLE);     // 墨位和墨盒走38译码器的相同出口
+// End of H.M.Wang 2020-11-27 修改38译码器出口，新的墨盒插槽已经将墨盒和墨位的38译码器出口调整为相同的一个了
     } else if(pg5 == 0x01 && pg8 == 0x01 && pg9 == 0x00) {  // Bulk Cartridge
         return SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD4);
     } else if(pg5 == 0x00 && pg8 == 0x00 && pg9 == 0x00) {  // Level

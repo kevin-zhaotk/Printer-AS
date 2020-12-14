@@ -1442,7 +1442,7 @@ public class DataTransferThread {
 				}
 
 // H.M.Wang 2020-11-13 追加内容是否变化的判断
-//				mNeedUpdate |= mDataTask.get(index()).contentChanged();
+				mNeedUpdate |= mDataTask.get(index()).contentChanged();
 // End of H.M.Wang 2020-11-13 追加内容是否变化的判断
 
 				if(mNeedUpdate == true) {

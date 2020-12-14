@@ -23,7 +23,7 @@ public class SmartCardManager implements IInkDevice {
     public static boolean OIB_CHECK = false;
     public static boolean SUM_CHECK = false;
 
-    private final static int MAX_BAG_INK_VOLUME         = 3600;
+    private final static int MAX_BAG_INK_VOLUME         = 3150;
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
     private final static int MAX_PEN_INK_VOLUME         = 300;
     private final static int DATA_SEPERATER             = 100000;      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
@@ -75,7 +75,7 @@ public class SmartCardManager implements IInkDevice {
             switch (msg.what) {
                 case MSG_SHOW_CONSISTENCY:
                     if (null != mRecvedLevelPromptDlg) {
-                        mRecvedLevelPromptDlg.setTitle("Legality");
+                        mRecvedLevelPromptDlg.setTitle("Legality" + " - " + MAX_BAG_INK_VOLUME);
                         mRecvedLevelPromptDlg.setMessage((String) msg.obj);
                         mRecvedLevelPromptDlg.show();
                         mRecvedLevelPromptDlg.show();
@@ -393,7 +393,8 @@ public class SmartCardManager implements IInkDevice {
                         }
                     }.start();
 // H.M.Wang 2020-11-13 当墨量<5%时，如果3次加墨失败则写OIB，本人认为这个操作不太好
-                    if(getLocalInkPercentage(0) < 0.05f) {
+// H.M.Wang 2020-11-27 修改<5%的数值BUG，getLocalInkPercentage函数返回的是0-100的值，不是0-1的值
+                    if(getLocalInkPercentage(0) < 5.0f) {
                         synchronized (this) {
                             SmartCard.writeOIB(WORK_BULK_CARTRIDGE);
                         }
@@ -495,10 +496,10 @@ public class SmartCardManager implements IInkDevice {
         Debug.d(TAG, "---> enter getLocalInkPercentage()");
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
         if(head == 0) {
-            Debug.d(TAG, "---> Bag % : " + 100.0f * mBagInkLevel / MAX_BAG_INK_VOLUME);
+//            Debug.d(TAG, "---> Bag % : " + 100.0f * mBagInkLevel / MAX_BAG_INK_VOLUME);
             return (100.0f * mBagInkLevel / MAX_BAG_INK_VOLUME);
         } else {
-            Debug.d(TAG, "---> Pen % : " + 100.0f * mPenInkLevel / MAX_PEN_INK_VOLUME);
+//            Debug.d(TAG, "---> Pen % : " + 100.0f * mPenInkLevel / MAX_PEN_INK_VOLUME);
             return (100.0f * mPenInkLevel / MAX_PEN_INK_VOLUME);
         }
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
