@@ -12,6 +12,10 @@ extern char *supplyFamilyGetFiledName(uint8_t id);
 
 // static char *(*FIELD_NAME[HP_SMART_CARD_DEVICE_NUM_DEVICES])(uint8_t id) = {tag0GetFiledName, tag0GetFiledName};
 
+// H.M.Wang 2020-12-16 定义移到.c里面做，如果在.h里面做的话，可能会出现重复定义
+char *(*FIELD_NAME[HP_SMART_CARD_DEVICE_NUM_DEVICES])(uint8_t id);
+// End of H.M.Wang 2020-12-16 定义移到.c里面做，如果在.h里面做的话，可能会出现重复定义
+
 HP_SMART_CARD_result_t readByte(HP_SMART_CARD_device_id_t cardId, uint8_t fieldId, uint8_t *data) {
     HP_SMART_CARD_result_t result = LIB_HP_SMART_CARD_read_field(cardId, fieldId, sizeof(*data), data);
     if (HP_SMART_CARD_OK == result) {
