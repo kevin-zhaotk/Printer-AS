@@ -765,7 +765,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		}
 		mProgressDialog = LoadingDialog.show(this, R.string.strCopying);
 		
-		FileUtil.deleteFolder(Configs.QR_LAST);
+// H.M.Wang 2020-12-17 取消该文件的访问		FileUtil.deleteFolder(Configs.QR_LAST);
 		Observable.just(Configs.SYSTEM_CONFIG_MSG_PATH, Configs.PICTURE_SUB_PATH, Configs.QR_DIR, Configs.FONT_DIR)
 				.flatMap(new Func1<String, Observable<Map<String, String>>>() {
 

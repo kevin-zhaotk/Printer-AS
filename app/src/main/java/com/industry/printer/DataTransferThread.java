@@ -1173,12 +1173,14 @@ public class DataTransferThread {
 //	}
 
 // H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整
-	private void setCounterNext() {
+	private void setCounterNext(DataTask task) {
 		Debug.d(TAG, "--->setCounterNext");
-		if (mDataTask == null) {
-			return;
-		}
-		for (DataTask task : mDataTask) {
+// H.M.Wang 2020-12-17 以前没有参数，遍历打印群组，会出现打印一个任务，所有相关计数器都被更新的问题，追加参数，仅对当前任务进行修改
+//		if (mDataTask == null) {
+//			return;
+//		}
+//		for (DataTask task : mDataTask) {
+// End of H.M.Wang 2020-12-17 以前没有参数，遍历打印群组，会出现打印一个任务，所有相关计数器都被更新的问题，追加参数，仅对当前任务进行修改
 			for (BaseObject object : task.getObjList()) {
 				if (object instanceof CounterObject) {
 					((CounterObject) object).goNext();
@@ -1190,7 +1192,7 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-7-31 追加超文本及条码当中超文本的计数器打印后调整
 				}
 			}
-		}
+//		}
 	}
 // End of H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整
 
@@ -1351,6 +1353,7 @@ public class DataTransferThread {
 			boolean isFirst = true;
 			while(mRunning == true) {
 				long startMillis = System.currentTimeMillis();
+                Debug.d(TAG, "--->FPGA pollState");
 				int writable = FpgaGpioOperation.pollState();
 
 //				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
@@ -1384,7 +1387,9 @@ public class DataTransferThread {
 					mNeedUpdate = false;
 
 // H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整，取消从前在生成打印缓冲区时调整
-					setCounterNext();
+// H.M.Wang 2020-12-17 以前没有参数，遍历打印群组，会出现打印一个任务，所有相关计数器都被更新的问题，追加参数，仅对当前任务进行修改
+					setCounterNext(mDataTask.get(index()));
+// End of H.M.Wang 2020-12-17 以前没有参数，遍历打印群组，会出现打印一个任务，所有相关计数器都被更新的问题，追加参数，仅对当前任务进行修改
 // End of H.M.Wang 2020-7-2 调整计数器增量策略
 
 					synchronized (DataTransferThread.class) {
@@ -1405,7 +1410,7 @@ public class DataTransferThread {
 						} else {
 // H.M.Wang 2020-5-19 QR文件打印最后一行后无反应问题。应该先生成打印缓冲区，而不是先判断是否到了终点。顺序不对
 							Debug.i(TAG, "mIndex: " + index());
-							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
+// 临时注释掉							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
 							if (!mDataTask.get(index()).isReady) {
 								if (mCallback != null) {
 									mCallback.OnFinished(CODE_BARFILE_END);

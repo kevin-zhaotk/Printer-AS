@@ -777,7 +777,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 			mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
 // H.M.Wang 2020-11-27 追加当墨量小于5%的时候，黄底字报警
-		} else if (ink >= 5.0f){
+// H.M.Wang 2020-12-21 Smartcard时为5%，RFID时为1%
+//		} else if (ink >= 5.0f){
+		} else if (mInkManager instanceof SmartCardManager && ink >= 5.0f ||
+					mInkManager instanceof RFIDManager && ink >= 1.0f){
+// End of H.M.Wang 2020-12-21 Smartcard时为5%，RFID时为1%
 // End of H.M.Wang 2020-11-27 追加当墨量小于5%的时候，黄底字报警
 // H.M.Wang 2020-11-17 这个设置导致多个RFID头墨量显示时，会把开始打印按键错误激活
 			// H.M.Wang RFID恢复正常，打开打印
@@ -804,7 +808,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		// Debug.e(TAG, "--->ink = " + ink + ", " + (ink <= 1.0f) + ", " + (ink > 0f));
 		// Debug.e(TAG, "--->ink = " + ink + ", " + (ink <= 0f));
 // H.M.Wang 2020-11-27 追加当墨量小于5%的时候，黄底字报警
-		if (ink < 5.0f && ink > 0f && mInkLow == false) {
+// H.M.Wang 2020-12-21 Smartcard时为5%，RFID时为1%
+//		if (ink < 5.0f && ink > 0f && mInkLow == false) {
+		if((mInkManager instanceof SmartCardManager && ink < 5.0f ||
+			mInkManager instanceof RFIDManager && ink < 1.0f) &&
+			ink > 0f && mInkLow == false) {
+// End of H.M.Wang 2020-12-21 Smartcard时为5%，RFID时为1%
 // End of H.M.Wang 2020-11-27 追加当墨量小于5%的时候，黄底字报警
 			mInkLow = true;
 			mHandler.sendEmptyMessageDelayed(MESSAGE_RFID_LOW, 200);
@@ -1516,7 +1525,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if (mDTransThread == null) {
 			return true;
 		}
-		QRReader reader = QRReader.getInstance(mContext);
+// H.M.Wang 2020-12-18 reInstance重新生成QRReader，以使得对QR文件的修改生效
+//		QRReader reader = QRReader.getInstance(mContext);
+		QRReader reader = QRReader.reInstance(mContext);
+// H.M.Wang 2020-12-18 reInstance重新生成QRReader，以使得对QR文件的修改生效
 		boolean qrReady = reader.isReady();
 		Debug.d(TAG, "--->checkQRfile = " + qrReady);
 		DataTask task = mDTransThread.getCurData();

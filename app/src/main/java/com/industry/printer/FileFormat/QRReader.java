@@ -13,6 +13,7 @@ import java.util.List;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.hardware.RTCDevice;
 
 import android.content.Context;
@@ -73,7 +74,7 @@ public class QRReader {
 //		mRoot = paths.get(0);
 // H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存
 //		File last = new File(Configs.QR_LAST);
-		mRow = RTCDevice.getInstance(mContext).readQRLast();
+// H.M.Wang 2020-12-17 mRow移到后面		mRow = RTCDevice.getInstance(mContext).readQRLast();
 // End of H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存
 
 		try {
@@ -96,15 +97,35 @@ public class QRReader {
 //			}
 // End of H.M.Wang 2020-5-15 QRLast移植RTC的0x38地址保存
 
-			String path = null;
+// H.M.Wang 2020-12-17 文件的使用逻辑改为，如果发现了QR.txt或者QR.csv，则认为是新文件，改名为QR_R.csv，并且索引重置为0。运行时使用QR_R.csv
+//			String path = null;
+//			if (new File(Configs.QR_CSV).exists()) {
+//				path =  Configs.QR_CSV;
+//			} else if (new File(Configs.QR_DATA).exists()) {
+//				path = Configs.QR_DATA;
+//			}
+//			if (path == null) {
+//				return;
+//			}
+
+			String path = Configs.QR_R_CSV;
+
 			if (new File(Configs.QR_CSV).exists()) {
-				path =  Configs.QR_CSV;
-			} else if (new File(Configs.QR_DATA).exists()) {
-				path = Configs.QR_DATA;
+				FileUtil.copyFile(Configs.QR_CSV, path);
+				FileUtil.deleteFolder(Configs.QR_CSV);
+				RTCDevice.getInstance(mContext).writeQRLast(0);
 			}
-			if (path == null) {
-				return;
+
+			if (new File(Configs.QR_DATA).exists()) {
+				FileUtil.copyFile(Configs.QR_DATA, path);
+				FileUtil.deleteFolder(Configs.QR_DATA);
+				RTCDevice.getInstance(mContext).writeQRLast(0);
 			}
+
+			// mRow取得从前面移到这里
+			mRow = RTCDevice.getInstance(mContext).readQRLast();
+// End of H.M.Wang 2020-12-17 文件的使用逻辑改为，如果发现了QR.txt或者QR.csv，则认为是新文件，改名为QR_R.csv，并且索引重置为0。运行时使用QR_R.csv
+
 			FileReader r = new FileReader(path);
 			mReader = new BufferedReader(r);
 			for (int i = 0; i < mRow; i++) {

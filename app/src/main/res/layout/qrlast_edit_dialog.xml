@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
         android:lines="1"
-        android:text="@string/strEncoderPPREditTitle"
+        android:text="@string/strQRLastEditTitle"
         android:gravity="center"
         android:textSize="30sp" />
 

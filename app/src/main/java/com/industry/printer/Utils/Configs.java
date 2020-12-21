@@ -178,9 +178,19 @@ public class Configs {
 	/**
 	 * 
 	 */
+// H.M.Wang 2020-12-17 修改QR文件的参照方式。原来是直接参照QR.txt或者QR.csv。现在改为该两个文件仅为新文件的传递使用，工作时，使用QR_R.csv
 	public static final String QR_DATA = CONFIG_PATH_FLASH + SYSTEM_CONFIG_DIR + "/QRdata/QR.txt";
 	public static final String QR_CSV = CONFIG_PATH_FLASH + SYSTEM_CONFIG_DIR + "/QRdata/QR.csv";
-	public static final String QR_LAST = CONFIG_PATH_FLASH + SYSTEM_CONFIG_DIR + "/QRdata/QRlast.txt";
+	public static final String QR_R_CSV = CONFIG_PATH_FLASH + SYSTEM_CONFIG_DIR + "/QRdata/QR_R.csv";
+// End of H.M.Wang 2020-12-17 修改QR文件的参照方式
+// H.M.Wang 2020-12-17 独立追加包号批号对应表文件
+	public static final String PP_DATA = CONFIG_PATH_FLASH + SYSTEM_CONFIG_DIR + "/PP.txt";
+// End of H.M.Wang 2020-12-17 独立追加包号批号对应表文件
+
+// H.M.Wang 2020-12-17 以前修改将QR的Index从保存于QRlast文件改为了保存到RTC当中，这个变量实际上没有用途了，现在取消该变量
+//	public static final String QR_LAST = CONFIG_PATH_FLASH + SYSTEM_CONFIG_DIR + "/QRdata/QRlast.txt";
+// End of H.M.Wang 2020-12-17 以前修改将QR的Index从保存于QRlast文件改为了保存到RTC当中，这个变量实际上没有用途了，现在取消该变量
+
 	public static final String QR_DIR = "/QRdata";
 	
 	public static final String SYSTEM_CONFIG_MSG_PATH = "/MSG1";

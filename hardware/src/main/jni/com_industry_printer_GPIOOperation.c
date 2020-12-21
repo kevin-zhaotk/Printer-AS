@@ -72,14 +72,16 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_poll
 
        if (fd <= 0)
                return -1;
-
+/*
        FD_ZERO(&fds);
        FD_SET(fd, &fds);
        maxfd = fd+1;
        timeout.tv_sec = 0;
        timeout.tv_usec = 100;
        ret = select(maxfd, NULL, &fds, NULL, &timeout);
-
+*/
+	char buf = 0x00;
+	ret = read(fd, &buf, 1);
        return ret;
 }
 

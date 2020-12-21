@@ -52,7 +52,9 @@ public class PackageListReader {
 
     private void init() {
         try {
-            FileReader r = new FileReader(Configs.QR_DATA);
+// H.M.Wang 2020-12-17 包号批号对应表这个原来使用的是QR_DATA这个文件，与QR共用文件，这样容易混淆，现在分开，使用PP_DATA
+            FileReader r = new FileReader(Configs.PP_DATA);
+// End of H.M.Wang 2020-12-17 包号批号对应表这个原来使用的是QR_DATA这个文件，与QR共用文件，这样容易混淆，现在分开，使用PP_DATA
             BufferedReader bufferedReader = new BufferedReader(r);
             mPackageList = new HashMap<String, String>();
 
