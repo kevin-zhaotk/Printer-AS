@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/select.h>
@@ -24,6 +25,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_open
 {
 	int ret=-1;
 	ALOGD("===>open gpio\n");
+
 	char *dev_utf = (*env)->GetStringUTFChars(env, dev, JNI_FALSE);
 	if(dev_utf == NULL)
 	{
@@ -62,6 +64,24 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_ioctl
 	return ret;
 }
 
+pthread_t monitor_thread_id = 0;
+static volatile int keepRunning = 0;
+static volatile int state = 0;
+void* monitor_thread(void* argv) {
+
+    ALOGD("enter monitor_thread");
+    keepRunning = 1;
+
+    int a = *((int *)argv);
+    while(keepRunning) {
+        char buf = 0x00;
+        state = read(*((int *)argv), &buf, 1);
+        usleep(1000);
+    }
+
+    ALOGD("exit monitor_thread");
+}
+
 JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_poll
        (JNIEnv *env, jclass arg, jint fd)
 {
@@ -80,9 +100,18 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_poll
        timeout.tv_usec = 100;
        ret = select(maxfd, NULL, &fds, NULL, &timeout);
 */
+/*
+    if(0 == monitor_thread_id) {
+        if(pthread_create(&monitor_thread_id, NULL, monitor_thread, &fd) != 0){
+            printf("Create command excution thread error [%d]%s.\n", errno, strerror(errno));
+            monitor_thread_id = 0;
+        }
+    }
+*/
 	char buf = 0x00;
 	ret = read(fd, &buf, 1);
        return ret;
+//    return state;
 }
 
 JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_read
@@ -99,6 +128,11 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_read
 JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_close
 	(JNIEnv *env, jclass arg, jint fd)
 {
+    if(0 != monitor_thread_id) {
+        keepRunning = 0;
+        pthread_join(monitor_thread_id, NULL);
+    }
+
 	int ret=-1;
 	ret = close(fd);
 	if(ret < 0) {

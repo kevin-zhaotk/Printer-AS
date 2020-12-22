@@ -1352,8 +1352,6 @@ public class DataTransferThread {
 
 			boolean isFirst = true;
 			while(mRunning == true) {
-				long startMillis = System.currentTimeMillis();
-                Debug.d(TAG, "--->FPGA pollState");
 				int writable = FpgaGpioOperation.pollState();
 
 //				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
@@ -1410,7 +1408,7 @@ public class DataTransferThread {
 						} else {
 // H.M.Wang 2020-5-19 QR文件打印最后一行后无反应问题。应该先生成打印缓冲区，而不是先判断是否到了终点。顺序不对
 							Debug.i(TAG, "mIndex: " + index());
-// 临时注释掉							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
+							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
 							if (!mDataTask.get(index()).isReady) {
 								if (mCallback != null) {
 									mCallback.OnFinished(CODE_BARFILE_END);
@@ -1535,7 +1533,7 @@ public class DataTransferThread {
 //				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
 
 				try {
-					Thread.sleep(10);
+					Thread.sleep(3);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

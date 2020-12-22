@@ -72,7 +72,7 @@ public class FpgaGpioOperation {
 	 * @return
 	 */
 	static public native int ioctl(int fd, int cmd, long arg);
-	
+
 	/**
 	 * 查询GPIO是否可写
 	 * @param fd	设备句柄
@@ -155,7 +155,7 @@ public class FpgaGpioOperation {
 		// close(fd);
 		return wlen;
 	}
-	
+
 	/**
 	 * pollState 轮训内核buffer状态
 	 * 由于该函数会调用native的poll函数，native的poll函数会一直阻塞直到内核kernel Buffer状态为空，
@@ -172,7 +172,7 @@ public class FpgaGpioOperation {
 		ret = poll(fd);
 		return ret;
 	}
-	
+
 	/**
 	 * clean 下发清空数据命令到FPGA	
 	 */
