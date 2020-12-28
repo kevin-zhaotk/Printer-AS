@@ -17,6 +17,7 @@
 #define JNI_TAG "serial_jni"
 
 #define ALOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,JNI_TAG,__VA_ARGS__)
+#define ALOGI(...)  __android_log_print(ANDROID_LOG_INFO,JNI_TAG,__VA_ARGS__)
 
 static jboolean isSmfyProduct(JNIEnv *env) {
 	jboolean isSmfy;
@@ -49,6 +50,8 @@ static JNINativeMethod gGPIOMethods[] = {
 	{"write",		"(I[CI)I",					(void *)Java_com_industry_printer_GPIO_write},
 	{"read",		"(I)I",						(void *)Java_com_industry_printer_GPIO_read},
 	{"ioctl",		"(IIJ)I",					(void *)Java_com_industry_printer_GPIO_ioctl},
+	{"start_mon",	"(I)I",						(void *)Java_com_industry_printer_GPIO_start_monitor},
+	{"stop_mon",	"(I)I",						(void *)Java_com_industry_printer_GPIO_stop_monitor},
 	{"poll",		"(I)I",						(void *)Java_com_industry_printer_GPIO_poll},
 	{"close",		"(I)I",						(void *)Java_com_industry_printer_GPIO_close},
 };
@@ -128,6 +131,8 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     JNIEnv* env = NULL;
     jint result = -1;
+
+	ALOGI("Hardware_jni.so 1.0.3 Loaded.");
 
     if ((*vm)->GetEnv(vm, (void**) &env, JNI_VERSION_1_4) != JNI_OK) {
         //__android_log_print(ANDROID_LOG_INFO, JNI_TAG,"ERROR: GetEnv failed\n");

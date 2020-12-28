@@ -1163,7 +1163,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //					data[0] = (char) (0x0001 << testdata);
 //					data[1] = (char) (0x0001 << testdata);
 //					testdata++;
-					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT,data, data.length*2);
+					FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT,data, data.length*2);
 					mHandler.sendEmptyMessageDelayed(MESSAGE_PAOMADENG_TEST, 1000);
 					break;
 				case MESSAGE_PRINT_CHECK_UID:
@@ -2762,7 +2762,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //												while(mDTransThread.mNeedUpdate) {
 //													Thread.sleep(10);
 //												}
-												FpgaGpioOperation.init();
+												FpgaGpioOperation.init(mContext);
 // H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
 //												mDTransThread.resendBufferToFPGA();
 // End of H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
@@ -2792,7 +2792,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //											while(mDTransThread.mNeedUpdate) {
 //												Thread.sleep(10);
 //											}
-											FpgaGpioOperation.init();
+											FpgaGpioOperation.init(mContext);
 // H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
 //												mDTransThread.resendBufferToFPGA();
 // End of H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作

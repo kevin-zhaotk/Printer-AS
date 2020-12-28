@@ -11,11 +11,11 @@
 #include <errno.h>
 #include <string.h>
 #include <jni.h>
-//#include <utils/Log.h>
 #include "com_industry_printer_HardwareJni.h"
 
 #define JNI_TAG "GPIO_operation"
 #define ALOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,JNI_TAG,__VA_ARGS__)
+#define ALOGE(...)  __android_log_print(ANDROID_LOG_ERROR,JNI_TAG,__VA_ARGS__)
 
 /**
  * Fpga Gpio operation APIs
@@ -64,54 +64,93 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_ioctl
 	return ret;
 }
 
-pthread_t monitor_thread_id = 0;
-static volatile int keepRunning = 0;
-static volatile int state = 0;
-void* monitor_thread(void* argv) {
+static int sFd;
+static int keepRunning = 0;
+static int driverReady = 0;
 
-    ALOGD("enter monitor_thread");
+void timer_proc(int signo) {
+    if(SIGALRM == signo) {
+        if(sFd > 0) {
+            char buf = 0x00;
+            if(read(sFd, &buf, 1) > 0 && keepRunning) {
+//                ALOGD("driver ready");
+                driverReady = 1;
+            }
+        }
+    }
+}
+
+JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_start_monitor(JNIEnv *env, jclass arg, jint fd) {
+    ALOGD("enter monitor. 6");
+
+    sFd = fd;
+
     keepRunning = 1;
 
-    int a = *((int *)argv);
-    while(keepRunning) {
-        char buf = 0x00;
-        state = read(*((int *)argv), &buf, 1);
-        usleep(1000);
+    jmethodID method = (*env)->GetStaticMethodID(env, arg, "onReady", "()V");
+    if(NULL == method) {
+        ALOGE("Failed to get JAVA receiver function id!");
+        return -1;
     }
 
-    ALOGD("exit monitor_thread");
+    struct itimerval value, ovalue;
+
+    signal(SIGALRM, timer_proc);
+
+    value.it_value.tv_sec = 0;
+    value.it_value.tv_usec = 1000;
+    value.it_interval.tv_sec = 0;
+    value.it_interval.tv_usec = 1000;
+    setitimer(ITIMER_REAL, &value, &ovalue);
+
+    while(keepRunning) {
+        if(driverReady) {
+            (*env)->CallVoidMethod(env, arg, method);
+            driverReady = 0;
+        }
+        usleep(1000);
+    };
+
+    ALOGD("quit monitor");
+    return 0;
+}
+
+JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_stop_monitor(JNIEnv *env, jclass arg, jint fd) {
+    struct itimerval value,ovalue,value2;
+
+    value.it_value.tv_sec = 0;
+    value.it_value.tv_usec = 0;
+    value.it_interval.tv_sec = 0;
+    value.it_interval.tv_usec = 0;
+    setitimer(ITIMER_REAL, &value, &ovalue);
+
+    keepRunning = 0;
+
+    return 0;
 }
 
 JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_poll
        (JNIEnv *env, jclass arg, jint fd)
 {
-       int ret=0;
-       int maxfd=0;
-       struct timeval timeout;
-       fd_set fds;
+    int ret=0;
+    int maxfd=0;
+    struct timeval timeout;
+    fd_set fds;
 
-       if (fd <= 0)
-               return -1;
-/*
-       FD_ZERO(&fds);
-       FD_SET(fd, &fds);
-       maxfd = fd+1;
-       timeout.tv_sec = 0;
-       timeout.tv_usec = 100;
-       ret = select(maxfd, NULL, &fds, NULL, &timeout);
+    if (fd <= 0)
+           return -1;
+
+    FD_ZERO(&fds);
+    FD_SET(fd, &fds);
+    maxfd = fd+1;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 100;
+    ret = select(maxfd, NULL, &fds, NULL, &timeout);
+    return ret;
+
+/*    char buf = 0x00;
+    return read(fd, &buf, 1);
 */
-/*
-    if(0 == monitor_thread_id) {
-        if(pthread_create(&monitor_thread_id, NULL, monitor_thread, &fd) != 0){
-            printf("Create command excution thread error [%d]%s.\n", errno, strerror(errno));
-            monitor_thread_id = 0;
-        }
-    }
-*/
-	char buf = 0x00;
-	ret = read(fd, &buf, 1);
-       return ret;
-//    return state;
 }
 
 JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_read
@@ -128,11 +167,6 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_read
 JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_close
 	(JNIEnv *env, jclass arg, jint fd)
 {
-    if(0 != monitor_thread_id) {
-        keepRunning = 0;
-        pthread_join(monitor_thread_id, NULL);
-    }
-
 	int ret=-1;
 	ret = close(fd);
 	if(ret < 0) {

@@ -11,195 +11,224 @@ import com.industry.printer.data.DataTask;
 
 /**
  * @author kevin
- * 用于操作Fpga Gpio的类
+ *         用于操作Fpga Gpio的类
  */
 public class FpgaGpioOperation {
-	
-	
-	/**
-	 * IOCMD
-	 */
-	public static final int FPGA_CMD_SETTING	= 0x01;
-	public static final int FPGA_CMD_SENDDATA	= 0x02;
-	public static final int FPGA_CMD_SYNCDATA	= 0x03;
-	public static final int FPGA_CMD_STARTPRINT	= 0x04;
-	public static final int FPGA_CMD_STOPPRINT	= 0x05;
-	public static final int FPGA_CMD_CLEAN		= 0x06;
-	
-	/**
-	 * 0x00 输出数据状态
-	 * 0x01 设置状态
-	 * 0x02 保留
-	 * 0x03 清空状态
-	 */
-	public static final int FPGA_STATE_OUTPUT	= 0x00;
-	public static final int FPGA_STATE_SETTING	= 0x01;
-	public static final int FPGA_STATE_RESERVED	= 0x02;
-	public static final int FPGA_STATE_CLEAN	= 0x03;
-	public static final int FPGA_STATE_PURGE	= 0x05;
 
-	
-	public static final String FPGA_DRIVER_FILE = "/dev/fpga-gpio";
-	public static int mFd=0;
-	/**
-	 * GPIO JNI APIs 
-	 **/
-	/**
-	 * 打开GPIO设备文件
-	 * @param dev  GPIO驱动设备文件
-	 * @return
-	 */
-	static public native int open(String dev);
-	
-	/**
-	 * 向GPIO写入数据
-	 * @param fd	设备句柄
-	 * @param buffer	要写到GPIO的数据buffer
-	 * @param count	写入数据长度，单位 sizeof（char）
-	 * @return
-	 */
-	static public native int write(int fd, char[] buffer, int count);
-	
-	/**
-	 * 讀取FPGA數據
-	 * @param fd
-	 * @return
-	 */
-	static public native int read(int fd);
-	/**
-	 * 向GPIO写入数据
-	 * @param fd	设备句柄
-	 * @return
-	 */
-	static public native int ioctl(int fd, int cmd, long arg);
 
-	/**
-	 * 查询GPIO是否可写
-	 * @param fd	设备句柄
-	 * @return
-	 */
-	static public native int poll(int fd);
-	
-	/**
-	 * 关闭GPIO驱动设备文件
-	 * @param fd	设备句柄
-	 * @return
-	 */
-	static public native int close(int fd);
-	
-	
-	//TAG
-	public final static String TAG = FpgaGpioOperation.class.getSimpleName();
-	
-	
-	public static volatile FpgaGpioOperation mInstance;
-	
-	public static FpgaGpioOperation getInstance() {
-		if (mInstance == null) {
-			synchronized (FpgaGpioOperation.class) {
-				if (mInstance == null) {
-					mInstance = new FpgaGpioOperation();
-				}
-			}
-		}
-		return mInstance;
-	}
-	
-	public FpgaGpioOperation() {
-		
-	}
-	
-	public static int open() {
-		if(mFd <= 0) {
-			mFd = open(FPGA_DRIVER_FILE);
-		}
-		return mFd;
-	}
-	
-	public static void close() {
-		if(mFd > 0) {
-			close(mFd);
-		}
-	}
-	
-	public int read() {
-		open();
-		return read(mFd);
-	}
-	/**
-	 * writeData 下发打印数据接口
-	 * 每次在启动打印的时候设置为输出，在打印过程中不允许修改PG0 PG1状态
-	 * @param type 数据类型，设置or打印数据
-	 * @param data
-	 * @param len
-	 * @return
-	 */
-	public static synchronized int writeData(int type, char data[], int len) {
-		
-		int fd = open();
-		if(fd <= 0) {
-			return -1;
-		}
-		if (type < FPGA_STATE_OUTPUT || type > FPGA_STATE_PURGE) {
-			Debug.d(TAG, "===>wrong data type");
-			return -1;
-		}
-		ioctl(fd, FPGA_CMD_SETTING, type);
-		Debug.d(TAG, "FPGA_CMD_SETTING -> TYPE = " + type);
-		Debug.d(TAG, "--->writeData len=" + len);
-		int wlen = write(fd, data, len);
-		if(wlen != len) {
-			//close(fd);
-			return -1;
-		}
-		// close(fd);
-		return wlen;
-	}
+    /**
+     * IOCMD
+     */
+    public static final int FPGA_CMD_SETTING = 0x01;
+    public static final int FPGA_CMD_SENDDATA = 0x02;
+    public static final int FPGA_CMD_SYNCDATA = 0x03;
+    public static final int FPGA_CMD_STARTPRINT = 0x04;
+    public static final int FPGA_CMD_STOPPRINT = 0x05;
+    public static final int FPGA_CMD_CLEAN = 0x06;
+// H.M.Wang 2020-12-25 追加两个命令
+    public static final int FPGA_CMD_DATAGENRE = 0x07;
+    public static final int FPGA_CMD_BUCKETSIZE = 0x08;
 
-	/**
-	 * pollState 轮训内核buffer状态
-	 * 由于该函数会调用native的poll函数，native的poll函数会一直阻塞直到内核kernel Buffer状态为空，
-	 * 所以不能在UI线程内调用该函数，请在单独的Thread中调用，防止ANR
-	 * @return
-	 */
-	public static int pollState() {
-		int ret=-1;
-		int fd = open();
-		if(fd <= 0) {
-			return -1;
-		}
-		
-		ret = poll(fd);
-		return ret;
-	}
+    public static final int DATA_GENRE_UPDATE   = 0;
+    public static final int DATA_GENRE_NEW      = 1;
+    public static final int DATA_GENRE_IGNORE   = 0;
+// End of H.M.Wang 2020-12-25 追加两个命令
 
-	/**
-	 * clean 下发清空数据命令到FPGA	
-	 */
-	public static void clean() {
-		int fd = open();
-		if(fd <= 0) {
-			Debug.d(TAG, "===>open fpga file error");
-			return;
-		}
-		ioctl(fd, FPGA_CMD_CLEAN, 0);
-		Debug.d(TAG, "FPGA_CMD_CLEAN");
-		// close(fd);
-	}
-	
-	public static final int SETTING_TYPE_NORMAL = 1;
-	public static final int SETTING_TYPE_PURGE1 = 2;
-	public static final int SETTING_TYPE_PURGE2 = 3;
-	
-	/**
-	 * updateSettings 下发系统设置
-	 * 如果要下发设置数据，必须先停止打印
-	 * FPGA驅動接收32個參數，其中前24個參數是下發給FPGA設備的，後8個給驅動備用
-	 * 參數24： 表示列高（經過補償後的字節數），用於加重處理
-	 * @param context
-	 */
-	
-	public static void updateSettings(Context context, DataTask task, int type ) {
+    /**
+     * 0x00 输出数据状态
+     * 0x01 设置状态
+     * 0x02 保留
+     * 0x03 清空状态
+     */
+    public static final int FPGA_STATE_OUTPUT = 0x00;
+    public static final int FPGA_STATE_SETTING = 0x01;
+    public static final int FPGA_STATE_RESERVED = 0x02;
+    public static final int FPGA_STATE_CLEAN = 0x03;
+    public static final int FPGA_STATE_PURGE = 0x05;
+
+    public static final String FPGA_DRIVER_FILE = "/dev/fpga-gpio";
+    public static int mFd = 0;
+    /**
+     * GPIO JNI APIs
+     **/
+    /**
+     * 打开GPIO设备文件
+     *
+     * @param dev GPIO驱动设备文件
+     * @return
+     */
+    static public native int open(String dev);
+
+    /**
+     * 向GPIO写入数据
+     *
+     * @param fd     设备句柄
+     * @param buffer 要写到GPIO的数据buffer
+     * @param count  写入数据长度，单位 sizeof（char）
+     * @return
+     */
+    static public native int write(int fd, char[] buffer, int count);
+
+    /**
+     * 讀取FPGA數據
+     *
+     * @param fd
+     * @return
+     */
+    static public native int read(int fd);
+
+    /**
+     * 向GPIO写入数据
+     *
+     * @param fd 设备句柄
+     * @return
+     */
+    static public native int ioctl(int fd, int cmd, long arg);
+
+    static public native int start_mon(int fd);
+
+    static public native int stop_mon(int fd);
+
+    /**
+     * 查询GPIO是否可写
+     *
+     * @param fd 设备句柄
+     * @return
+     */
+    static public native int poll(int fd);
+
+    /**
+     * 关闭GPIO驱动设备文件
+     *
+     * @param fd 设备句柄
+     * @return
+     */
+    static public native int close(int fd);
+
+
+    //TAG
+    public final static String TAG = FpgaGpioOperation.class.getSimpleName();
+
+
+    public static volatile FpgaGpioOperation mInstance;
+
+    public static FpgaGpioOperation getInstance() {
+        if (mInstance == null) {
+            synchronized (FpgaGpioOperation.class) {
+                if (mInstance == null) {
+                    mInstance = new FpgaGpioOperation();
+                }
+            }
+        }
+        return mInstance;
+    }
+
+    public FpgaGpioOperation() {
+
+    }
+
+    public static int open() {
+        if (mFd <= 0) {
+            mFd = open(FPGA_DRIVER_FILE);
+        }
+        return mFd;
+    }
+
+    public static void close() {
+        if (mFd > 0) {
+            close(mFd);
+        }
+    }
+
+    public int read() {
+        open();
+        return read(mFd);
+    }
+
+    /**
+     * writeData 下发打印数据接口
+     * 每次在启动打印的时候设置为输出，在打印过程中不允许修改PG0 PG1状态
+     *
+     * @param type 数据类型，设置or打印数据
+     * @param data
+     * @param len
+     * @return
+     */
+// H.M.Wang 2020-12-25 追加两个命令
+//    public static synchronized int writeData(int type, char data[], int len) {
+    public static synchronized int writeData(int dataGenre, int type, char data[], int len) {
+// End of H.M.Wang 2020-12-25 追加两个命令
+
+        int fd = open();
+        if (fd <= 0) {
+            return -1;
+        }
+        if (type < FPGA_STATE_OUTPUT || type > FPGA_STATE_PURGE) {
+            Debug.d(TAG, "===>wrong data type");
+            return -1;
+        }
+// H.M.Wang 2020-12-25 追加两个命令
+        ioctl(fd, FPGA_CMD_DATAGENRE, dataGenre);   // 0:update; 1:new data
+        Debug.d(TAG, "FPGA_CMD_DATAGENRE -> GENRE = " + dataGenre);
+// End of H.M.Wang 2020-12-25 追加两个命令
+        ioctl(fd, FPGA_CMD_SETTING, type);
+        Debug.d(TAG, "FPGA_CMD_SETTING -> TYPE = " + type);
+        Debug.d(TAG, "--->writeData len=" + len);
+        int wlen = write(fd, data, len);
+        if (wlen != len) {
+            //close(fd);
+            return -1;
+        }
+        // close(fd);
+        return wlen;
+    }
+
+    /**
+     * pollState 轮训内核buffer状态
+     * 由于该函数会调用native的poll函数，native的poll函数会一直阻塞直到内核kernel Buffer状态为空，
+     * 所以不能在UI线程内调用该函数，请在单独的Thread中调用，防止ANR
+     *
+     * @return
+     */
+    public static int pollState() {
+        int ret = -1;
+        int fd = open();
+        if (fd <= 0) {
+            return -1;
+        }
+
+        ret = poll(fd);
+        return ret;
+    }
+
+    /**
+     * clean 下发清空数据命令到FPGA
+     */
+    public static void clean() {
+        int fd = open();
+        if (fd <= 0) {
+            Debug.d(TAG, "===>open fpga file error");
+            return;
+        }
+        ioctl(fd, FPGA_CMD_CLEAN, 0);
+        Debug.d(TAG, "FPGA_CMD_CLEAN");
+        // close(fd);
+    }
+
+    public static final int SETTING_TYPE_NORMAL = 1;
+    public static final int SETTING_TYPE_PURGE1 = 2;
+    public static final int SETTING_TYPE_PURGE2 = 3;
+
+    /**
+     * updateSettings 下发系统设置
+     * 如果要下发设置数据，必须先停止打印
+     * FPGA驅動接收32個參數，其中前24個參數是下發給FPGA設備的，後8個給驅動備用
+     * 參數24： 表示列高（經過補償後的字節數），用於加重處理
+     *
+     * @param context
+     */
+
+    public static void updateSettings(Context context, DataTask task, int type) {
 
 /*
 		if (DataTransferThread.getInstance().isRunning()) {
@@ -207,46 +236,46 @@ public class FpgaGpioOperation {
 			return;
 		}
 */
-		int fd = open();
-		if(fd <= 0) {
-			return;
-		}
-		char data[] = new char[Configs.gParams];
-		SystemConfigFile config = SystemConfigFile.getInstance(context);
+        int fd = open();
+        if (fd <= 0) {
+            return;
+        }
+        char data[] = new char[Configs.gParams];
+        SystemConfigFile config = SystemConfigFile.getInstance(context);
 //		config.paramTrans();
- //		RFIDManager manager = RFIDManager.getInstance(context);
+        //		RFIDManager manager = RFIDManager.getInstance(context);
 //		RFIDDevice device = manager.getDevice(0);
 
-		IInkDevice device = InkManagerFactory.inkManager(context);
-		Paramter paramter = Paramter.getInstance();
-		int feature4 = 0;
-		int feature5 = 0;
-		if (device != null) {
-			feature4 = device.getFeature(0, 4);
-			feature5 = device.getFeature(0, 5);
-		}
-		paramter.paramTrans(config.mParam, feature4, feature5, config.getPNozzle().mHeads);
-		for (int i = 0; i < 24; i++) {
-			data[i] = (char) paramter.getFPGAParam(i);
- 		}
-		// S10 lower 4 bits represent print-header type
-		int index = (char) config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
-		data[9] = (char) PrinterNozzle.getInstance(index).mType;
-		
-		if (type != SETTING_TYPE_NORMAL) {
-			data[1] = 4;
-			data[3] = 100 * 4;
-			data[4] = 1000;
-			data[5] = 100 * 4;
-			data[15] = 1;
-		}
-		if (type == SETTING_TYPE_PURGE1) {
-			data[4] = (char)(data[4] * 2);
-			data[17] = (char) (data[17] | 0x010);
-		} else if (type == SETTING_TYPE_PURGE2) {
-			data[4] = (char)(data[4] * 2);
-			data[17] = (char) (data[17] & 0xffef);
-		}
+        IInkDevice device = InkManagerFactory.inkManager(context);
+        Paramter paramter = Paramter.getInstance();
+        int feature4 = 0;
+        int feature5 = 0;
+        if (device != null) {
+            feature4 = device.getFeature(0, 4);
+            feature5 = device.getFeature(0, 5);
+        }
+        paramter.paramTrans(config.mParam, feature4, feature5, config.getPNozzle().mHeads);
+        for (int i = 0; i < 24; i++) {
+            data[i] = (char) paramter.getFPGAParam(i);
+        }
+        // S10 lower 4 bits represent print-header type
+        int index = (char) config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
+        data[9] = (char) PrinterNozzle.getInstance(index).mType;
+
+        if (type != SETTING_TYPE_NORMAL) {
+            data[1] = 4;
+            data[3] = 100 * 4;
+            data[4] = 1000;
+            data[5] = 100 * 4;
+            data[15] = 1;
+        }
+        if (type == SETTING_TYPE_PURGE1) {
+            data[4] = (char) (data[4] * 2);
+            data[17] = (char) (data[17] | 0x010);
+        } else if (type == SETTING_TYPE_PURGE2) {
+            data[4] = (char) (data[4] * 2);
+            data[17] = (char) (data[17] & 0xffef);
+        }
 		/* else {
 			data[1] = (char) SystemConfigFile.mParam2;
 			data[3] = (char) SystemConfigFile.mParam4;
@@ -276,38 +305,38 @@ public class FpgaGpioOperation {
 		data[23] = (char) SystemConfigFile.mResv24;
 		*/
 
-		if (task != null) {
-			BinInfo info = task.getInfo();
-			data[24] = (char) info.getBytesFeed();
-		}
+        if (task != null) {
+            BinInfo info = task.getInfo();
+            data[24] = (char) info.getBytesFeed();
+        }
 // H.M.Wang 2020-5-7 12.7R5头的时候，设置头的数，强制设置打印头类型为12.7->3x25.4->12.7
-		// S17
+        // S17
 // H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
 // H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 //		if(config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
-		if(config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
-			config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
+        if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 //		final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
 //		PrinterNozzle head = PrinterNozzle.getInstance(headIndex);
 //		if(head == PrinterNozzle.MESSAGE_TYPE_12_7_R5) {
 // End of H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
-			data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_12_7;
-			data[16] &= 0xfc7f;		// Bit9-7
-			data[16] |= 0x0280;		// 6个头
-			data[24] *= 6;
-		}
+            data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_12_7;
+            data[16] &= 0xfc7f;        // Bit9-7
+            data[16] |= 0x0280;        // 6个头
+            data[24] *= 6;
+        }
 // End of H.M.Wang 2020-5-7 12.7R5头的时候，设置头的数
 
-		//是否雙列打印
-		data[25] = (char)config.getParam(31-1);
-		//雙列偏移量
-		data[26] = (char) config.getParam(32-1);
+        //是否雙列打印
+        data[25] = (char) config.getParam(31 - 1);
+        //雙列偏移量
+        data[26] = (char) config.getParam(32 - 1);
 
-		for (int i = 0; i < data.length; i++) {
-			Debug.e(TAG, "--->mFPGAParam[" + i + "]=" + (int)data[i]);
-		}
-		//时间参数放在最后3个
+        for (int i = 0; i < data.length; i++) {
+            Debug.e(TAG, "--->mFPGAParam[" + i + "]=" + (int) data[i]);
+        }
+        //时间参数放在最后3个
 		/*
 		Calendar c = Calendar.getInstance();
 		int hour = c.get(Calendar.HOUR_OF_DAY);  
@@ -317,33 +346,69 @@ public class FpgaGpioOperation {
 		data[Configs.gParams - 2] = (char)minute;
 		data[Configs.gParams - 1] = (char)second;
 		*/
-		writeData(FPGA_STATE_SETTING, data, data.length*2);
-	}
-	
-	/**
-	 * 启动打印时调用，用于初始化内核轮训线程
-	 */
-	public static void init() {
-		int fd = open();
-		if(fd <= 0) {
-			return ;
-		}
+        writeData(DATA_GENRE_IGNORE, FPGA_STATE_SETTING, data, data.length * 2);
+    }
+
+    /**
+     * 启动打印时调用，用于初始化内核轮训线程
+     */
+    public static void init(Context context) {
+        int fd = open();
+        if (fd <= 0) {
+            return;
+        }
 		/*设置状态为输出*/
-		// ioctl(fd, FPGA_CMD_SETTING, FPGA_STATE_OUTPUT);
+        // ioctl(fd, FPGA_CMD_SETTING, FPGA_STATE_OUTPUT);
 		/*启动内核轮训线程*/
-		ioctl(fd, FPGA_CMD_STARTPRINT, 0);
-		Debug.d(TAG, "FPGA_CMD_STARTPRINT");
-	}
-	
-	/**
-	 * 停止打印时调用，用于停止内核轮训线程
-	 */
-	public static void uninit() {
-		int fd = open();
-		if(fd <= 0) {
-			return ;
-		}
-		ioctl(fd, FPGA_CMD_STOPPRINT, 0);
-		Debug.d(TAG, "FPGA_CMD_STOPPRINT");
-	}
+        SystemConfigFile config = SystemConfigFile.getInstance(context);
+        ioctl(fd, FPGA_CMD_BUCKETSIZE, config.getParam(SystemConfigFile.INDEX_FIFO_SIZE));
+        Debug.d(TAG, "FPGA_CMD_BUCKETSIZE -> 10");
+        ioctl(fd, FPGA_CMD_STARTPRINT, 0);
+        Debug.d(TAG, "FPGA_CMD_STARTPRINT");
+    }
+
+    /**
+     * 停止打印时调用，用于停止内核轮训线程
+     */
+    public static void uninit() {
+        int fd = open();
+        if (fd <= 0) {
+            return;
+        }
+
+//        mListener = null;
+//        stop_mon(fd);
+        ioctl(fd, FPGA_CMD_STOPPRINT, 0);
+        Debug.d(TAG, "FPGA_CMD_STOPPRINT");
+    }
+/*
+    public static void stop_monitor() {
+        Debug.d(TAG, "stop_monitor");
+        mListener = null;
+        stop_mon(0);
+    }
+
+    public static void start_monitor(FpgaStateListenner l) {
+        int fd = open();
+        if (fd <= 0) {
+            return;
+        }
+
+        Debug.d(TAG, "start_monitor");
+        mListener = l;
+        start_mon(fd);
+    }
+
+    public interface FpgaStateListenner {
+        public void onReady();
+    }
+    private static FpgaStateListenner mListener = null;
+
+    public static void onReady() {
+        Debug.d(TAG, "FPGA ready to receive data!");
+        if(null != mListener) {
+            mListener.onReady();
+        }
+    }
+*/
 }

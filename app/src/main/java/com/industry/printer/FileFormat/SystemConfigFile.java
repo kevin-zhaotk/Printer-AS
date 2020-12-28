@@ -197,6 +197,10 @@ public class SystemConfigFile{
 
     public static final int INDEX_QRCODE_LAST = 54;
 
+// H.M.Wang 2020-12-28 追加FIFO打印缓冲区数量设置
+	public static final int INDEX_FIFO_SIZE = 55;
+// End of H.M.Wang 2020-12-28 追加FIFO打印缓冲区数量设置
+
 	/*
 	 * 目前參數使用情況：
 	 * 1、參數1~24：分配給FPGA

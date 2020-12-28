@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -16,6 +18,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Process;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.ViewGroup;
@@ -150,7 +153,7 @@ public class DataTransferThread {
 //		Debug.i(TAG, "--->setlanBuffer: [" + index + "," + buffer.length + "]");
 		mLanBuffer.put(String.valueOf(index), Arrays.copyOf(buffer, buffer.length));
 		if (index == DataTransferThread.getInstance(context).index()) {
-			FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
+			FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
 		}
 	}
 
@@ -181,7 +184,7 @@ public class DataTransferThread {
 		mIndex = 0;
 		//pcReset = true;
 		char[] buffer = getLanBuffer(index());
-		FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
+		FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
 	}
 	
 	boolean needRestore = false;
@@ -253,7 +256,7 @@ public class DataTransferThread {
 // 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 //					launch(mContext);
 					FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
-					FpgaGpioOperation.init();
+					FpgaGpioOperation.init(mContext);
 					resendBufferToFPGA();
 // End of 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 					needRestore = false;
@@ -268,7 +271,7 @@ public class DataTransferThread {
 		
 		Debug.e(TAG, "--->buffer len: " + buffer.length);
 		FpgaGpioOperation.updateSettings(context, task, purgeType);
-		FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+		FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 		try {
 			Thread.sleep(2500);
 		} catch (InterruptedException e) {
@@ -339,7 +342,7 @@ public class DataTransferThread {
 					Debug.e(TAG, "--->buffer len: " + buffer.length);
 					
 					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE1);
-					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+					FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 					try {
 //						Thread.sleep(3000 * 5);
 						mPurgeLock.tryLock(10, TimeUnit.SECONDS);
@@ -351,7 +354,7 @@ public class DataTransferThread {
 
 					FpgaGpioOperation.clean();
 					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE2);
-					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+					FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 					try {
 						mPurgeLock.tryLock(10, TimeUnit.SECONDS);
 //						break;
@@ -1199,7 +1202,7 @@ public class DataTransferThread {
 // H.M.Wang 2020-5-6 参数设置页面，在未修改计数器的情况下，点击OK保存后，计数器会跳数，分析是因为设置了	mNeedUpdate=true，重新生成打印缓冲区，重新生成时计数器会自动增量，所以增加了一个重新下发的函数，而不重新生成缓冲区
 	public void resendBufferToFPGA() {
 		if(null != mPrintBuffer) {
-			FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+			FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 		}
 	}
 
@@ -1227,11 +1230,15 @@ public class DataTransferThread {
 // H.M.Wang 2020-7-9 追加计数器重置标识
 	public boolean mCounterReset=false;
 // End of H.M.Wang 2020-7-9 追加计数器重置标识
+	private long last = 0;
 
 	public class PrintTask extends Thread {
-
 		@Override
 		public void run() {
+			Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO);
+
+			FpgaGpioOperation.init(mContext);
+
 // 2020-6-29 处于打印状态时，如果用户确认设置，需要向FPGA下发设置内容，按一定原则延迟下发
 			Time1 = System.currentTimeMillis();
 			Time2 = System.currentTimeMillis();
@@ -1246,8 +1253,7 @@ public class DataTransferThread {
 			}
 // End of 2020-6-30 网络快速打印的第一次数据生成标识设真
 
-			long last = 0;
-			/*逻辑要求，必须先发数据*/
+			//逻辑要求，必须先发数据
 			Debug.d(TAG, "--->print run");
 
 			mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true);
@@ -1320,7 +1326,7 @@ public class DataTransferThread {
 // 2020-6-30 网络快速打印的第一次数据生成后不下发
 				if(!mFirstForLanFast) {
 					Debug.e(TAG, "--->write data");
-					FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+					FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 					DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
 // End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
@@ -1343,24 +1349,21 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-6-28 追加向网络发送打印数据缓冲区准备完成消息
 // End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 
-				/**  save log */
+				// save log
 				LogIntercepter.getInstance(mContext).execute(getCurData());
 
 			}
 			last = SystemClock.currentThreadTimeMillis();
-			FpgaGpioOperation.init();
 
-			boolean isFirst = true;
 			while(mRunning == true) {
 				int writable = FpgaGpioOperation.pollState();
-
 //				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
 
 				if (writable == 0) { //timeout
 //					Debug.e(TAG, "--->FPGA timeout");
 //					if (isLanPrint() && pcReset == true) {
 //						buffer = getLanBuffer(index());
-//						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
+//						FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
 //						pcReset = false;
 //					}
 				} else if (writable == -1) {
@@ -1420,7 +1423,7 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-5-19 QR文件打印最后一行后无反应问题。应该先生成打印缓冲区，而不是先判断是否到了终点。顺序不对
 						}
 
-						FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+						FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
@@ -1443,7 +1446,6 @@ public class DataTransferThread {
 						LogIntercepter.getInstance(mContext).execute(getCurData());
 					}
 				}
-
 // H.M.Wang 2020-11-13 追加内容是否变化的判断
 				mNeedUpdate |= mDataTask.get(index()).contentChanged();
 // End of H.M.Wang 2020-11-13 追加内容是否变化的判断
@@ -1472,7 +1474,7 @@ public class DataTransferThread {
 //						try {sleep(30);}catch(Exception e){};
 // H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
 						if(FpgaGpioOperation.pollState() == 0) {
-							FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+							FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 						}
 // End of H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
@@ -1489,7 +1491,7 @@ public class DataTransferThread {
 						Debug.d(TAG, "First print buffer deliver to FPGA. size = " + mPrintBuffer.length);
 // H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
 						if(FpgaGpioOperation.pollState() == 0) {
-							FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+							FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 						}
 // End of H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
@@ -1512,7 +1514,7 @@ public class DataTransferThread {
 						try {sleep(30);}catch(Exception e){};
 // H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
 						if(FpgaGpioOperation.pollState() == 0) {
-							FpgaGpioOperation.writeData(FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+							FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 						}
 // End of H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
@@ -1540,6 +1542,7 @@ public class DataTransferThread {
 				}
 				//Debug.d(TAG, "===>kernel buffer empty, fill it");
 				//TO-DO list 下面需要把打印数据下发
+
 			}
 // H.M.Wang 2020-7-2 由于调整计数器增量策略，在打印完成时调整，因此无需rollback
 //			rollback();

@@ -368,7 +368,7 @@ public static final String TAG="SettingsTabActivity";
 //							while (dt.mNeedUpdate) {
 //								try{Thread.sleep(10);}catch(Exception e){};
 //							}
-					FpgaGpioOperation.init();
+					FpgaGpioOperation.init(mContext);
 // H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
 //					dt.resendBufferToFPGA();
 // End of H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作

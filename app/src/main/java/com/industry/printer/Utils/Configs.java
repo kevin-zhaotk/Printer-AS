@@ -166,6 +166,8 @@ public class Configs {
 	// H.M.Wang 2019-10-31 添加1行，升级SerialPort的so库文件
 	public static final String UPGRADE_SERIAL_SO = "libSerialPort.so";
 
+	public static final String UPGRADE_HARDWARE_SO = "libHardware_jni.so";
+
 	/**
 	 * SYSTEM_CONFIG_FILE
 	 */
