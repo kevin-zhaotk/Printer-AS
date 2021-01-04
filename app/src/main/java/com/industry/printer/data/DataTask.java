@@ -301,7 +301,7 @@ public class DataTask {
 
 // H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
 	private void calDots(){
-		Debug.d(TAG, "GetPrintDots Start Time: " + System.currentTimeMillis());
+//		Debug.d(TAG, "GetPrintDots Start Time: " + System.currentTimeMillis());
 // H.M.Wang 2020-10-18 重新开放打印前计算墨点数
 		int[] dots = NativeGraphicJni.GetPrintDots(mPrintBuffer, mPrintBuffer.length, getInfo().mCharsPerHFeed, getPNozzle().mHeads);
 
@@ -327,7 +327,7 @@ public class DataTask {
 		setDots(totalDot);
 		setDotsEach(dots);
 // End of H.M.Wang 2020-10-18 重新开放打印前计算墨点数
-		Debug.d(TAG, "GetPrintDots Done Time: " + System.currentTimeMillis());
+//		Debug.d(TAG, "GetPrintDots Done Time: " + System.currentTimeMillis());
 	}
 // End of H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
 
@@ -485,6 +485,24 @@ public class DataTask {
 //		div = div/stat.getScale();
 		Debug.d(TAG, "-----scaleW = " + scaleW + " div = " + div);
 		//mPreBitmap = Arrays.copyOf(mBg.mBits, mBg.mBits.length);
+
+// H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持QRCode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
+		int strIndex = -1;
+		String[] recvStrs = new String[1];
+// H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
+//		if (!prev && SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE) {
+		if (!prev &&
+			(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE ||
+			SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE2)) {
+// End of H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
+			QRReader reader = QRReader.getInstance(mContext);
+			String content = reader.read();
+
+			recvStrs = content.split(",");
+			strIndex = 0;
+		}
+// End of H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持QRCode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
+
 		for(BaseObject o:mObjList)
 		{
 			Debug.d(TAG, "Name " + o.mName);
@@ -501,21 +519,32 @@ public class DataTask {
 //				if (!prev) {
 // H.M.Wang 2020-5-18 由于数据源参数索引使用立即数，未及时发现修改，改为固定变量索引
 //				if (!prev && SystemConfigFile.getInstance().getParam(40) == SystemConfigFile.DATA_SOURCE_FILE) {
-				if (!prev && SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE) {
+// H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
+//				if (!prev && SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE) {
+				if (!prev &&
+					(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE ||
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE2)) {
+// End of H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
 // End of H.M.Wang 2020-5-18 由于数据源参数索引使用立即数，未及时发现修改，改为固定变量索引
-					QRReader reader = QRReader.getInstance(mContext);
-					String content = reader.read();
+// H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持QRCode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
+//					QRReader reader = QRReader.getInstance(mContext);
+//					String content = reader.read();
 
-					if (TextUtils.isEmpty(content)) {
-						isReady = false;
-						continue;
+//					if (TextUtils.isEmpty(content)) {
+//						isReady = false;
+//						continue;
+//					}
+//					o.setContent(content);
+// End of H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持QRCode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
+					if (recvStrs.length >= 11) {
+						Debug.d(TAG, "--->set content to BarcodeObject = " + recvStrs[10]);
+						o.setContent(recvStrs[10]);
 					}
-					o.setContent(content);
 				}
 // End.
 				// Bitmap bmp = o.getScaledBitmap(mContext);
-				Bitmap bmp = ((BarcodeObject)o).getPrintBitmap((int)(o.getWidth()/scaleW), mBinInfo.getBytesFeed()*8, (int)(o.getWidth()/scaleW), (int)(o.getHeight()/scaleH), (int)o.getY());
 				Debug.d(TAG,"--->cover barcode w = " + o.getWidth() + "  h = " + o.getHeight() + " total=" + (mBinInfo.getBytesFeed()*8) + " " + (o.getWidth()/scaleW) + " " + (o.getHeight()/scaleH));
+				Bitmap bmp = ((BarcodeObject)o).getPrintBitmap((int)(o.getWidth()/scaleW), mBinInfo.getBytesFeed()*8, (int)(o.getWidth()/scaleW), (int)(o.getHeight()/scaleH), (int)o.getY());
 				// BinCreater.saveBitmap(bmp, "bar.png");
 				BinInfo info = new BinInfo(mContext, bmp, mExtendStat);
 
@@ -527,6 +556,23 @@ public class DataTask {
 // H.M.Wang 2020-5-22 串口数据启用DynamicText，取消代用CounterObject
             } else if(o instanceof DynamicText) {
 				Debug.d(TAG, "--->object index=" + o.getIndex());
+// H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持QRCode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
+				if (!prev && SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE) {
+					Debug.d(TAG, "--->set content to DynamicText = " + recvStrs[strIndex]);
+					o.setContent(recvStrs[strIndex++]);
+				}
+// H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
+				if (!prev && SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE2) {
+					int dtIndex = ((DynamicText)o).getDtIndex();
+					if(dtIndex >= 0 && dtIndex < recvStrs.length) {
+						Debug.d(TAG, "--->set content to DynamicText = " + recvStrs[dtIndex]);
+						o.setContent(recvStrs[dtIndex]);
+					} else {
+						o.setContent("");
+					}
+				}
+// End of H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
+// End of H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持QRCode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
 // H.M.Wang 2020-10-29 修改DynamicText实时生成打印缓冲区，而不是使用Vbin贴图
                 Bitmap bmp = ((DynamicText)o).getPrintBitmap(scaleW, scaleH, headType.getHeight());
                 BinInfo info = new BinInfo(mContext, bmp, mExtendStat);

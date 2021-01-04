@@ -16,14 +16,14 @@ public class ExtGpio {
 	
 	private static final int GPIO_PLAY = 0x01;
 	private static final int GPIO_PLAY_ERR = 0x02;
-	private static final int GPIO_RFID_CARD1 = 0x03;
-	private static final int GPIO_RFID_CARD2 = 0x04;
-	private static final int GPIO_RFID_CARD3 = 0x05;
-	private static final int GPIO_RFID_CARD4 = 0x06;
-	private static final int GPIO_RFID_CARD5 = 0x07;
-	private static final int GPIO_RFID_CARD6 = 0x08;
-	private static final int GPIO_RFID_CARD7 = 0x09;
-	private static final int GPIO_RFID_CARD8 = 0x0A;
+	private static final int GPIO_RFID_CARD1 = 0x03;		// PG5-9: 011
+	private static final int GPIO_RFID_CARD2 = 0x04;		// PG5-9: 100
+	private static final int GPIO_RFID_CARD3 = 0x05;		// PG5-9: 101
+	private static final int GPIO_RFID_CARD4 = 0x06;		// PG5-9: 110
+	private static final int GPIO_RFID_CARD5 = 0x07;		// 在驱动中执行与GPIO_RFID_CARD4相同操作
+	private static final int GPIO_RFID_CARD6 = 0x08;		// 在驱动中执行与GPIO_RFID_CARD4相同操作
+	private static final int GPIO_RFID_CARD7 = 0x09;		// 在驱动中执行与GPIO_RFID_CARD4相同操作
+	private static final int GPIO_RFID_CARD8 = 0x0A;		// 在驱动中执行与GPIO_RFID_CARD4相同操作
 	private static final int GPIO_WRITE = 0x10;
 	
 	
@@ -32,14 +32,14 @@ public class ExtGpio {
 	// RFID卡2對應的3-8譯碼器編碼
 	private static final int RFID_CARD2_CODE = 4;
 	
-	public static final int RFID_CARD1 = 0;
-	public static final int RFID_CARD2 = 1;
-	public static final int RFID_CARD3 = 2;
-	public static final int RFID_CARD4 = 3;
-	public static final int RFID_CARD5 = 4;
-	public static final int RFID_CARD6 = 5;
-	public static final int RFID_CARD7 = 6;
-	public static final int RFID_CARD8 = 7;
+	public static final int RFID_CARD1 = 0;					// PG5-9: 000
+	public static final int RFID_CARD2 = 1;					// PG5-9: 100
+	public static final int RFID_CARD3 = 2;					// PG5-9: 010
+	public static final int RFID_CARD4 = 3;					// PG5-9: 110
+	public static final int RFID_CARD5 = 4;					// PG5-9: 001
+	public static final int RFID_CARD6 = 5;					// PG5-9: 101
+	public static final int RFID_CARD7 = 6;					// PG5-9: 011
+	public static final int RFID_CARD8 = 7;					// PG5-9: 111
 	
 	public static int mFd = 0;
 	public static void rfidSwitch(int sw) {

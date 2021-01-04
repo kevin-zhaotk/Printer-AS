@@ -10,20 +10,26 @@
 extern "C" {
 #endif
 
-/* Added by H.M.Wang 2019-10-17 */
-#define HP_PRINT_CARTRIDGE      11
-#define HP_BULK_CARTRIDGE       12
-#define LEVEL_SENSOR            21
-/* Added by H.M.Wang 2019-10-17 end */
+#define CARD_SELECT_PEN1                        11
+#define CARD_SELECT_PEN2                        12
+#define CARD_SELECT_BULK1                       13
+#define CARD_SELECT_BULKX                       14
+#define SELECT_LEVEL1                           21
+#define SELECT_LEVEL2                           22
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_shutdown(JNIEnv *env, jclass arg);
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_exist(JNIEnv *env, jclass arg);
 
 /*
- * 初始化HP智能卡设备，包括HOST卡，COMPONENT卡以及LEVEL
+ * 初始化HP智能卡设备和HOST卡
  */
 JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg);
+
+/*
+ * 初始化HP智能卡其他设备，包括COMPONENT卡以及LEVEL
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jint card );
 
 /**
  * 写入验证码
@@ -38,12 +44,12 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_checkSum(JNIEnv *env, jclass arg, jint
 /**
  * 检查墨袋参数一致性
  */
-JNIEXPORT jint JNICALL Java_com_Smartcard_checkConsistency(JNIEnv *env, jclass arg);
+JNIEXPORT jint JNICALL Java_com_Smartcard_checkConsistency(JNIEnv *env, jclass arg, jint card, jint supply);
 
 /**
  * 读取合法性检查数据，仅为认证使用
  */
-JNIEXPORT jstring JNICALL Java_com_Smartcard_readConsistency(JNIEnv *env, jclass arg);
+JNIEXPORT jstring JNICALL Java_com_Smartcard_readConsistency(JNIEnv *env, jclass arg, jint card);
 
 /**
  * 检查墨袋是否已经用完

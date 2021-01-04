@@ -23,16 +23,19 @@ public class SmartCardManager implements IInkDevice {
     public static boolean OIB_CHECK = false;
     public static boolean SUM_CHECK = false;
 
+    private final static int PEN_VS_BAG_RATIO           = 3;
     private final static int MAX_BAG_INK_VOLUME         = 3150;
-// M.M.Wang 2020-11-16 增加墨盒墨量显示
-    private final static int MAX_PEN_INK_VOLUME         = 300;
-    private final static int DATA_SEPERATER             = 100000;      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
-// End of M.M.Wang 2020-11-16 增加墨盒墨量显示
+    private final static int MAX_PEN_INK_VOLUME         = MAX_BAG_INK_VOLUME * PEN_VS_BAG_RATIO;
 
-    private final static int HP_PRINT_CARTRIDGE         = 11;
-    private final static int HP_BULK_CARTRIDGE          = 12;
-    private final static int LEVEL_SENSOR               = 21;
-    public final static int WORK_BULK_CARTRIDGE         = HP_BULK_CARTRIDGE;
+    public final static int CARD_PEN1                   = 11;
+    public final static int CARD_PEN2                   = 12;
+    public final static int CARD_BULK1                  = 13;
+    public final static int CARD_BULKX                  = 14;
+    public final static int LEVEL1                      = 21;
+    public final static int LEVEL2                      = 22;
+
+    public final static int WORK_BULK                   = CARD_BULKX;
+    private int mCurrentPen                             = CARD_PEN1;
 
     public static final int MSG_SMARTCARD_INIT_SUCCESS  = 11001;
     public static final int MSG_SMARTCARD_INIT_FAILED   = 11002;
@@ -45,7 +48,8 @@ public class SmartCardManager implements IInkDevice {
     private boolean mValid;
     private int     mBagInkLevel;
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
-    private int     mPenInkLevel;
+    private int     mPenInkLevel1;
+    private int     mPenInkLevel2;
 // End of M.M.Wang 2020-11-16 增加墨盒墨量显示
 
     private boolean mBlockAdding = false;
@@ -136,11 +140,15 @@ public class SmartCardManager implements IInkDevice {
         mValid = true;
         mInitialied = false;
         mBagInkLevel = -1;
+        mPenInkLevel1 = -1;
+        mPenInkLevel2 = -1;
         mCallback = null;
 
         mReadLevels = new int[READ_LEVEL_TIMES];
         mCurrentLevels = new int[10];
         mCurLvlNums = 0;
+
+        mCurrentPen = CARD_PEN1;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
@@ -152,41 +160,15 @@ public class SmartCardManager implements IInkDevice {
         }).create();
     }
 
-    boolean isOpeningInit = false;
+    private boolean isOpeningInit = false;
+    private int reading = CARD_PEN1;
 
     @Override
     public void init(final Handler callback) {
         Debug.d(TAG, "---> enter init()");
 
         if(mInitialied) return;
-/*
-        mCallback = callback;
-        Timer tm = new Timer();
-        tm.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                int ret = -1;
-                if(SMARTCARD_ACCESS) {
-                    synchronized (this) {
-                        ret = SmartCard.init();
-                    }
-                } else {
-                    ret = SmartCard.SC_SUCCESS;
-                }
-                if(SmartCard.SC_SUCCESS == ret) {
-                    mInitialied = true;
-                    mInkLevel = (int)getLocalInk(0);
-                    downLocal(0);
-                    shutdown();
-                    mWrittenTimes++;
-                    mHandler.obtainMessage(MSG_SHOW_INIT_TIMES, this).sendToTarget();
-                    if(null != mCallback) mCallback.sendEmptyMessage(MSG_SMARTCARD_INIT_SUCCESS);
-                } else {
-                    mHandler.obtainMessage(MSG_SHOW_INIT_TIMES, null).sendToTarget();
-                }
-            }
-        }, 3000L, 2000L);
-*/
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -201,6 +183,11 @@ public class SmartCardManager implements IInkDevice {
                 if(SMARTCARD_ACCESS) {
                     synchronized (this) {
                         ret = SmartCard.init();
+                        if(SmartCard.SC_SUCCESS == ret) ret = SmartCard.initComponent(CARD_PEN1);
+                        if(SmartCard.SC_SUCCESS == ret) ret = SmartCard.initComponent(CARD_PEN2);
+                        if(SmartCard.SC_SUCCESS == ret) ret = SmartCard.initComponent(WORK_BULK);
+                        if(SmartCard.SC_SUCCESS == ret) ret = SmartCard.initComponent(LEVEL1);
+                        if(SmartCard.SC_SUCCESS == ret) ret = SmartCard.initComponent(LEVEL2);
                     }
                 } else {
                     ret = SmartCard.SC_SUCCESS;
@@ -209,9 +196,10 @@ public class SmartCardManager implements IInkDevice {
                 if(SmartCard.SC_SUCCESS == ret) {
                     mInitialied = true;
                     checkConsistency();
-                    checkOIB(WORK_BULK_CARTRIDGE);
-                    checkSum(WORK_BULK_CARTRIDGE);
+                    checkOIB(mCurrentPen);
+                    checkSum(mCurrentPen);
                     getLocalInk(0);
+                    getLocalInk(1);
 
                     if(isOpeningInit) {
                         shutdown();
@@ -224,14 +212,10 @@ public class SmartCardManager implements IInkDevice {
                                 @Override
                                 public void run() {
                                     checkConsistency();
-                                    readConsistency();
-//                                    downLocal(0);
-//                                    mWrittenTimes++;
-//                                    mHandler.obtainMessage(MSG_SHOW_INIT_TIMES, this).sendToTarget();
-
+                                    readConsistency(reading);
+                                    if(reading == WORK_BULK) reading = mCurrentPen;
                                 }
                             }, (long)3000, (long)MSG_READ_CONSISTENCY_INTERVAL);
-//                            }, 0L, 500L);
                         }
                     }
                 } else {
@@ -253,7 +237,7 @@ public class SmartCardManager implements IInkDevice {
 
         synchronized (this) {
             if(mInitialied && mValid) {
-                int ret = SmartCard.checkConsistency();
+                int ret = SmartCard.checkConsistency(mCurrentPen, WORK_BULK);
                 if(SmartCard.SC_SUCCESS != ret) {
                     mValid = false;
                     mCallback.obtainMessage(MSG_SMARTCARD_CHECK_FAILED, ret, 0, null).sendToTarget();
@@ -262,7 +246,7 @@ public class SmartCardManager implements IInkDevice {
         }
     }
 
-    private void readConsistency() {
+    private void readConsistency(int card) {
         Debug.d(TAG, "---> enter readConsistency()");
 
         if(!SMARTCARD_ACCESS) {
@@ -272,21 +256,21 @@ public class SmartCardManager implements IInkDevice {
 
         synchronized (this) {
             if(mInitialied && mValid) {
-                mHandler.obtainMessage(MSG_SHOW_CONSISTENCY, SmartCard.readConsistency()).sendToTarget();
+                mHandler.obtainMessage(MSG_SHOW_CONSISTENCY, SmartCard.readConsistency(card)).sendToTarget();
             } else {
                 mHandler.obtainMessage(MSG_SHOW_CONSISTENCY, "Not initialized or invalid!").sendToTarget();
             }
         }
     }
 
-    private void checkOIB(int cardType) {
-        Debug.d(TAG, "---> enter checkOIB(" + cardType + ")");
+    private void checkOIB(int card) {
+        Debug.d(TAG, "---> enter checkOIB(" + card + ")");
 
         if(!SMARTCARD_ACCESS || !OIB_CHECK) return;
 
         synchronized (this) {
             if(mInitialied && mValid) {
-                int ret = SmartCard.checkOIB(cardType);
+                int ret = SmartCard.checkOIB(card);
                 if(0 != ret) {
                     mValid = false;
                     mCallback.obtainMessage(MSG_SMARTCARD_CHECK_FAILED, SmartCard.SC_OUT_OF_INK_ERROR, 0, null).sendToTarget();
@@ -318,8 +302,13 @@ public class SmartCardManager implements IInkDevice {
         } else {
             synchronized (this) {
                 if(mInitialied) {
-                    int level;
-                    level = SmartCard.readLevel(LEVEL_SENSOR);
+                    int level = 0;
+                    if(mCurrentPen == CARD_PEN1) {
+                        level = SmartCard.readLevel(LEVEL1);
+                    }
+                    if(mCurrentPen == CARD_PEN2) {
+                        level = SmartCard.readLevel(LEVEL2);
+                    }
                     if ((level & 0xF0000000) == 0x00000000) {
                         Debug.d(TAG, "Read Level " + (count + 1) + " times = " + level);
                         mReadLevels[count] = level;
@@ -334,13 +323,18 @@ public class SmartCardManager implements IInkDevice {
 
     private void addInkOn() {
         Debug.d(TAG, "Add ink opened!");
-        ExtGpio.writeGpio('b', 11, 1);
+        if(mCurrentPen == CARD_PEN1) {
+            ExtGpio.rfidSwitch(ExtGpio.RFID_CARD6);
+        }
+        if(mCurrentPen == CARD_PEN2) {
+            ExtGpio.rfidSwitch(ExtGpio.RFID_CARD7);
+        }
         mBlockAdding = true;
     }
 
     private void addInOff() {
         Debug.d(TAG, "Add ink closed!");
-        ExtGpio.writeGpio('b', 11, 0);
+        ExtGpio.rfidSwitch(ExtGpio.RFID_CARD1);
     }
 
     private int mInkAddedTimes = 0;
@@ -396,7 +390,12 @@ public class SmartCardManager implements IInkDevice {
 // H.M.Wang 2020-11-27 修改<5%的数值BUG，getLocalInkPercentage函数返回的是0-100的值，不是0-1的值
                     if(getLocalInkPercentage(0) < 5.0f) {
                         synchronized (this) {
-                            SmartCard.writeOIB(WORK_BULK_CARTRIDGE);
+                            SmartCard.writeOIB(WORK_BULK);
+                        }
+                    }
+                    if(getLocalInkPercentage(1) < 5.0f) {
+                        synchronized (this) {
+                            SmartCard.writeOIB(WORK_BULK);
                         }
                     }
 // End of H.M.Wang 2020-11-13 当墨量<5%时，如果3次加墨失败则写OIB，本人认为这个操作不太好
@@ -465,44 +464,75 @@ public class SmartCardManager implements IInkDevice {
 
     @Override
     public float getLocalInk(int head) {
-        Debug.d(TAG, "---> enter getLocalInk()");
+        Debug.d(TAG, "---> enter getLocalInk(" + head + ")");
 
         if(mBagInkLevel == -1) {
             if(mInitialied && mValid) {
                 if(!SMARTCARD_ACCESS) {
                     mBagInkLevel = MAX_BAG_INK_VOLUME / 2;           // 如果跳过Smartcard访问标识开启，则返回一个恰当值
-// M.M.Wang 2020-11-16 增加墨盒墨量显示
-                    mPenInkLevel = MAX_PEN_INK_VOLUME / 2;
-// End of M.M.Wang 2020-11-16 增加墨盒墨量显示
                 } else {
                     synchronized (this) {
-                        mBagInkLevel = SmartCard.getLocalInk(WORK_BULK_CARTRIDGE);
-// M.M.Wang 2020-11-16 增加墨盒墨量显示
-                        mPenInkLevel = MAX_PEN_INK_VOLUME - mBagInkLevel / DATA_SEPERATER;
-                        mBagInkLevel = MAX_BAG_INK_VOLUME - mBagInkLevel % DATA_SEPERATER;
-// End of M.M.Wang 2020-11-16 增加墨盒墨量显示
+                        mBagInkLevel = SmartCard.getLocalInk(WORK_BULK);
+                        mBagInkLevel = (mBagInkLevel >= 0 ? MAX_BAG_INK_VOLUME - mBagInkLevel : mBagInkLevel);
                     }
                 }
             }
         }
 
-        Debug.d(TAG, "---> Ink Level = " + mBagInkLevel);
+        Debug.d(TAG, "---> Ink Level(WORK_BULK) = " + mBagInkLevel);
+        float localInk = mBagInkLevel;
+
+        if(head == 0) {
+            if(mPenInkLevel1 == -1) {
+                if(mInitialied && mValid) {
+                    if(!SMARTCARD_ACCESS) {
+                        mPenInkLevel1 = MAX_PEN_INK_VOLUME / 2;
+                    } else {
+                        synchronized (this) {
+                            mPenInkLevel1 = SmartCard.getLocalInk(CARD_PEN1);
+                            mPenInkLevel1 = (mPenInkLevel1 >= 0 ? MAX_PEN_INK_VOLUME - mPenInkLevel1 : mPenInkLevel1);
+                        }
+                    }
+                }
+            }
+            localInk = mPenInkLevel1;
+            Debug.d(TAG, "---> Ink Level(CARD_PEN1) = " + localInk);
+        }
+
+        if(head == 1) {
+            if(mPenInkLevel2 == -1) {
+                if(mInitialied && mValid) {
+                    if(!SMARTCARD_ACCESS) {
+                        mPenInkLevel2 = MAX_PEN_INK_VOLUME / 2;
+                    } else {
+                        synchronized (this) {
+                            mPenInkLevel2 = SmartCard.getLocalInk(CARD_PEN2);
+                            mPenInkLevel2 = (mPenInkLevel2 >= 0 ? MAX_PEN_INK_VOLUME - mPenInkLevel2 : mPenInkLevel2);
+                        }
+                    }
+                }
+            }
+            localInk = mPenInkLevel2;
+            Debug.d(TAG, "---> Ink Level(CARD_PEN2) = " + localInk);
+        }
+
         mHandler.sendEmptyMessage(MSG_SHOW_LOCAL_INK);
-        return (mBagInkLevel == -1 ? 1.0f * MAX_BAG_INK_VOLUME : 1.0f * mBagInkLevel);
+        return localInk;
     }
 
     @Override
     public float getLocalInkPercentage(int head) {
-        Debug.d(TAG, "---> enter getLocalInkPercentage()");
+        Debug.d(TAG, "---> enter getLocalInkPercentage(" + head + ")");
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
         if(head == 0) {
-//            Debug.d(TAG, "---> Bag % : " + 100.0f * mBagInkLevel / MAX_BAG_INK_VOLUME);
+            return (100.0f * mPenInkLevel1 / MAX_PEN_INK_VOLUME);
+        } else if(head == 1) {
+            return (100.0f * mPenInkLevel2 / MAX_PEN_INK_VOLUME);
+        } else if(head == 2) {
             return (100.0f * mBagInkLevel / MAX_BAG_INK_VOLUME);
-        } else {
-//            Debug.d(TAG, "---> Pen % : " + 100.0f * mPenInkLevel / MAX_PEN_INK_VOLUME);
-            return (100.0f * mPenInkLevel / MAX_PEN_INK_VOLUME);
         }
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
+        return 0f;
     }
 
     @Override
@@ -526,7 +556,7 @@ public class SmartCardManager implements IInkDevice {
     }
 
     @Override
-    public void downLocal(int dev) {
+    public void downLocal(int head) {
         Debug.d(TAG, "---> enter downLocal()");
 
         mBagInkLevel--;
@@ -534,27 +564,35 @@ public class SmartCardManager implements IInkDevice {
         if(!SMARTCARD_ACCESS) return;
 
         if(mInitialied && mValid) {
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-                    synchronized (this) {
-                        SmartCard.downLocal(WORK_BULK_CARTRIDGE);
-                        mBagInkLevel = SmartCard.getLocalInk(WORK_BULK_CARTRIDGE);
-// M.M.Wang 2020-11-16 增加墨盒墨量显示
-                        mPenInkLevel = MAX_PEN_INK_VOLUME - mBagInkLevel / DATA_SEPERATER;
-                        mBagInkLevel = MAX_BAG_INK_VOLUME - mBagInkLevel % DATA_SEPERATER;
-// End of M.M.Wang 2020-11-16 增加墨盒墨量显示
-                    }
-                    checkOIB(WORK_BULK_CARTRIDGE);
-//                }
-//            }).start();
+            synchronized (this) {
+                if(head == 0) {
+                    SmartCard.downLocal(CARD_PEN1);
+                    mPenInkLevel1 = MAX_PEN_INK_VOLUME - SmartCard.getLocalInk(CARD_PEN1);
+                    checkOIB(CARD_PEN1);
+                }
+                if(head == 1) {
+                    SmartCard.downLocal(CARD_PEN2);
+                    mPenInkLevel2 = MAX_PEN_INK_VOLUME - SmartCard.getLocalInk(CARD_PEN2);
+                    checkOIB(CARD_PEN2);
+                } else {
+                    return;
+                }
+                SmartCard.downLocal(WORK_BULK);
+                mBagInkLevel = MAX_BAG_INK_VOLUME - SmartCard.getLocalInk(WORK_BULK);
+                checkOIB(WORK_BULK);
+            }
         }
     }
 
     @Override
-    public void switchRfid(int i) {
-        Debug.d(TAG, "---> enter switchRfid()");
-        // No need to rolling.
+    public void switchRfid(int head) {
+        Debug.d(TAG, "---> enter switchRfid -> " + head);
+        if(0 == head) {
+            mCurrentPen = CARD_PEN1;
+        }
+        if(1 == head) {
+            mCurrentPen = CARD_PEN2;
+        }
     }
 
     @Override

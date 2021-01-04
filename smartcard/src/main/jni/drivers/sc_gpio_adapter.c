@@ -135,3 +135,45 @@ uint8_t SC_GPIO_ADAPTER_select_38_xlater(int pg5, int pg8, int pg9) {
 // End of H.M.Wang 2020-9-27 通过切换RFID的方式实现38译码器的功能
 }
 
+/*********************************************************************************
+    SC_GPIO_ADAPTER_select_device
+----------------------------------------------------------------------------------
+    @描述
+        选择38译码器的通路。
+    @参数
+        pg5 - 38译码器的输入第一根线
+        pg8 - 38译码器的输入第二根线
+        pg9 - 38译码器的输入第三根线
+    @返回值
+        0: 相应的端口为低电平
+        1: 相应的端口为高电平
+        -1：失败
+**********************************************************************************/
+
+uint8_t SC_GPIO_ADAPTER_select_device(int device) {
+
+    switch(device) {
+        case GPIO_DEVICE_BULK1:
+            LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_BULK : GPIO_RFID_CARD5): %d", GPIO_RFID_CARD5);
+            SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD5);
+            break;
+        case GPIO_DEVICE_PEN1:
+            LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1 : GPIO_RFID_CARD2): %d", GPIO_RFID_CARD2);
+            SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD2);
+            break;
+        case GPIO_DEVICE_PEN2:
+            LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN2 : GPIO_RFID_CARD3): %d", GPIO_RFID_CARD3);
+            SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD3);
+            break;
+        case GPIO_DEVICE_OUTPUT1:
+            LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_OUTPUT1 : GPIO_RFID_CARD6): %d", GPIO_RFID_CARD6);
+            SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD6);
+            break;
+        case GPIO_DEVICE_OUTPUT2:
+            LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_OUTPUT2 : GPIO_RFID_CARD7): %d", GPIO_RFID_CARD7);
+            SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD7);
+            break;
+    }
+//    usleep(100000); // sleep 100ms
+//    SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD1);
+}

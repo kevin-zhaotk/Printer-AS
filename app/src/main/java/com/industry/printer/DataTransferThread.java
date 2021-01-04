@@ -1447,7 +1447,11 @@ public class DataTransferThread {
 					}
 				}
 // H.M.Wang 2020-11-13 追加内容是否变化的判断
-				mNeedUpdate |= mDataTask.get(index()).contentChanged();
+// H.M.Wang 2021-1-4 在打印过程中，用户可能通过上下键（ControlTabActivity里的mMsgNext或者mMsgPrev，这回最终导致resetTask，在resetTask里面会对mDataTask清空，如果不排斥线程，这里可能会遇到空的情况而崩溃
+ 				synchronized (DataTransferThread.class) {
+					mNeedUpdate |= mDataTask.get(index()).contentChanged();
+				}
+// End of H.M.Wang 2021-1-4 在打印过程中，用户可能通过上下键（ControlTabActivity里的mMsgNext或者mMsgPrev，这回最终导致resetTask，在resetTask里面会对mDataTask清空，如果不排斥线程，这里可能会遇到空的情况而崩溃
 // End of H.M.Wang 2020-11-13 追加内容是否变化的判断
 
 				if(mNeedUpdate == true) {

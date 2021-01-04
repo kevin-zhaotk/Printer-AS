@@ -34,10 +34,10 @@ extern "C" {
 // Added by H.M.Wang 2019-10-17
 // 低电平有效，589排列
 
-#define SELECT_LEVEL        0x00, 0x00, 0x00
-#define SELECT_PRNT_CTRG    0x00, 0x01, 0x00
-#define SELECT_BULK_CTRG    0x01, 0x01, 0x00
-#define I2C_BUS_HANGUP      0xFF, 0xFF, 0xFF
+//#define SELECT_LEVEL        0x00, 0x00, 0x00
+//#define SELECT_PRNT_CTRG    0x00, 0x01, 0x00
+//#define SELECT_BULK_CTRG    0x01, 0x01, 0x00
+//#define I2C_BUS_HANGUP      0xFF, 0xFF, 0xFF
 
 //#define SELECT_LEVEL        0x01, 0x00, 0x00
 //#define SELECT_PRNT_CTRG    0x01, 0x01, 0x00
@@ -94,6 +94,28 @@ uint8_t SC_GPIO_ADAPTER_read_value(HP_SMART_CARD_gpio_line_t line);
 **********************************************************************************/
 
 uint8_t SC_GPIO_ADAPTER_select_38_xlater(int pg5, int pg8, int pg9);
+
+#define GPIO_DEVICE_BULK1       1
+#define GPIO_DEVICE_BULK2       2
+#define GPIO_DEVICE_PEN1        3
+#define GPIO_DEVICE_PEN2        4
+#define GPIO_DEVICE_OUTPUT1     5
+#define GPIO_DEVICE_OUTPUT2     6
+
+/*********************************************************************************
+    SC_GPIO_ADAPTER_select_device
+----------------------------------------------------------------------------------
+    @描述
+        选择38译码器的通路选择设备。
+    @参数
+        device - 设备号
+    @返回值
+        0: 相应的端口为低电平
+        1: 相应的端口为高电平
+        -1：失败
+**********************************************************************************/
+
+uint8_t SC_GPIO_ADAPTER_select_device(int device);
 
 
 #ifdef __cplusplus

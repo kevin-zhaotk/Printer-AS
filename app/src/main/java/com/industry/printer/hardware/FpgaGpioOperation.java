@@ -362,7 +362,7 @@ public class FpgaGpioOperation {
 		/*启动内核轮训线程*/
         SystemConfigFile config = SystemConfigFile.getInstance(context);
         ioctl(fd, FPGA_CMD_BUCKETSIZE, config.getParam(SystemConfigFile.INDEX_FIFO_SIZE));
-        Debug.d(TAG, "FPGA_CMD_BUCKETSIZE -> 10");
+        Debug.d(TAG, "FPGA_CMD_BUCKETSIZE -> " + config.getParam(SystemConfigFile.INDEX_FIFO_SIZE));
         ioctl(fd, FPGA_CMD_STARTPRINT, 0);
         Debug.d(TAG, "FPGA_CMD_STARTPRINT");
     }

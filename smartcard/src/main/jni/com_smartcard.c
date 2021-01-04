@@ -9,6 +9,7 @@
 #include <src/sc_supply_mem_access.h>
 #include <malloc.h>
 #include <drivers/internal_ifc/sc_gpio_driver.h>
+#include <unistd.h>
 
 #include "hp_host_smart_card.h"
 #include "drivers/internal_ifc/hp_smart_card_gpio_ifc.h"
@@ -22,31 +23,27 @@ extern "C"
 {
 #endif
 
-#define HP_PRINT_CARTRIDGE                      11
-#define HP_BULK_CARTRIDGE                       12
-#define LEVEL_SENSOR                            21
-
 #define SC_SUCCESS                              0
 #define SC_INIT_HOST_CARD_NOT_PRESENT           100
 #define SC_INIT_PRNT_CTRG_NOT_PRESENT           110
 #define SC_INIT_BULK_CTRG_NOT_PRESENT           111
 #define SC_INIT_PRNT_CTRG_INIT_FAILED           120
 #define SC_INIT_BULK_CTRG_INIT_FAILED           121
-#define SC_INIT_PRNT_CTRG_FID_NOT_MATCH         130
-#define SC_INIT_BULK_CTRG_FID_NOT_MATCH         131
 #define SC_PRINT_CTRG_ACCESS_FAILED             200
 #define SC_BULK_CTRG_ACCESS_FAILED              201
 #define SC_LEVEL_CENSOR_ACCESS_FAILED           202
 #define SC_CONSISTENCY_FAILED                   300
 #define SC_CHECKSUM_FAILED                      400
 
+#define PEN_VS_BAG_RATIO                        3
 #define MAX_BAG_INK_VOLUME                      3150
-#define MAX_PEN_INK_VOLUME                      300
-#define INK_VOLUME_PER_CENTAGE                  (MAX_BAG_INK_VOLUME / 100)
+#define MAX_PEN_INK_VOLUME                      MAX_BAG_INK_VOLUME * PEN_VS_BAG_RATIO
+#define INK_VOL_OF_BAG_PERCENTAGE               (MAX_BAG_INK_VOLUME / 100)
+#define INK_VOL_OF_PEN_PERCENTAGE               (MAX_PEN_INK_VOLUME / 100)
 
-#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
+//#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.348"
+#define VERSION_CODE                            "1.0.359"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -150,15 +147,6 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
     HP_SMART_CARD_gpio_init();
     HP_SMART_CARD_i2c_init();
 
-    // Register for assert callback
-//    LIB_HP_SMART_CARD_register_assert_callback(assert_handler);
-
-    // Register for cache monitor callack
-//    LIB_HP_SMART_CARD_register_cache_monitor_callback(cache_monitor_failure_handler);
-
-//    LIB_HP_SMART_CARD_set_log_depth(0);
-
-    // Initialise the library
     LIB_HP_SMART_CARD_init();
 
     if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_HOST)) {
@@ -166,118 +154,129 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
         return SC_INIT_HOST_CARD_NOT_PRESENT;
     }
 
-    // Initialize Smart Card 0, this should be a print cartridge
-    if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_ID_0)) {
-        LOGE(">>> LIB_HP_SMART_CARD_device_present(%d): NOT PRESENT.  ", HP_SMART_CARD_DEVICE_ID_0);
-        return SC_INIT_PRNT_CTRG_NOT_PRESENT;
+    return SC_SUCCESS;
+}
+
+JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jint card ) {
+    LOGI("Initializing smart card component...%d\n", card);
+
+    if(CARD_SELECT_PEN1 == card) {
+        // Initialize Smart Card 0, this should be a print cartridge
+        if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_PEN1)) {
+            LOGE(">>> LIB_HP_SMART_CARD_device_present(%d): NOT PRESENT.  ", HP_SMART_CARD_DEVICE_PEN1);
+            return SC_INIT_PRNT_CTRG_NOT_PRESENT;
+        }
+
+        if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_DEVICE_PEN1)) {
+            LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): Initialization Failed.  ", HP_SMART_CARD_DEVICE_PEN1);
+            return SC_INIT_PRNT_CTRG_INIT_FAILED;
+        }
+        adjustLocalInkValue(HP_SMART_CARD_DEVICE_PEN1);
+    } else if(CARD_SELECT_PEN2 == card) {
+        // Initialize Smart Card 0, this should be a print cartridge
+        if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_PEN2)) {
+            LOGE(">>> LIB_HP_SMART_CARD_device_present(%d): NOT PRESENT.  ", HP_SMART_CARD_DEVICE_PEN2);
+            return SC_INIT_PRNT_CTRG_NOT_PRESENT;
+        }
+
+        if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_DEVICE_PEN2)) {
+            LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): Initialization Failed.  ", HP_SMART_CARD_DEVICE_PEN2);
+            return SC_INIT_PRNT_CTRG_INIT_FAILED;
+        }
+        adjustLocalInkValue(HP_SMART_CARD_DEVICE_PEN2);
+    } else if(CARD_SELECT_BULK1 == card || CARD_SELECT_BULKX == card) {
+        if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_BULK1)) {
+            LOGE(">>> LIB_HP_SMART_CARD_device_present(%d): NOT PRESENT.  ", HP_SMART_CARD_DEVICE_BULK1);
+            return SC_INIT_BULK_CTRG_NOT_PRESENT;
+        }
+
+        if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_DEVICE_BULK1)) {
+            LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): Initialization Failed.  ", HP_SMART_CARD_DEVICE_BULK1);
+            return SC_INIT_BULK_CTRG_INIT_FAILED;
+        }
+        adjustLocalInkValue(HP_SMART_CARD_DEVICE_BULK1);
+    } else if(SELECT_LEVEL1 == card) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1);
+
+        uint16_t config;
+
+        if(LEVEL_I2C_OK != readConfig(&config)) {
+            return SC_LEVEL_CENSOR_ACCESS_FAILED;
+        }
+        LOGD(">>> Read config: 0x%04X", config);
+
+        config &= CONFIG_ACTIVE_MODE_ENABLE;                // Set to Active mode
+        if(LEVEL_I2C_OK != writeConfig(&config)) {
+            return SC_LEVEL_CENSOR_ACCESS_FAILED;
+        }
+        LOGD(">>> Write config: 0x%04X", config);
+    } else if(SELECT_LEVEL2 == card) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN2);
+
+        uint16_t config;
+
+        if(LEVEL_I2C_OK != readConfig(&config)) {
+            return SC_LEVEL_CENSOR_ACCESS_FAILED;
+        }
+        LOGD(">>> Read config: 0x%04X", config);
+
+        config &= CONFIG_ACTIVE_MODE_ENABLE;                // Set to Active mode
+        if(LEVEL_I2C_OK != writeConfig(&config)) {
+            return SC_LEVEL_CENSOR_ACCESS_FAILED;
+        }
+        LOGD(">>> Write config: 0x%04X", config);
     }
-
-    if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_DEVICE_ID_0)) {
-        LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): Initialization Failed.  ", HP_SMART_CARD_DEVICE_ID_0);
-        return SC_INIT_PRNT_CTRG_INIT_FAILED;
-    }
-
-    uint8_t family_id;
-//    HP_SMART_CARD_result_t r;
-    if (HP_SMART_CARD_OK == readTag0FamilyID(HP_SMART_CARD_DEVICE_ID_0, &family_id)) {
-        LOGD(">>> Tag0 Family ID of Device %d -> %d\n", HP_SMART_CARD_DEVICE_ID_0, family_id);
-        if(family_id != HP_SMART_CARD_INK_FAMILY_ID) return SC_INIT_PRNT_CTRG_FID_NOT_MATCH;
-    } else {
-        return SC_PRINT_CTRG_ACCESS_FAILED;
-    }
-
-    // Initialize Smart Card 1, this should be a bulk cartridge
-    if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_ID_1)) {
-        LOGE(">>> LIB_HP_SMART_CARD_device_present(%d): NOT PRESENT.  ", HP_SMART_CARD_DEVICE_ID_1);
-        return SC_INIT_BULK_CTRG_NOT_PRESENT;
-    }
-
-    if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_DEVICE_ID_1)) {
-        LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): Initialization Failed.  ", HP_SMART_CARD_DEVICE_ID_1);
-        return SC_INIT_BULK_CTRG_INIT_FAILED;
-    }
-
-    if (HP_SMART_CARD_OK == readTag0FamilyID(HP_SMART_CARD_DEVICE_ID_1, &family_id)) {
-        LOGD(">>> Tag0 Family ID of Device %d -> %d\n", HP_SMART_CARD_DEVICE_ID_1, family_id);
-        if(family_id != HPSCS_FAMILY_ID) return SC_INIT_BULK_CTRG_FID_NOT_MATCH;
-    } else {
-        return SC_BULK_CTRG_ACCESS_FAILED;
-    }
-
-    adjustLocalInkValue(HP_SMART_CARD_DEVICE_ID_0);
-    adjustLocalInkValue(HP_SMART_CARD_DEVICE_ID_1);
-
-// 初始化的时候将墨盒和墨袋的计数器清零（为了测试）
-//    inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, 0);
-//    supplyWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, 0);
-
-    SC_GPIO_ADAPTER_select_38_xlater(SELECT_LEVEL);
-
-    uint16_t config;
-
-    if(LEVEL_I2C_OK != readConfig(&config)) {
-        return SC_LEVEL_CENSOR_ACCESS_FAILED;
-    }
-    LOGD(">>> Read config: 0x%04X", config);
-
-    config &= CONFIG_ACTIVE_MODE_ENABLE;                // Set to Active mode
-    if(LEVEL_I2C_OK != writeConfig(&config)) {
-        return SC_LEVEL_CENSOR_ACCESS_FAILED;
-    }
-    LOGD(">>> Write config: 0x%04X", config);
-
-    SC_GPIO_ADAPTER_select_38_xlater(I2C_BUS_HANGUP);
 
     return SC_SUCCESS;
 }
 
 static uint32_t calculateCheckSum(jint clientUniqueCode) {
     uint16_t manu_year = 0;
-    supplyReadTag1ManufactureYear(HP_SMART_CARD_DEVICE_ID_1, &manu_year);
+    supplyReadTag1ManufactureYear(HP_SMART_CARD_DEVICE_BULK1, &manu_year);
 //    LOGD(">>>> HPSCS_SN_MFG_YEAR = %u", manu_year);
 
     uint8_t manu_woy = 0;
-    supplyReadTag1ManufactureWeekOfYear(HP_SMART_CARD_DEVICE_ID_1, &manu_woy);
+    supplyReadTag1ManufactureWeekOfYear(HP_SMART_CARD_DEVICE_BULK1, &manu_woy);
 //    LOGD(">>>> HPSCS_SN_WEEK = %u", manu_woy);
 
     uint8_t manu_dow = 0;
-    supplyReadTag1ManufactureDayOfWeek(HP_SMART_CARD_DEVICE_ID_1, &manu_dow);
+    supplyReadTag1ManufactureDayOfWeek(HP_SMART_CARD_DEVICE_BULK1, &manu_dow);
 //    LOGD(">>>> HPSCS_SN_DOW = %u", manu_dow);
 
     uint8_t manu_hod = 0;
-    supplyReadTag1ManufactureHourOfDay(HP_SMART_CARD_DEVICE_ID_1, &manu_hod);
+    supplyReadTag1ManufactureHourOfDay(HP_SMART_CARD_DEVICE_BULK1, &manu_hod);
 //    LOGD(">>>> HPSCS_SN_HOD = %u", manu_hod);
 
     uint8_t manu_moh = 0;
-    supplyReadTag1ManufactureMinuteOfHour(HP_SMART_CARD_DEVICE_ID_1, &manu_moh);
+    supplyReadTag1ManufactureMinuteOfHour(HP_SMART_CARD_DEVICE_BULK1, &manu_moh);
 //    LOGD(">>>> HPSCS_SN_MOH = %u", manu_moh);
 
     uint8_t manu_som = 0;
-    supplyReadTag1ManufactureSecondOfMinute(HP_SMART_CARD_DEVICE_ID_1, &manu_som);
+    supplyReadTag1ManufactureSecondOfMinute(HP_SMART_CARD_DEVICE_BULK1, &manu_som);
 //    LOGD(">>>> HPSCS_SN_SOM = %u", manu_som);
 
     uint16_t fill_year = 0;
-    supplyReadTag3CartridgeFillYear(HP_SMART_CARD_DEVICE_ID_1, &fill_year);
+    supplyReadTag3CartridgeFillYear(HP_SMART_CARD_DEVICE_BULK1, &fill_year);
 //    LOGD(">>>> HPSCS_FILL_YEAR = %u", fill_year);
 
     uint8_t fill_woy = 0;
-    supplyReadTag3CartridgeFillWeekOfYear(HP_SMART_CARD_DEVICE_ID_1, &fill_woy);
+    supplyReadTag3CartridgeFillWeekOfYear(HP_SMART_CARD_DEVICE_BULK1, &fill_woy);
 //    LOGD(">>>> HPSCS_FILL_WEEK = %u", fill_woy);
 
     uint8_t fill_dow = 0;
-    supplyReadTag3CartridgeFillDayOfWeek(HP_SMART_CARD_DEVICE_ID_1, &fill_dow);
+    supplyReadTag3CartridgeFillDayOfWeek(HP_SMART_CARD_DEVICE_BULK1, &fill_dow);
 //    LOGD(">>>> HPSCS_FILL_DOW = %u", fill_dow);
 
     uint8_t fill_hod = 0;
-    supplyReadTag3CartridgeFillHourOfDay(HP_SMART_CARD_DEVICE_ID_1, &fill_hod);
+    supplyReadTag3CartridgeFillHourOfDay(HP_SMART_CARD_DEVICE_BULK1, &fill_hod);
 //    LOGD(">>>> HPSCS_FILL_HOD = %u", fill_hod);
 
     uint8_t fill_moh = 0;
-    supplyReadTag3CartridgeFillMinuteOfHour(HP_SMART_CARD_DEVICE_ID_1, &fill_moh);
+    supplyReadTag3CartridgeFillMinuteOfHour(HP_SMART_CARD_DEVICE_BULK1, &fill_moh);
 //    LOGD(">>>> HPSCS_FILL_MOH = %u", fill_moh);
 
     uint8_t fill_som = 0;
-    supplyReadTag3CartridgeFillSecondOfMinute(HP_SMART_CARD_DEVICE_ID_1, &fill_som);
+    supplyReadTag3CartridgeFillSecondOfMinute(HP_SMART_CARD_DEVICE_BULK1, &fill_som);
 //    LOGD(">>>> HPSCS_FILL_SOM = %u", fill_som);
 
     uint32_t sum = clientUniqueCode;
@@ -312,10 +311,14 @@ static uint32_t calculateCheckSum(jint clientUniqueCode) {
 JNIEXPORT jint JNICALL Java_com_Smartcard_writeCheckSum(JNIEnv *env, jclass arg, jint card, jint clientUniqueCode) {
     uint32_t check_sum = calculateCheckSum(clientUniqueCode);
 
-    if(HP_PRINT_CARTRIDGE == card) {
-        return inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_ID_0, check_sum);
-    } else if(HP_BULK_CARTRIDGE == card) {
-        return supplyWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_ID_1, check_sum);
+    if(CARD_SELECT_PEN1 == card) {
+        return inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_PEN1, check_sum);
+    } else if(CARD_SELECT_PEN2 == card) {
+        return inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_PEN2, check_sum);
+    } else if(CARD_SELECT_BULK1 == card) {
+        return supplyWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_BULK1, check_sum);
+    } else if(CARD_SELECT_BULKX == card) {
+        return inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_BULK1, check_sum);
     }
     return SC_CHECKSUM_FAILED;
 }
@@ -327,12 +330,20 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_checkSum(JNIEnv *env, jclass arg, jint
     uint32_t check_sum = calculateCheckSum(clientUniqueCode);
 
     uint32_t read_check_sum = -1;
-    if(HP_PRINT_CARTRIDGE == card) {
-        if (HP_SMART_CARD_OK != inkReadTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_ID_0, &read_check_sum)) {
+    if(CARD_SELECT_PEN1 == card) {
+        if (HP_SMART_CARD_OK != inkReadTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_PEN1, &read_check_sum)) {
             return SC_CHECKSUM_FAILED;
         }
-    } else if(HP_BULK_CARTRIDGE == card) {
-        if (HP_SMART_CARD_OK != supplyReadTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_ID_1, &read_check_sum)) {
+    } else if(CARD_SELECT_PEN2 == card) {
+        if (HP_SMART_CARD_OK != inkReadTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_PEN2, &read_check_sum)) {
+            return SC_CHECKSUM_FAILED;
+        }
+    } else if(CARD_SELECT_BULK1 == card) {
+        if (HP_SMART_CARD_OK != supplyReadTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_BULK1, &read_check_sum)) {
+            return SC_CHECKSUM_FAILED;
+        }
+    } else if(CARD_SELECT_BULKX == card) {
+        if (HP_SMART_CARD_OK != inkReadTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_BULK1, &read_check_sum)) {
             return SC_CHECKSUM_FAILED;
         }
     }
@@ -346,28 +357,51 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_checkSum(JNIEnv *env, jclass arg, jint
     return SC_SUCCESS;
 }
 
-
-JNIEXPORT jint JNICALL Java_com_Smartcard_checkConsistency(JNIEnv *env, jclass arg) {
+JNIEXPORT jint JNICALL Java_com_Smartcard_checkConsistency(JNIEnv *env, jclass arg, jint card, jint supply) {
     uint8_t ink_designator, supply_designator;
     uint8_t ink_formulator_id, supply_formulator_id;
     uint8_t ink_family, supply_ink_family;
     uint8_t ink_color_code, supply_ink_color_code;
     uint8_t ink_family_member, supply_ink_family_member;
 
-    if (HP_SMART_CARD_OK != inkReadTag13OEMInkDesignator(HP_SMART_CARD_DEVICE_ID_0, &ink_designator) ||
-        HP_SMART_CARD_OK != inkReadTag4FormulatorID(HP_SMART_CARD_DEVICE_ID_0, &ink_formulator_id) ||
-        HP_SMART_CARD_OK != inkReadTag4InkFamily(HP_SMART_CARD_DEVICE_ID_0, &ink_family) ||
-        HP_SMART_CARD_OK != inkReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_ID_0, &ink_color_code) ||
-        HP_SMART_CARD_OK != inkReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_ID_0, &ink_family_member)) {
-        return SC_PRINT_CTRG_ACCESS_FAILED;
+    if(CARD_SELECT_PEN1 == card) {
+        if (HP_SMART_CARD_OK != inkReadTag13OEMInkDesignator(HP_SMART_CARD_DEVICE_PEN1, &ink_designator) ||
+            HP_SMART_CARD_OK != inkReadTag4FormulatorID(HP_SMART_CARD_DEVICE_PEN1, &ink_formulator_id) ||
+            HP_SMART_CARD_OK != inkReadTag4InkFamily(HP_SMART_CARD_DEVICE_PEN1, &ink_family) ||
+            HP_SMART_CARD_OK != inkReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_PEN1, &ink_color_code) ||
+            HP_SMART_CARD_OK != inkReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_PEN1, &ink_family_member)) {
+            return SC_PRINT_CTRG_ACCESS_FAILED;
+        }
+    } else if(CARD_SELECT_PEN2 == card) {
+        if (HP_SMART_CARD_OK != inkReadTag13OEMInkDesignator(HP_SMART_CARD_DEVICE_PEN2, &ink_designator) ||
+            HP_SMART_CARD_OK != inkReadTag4FormulatorID(HP_SMART_CARD_DEVICE_PEN2, &ink_formulator_id) ||
+            HP_SMART_CARD_OK != inkReadTag4InkFamily(HP_SMART_CARD_DEVICE_PEN2, &ink_family) ||
+            HP_SMART_CARD_OK != inkReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_PEN2, &ink_color_code) ||
+            HP_SMART_CARD_OK != inkReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_PEN2, &ink_family_member)) {
+            return SC_PRINT_CTRG_ACCESS_FAILED;
+        }
+    } else {
+        return SC_SUCCESS;
     }
 
-    if (HP_SMART_CARD_OK != supplyReadTag1OEMInkDesignator(HP_SMART_CARD_DEVICE_ID_1, &supply_designator) ||
-        HP_SMART_CARD_OK != supplyReadTag4FormulatorID(HP_SMART_CARD_DEVICE_ID_1, &supply_formulator_id) ||
-        HP_SMART_CARD_OK != supplyReadTag4InkFamily(HP_SMART_CARD_DEVICE_ID_1, &supply_ink_family) ||
-        HP_SMART_CARD_OK != supplyReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_ID_1, &supply_ink_color_code) ||
-        HP_SMART_CARD_OK != supplyReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_ID_1, &supply_ink_family_member)) {
-        return SC_BULK_CTRG_ACCESS_FAILED;
+    if(CARD_SELECT_BULK1 == supply) {
+        if (HP_SMART_CARD_OK != supplyReadTag1OEMInkDesignator(HP_SMART_CARD_DEVICE_BULK1, &supply_designator) ||
+            HP_SMART_CARD_OK != supplyReadTag4FormulatorID(HP_SMART_CARD_DEVICE_BULK1, &supply_formulator_id) ||
+            HP_SMART_CARD_OK != supplyReadTag4InkFamily(HP_SMART_CARD_DEVICE_BULK1, &supply_ink_family) ||
+            HP_SMART_CARD_OK != supplyReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_BULK1, &supply_ink_color_code) ||
+            HP_SMART_CARD_OK != supplyReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_BULK1, &supply_ink_family_member)) {
+            return SC_BULK_CTRG_ACCESS_FAILED;
+        }
+    } else if(CARD_SELECT_BULKX == supply) {
+        if (HP_SMART_CARD_OK != inkReadTag13OEMInkDesignator(HP_SMART_CARD_DEVICE_BULK1, &ink_designator) ||
+            HP_SMART_CARD_OK != inkReadTag4FormulatorID(HP_SMART_CARD_DEVICE_BULK1, &ink_formulator_id) ||
+            HP_SMART_CARD_OK != inkReadTag4InkFamily(HP_SMART_CARD_DEVICE_BULK1, &ink_family) ||
+            HP_SMART_CARD_OK != inkReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_BULK1, &ink_color_code) ||
+            HP_SMART_CARD_OK != inkReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_BULK1, &ink_family_member)) {
+            return SC_PRINT_CTRG_ACCESS_FAILED;
+        }
+    } else {
+        return SC_SUCCESS;
     }
 
     if(ink_designator != supply_designator ||
@@ -381,58 +415,95 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_checkConsistency(JNIEnv *env, jclass a
     return SC_SUCCESS;
 }
 
-JNIEXPORT jstring JNICALL Java_com_Smartcard_readConsistency(JNIEnv *env, jclass arg) {
+JNIEXPORT jstring JNICALL Java_com_Smartcard_readConsistency(JNIEnv *env, jclass arg, jint card) {
     char strTemp[1024];
 
-    uint8_t ink_designator, supply_designator;
-    uint8_t ink_formulator_id, supply_formulator_id;
-    uint8_t ink_family, supply_ink_family;
-    uint8_t ink_color_code, supply_ink_color_code;
-    uint8_t ink_family_member, supply_ink_family_member;
+    uint8_t ink_designator;
+    uint8_t ink_formulator_id;
+    uint8_t ink_family;
+    uint8_t ink_color_code;
+    uint8_t ink_family_member;
     uint8_t out_of_ink;
-
-    inkReadTag13OEMInkDesignator(HP_SMART_CARD_DEVICE_ID_0, &ink_designator);
-    inkReadTag4FormulatorID(HP_SMART_CARD_DEVICE_ID_0, &ink_formulator_id);
-    inkReadTag4InkFamily(HP_SMART_CARD_DEVICE_ID_0, &ink_family);
-    inkReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_ID_0, &ink_color_code);
-    inkReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_ID_0, &ink_family_member);
-
-    supplyReadTag1OEMInkDesignator(HP_SMART_CARD_DEVICE_ID_1, &supply_designator);
-    supplyReadTag4FormulatorID(HP_SMART_CARD_DEVICE_ID_1, &supply_formulator_id);
-    supplyReadTag4InkFamily(HP_SMART_CARD_DEVICE_ID_1, &supply_ink_family);
-    supplyReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_ID_1, &supply_ink_color_code);
-    supplyReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_ID_1, &supply_ink_family_member);
-
-    supplyReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_1, &out_of_ink);
+    float density, weight;
+    uint8_t drop_volume;
+    uint32_t x = 0;
 
     uint32_t value;
     char buf[4][26];
-    for(int i=0; i<4; i++) {
-        value = 0x00000000;
-        supplyILGReadFunc[i](HP_SMART_CARD_DEVICE_ID_1, &value);
-        toBinaryString(buf[i], value);
+    char title[8];
+
+    strcpy(title, "UNKNOWN");
+    if(CARD_SELECT_PEN1 == card) {
+        inkReadTag13OEMInkDesignator(HP_SMART_CARD_DEVICE_PEN1, &ink_designator);
+        inkReadTag4FormulatorID(HP_SMART_CARD_DEVICE_PEN1, &ink_formulator_id);
+        inkReadTag4InkFamily(HP_SMART_CARD_DEVICE_PEN1, &ink_family);
+        inkReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_PEN1, &ink_color_code);
+        inkReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_PEN1, &ink_family_member);
+        inkReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_PEN1, &out_of_ink);
+        inkReadTag4Density(HP_SMART_CARD_DEVICE_PEN1, &density);
+        inkReadTag4UsableInkWeight(HP_SMART_CARD_DEVICE_PEN1, &weight);
+        inkReadTag5DropVolume(HP_SMART_CARD_DEVICE_PEN1, &drop_volume);
+        for(int i=0; i<4; i++) {
+            value = 0x00000000;
+            inkILGReadFunc[i](HP_SMART_CARD_DEVICE_PEN1, &value);
+            toBinaryString(buf[i], value);
+        }
+        strcpy(title, "PEN1");
+    } else if(CARD_SELECT_PEN2 == card) {
+        inkReadTag13OEMInkDesignator(HP_SMART_CARD_DEVICE_PEN2, &ink_designator);
+        inkReadTag4FormulatorID(HP_SMART_CARD_DEVICE_PEN2, &ink_formulator_id);
+        inkReadTag4InkFamily(HP_SMART_CARD_DEVICE_PEN2, &ink_family);
+        inkReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_PEN2, &ink_color_code);
+        inkReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_PEN2, &ink_family_member);
+        inkReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_PEN2, &out_of_ink);
+        inkReadTag4Density(HP_SMART_CARD_DEVICE_PEN2, &density);
+        inkReadTag4UsableInkWeight(HP_SMART_CARD_DEVICE_PEN2, &weight);
+        inkReadTag5DropVolume(HP_SMART_CARD_DEVICE_PEN2, &drop_volume);
+        for(int i=0; i<4; i++) {
+            value = 0x00000000;
+            inkILGReadFunc[i](HP_SMART_CARD_DEVICE_PEN2, &value);
+            toBinaryString(buf[i], value);
+        }
+        strcpy(title, "PEN2");
+    } else if(CARD_SELECT_BULK1 == card) {
+        supplyReadTag1OEMInkDesignator(HP_SMART_CARD_DEVICE_BULK1, &ink_designator);
+        supplyReadTag4FormulatorID(HP_SMART_CARD_DEVICE_BULK1, &ink_formulator_id);
+        supplyReadTag4InkFamily(HP_SMART_CARD_DEVICE_BULK1, &ink_family);
+        supplyReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_BULK1, &ink_color_code);
+        supplyReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_BULK1, &ink_family_member);
+        supplyReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_BULK1, &out_of_ink);
+        supplyReadTag4Density(HP_SMART_CARD_DEVICE_BULK1, &density);
+        supplyReadTag4UsableInkWeight(HP_SMART_CARD_DEVICE_BULK1, &weight);
+        drop_volume = 0;
+        for(int i=0; i<4; i++) {
+            value = 0x00000000;
+            supplyILGReadFunc[i](HP_SMART_CARD_DEVICE_BULK1, &value);
+            toBinaryString(buf[i], value);
+        }
+        if (HP_SMART_CARD_OK != supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x)) {
+            x = 0;
+        }
+        strcpy(title, "BULK1");
+    } else if(CARD_SELECT_BULKX == card) {
+        inkReadTag13OEMInkDesignator(HP_SMART_CARD_DEVICE_BULK1, &ink_designator);
+        inkReadTag4FormulatorID(HP_SMART_CARD_DEVICE_BULK1, &ink_formulator_id);
+        inkReadTag4InkFamily(HP_SMART_CARD_DEVICE_BULK1, &ink_family);
+        inkReadTag4ColorCodesGeneral(HP_SMART_CARD_DEVICE_BULK1, &ink_color_code);
+        inkReadTag4InkFamilyMember(HP_SMART_CARD_DEVICE_BULK1, &ink_family_member);
+        inkReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_BULK1, &out_of_ink);
+        inkReadTag4Density(HP_SMART_CARD_DEVICE_BULK1, &density);
+        inkReadTag4UsableInkWeight(HP_SMART_CARD_DEVICE_BULK1, &weight);
+        drop_volume = 0;
+        for(int i=0; i<4; i++) {
+            value = 0x00000000;
+            inkILGReadFunc[i](HP_SMART_CARD_DEVICE_BULK1, &value);
+            toBinaryString(buf[i], value);
+        }
+        strcpy(title, "BULKX");
     }
 
-    uint32_t x = 0;
-    if (HP_SMART_CARD_OK != supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, &x)) {
-        x = 0;
-    }
-
-    float density0, weight0, density1, weight1;
-    int drop_volume0, drop_volume1;
-
-    inkReadTag4Density(HP_SMART_CARD_DEVICE_ID_0, &density0);
-    inkReadTag4UsableInkWeight(HP_SMART_CARD_DEVICE_ID_0, &weight0);
-    inkReadTag5DropVolume(HP_SMART_CARD_DEVICE_ID_0, &drop_volume0);
-
-    supplyReadTag4Density(HP_SMART_CARD_DEVICE_ID_1, &density1);
-    supplyReadTag4UsableInkWeight(HP_SMART_CARD_DEVICE_ID_1, &weight1);
-
-    sprintf(strTemp, "legal:{dev0:{dsg:%d,fml:%d,fam:%d,clr:%d,mem:%d,ds:%f,wt:%f,dv:%d},\ndev1:{dsg:%d,fml:%d,fam:%d,clr:%d,mem:%d,ds:%f,wt:%f}}\nOIB:%d\nILG:%s-%s-%s-%s\nCount:%d",
-        ink_designator, ink_formulator_id, ink_family, ink_color_code, ink_family_member, density0, weight0, drop_volume0,
-        supply_designator, supply_formulator_id, supply_ink_family, supply_ink_color_code, supply_ink_family_member, density1, weight1,
-        out_of_ink,
-        buf[3], buf[2], buf[1], buf[0], x
+    sprintf(strTemp, "[%s]\ndsg:%d,fml:%d,fam:%d,clr:%d,mem:%d,ds:%f,wt:%f,dv:%d\nILG:%s-%s-%s-%s\nOIB:%d\nCount:%d",
+        title, ink_designator, ink_formulator_id, ink_family, ink_color_code, ink_family_member, density, weight, drop_volume,buf[3], buf[2], buf[1], buf[0],out_of_ink,x
     );
 
     return (*env)->NewStringUTF(env, strTemp);
@@ -442,15 +513,22 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_checkOIB(JNIEnv *env, jclass arg, jint
     uint8_t out_of_ink = 1;
 
     HP_SMART_CARD_result_t ret = HP_SMART_CARD_ERROR;
-    if(HP_PRINT_CARTRIDGE == card) {
-        ret = inkReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_0, &out_of_ink);
-    } else if(HP_BULK_CARTRIDGE == card) {
-        ret = supplyReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_1, &out_of_ink);
+    if(CARD_SELECT_PEN1 == card) {
+        ret = inkReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_PEN1, &out_of_ink);
+    } else if(CARD_SELECT_PEN2 == card) {
+        ret = inkReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_PEN2, &out_of_ink);
+    } else if(CARD_SELECT_BULK1 == card) {
+        ret = supplyReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_BULK1, &out_of_ink);
+    } else if(CARD_SELECT_BULKX == card) {
+        ret = inkReadTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_BULK1, &out_of_ink);
     }
 
     if (HP_SMART_CARD_OK != ret) {
+        LOGE(">>> checkOIB access error(#%d)!", card);
         out_of_ink = 1;
     }
+
+    LOGD(">>> checkOIB(#%d) = %d", card, out_of_ink);
 
     return out_of_ink;
 }
@@ -461,10 +539,14 @@ static void adjustLocalInkValue(jint card) {
 
     for(int i=3; i>=0; i--) {
         uint32_t tmp_value = 0x00000000;
-        if(HP_PRINT_CARTRIDGE == card) {
-            ret = inkILGReadFunc[i](HP_SMART_CARD_DEVICE_ID_0, &tmp_value);
-        } else if(HP_BULK_CARTRIDGE == card) {
-            ret = supplyILGReadFunc[i](HP_SMART_CARD_DEVICE_ID_1, &tmp_value);
+        if(CARD_SELECT_PEN1 == card) {
+            ret = inkILGReadFunc[i](HP_SMART_CARD_DEVICE_PEN1, &tmp_value);
+        } else if(CARD_SELECT_PEN2 == card) {
+            ret = inkILGReadFunc[i](HP_SMART_CARD_DEVICE_PEN2, &tmp_value);
+        } else if(CARD_SELECT_BULK1 == card) {
+            ret = supplyILGReadFunc[i](HP_SMART_CARD_DEVICE_BULK1, &tmp_value);
+        } else if(CARD_SELECT_BULKX == card) {
+            ret = inkILGReadFunc[i](HP_SMART_CARD_DEVICE_BULK1, &tmp_value);
         }
 
         if(HP_SMART_CARD_OK != ret) {
@@ -487,27 +569,35 @@ static void adjustLocalInkValue(jint card) {
         break;
     }
 
+    int vol_percentage = 1;
     uint32_t x = 0;
-    if(HP_PRINT_CARTRIDGE == card) {
-        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, &x);
-    } else if(HP_BULK_CARTRIDGE == card) {
-        ret = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, &x);
+    if(CARD_SELECT_PEN1 == card) {
+        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN1, &x);
+        vol_percentage = INK_VOL_OF_PEN_PERCENTAGE;
+    } else if(CARD_SELECT_PEN2 == card) {
+        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN2, &x);
+        vol_percentage = INK_VOL_OF_PEN_PERCENTAGE;
+    } else if(CARD_SELECT_BULK1 == card) {
+        ret = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x);
+        vol_percentage = INK_VOL_OF_BAG_PERCENTAGE;
+    } else if(CARD_SELECT_BULKX == card) {
+        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x);
+        vol_percentage = INK_VOL_OF_BAG_PERCENTAGE;
     }
     if (HP_SMART_CARD_OK != ret) {
         x = 0;
     }
 
-    // 100000以上给墨盒的200次减记留位，虽然在墨袋的时候不需要，为了处理统一也留。
-    // 目的是为了在正式版本里面墨袋减记两次，墨盒减记一次。如果是使用墨盒替代墨袋做实验，那就在模拟墨袋的次数减慢后这个墨盒就已经不可用了，没有影响
+    x = ilg * vol_percentage + x % vol_percentage;
 
-    uint32_t value = x % DATA_SEPERATER;
-    value = ilg * INK_VOLUME_PER_CENTAGE + value % INK_VOLUME_PER_CENTAGE;
-    value += (int)(x / DATA_SEPERATER) * DATA_SEPERATER;
-
-    if(HP_PRINT_CARTRIDGE == card) {
-        inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, value);
-    } else if(HP_BULK_CARTRIDGE == card) {
-        supplyWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, value);
+    if(CARD_SELECT_PEN1 == card) {
+        inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN1, x);
+    } else if(CARD_SELECT_PEN2 == card) {
+        inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN2, x);
+    } else if(CARD_SELECT_BULK1 == card) {
+        supplyWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, x);
+    } else if(CARD_SELECT_BULKX == card) {
+        inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, x);
     }
 }
 
@@ -519,21 +609,23 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, j
 
     HP_SMART_CARD_result_t ret = HP_SMART_CARD_ERROR;
 
-    uint32_t x = MAX_BAG_INK_VOLUME;
-    if(HP_PRINT_CARTRIDGE == card) {
-        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, &x);
-    } else if(HP_BULK_CARTRIDGE == card) {
-        ret = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, &x);
+    uint32_t x = -1;
+    if(CARD_SELECT_PEN1 == card) {
+        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN1, &x);
+    } else if(CARD_SELECT_PEN2 == card) {
+        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN2, &x);
+    } else if(CARD_SELECT_BULK1 == card) {
+        ret = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x);
+    } else if(CARD_SELECT_BULKX == card) {
+        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x);
     }
 
-    uint32_t y = MAX_PEN_INK_VOLUME;
-    ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, &y);
+    if (HP_SMART_CARD_OK != ret) {
+        LOGE(">>> getLocalInk access error(#%d)!", card);
+    }
+    LOGD(">>> Ink Level(#%d) = %d", card, x);
 
-    uint32_t value = (y / DATA_SEPERATER) * DATA_SEPERATER + x % DATA_SEPERATER;
-
-    LOGD(">>> Ink Level = %d", value);
-
-    return value;
+    return x;
 }
 
 static void writeILG(jint card, int percent) {
@@ -544,20 +636,28 @@ static void writeILG(jint card, int percent) {
 
     for(int i=0; i<4; i++) {
         value = 0x00000000;
-        if(HP_PRINT_CARTRIDGE == card) {
-            inkILGReadFunc[i](HP_SMART_CARD_DEVICE_ID_0, &value);
-        } else if(HP_BULK_CARTRIDGE == card) {
-            supplyILGReadFunc[i](HP_SMART_CARD_DEVICE_ID_1, &value);
+        if(CARD_SELECT_PEN1 == card) {
+            inkILGReadFunc[i](HP_SMART_CARD_DEVICE_PEN1, &value);
+        } else if(CARD_SELECT_PEN2 == card) {
+            inkILGReadFunc[i](HP_SMART_CARD_DEVICE_PEN2, &value);
+        } else if(CARD_SELECT_BULK1 == card) {
+            supplyILGReadFunc[i](HP_SMART_CARD_DEVICE_BULK1, &value);
+        } else if(CARD_SELECT_BULKX == card) {
+            inkILGReadFunc[i](HP_SMART_CARD_DEVICE_BULK1, &value);
         }
 
         // percent/25选择ilg(0:1-25; 1:26-50; 2:51:75; 3:76-100)
         // percent%25选择ilg的写入位(1%, 26%, 51%, 76%在第0位)
         if(i == percent / 25) {
             value |= (0x00000001 << (percent % 25));
-            if(HP_PRINT_CARTRIDGE == card) {
-                inkILGWriteFunc[i](HP_SMART_CARD_DEVICE_ID_0, value);
-            } else if(HP_BULK_CARTRIDGE == card) {
-                supplyILGWriteFunc[i](HP_SMART_CARD_DEVICE_ID_1, value);
+            if(CARD_SELECT_PEN1 == card) {
+                inkILGWriteFunc[i](HP_SMART_CARD_DEVICE_PEN1, value);
+            } else if(CARD_SELECT_PEN2 == card) {
+                inkILGWriteFunc[i](HP_SMART_CARD_DEVICE_PEN2, value);
+            } else if(CARD_SELECT_BULK1 == card) {
+                supplyILGWriteFunc[i](HP_SMART_CARD_DEVICE_BULK1, value);
+            } else if(CARD_SELECT_BULKX == card) {
+                inkILGWriteFunc[i](HP_SMART_CARD_DEVICE_BULK1, value);
             }
         }
         toBinaryString(buf[i], value);
@@ -570,64 +670,68 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
     uint32_t x = 0;
     HP_SMART_CARD_result_t ret = HP_SMART_CARD_ERROR;
 
-    if(HP_PRINT_CARTRIDGE == card) {
-        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, &x);
-    } else if(HP_BULK_CARTRIDGE == card) {
-        ret = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, &x);
+    int vol_percentage = 1;
+
+    if(CARD_SELECT_PEN1 == card) {
+        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN1, &x);
+        vol_percentage *= INK_VOL_OF_PEN_PERCENTAGE;
+    } else if(CARD_SELECT_PEN2 == card) {
+        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN2, &x);
+        vol_percentage *= INK_VOL_OF_PEN_PERCENTAGE;
+    } else if(CARD_SELECT_BULK1 == card) {
+        ret = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x);
+        vol_percentage *= INK_VOL_OF_BAG_PERCENTAGE;
+    } else if(CARD_SELECT_BULKX == card) {
+        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x);
+        vol_percentage *= INK_VOL_OF_BAG_PERCENTAGE;
     }
 
     if (HP_SMART_CARD_OK != ret) {
-        if(HP_PRINT_CARTRIDGE == card) {
+        if(CARD_SELECT_PEN1 == card || CARD_SELECT_PEN2 == card) {
             return SC_PRINT_CTRG_ACCESS_FAILED;
-        } else if(HP_BULK_CARTRIDGE == card) {
+        } else if(CARD_SELECT_BULK1 == card || CARD_SELECT_BULKX == card) {
             return SC_BULK_CTRG_ACCESS_FAILED;
         }
     }
 
     int p1, p2;
-    p1 = (x % DATA_SEPERATER) / INK_VOLUME_PER_CENTAGE;
+    p1 = x / vol_percentage;
     x++;
-    p2 = (x % DATA_SEPERATER) / INK_VOLUME_PER_CENTAGE;
+    p2 = x / vol_percentage;
 
-    if(HP_PRINT_CARTRIDGE == card) {
-        ret = inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, x);
-    } else if(HP_BULK_CARTRIDGE == card) {
-        ret = supplyWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_1, x);
+    if(CARD_SELECT_PEN1 == card) {
+        ret = inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN1, x);
+    } else if(CARD_SELECT_PEN2 == card) {
+        ret = inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN2, x);
+    } else if(CARD_SELECT_BULK1 == card) {
+        ret = supplyWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, x);
+    } else if(CARD_SELECT_BULKX == card) {
+        ret = inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, x);
     }
 
     if (HP_SMART_CARD_OK != ret) {
-        if(HP_PRINT_CARTRIDGE == card) {
+        if(CARD_SELECT_PEN1 == card || CARD_SELECT_PEN2 == card) {
             return SC_PRINT_CTRG_ACCESS_FAILED;
-        } else if(HP_BULK_CARTRIDGE == card) {
+        } else if(CARD_SELECT_BULK1 == card || CARD_SELECT_BULKX == card) {
             return SC_BULK_CTRG_ACCESS_FAILED;
         }
     }
 
+    LOGD(">>> downLocal(#%d) -> %d", card, x);
+
     if(p1 != p2) {
         writeILG(card, p1);
 
-        ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, &x);
-        if (HP_SMART_CARD_OK != ret) {
-            return SC_PRINT_CTRG_ACCESS_FAILED;
-        }
-
-        uint32_t y = x / DATA_SEPERATER;
-        y++;
-        x = (y * DATA_SEPERATER) + (x % DATA_SEPERATER);
-
-        inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_ID_0, x);
-        writeILG(HP_SMART_CARD_DEVICE_ID_0, (y/3 - 1));
-        if(100 <= y/3) {
-            LOGD(">>> Print Cartridge OIB");
-            inkWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_0, 1);
-        }
-
         if(100 <= p2) {
-            LOGD(">>> OIB");
-            if(HP_PRINT_CARTRIDGE == card) {
-                inkWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_0, 1);
-            } else if(HP_BULK_CARTRIDGE == card) {
-                supplyWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_1, 1);
+            LOGD(">>> OIB(#%d)", card);
+            if(CARD_SELECT_PEN1 == card) {
+                inkWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_PEN1, 1);
+            } else if(CARD_SELECT_PEN2 == card) {
+                inkWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_PEN2, 1);
+            } else if(CARD_SELECT_BULK1 == card) {
+                supplyWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_BULK1, 1);
+            } else if(CARD_SELECT_BULKX == card) {
+                inkWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_BULK1, 1);
             }
         }
     }
@@ -638,28 +742,35 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
 JNIEXPORT jint JNICALL Java_com_Smartcard_writeOIB(JNIEnv *env, jclass arg, jint card) {
     HP_SMART_CARD_result_t ret = HP_SMART_CARD_ERROR;
 
-    LOGD(">>> Write OIB");
-    if(HP_PRINT_CARTRIDGE == card) {
-        ret = inkWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_0, 1);
-    } else if(HP_BULK_CARTRIDGE == card) {
-        ret = supplyWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_ID_1, 1);
+    LOGD(">>> Write OIB(#%d)", card);
+
+    if(CARD_SELECT_PEN1 == card) {
+        ret = inkWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_PEN1, 1);
+    } else if(CARD_SELECT_PEN2 == card) {
+        ret = inkWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_PEN2, 1);
+    } else if(CARD_SELECT_BULK1 == card) {
+        ret = supplyWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_BULK1, 1);
+    } else if(CARD_SELECT_BULKX == card) {
+        ret = inkWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_BULK1, 1);
     }
 
     return ret;
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jint card) {
-    if(LEVEL_SENSOR != card) return 0;
-
-    SC_GPIO_ADAPTER_select_38_xlater(SELECT_LEVEL);
+    if(SELECT_LEVEL1 == card) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1);
+    } else if(SELECT_LEVEL2 == card) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN2);
+    } else {
+        return 0;
+    }
 
     uint32_t chData;
 
     if(LEVEL_I2C_OK != readChannelData0(&chData)) {
         chData = 0;
     }
-
-    SC_GPIO_ADAPTER_select_38_xlater(I2C_BUS_HANGUP);
 
     LOGD(">>> Level data read: 0x%08X", chData);
 
@@ -672,10 +783,11 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jin
 static JNINativeMethod gMethods[] = {
         {"exist",					"()I",	                    (void *)Java_com_Smartcard_exist},
         {"init",					"()I",	                    (void *)Java_com_Smartcard_init},
+        {"initComponent",			"(I)I",	                    (void *)Java_com_Smartcard_init_comp},
         {"writeCheckSum",	        "(II)I",					(void *)Java_com_Smartcard_writeCheckSum},
         {"checkSum",	            "(II)I",					(void *)Java_com_Smartcard_checkSum},
-        {"checkConsistency",	    "()I",						(void *)Java_com_Smartcard_checkConsistency},
-        {"readConsistency",	        "()Ljava/lang/String;",		(void *)Java_com_Smartcard_readConsistency},
+        {"checkConsistency",	    "(II)I",					(void *)Java_com_Smartcard_checkConsistency},
+        {"readConsistency",	        "(I)Ljava/lang/String;",	(void *)Java_com_Smartcard_readConsistency},
         {"checkOIB",		        "(I)I",						(void *)Java_com_Smartcard_checkOIB},
         {"getLocalInk",		        "(I)I",						(void *)Java_com_Smartcard_getLocalInk},
         {"downLocal",		        "(I)I",						(void *)Java_com_Smartcard_downLocal},

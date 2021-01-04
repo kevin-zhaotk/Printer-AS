@@ -512,11 +512,14 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 						}
 						else if(mObject instanceof BarcodeObject)
 						{
+// H.M.Wang 2021-1-4 将Code的设置提前到setContent，否则根据内容计算宽度没有正确的条码参照可参照
+							((BarcodeObject) mObject).setCode(mCode.getText().toString());
+
 							if (!mObject.mSource) {
 								mObject.setContent(mContent.getText().toString());
 							}
-							
-							((BarcodeObject) mObject).setCode(mCode.getText().toString());
+// End of H.M.Wang 2021-1-4 将Code的设置提前到setContent，否则根据内容计算宽度没有正确的条码参照可参照
+
 // H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
 							((BarcodeObject) mObject).setWithFrame(mITF14Frame.isChecked());
 // End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置

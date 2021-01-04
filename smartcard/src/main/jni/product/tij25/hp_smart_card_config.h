@@ -24,10 +24,16 @@
 // NOTE: only 32 Component devices are supported.
 typedef enum
 {
-    HP_SMART_CARD_DEVICE_ID_0,                              // This is the device id of the first Component Smart Card
+//    HP_SMART_CARD_DEVICE_ID_0,                              // This is the device id of the first Component Smart Card
+// H.M.Wang 2020-12-29 追加PEN1，PEN2，和BULK1，BULK2
+    HP_SMART_CARD_DEVICE_PEN1,                              // PEN1
+    HP_SMART_CARD_DEVICE_PEN2,                              // PEN1
 // H.M.Wang 2019-10-17 Added the following 3 devices
 #ifdef INCLUDE_HP_SMART_CARD_SUPPLY
-    HP_SMART_CARD_DEVICE_ID_1,                              // If supply is supported, a second Component device is assumed
+//    HP_SMART_CARD_DEVICE_ID_1,                              // If supply is supported, a second Component device is assumed
+    HP_SMART_CARD_DEVICE_BULK1,                              // BULK1
+    HP_SMART_CARD_DEVICE_BULK2,                              // BULK2
+// End of H.M.Wang 2020-12-29 追加PEN1，PEN2，和BULK1，BULK2
 #endif
     //HP_SMART_CARD_DEVICE_ID_2,				            // Example - add enum entries for up to 32 component devices as needed
 

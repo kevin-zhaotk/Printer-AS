@@ -256,27 +256,26 @@ public class BarcodeObject extends BaseObject {
 	public void setContent(String content)
 	{
 // H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+		Debug.d(TAG, "setContent = " + content);
 		mOrgContent = content;
 		mHTContent.setContent(content);
 		mContent = mHTContent.getExpandedContent();
 //		mContent=content;
 // End of H.M.Wang 2020-7-31 追加超文本内容，条码的内容可能是超文本
+
 // H.M.Wang 2020-12-25 这里当生成条码的时候，会因为宽度为0，而在getPrintBitmap函数里面异常退出
 //		if (!is2D()) {
 //			mWidth = 0;
 //		}
 		check();
 		if (!is2D()) {
-			if (mWidth <= 0) {
-// H.M.Wang 2019-9-26 这个宽度的设置，由于参照的元是根据字数直接算的，而不是像其他的元素根据高计算的，因此如果高做了调整，mRatio里面已经考虑了高变化的因素，因此需要将高的因素化解后使用
+//			if (mWidth <= 0) {
 				mWidth = mContent.length() * 50 * mRatio * mHeight / 152;
-//                mWidth = mContent.length() * 70;
-			}
-// H.M.Wang2019-9-26 恢复使用mWidth和mHeight进行画图
+//			}
 		} else {
-			if (mWidth <= 0) {
+//			if (mWidth <= 0) {
 				mWidth = mHeight;
-			}
+//			}
 		}
 		setWidth(mWidth);
 // End of H.M.Wang 2020-12-25 这里当生成条码的时候，会因为宽度为0，而在getPrintBitmap函数里面异常退出

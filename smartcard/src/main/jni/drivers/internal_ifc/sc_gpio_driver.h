@@ -53,6 +53,19 @@ extern "C" {
 //#define SELECT_BULK_CTRG    0x01, 0x01, 0x00
 // End of H.M.Wang 2020-9-25 为了使用rfidSwitch的方法选通38译码器做的追加
 
+/*
+// H.M.Wang 2020-12-29 增加7寸屏的卡定义
+#define GPIO_RFID_CARD1         0x03
+#define GPIO_RFID_CARD2         0x04          // Bulk Cartridge. PG985(001)
+#define GPIO_RFID_CARD3         0x05          // Print2 Cartridge. PG985(010)
+#define GPIO_RFID_CARD4         0x06
+#define GPIO_RFID_CARD5         0x07          // Print1 Cartridge. PG985(100)
+#define GPIO_RFID_CARD6         0x08          // Output1 Cartridge. PG985(101)
+#define GPIO_RFID_CARD7         0x09          // Output2 Cartridge. PG985(110)
+#define GPIO_RFID_CARD8         0x0A
+// End of H.M.Wang 2020-12-29 增加7寸屏的卡定义
+*/
+
 //-----------------------------------------------------------------------------
 // Function Prototypes
 

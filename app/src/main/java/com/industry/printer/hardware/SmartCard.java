@@ -17,8 +17,6 @@ public class SmartCard {
     public final static int SC_INIT_BULK_CTRG_NOT_PRESENT   = 111;
     public final static int SC_INIT_PRNT_CTRG_INIT_FAILED   = 120;
     public final static int SC_INIT_BULK_CTRG_INIT_FAILED   = 121;
-    public final static int SC_INIT_PRNT_CTRG_FID_NOT_MATCH = 130;
-    public final static int SC_INIT_BULK_CTRG_FID_NOT_MATCH = 131;
     public final static int SC_PRINT_CARTRIDGE_ACCESS_FAILED = 200;
     public final static int SC_BULK_CARTRIDGE_ACCESS_FAILED = 201;
     public final static int SC_LEVEL_CENSOR_ACCESS_FAILED   = 202;
@@ -37,13 +35,15 @@ public class SmartCard {
 
     static public native int init();
 
+    static public native int initComponent(int card);
+
     static public native int writeCheckSum(int card, int clientUniqueCode);
 
     static public native int checkSum(int card, int clientUniqueCode);
 
-    static public native int checkConsistency();
+    static public native int checkConsistency(int card, int supply);
 
-    static public native String readConsistency();
+    static public native String readConsistency(int card);
 
     static public native int checkOIB(int card);
 

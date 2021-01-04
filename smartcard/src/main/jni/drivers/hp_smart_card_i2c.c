@@ -30,9 +30,8 @@
 
 // Removed by H.M.Wang 2019-10-17
 // #include "bcm2835.h"
+// #define MAX_DATA_SIZE    255
 // Removed by H.M.Wang 2019-10-17 end
-
-#define MAX_DATA_SIZE    255
 
 /***********************************************
 * Implementation of APIs
@@ -71,18 +70,15 @@ uint8_t DeviceIDtoAddr(HP_SMART_CARD_device_id_t device_id)
 static uint8_t DeviceIDtoAddr(HP_SMART_CARD_device_id_t device_id) {
     if (device_id == HP_SMART_CARD_DEVICE_HOST) {
         return (0xF0 >> 1);
-    } else if (device_id == HP_SMART_CARD_DEVICE_ID_0) {
-        SC_GPIO_ADAPTER_select_38_xlater(SELECT_PRNT_CTRG);               // select Print Cartridge
+    } else if (device_id == HP_SMART_CARD_DEVICE_PEN1) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1);               // Select Pen1
         return (0x42 >> 1);
-    } else if (device_id == HP_SMART_CARD_DEVICE_ID_1) {
-        SC_GPIO_ADAPTER_select_38_xlater(SELECT_BULK_CTRG);               // select Bulk Cartridge
+    } else if (device_id == HP_SMART_CARD_DEVICE_PEN2) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN2);               // Select Pen2
         return (0x42 >> 1);
-//    } else if (device_id == HP_SMART_CARD_DEVICE_ID_2) {
-//        HP_SMART_CARD_gpio_select(SELECT_CARD_3);               // select Pen 2
-//        return (0x42 >> 1);
-//    } else if (device_id == HP_SMART_CARD_DEVICE_ID_3) {
-//        HP_SMART_CARD_gpio_select(SELECT_CARD_4);               // select Pen 3
-//        return (0x42 >> 1);
+    } else if (device_id == HP_SMART_CARD_DEVICE_BULK1) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_BULK1);              // Select Bulk
+        return (0x42 >> 1);
     }
     return 0;
 }
@@ -124,7 +120,7 @@ HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_read(HP_SMART_CARD_device_id_t devi
 //        return HP_SMART_CARD_I2C_FAILED;
 //    }
     HP_SMART_CARD_i2c_result_t ret = HP_SMART_CARD_i2c_read_direct(DeviceIDtoAddr(device_id), addr, data, num_bytes_to_read);
-    SC_GPIO_ADAPTER_select_38_xlater(I2C_BUS_HANGUP);
+//    SC_GPIO_ADAPTER_select_38_xlater(I2C_BUS_HANGUP);
     return ret;
 }
 
@@ -199,7 +195,7 @@ HP_SMART_CARD_i2c_result_t HP_SMART_CARD_i2c_write(HP_SMART_CARD_device_id_t dev
 //        return HP_SMART_CARD_I2C_FAILED;
 //    }
     HP_SMART_CARD_i2c_result_t ret = HP_SMART_CARD_i2c_write_direct(DeviceIDtoAddr(device_id), addr, data, num_bytes_to_write);
-    SC_GPIO_ADAPTER_select_38_xlater(I2C_BUS_HANGUP);
+//    SC_GPIO_ADAPTER_select_38_xlater(I2C_BUS_HANGUP);
     return ret;
 }
 

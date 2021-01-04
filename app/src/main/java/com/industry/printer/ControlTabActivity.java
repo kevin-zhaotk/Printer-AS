@@ -732,7 +732,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		int heads = mSysconfig.getPNozzle().mHeads * mSysconfig.getHeadFactor();
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
 		if(mInkManager instanceof SmartCardManager) {
-			heads = 2;
+			heads = 3;
 		}
 // End of M.M.Wang 2020-11-16 增加墨盒墨量显示
 
@@ -760,7 +760,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if(mInkManager instanceof RFIDManager) {
 			level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");
 		} else {
-			level = (mRfid == 0 ? "B" : "P") + "-" + (ink >= 100f ? "100%" : (String.format("%.1f", ink) + "%"));
+			if(mRfid == 0) {
+				level = "1-" + (ink >= 100f ? "100%" : (ink < 0f ? "-" : (String.format("%.1f", ink) + "%")));
+			} else if(mRfid == 1) {
+				level = "2-" + (ink >= 100f ? "100%" : (ink < 0f ? "-" : (String.format("%.1f", ink) + "%")));
+			} else {
+				level = "B-" + (ink >= 100f ? "100%" : (ink < 0f ? "-" : (String.format("%.1f", ink) + "%")));
+			}
 		}
 
 		if (!mInkManager.isValid(mRfid)) {
@@ -1244,7 +1250,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					resetCounterIfNeed();
 // H.M.Wang 2020-6-2 只有数据源为文件打印的时候采取检查QR.txt或者QR.csv的存在
 //					if (!checkQRFile()) {
-					if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE && !checkQRFile()) {
+// H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
+//					if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE && !checkQRFile()) {
+					if((SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE ||
+						SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE2) &&
+						!checkQRFile()) {
+// End of H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
 // End of H.M.Wang 2020-6-2 只有数据源为文件打印的时候采取检查QR.txt或者QR.csv的存在
 						handleError(R.string.str_toast_no_qrfile, Constants.pcErr(pcMsg));
 						mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
@@ -1379,6 +1390,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					break;
 				case RFIDManager.MSG_RFID_INIT_SUCCESS:
 					// mInkManager.read(mHandler);
+// H.M.Wang 2021-1-4 当RFID初始化成功的时候，激活打印键，这个方案可能不完美，暂时可以。要解决的问题是，系统刚刚启动的时候，RFID正在初始化，但是refreshInk函数会按着初始化失败关闭打印键，迟到的初始化成功没办法激活打印键
+					mBtnStart.setClickable(true);
+					mTvStart.setTextColor(Color.BLACK);
+// End of H.M.Wang 2021-1-4 当RFID初始化成功的时候，激活打印键，这个方案可能不完美，暂时可以。要解决的问题是，系统刚刚启动的时候，RFID正在初始化，但是refreshInk函数会按着初始化失败关闭打印键，迟到的初始化成功没办法激活打印键
 					break;
 				case SmartCardManager.MSG_SMARTCARD_INIT_FAILED:
 					Debug.e(TAG, "Smartcard Initialization Failed! [" + msg.arg1 + "]");
@@ -1700,9 +1715,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				// mMsgNext.setClickable(false);
 				// mMsgPrev.setClickable(false);
 // H.M.Wang 2020-9-15 如果不是工作在Smart卡模式，则继续使用该管脚作为打印信号使用
-				if(!(mInkManager instanceof SmartCardManager)) {
+//				if(!(mInkManager instanceof SmartCardManager)) {
 					ExtGpio.writeGpio('b', 11, 1);
-				}
+//				}
 // End of H.M.Wang 2020-9-15 如果不是工作在Smart卡模式，则继续使用该管脚作为打印信号使用
 				break;
 			case STATE_STOPPED:
@@ -1722,9 +1737,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				// mMsgNext.setClickable(true);
 				// mMsgPrev.setClickable(true);
 // H.M.Wang 2020-9-15 如果不是工作在Smart卡模式，则继续使用该管脚作为打印信号使用
-				if(!(mInkManager instanceof SmartCardManager)) {
+//				if(!(mInkManager instanceof SmartCardManager)) {
 					ExtGpio.writeGpio('b', 11, 0);
-				}
+//				}
 // End of H.M.Wang 2020-9-15 如果不是工作在Smart卡模式，则继续使用该管脚作为打印信号使用
 				break;
 			default:
@@ -1985,7 +2000,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				if(PlatformInfo.DEVICE_SMARTCARD.equals(PlatformInfo.getInkDevice()) &&	Configs.SMARTCARDMANAGER) {
 					int ret = SmartCard.init();
 					if(SmartCard.SC_SUCCESS == ret) {
-						if(SmartCard.SC_SUCCESS == SmartCard.writeCheckSum(SmartCardManager.WORK_BULK_CARTRIDGE, mSysconfig.getParam(0))) {
+						if(SmartCard.SC_SUCCESS == SmartCard.writeCheckSum(SmartCardManager.WORK_BULK, mSysconfig.getParam(0))) {
 							ToastUtil.show(mContext, "Done.");
 						} else {
 							ToastUtil.show(mContext, "Failed.");
