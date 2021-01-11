@@ -1370,6 +1370,7 @@ public class DataTransferThread {
 //					Debug.e(TAG, "--->FPGA error");
 				} else {
 					Debug.d(TAG, "--->FPGA buffer is empty");
+////					Debug.d(TAG, "Printed: " + FpgaGpioOperation.getPrintedCount());
 // 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
 					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
 						if(!mDataUpdatedForFastLan) {

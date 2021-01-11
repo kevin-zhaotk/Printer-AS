@@ -362,7 +362,7 @@
 	<string name="str_textview_param53">53.Счетчик8</string>
 	<string name="str_textview_param54">54.Счетчик9</string>
 	<string name="str_textview_param55">55.Резерв</string>
-	<string name="str_textview_param56">56.Резерв</string>
+	<string name="str_textview_param56">56.FIFO</string>
 	<string name="str_textview_param57">57.Резерв</string>
 	<string name="str_textview_param58">58.Резерв</string>
 	<string name="str_textview_param59">59.Резерв</string>

@@ -732,7 +732,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		int heads = mSysconfig.getPNozzle().mHeads * mSysconfig.getHeadFactor();
 // M.M.Wang 2020-11-16 增加墨盒墨量显示
 		if(mInkManager instanceof SmartCardManager) {
-			heads = 3;
+			heads = mSysconfig.getPNozzle().mHeads + 1;
 		}
 // End of M.M.Wang 2020-11-16 增加墨盒墨量显示
 
@@ -755,27 +755,17 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	private void refreshInk() {
 		float ink = mInkManager.getLocalInkPercentage(mRfid);
-//		Debug.d(TAG, "--->refresh ink: " + mRfid + " = " + ink);
+		Debug.d(TAG, "--->refresh ink: " + mRfid + " = " + ink);
 		String level = "";
 		if(mInkManager instanceof RFIDManager) {
 			level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");
 		} else {
-			if(mRfid == 0) {
-				level = "1-" + (ink >= 100f ? "100%" : (ink < 0f ? "-" : (String.format("%.1f", ink) + "%")));
-			} else if(mRfid == 1) {
-				level = "2-" + (ink >= 100f ? "100%" : (ink < 0f ? "-" : (String.format("%.1f", ink) + "%")));
-			} else {
-				level = "B-" + (ink >= 100f ? "100%" : (ink < 0f ? "-" : (String.format("%.1f", ink) + "%")));
-			}
+			level = String.valueOf(mRfid + 1) + "-" + (ink >= 100f ? "100%" : (ink < 0f ? "-" : (String.format("%.1f", ink) + "%")));
 		}
 
 		if (!mInkManager.isValid(mRfid)) {
 			mInkLevel.setBackgroundColor(Color.RED);
-			if(mInkManager instanceof RFIDManager) {
-				mInkLevel.setText(String.valueOf(mRfid + 1) + "--");
-			} else {
-				mInkLevel.setText("--");
-			}
+			mInkLevel.setText(String.valueOf(mRfid + 1) + "--");
 
 			// H.M.Wang RFID错误时报警，禁止打印
 			mBtnStart.setClickable(false);
@@ -1204,8 +1194,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					break;
 				case SmartCardManager.MSG_SMARTCARD_CHECK_FAILED:
 // H.M.Wang 2020-5-18 Smartcard定期检测出现错误显示错误码
-					mInkLevel.setBackgroundColor(Color.RED);
-					mInkLevel.setText("" + msg.arg1);
+// H.M.Wang 2021-1-7 取消显示错误号，这个是为了调试
+//					mInkLevel.setBackgroundColor(Color.RED);
+//					mInkLevel.setText("" + msg.arg1);
+// End of H.M.Wang 2021-1-7 取消显示错误号，这个是为了调试
 // End of H.M.Wang 2020-5-18 Smartcard定期检测出现错误显示错误码
 				case RFIDManager.MSG_RFID_CHECK_FAIL:
 					Debug.d(TAG, "--->Print check UUID fail");
@@ -1302,7 +1294,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					handlerSuccess(R.string.str_print_startok, pcMsg);
 					break;
 				case MESSAGE_PRINT_STOP:
-					FpgaGpioOperation.updateSettings(mContext, null, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+// 2021-1-11 取消停止打印时重新下发参数
+//					FpgaGpioOperation.updateSettings(mContext, null, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+// End of 2021-1-11 取消停止打印时重新下发参数
 					// do nothing if not in printing state
 					if (mDTransThread == null || !mDTransThread.isRunning()) {
 						sendToRemote(Constants.pcOk(msg.getData().getString(Constants.PC_CMD)));
@@ -1310,9 +1304,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					}
 					if (mDTransThread != null && !mDTransThread.isRunning()) {
 						switchState(STATE_STOPPED);
-						FpgaGpioOperation.clean();
+// 2021-1-11 取消停止打印时重新下发CLEAN
+//						FpgaGpioOperation.clean();
+// End of 2021-1-11 取消停止打印时重新下发CLEAN
 						break;
 					}
+
 					FpgaGpioOperation.uninit();
 					if (mDTransThread != null) {
 						mDTransThread.finish();
@@ -1390,10 +1387,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					break;
 				case RFIDManager.MSG_RFID_INIT_SUCCESS:
 					// mInkManager.read(mHandler);
-// H.M.Wang 2021-1-4 当RFID初始化成功的时候，激活打印键，这个方案可能不完美，暂时可以。要解决的问题是，系统刚刚启动的时候，RFID正在初始化，但是refreshInk函数会按着初始化失败关闭打印键，迟到的初始化成功没办法激活打印键
-					mBtnStart.setClickable(true);
-					mTvStart.setTextColor(Color.BLACK);
-// End of H.M.Wang 2021-1-4 当RFID初始化成功的时候，激活打印键，这个方案可能不完美，暂时可以。要解决的问题是，系统刚刚启动的时候，RFID正在初始化，但是refreshInk函数会按着初始化失败关闭打印键，迟到的初始化成功没办法激活打印键
 					break;
 				case SmartCardManager.MSG_SMARTCARD_INIT_FAILED:
 					Debug.e(TAG, "Smartcard Initialization Failed! [" + msg.arg1 + "]");
@@ -1414,6 +1407,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							break;
 						}
 					}
+
+// H.M.Wang 2021-1-4 当RFID初始化成功的时候，激活打印键，这个方案可能不完美，暂时可以。要解决的问题是，系统刚刚启动的时候，RFID正在初始化，但是refreshInk函数会按着初始化失败关闭打印键，迟到的初始化成功没办法激活打印键
+					mBtnStart.setClickable(true);
+					mTvStart.setTextColor(Color.BLACK);
+// End of H.M.Wang 2021-1-4 当RFID初始化成功的时候，激活打印键，这个方案可能不完美，暂时可以。要解决的问题是，系统刚刚启动的时候，RFID正在初始化，但是refreshInk函数会按着初始化失败关闭打印键，迟到的初始化成功没办法激活打印键
 
 					if (Configs.READING) {
 						// H.M.Wang 2019-09-12 修改在Configs.READING = true时，直接显示缺省值，而不是在尝试10次后显示
@@ -1997,7 +1995,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		switch (v.getId()) {
 			case R.id.StartPrint:
 // H.M.Wang 2020-9-15 追加在条件满足的情况下，启动写入Smart卡验证码工作模式
-				if(PlatformInfo.DEVICE_SMARTCARD.equals(PlatformInfo.getInkDevice()) &&	Configs.SMARTCARDMANAGER) {
+/* 2021-1-6 暂时取消				if(PlatformInfo.DEVICE_SMARTCARD.equals(PlatformInfo.getInkDevice()) &&	Configs.SMARTCARDMANAGER) {
 					int ret = SmartCard.init();
 					if(SmartCard.SC_SUCCESS == ret) {
 						if(SmartCard.SC_SUCCESS == SmartCard.writeCheckSum(SmartCardManager.WORK_BULK, mSysconfig.getParam(0))) {
@@ -2011,6 +2009,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					}
 					break;
 				}
+*/
 // End of H.M.Wang 2020-9-15 追加在条件满足的情况下，启动写入Smart卡验证码工作模式
 
 // H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
@@ -3322,8 +3321,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 
 	    public void onComplete(int index) {
-			String msg=mCounter+" \r\nink"+mInkManager.getLocalInk(0)+"\r\n"+mObjPath+"\r\n";
-			Debug.d(TAG, "--->onComplete: msg = " + msg);
+			Debug.d(TAG, "--->onComplete: mCounter:" + mCounter+"; ink:"+mInkManager.getLocalInk(0)+"; path:"+mObjPath+"\n");
 			PrintWriter pout = null;
 			// H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
 // H.M.Wang 2020-8-24 返回打印任务名称

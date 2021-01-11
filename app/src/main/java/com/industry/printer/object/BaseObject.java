@@ -1272,7 +1272,7 @@ public class BaseObject{
 		if ( c.get(Calendar.HOUR_OF_DAY)*100 + c.get(Calendar.MINUTE) < hold) {
 			delay = RealtimeObject.MS_DAY;
 		}
-		Debug.d(TAG, "--->delay:" + delay);
+//		Debug.d(TAG, "--->delay:" + delay);
 		return delay;
 	}
 	

@@ -183,6 +183,17 @@ public class FpgaGpioOperation {
         return wlen;
     }
 
+    public static int getPrintedCount() {
+        int ret = 0;
+        int fd = open();
+        if (fd <= 0) {
+            return -1;
+        }
+
+        ret = read(fd);
+        return ret;
+    }
+
     /**
      * pollState 轮训内核buffer状态
      * 由于该函数会调用native的poll函数，native的poll函数会一直阻塞直到内核kernel Buffer状态为空，
@@ -378,6 +389,9 @@ public class FpgaGpioOperation {
 
 //        mListener = null;
 //        stop_mon(fd);
+// H.M.Wang 2021-1-11 增加1s睡眠，以保证打印完成后再发送停止
+        try{Thread.sleep(1000);}catch(Exception e){};
+// End of H.M.Wang 2021-1-11 增加1s睡眠，以保证打印完成后再发送停止
         ioctl(fd, FPGA_CMD_STOPPRINT, 0);
         Debug.d(TAG, "FPGA_CMD_STOPPRINT");
     }

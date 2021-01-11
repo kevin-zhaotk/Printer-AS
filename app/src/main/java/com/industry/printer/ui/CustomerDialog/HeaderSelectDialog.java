@@ -27,7 +27,7 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 
 	private Context mContext;
 	private GridView mHeaderlist;
-	private FontItemAdapter mAdapter;
+	private HeaderItemAdapter mAdapter;
 	
 	private TextView mOk;
 	private TextView mCancel;
@@ -56,7 +56,7 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 	    mCancel.setOnClickListener(this);
 
 		mHeaderlist = (GridView) findViewById(R.id.sizelist);
-	    mAdapter = new FontItemAdapter(mSelected);
+	    mAdapter = new HeaderItemAdapter(mSelected);
 
 
 		mHeaderlist.setAdapter(mAdapter);
@@ -64,7 +64,7 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 	}
 
 	
-	public class FontItemAdapter extends BaseAdapter {
+	public class HeaderItemAdapter extends BaseAdapter {
 
 		private int position=0;
 		private Holder mHolder;
@@ -72,7 +72,7 @@ public class HeaderSelectDialog extends Dialog implements android.view.View.OnCl
 		private String[] mHeaders; // = new String[MessageObject.mBaseList.length];
 		
 		
-		public FontItemAdapter(int pos) {
+		public HeaderItemAdapter(int pos) {
 			mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			position = pos;
 			init();

@@ -11,6 +11,7 @@ public class SmartCard {
 		System.loadLibrary("smartcard");
     }
 
+    public final static int SC_FAILED                       = -1;
     public final static int SC_SUCCESS                      = 0;
     public final static int SC_INIT_HOST_CARD_NOT_PRESENT   = 100;
     public final static int SC_INIT_PRNT_CTRG_NOT_PRESENT   = 110;

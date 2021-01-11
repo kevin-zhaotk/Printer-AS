@@ -417,8 +417,8 @@ public class DataTask {
 //		}
 
 		PrinterNozzle headType = mTask.getNozzle();
+// H.M.Wang 2021-1-8 取消这个计算好像不行，12.7多头的时候似乎有问题
 // H.M.Wang 2020-10-29 取消在计算scale的计算，采用Nozzle类里面的计算值
-/*
 		if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
 // H.M.Wang 修改
 //			div = 1;
@@ -470,11 +470,12 @@ public class DataTask {
 			scaleW = 152f/64;
 			scaleH = 152f/64;
 		}
-*/
-		scaleW = 1.0f * headType.getFactorScale() / headType.getScaleW();
-		div = scaleW;
-		scaleH = 1.0f / headType.getScaleW();
+
+//		scaleW = 1.0f * headType.getFactorScale() / headType.getScaleW();
+//		div = scaleW;
+//		scaleH = 1.0f / headType.getScaleW();
 // End of H.M.Wang 2020-10-29 取消在计算scale的计算，采用Nozzle类里面的计算值
+// End of H.M.Wang 2021-1-8 取消这个计算好像不行，12.7多头的时候似乎有问题
 
 		/**if high resolution message, do not divide width by 2 */
 		if (msg.getResolution()) {
@@ -486,7 +487,7 @@ public class DataTask {
 		Debug.d(TAG, "-----scaleW = " + scaleW + " div = " + div);
 		//mPreBitmap = Arrays.copyOf(mBg.mBits, mBg.mBits.length);
 
-// H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持QRCode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
+// H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持Barcode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
 		int strIndex = -1;
 		String[] recvStrs = new String[1];
 // H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
@@ -498,10 +499,15 @@ public class DataTask {
 			QRReader reader = QRReader.getInstance(mContext);
 			String content = reader.read();
 
+			if (TextUtils.isEmpty(content)) {
+				isReady = false;
+				return;
+			}
+
 			recvStrs = content.split(",");
 			strIndex = 0;
 		}
-// End of H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持QRCode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
+// End of H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持Barcode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
 
 		for(BaseObject o:mObjList)
 		{

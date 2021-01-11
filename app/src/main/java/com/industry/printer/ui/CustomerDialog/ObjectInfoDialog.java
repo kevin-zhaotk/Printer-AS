@@ -515,9 +515,11 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 // H.M.Wang 2021-1-4 将Code的设置提前到setContent，否则根据内容计算宽度没有正确的条码参照可参照
 							((BarcodeObject) mObject).setCode(mCode.getText().toString());
 
-							if (!mObject.mSource) {
+// H.M.Wang 2021-1-5 取消动态二维码不保存内容的限制，否则宽度不会被重新计算，会沿用初始宽度（这个宽度是根据缺省的一维码的内容计算的），导致动态二维码的宽度被拉伸
+//							if (!mObject.mSource) {
 								mObject.setContent(mContent.getText().toString());
-							}
+//							}
+// End of H.M.Wang 2021-1-5 取消动态二维码不保存内容的限制，否则宽度不会被重新计算，会沿用初始宽度（这个宽度是根据缺省的一维码的内容计算的），导致动态二维码的宽度被拉伸
 // End of H.M.Wang 2021-1-4 将Code的设置提前到setContent，否则根据内容计算宽度没有正确的条码参照可参照
 
 // H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
