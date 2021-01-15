@@ -79,9 +79,9 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 					break;
 				}
 				if (RFIDDevice.isNewModel) {
-					mDevice.autoSearch(false);
+					mDevice.autoSearch(false);      // RFID_CMD_AUTO_SEARCH
 				} else {
-					mDevice.lookForCards(false);
+					mDevice.lookForCards(false);    // RFID_CMD_SEARCHCARD
 				}
 				// mDevice.connect();
 				break;
@@ -109,9 +109,9 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 				break;
 			case MSG_RFID_CHECK_NEXT:
 				if (RFIDDevice.isNewModel) {
-					mDevice.readBlock(RFIDDevice.SECTOR_UUID, RFIDDevice.BLOCK_UUID, RFIDDevice.RFID_DATA_MIFARE_KEY_A);
+					mDevice.readBlock(RFIDDevice.SECTOR_UUID, RFIDDevice.BLOCK_UUID, RFIDDevice.RFID_DATA_MIFARE_KEY_A);    // RFID_CMD_READ_VERIFY
 				} else {
-					mDevice.keyVerfication(RFIDDevice.SECTOR_UUID, RFIDDevice.BLOCK_UUID, RFIDDevice.RFID_DATA_MIFARE_KEY_A);
+					mDevice.keyVerfication(RFIDDevice.SECTOR_UUID, RFIDDevice.BLOCK_UUID, RFIDDevice.RFID_DATA_MIFARE_KEY_A);   // RFID_CMD_MIFARE_KEY_VERIFICATION
 				}
 				break;
 			case MSG_RFID_CHECK_COMPLETE:

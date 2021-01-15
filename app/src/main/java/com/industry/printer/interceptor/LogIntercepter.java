@@ -47,7 +47,6 @@ public class LogIntercepter implements IPrintIntercepter {
     FileOutputStream cWriter;
     int count;Context mCtx;
 
-
     // singleton
     public static LogIntercepter getInstance(Context ctx) {
 

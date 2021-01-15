@@ -276,11 +276,6 @@ public class Configs {
 			return false;
 	}
 	
-	
-	/**
-	 * 鑾峰彇u鐩樻寕杞借矾寰�
-	 * @return usb root path
-	 */
 	public static String getUsbPath() {
 		return USB_ROOT_PATH;
 	}
@@ -320,7 +315,7 @@ public class Configs {
 		} catch (Exception e) {
 		}
 	}
-	
+
 	private static void setObjectFlag(String id, int flag) {
 		boolean enable = false;
 		if ( flag > 0) {

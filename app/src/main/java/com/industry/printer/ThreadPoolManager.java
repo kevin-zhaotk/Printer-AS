@@ -10,6 +10,4 @@ public class ThreadPoolManager {
 	public static ExecutorService mSerialControlThread = Executors.newFixedThreadPool(1);
 	
 	public static ExecutorService mRfidThread = Executors.newFixedThreadPool(1);
-	
-		
 }

@@ -8,28 +8,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.nio.Buffer;
 import java.util.ArrayList;
-import java.util.Vector;
 
-import com.industry.printer.EditTabActivity;
 import com.industry.printer.MessageTask;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.FileFormat.TlkFile;
 import com.industry.printer.PHeader.PrinterNozzle;
-import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.StringUtil;
 import com.industry.printer.exception.PermissionDeniedException;
 import com.industry.printer.exception.TlkNotFoundException;
-import com.industry.printer.object.BaseObject;
-import com.industry.printer.object.LetterHourObject;
 
-import android.R.bool;
-import android.R.integer;
 import android.content.Context;
-import android.util.Log;
 
 public class TLKFileParser  extends TlkFile{
 	

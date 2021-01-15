@@ -97,6 +97,11 @@ public class SerialHandler {
             Scaner2Protocol p = new Scaner2Protocol(mSerialPort);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // End of H.M.Wang 2020-10-30 追加扫描2串口协议
+// H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER3) {
+            Scaner2Protocol p = new Scaner2Protocol(mSerialPort);
+            p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
+// End of H.M.Wang 2021-1-15 追加扫描协议3
         }
     }
 
