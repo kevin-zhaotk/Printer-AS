@@ -652,9 +652,6 @@ public class DataTransferThread {
 
 //	private AlertDialog mRemoteRecvedPromptDlg = null;
 	private RemoteMsgPrompt mRemoteRecvedPromptDlg = null;
-// H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
-	private boolean mScaner3DataPrinted = false;
-// End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 
 	public boolean launch(Context ctx) {
 		// H.M.Wang 2019-12-31 设置mContext，以避免因为mContext=null而导致程序崩溃
@@ -735,7 +732,6 @@ public class DataTransferThread {
 				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER3) {
 					String datastring = new String(data, 0, data.length);
 					setScan2DataToDt(datastring);
-					mScaner3DataPrinted = false;
 					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
 // End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 				}
@@ -764,7 +760,6 @@ public class DataTransferThread {
 				@Override
 				public void onCodeReceived(String code) {
 					setScan2DataToDt(code);
-					mScaner3DataPrinted = false;
 				}
 			});
 // End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
@@ -824,13 +819,6 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-6-3 解决提示对话窗在显示时，扫码枪的信息被其劫持，而无法识别的问题
 
 		mRunning = true;
-
-// H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
-	mScaner3DataPrinted = false;
-	if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER3) {
-		mScaner3DataPrinted = true;
-	}
-// End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 
 		mPrinter = new PrintTask();
 		if (!isBufferReady || mDataTask == null) {
@@ -1353,8 +1341,7 @@ public class DataTransferThread {
 // 2020-6-30 网络快速打印的第一次数据生成后不下发
 // H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 //				if(!mFirstForLanFast) {
-				if(!mFirstForLanFast && !mScaner3DataPrinted) {
-					mScaner3DataPrinted = true;
+				if(!mFirstForLanFast && SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) != SystemConfigFile.DATA_SOURCE_SCANER3) {
 // End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 					Debug.e(TAG, "--->write data");
 					FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
@@ -1386,6 +1373,10 @@ public class DataTransferThread {
 			}
 			last = SystemClock.currentThreadTimeMillis();
 
+// H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
+			boolean dataSent = false;
+// End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
+
 			while(mRunning == true) {
 				int writable = FpgaGpioOperation.pollState();
 
@@ -1403,42 +1394,42 @@ public class DataTransferThread {
 				} else {
 					Debug.d(TAG, "--->FPGA buffer is empty");
 ////					Debug.d(TAG, "Printed: " + FpgaGpioOperation.getPrintedCount());
-// H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
-					if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) != SystemConfigFile.DATA_SOURCE_SCANER3 || !mScaner3DataPrinted) {
 // 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
-						if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
-							if(!mDataUpdatedForFastLan) {
-								continue;
-							}
-							mDataUpdatedForFastLan = false;
+					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
+						if(!mDataUpdatedForFastLan) {
+							continue;
 						}
+						mDataUpdatedForFastLan = false;
+					}
 // End of 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
-						Time1 = Time2;
-						Time2 = System.currentTimeMillis();
-						if (mCallback != null) {
-							mCallback.onPrinted(index());
-						}
-						mInterval = SystemClock.currentThreadTimeMillis() - last;
-						mHandler.removeMessages(MESSAGE_DATA_UPDATE);
-						mNeedUpdate = false;
+					Time1 = Time2;
+					Time2 = System.currentTimeMillis();
+					if (mCallback != null) {
+						mCallback.onPrinted(index());
+					}
+					mInterval = SystemClock.currentThreadTimeMillis() - last;
+					mHandler.removeMessages(MESSAGE_DATA_UPDATE);
+					mNeedUpdate = false;
 
 // H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整，取消从前在生成打印缓冲区时调整
 // H.M.Wang 2020-12-17 以前没有参数，遍历打印群组，会出现打印一个任务，所有相关计数器都被更新的问题，追加参数，仅对当前任务进行修改
-						setCounterNext(mDataTask.get(index()));
+					setCounterNext(mDataTask.get(index()));
 // End of H.M.Wang 2020-12-17 以前没有参数，遍历打印群组，会出现打印一个任务，所有相关计数器都被更新的问题，追加参数，仅对当前任务进行修改
 // End of H.M.Wang 2020-7-2 调整计数器增量策略
 
-						synchronized (DataTransferThread.class) {
+					synchronized (DataTransferThread.class) {
 ////////////////////////////////////////////////////////
-							IInkDevice id = InkManagerFactory.inkManager(mContext);
-							if(id instanceof SmartCardManager) {
-								if(mPrintCount == 0) {
-									mPrintCount = 10;
-									((SmartCardManager) id).updateLevel();
-								}
-								mPrintCount--;
+						IInkDevice id = InkManagerFactory.inkManager(mContext);
+						if(id instanceof SmartCardManager) {
+							if(mPrintCount == 0) {
+								mPrintCount = 10;
+								((SmartCardManager) id).updateLevel();
 							}
+							mPrintCount--;
+						}
 ////////////////////////////////////////////////////////
+// H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
+						if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) != SystemConfigFile.DATA_SOURCE_SCANER3) {
 							next();
 							if (isLanPrint()) {
 								mPrintBuffer = getLanBuffer(index());
@@ -1459,32 +1450,38 @@ public class DataTransferThread {
 							}
 
 							FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
-// H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
-							if(index() == mDataTask.size() - 1) mScaner3DataPrinted = true;
+							Debug.d(TAG, "--->FPGA data sent!");
+						} else {
+							if(dataSent) {
+								next();				// 扫描3的逻辑是没有收到扫描数据不打印，打印之打印一次。实现策略是初始和empty时不下发新的缓冲区，仅在更新时下发。因此，如果更新没下发就保持当前的记录
+													// 这个dataSent标识就是起到这个作用。初值为false，开始打印后第一个任务等待扫描数据，扫描数据下发后，更新下发。在更新下发结束后，dataSent置真。因此只有在有了更新下发以后，才为真
+								dataSent = false;	// 更改打印指针后，立即设置为false，以避免没下发数据，频繁来empty导致不必要指针调整（这个在新的img里面不会发生，因此这一句仅为保险设置，实际不设也行）
+							}
+							if(index() > 0 && index() < mDataTask.size()) {
+								mNeedUpdate = true;
+							}
+						}
 // End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
-							DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
+						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
 // End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
-							Debug.d(TAG, "--->FPGA data sent!");
 
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
-							if(mCallback != null && mDataTask.size() > 1) {
-								mCallback.onPrint(index());
-							}
+						if(mCallback != null && mDataTask.size() > 1) {
+							mCallback.onPrint(index());
+						}
 // End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 
-							last = SystemClock.currentThreadTimeMillis();
-							countDown();
+						last = SystemClock.currentThreadTimeMillis();
+						countDown();
 //						mInkListener.onCountChanged();
 //						mScheduler.schedule();
-							if (mCallback != null) {
-								mCallback.onComplete(index());
-							}
-							LogIntercepter.getInstance(mContext).execute(getCurData());
+						if (mCallback != null) {
+							mCallback.onComplete(index());
 						}
+						LogIntercepter.getInstance(mContext).execute(getCurData());
 					}
-// End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 				}
 // H.M.Wang 2020-11-13 追加内容是否变化的判断
 // H.M.Wang 2021-1-4 在打印过程中，用户可能通过上下键（ControlTabActivity里的mMsgNext或者mMsgPrev，这回最终导致resetTask，在resetTask里面会对mDataTask清空，如果不排斥线程，这里可能会遇到空的情况而崩溃
@@ -1506,7 +1503,7 @@ public class DataTransferThread {
 						} else {
 // H.M.Wang 2020-6-24 修改重新生成打印缓冲区的时候计数器自动增值和读条码文件下一条的问题
 //							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
-							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
+							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, true);
 // End of H.M.Wang 2020-6-24 修改重新生成打印缓冲区的时候计数器自动增值和读条码文件下一条的问题
 						}
 // End of H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素
@@ -1574,6 +1571,10 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-7-14 设置计数器后再次向PC发送0001，要数据
 					}
 // End of 2020-6-30 网络快速打印时第一次收到网络数据后下发
+
+// H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
+					dataSent = true;
+// End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 				}
 
 //				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);
