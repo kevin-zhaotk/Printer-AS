@@ -709,6 +709,7 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_25_4 ||
 					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_38_1 ||
 					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_50_8 ||
+					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_9MM ||
 					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
 					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
 					mObject.getTask().getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||

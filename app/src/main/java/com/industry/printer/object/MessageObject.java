@@ -20,7 +20,8 @@ public class MessageObject extends BaseObject {
 	public static final int PIXELS_PER_MM = 12;
 	public static final float[] mBaseList = {1, 1.5f, 2, 2.5f, 3, 3.5f, 4, 4.5f, 5, 5.5f, 6, 6.5f, 
 											7, 7.5f, 8, 8.5f, 9, 9.5f, 10, 10.5f, 11, 11.5f, 12, 12.7f};
-	public static final float[] mBaseList_16 = {1, 1.5f, 2, 2.5f, 3, 3.5f, 4, 4.5f, 5, 5.5f, 6, 6.5f, 
+	public static final float[] mBaseList_9mm = {1, 1.5f, 2, 2.5f, 3, 3.5f, 4, 4.5f, 5, 5.5f, 6, 6.5f,7, 7.5f, 8, 8.5f, 9};
+	public static final float[] mBaseList_16 = {1, 1.5f, 2, 2.5f, 3, 3.5f, 4, 4.5f, 5, 5.5f, 6, 6.5f,
 											7, 7.5f, 8, 8.5f, 9, 9.5f, 10, 10.5f, 11, 11.5f, 12, 12.5f, 
 											13, 13.5f, 14, 14.5f, 15, 15.5f, 16, 16.3f};
 	
@@ -242,9 +243,14 @@ public class MessageObject extends BaseObject {
 	public String[] getDisplayFSList() {
 		String[] size = new String[mBaseList.length];
 		Debug.d(TAG, "--->getDisplayFSList mPNozzle.mType = " + mPNozzle.mType);
-		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) { //single
+		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+			size = new String[mBaseList_9mm.length];
 			for (int i = 0; i < size.length; i++) {
-				size[i] = String.valueOf(mBaseList[i]); 
+				size[i] = String.valueOf(mBaseList_9mm[i]);
+			}
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) { //single
+			for (int i = 0; i < size.length; i++) {
+				size[i] = String.valueOf(mBaseList[i]);
 			}
 		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_25_4
 				|| mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH) { //dual
@@ -317,7 +323,9 @@ public class MessageObject extends BaseObject {
 			Debug.d(TAG, "--->exception: " + e.getMessage());
 		}
 		Debug.d(TAG, "--->h: " + h + ", type=" + mPNozzle.mType);
-		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) {
+		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+			return h * 12.7f / 9;
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) {
 			return h;
 		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_25_4 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
 			return h/2;
@@ -438,7 +446,9 @@ public class MessageObject extends BaseObject {
 		float[] sizelist;
 
 		sizelist= mBaseList;
-
+		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+			sizelist = mBaseList_9mm;
+		}
 //		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) {
 //			h = size/PIXELS_PER_MM;
 //		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_25_4 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
@@ -587,6 +597,9 @@ public class MessageObject extends BaseObject {
 //			h = mPNozzle.getScaleH() * size/PIXELS_PER_MM;
 			type = mPNozzle.factor();
 			h = type * size/PIXELS_PER_MM;
+			if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+				h = type * size/152*9;
+			}
 		}
 		for (int i = 0; i < sizelist.length; i++) {
 			if ((h > type * sizelist[i] - 0.3) && (h < type * sizelist[i] + 0.3)) {
@@ -598,7 +611,7 @@ public class MessageObject extends BaseObject {
 // H.M.Wang 2019-9-29 保留小数点后1位
 //  H.M.Wang 2019-6-24 西班牙语时，通过String.format("%.1f", h)转换会把6.0转为6,0。强制转回来
 //		return String.format("%.1f", h);	// 似乎不需要这个转换
-//		Debug.d(TAG, "String.valueOf(h) = " + String.valueOf(h));
+//		Debug.d(TAG, "String.valueOf(h) = " + String.valueOf(h) + "; size=" + size + "; h=" + h);
 		return String.valueOf(h);
 //  End of H.M.Wang 2019-6-24 西班牙语时，通过String.format("%.1f", h)转换会把6.0转为6,0。强制转回来
 	}

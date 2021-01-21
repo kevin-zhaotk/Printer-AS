@@ -1,5 +1,6 @@
 package com.industry.printer;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import com.industry.printer.Serial.Scaner2Protocol;
 import com.industry.printer.Serial.SerialHandler;
 import com.industry.printer.Serial.SerialProtocol;
 import com.industry.printer.Serial.SerialProtocol7;
+import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.ToastUtil;
@@ -1503,7 +1505,7 @@ public class DataTransferThread {
 						} else {
 // H.M.Wang 2020-6-24 修改重新生成打印缓冲区的时候计数器自动增值和读条码文件下一条的问题
 //							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
-							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, true);
+							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
 // End of H.M.Wang 2020-6-24 修改重新生成打印缓冲区的时候计数器自动增值和读条码文件下一条的问题
 						}
 // End of H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素

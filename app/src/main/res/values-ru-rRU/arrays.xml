@@ -62,6 +62,7 @@
         <!-- H.M.Wang 2020-8-26 追加64SN打印头 -->
         <item>64SN</item>
         <!-- End of H.M.Wang 2020-8-26 追加64SN打印头 -->
+        <item>9MM</item>
     </string-array>
 
     <string-array name="strFontArray">

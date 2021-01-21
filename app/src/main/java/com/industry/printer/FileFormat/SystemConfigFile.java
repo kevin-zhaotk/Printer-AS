@@ -1230,6 +1230,9 @@ public class SystemConfigFile{
 			case PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT:
 				nozzle = PrinterNozzle.MESSAGE_TYPE_64_DOT;
 				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_9MM:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_9MM;
+				break;
 		}
 
 		return nozzle;

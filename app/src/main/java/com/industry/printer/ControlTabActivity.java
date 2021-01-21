@@ -2384,7 +2384,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			myHandler =new Handler(){	
 			public void handleMessage(Message msg)
 				{ 
-					if (msg.what == EditMultiTabActivity.HANDLER_MESSAGE_SAVE_SUCCESS) {
+					if (msg.what == EditTabSmallActivity.HANDLER_MESSAGE_SAVE_SUCCESS) {
 						String cmd = msg.getData().getString(Constants.PC_CMD);
 						sendMsg(Constants.pcOk(cmd));
 					} //else if (msg.what)

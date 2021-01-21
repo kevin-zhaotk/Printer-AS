@@ -35,8 +35,12 @@ public enum PrinterNozzle {
 // End of H.M.Wang 2020-8-14 追加32SN打印头
 
 // H.M.Wang 2020-8-26 追加64SN打印头
-    MESSAGE_TYPE_64SN(MessageType.NOZZLE_INDEX_64SN, NozzleType.NOZZLE_TYPE_64SN, 1, 1);
+    MESSAGE_TYPE_64SN(MessageType.NOZZLE_INDEX_64SN, NozzleType.NOZZLE_TYPE_64SN, 1, 1),
 // End of H.M.Wang 2020-8-26 追加64SN打印头
+
+// H.M.Wang 2021-1-19 追加9mm打印头
+    MESSAGE_TYPE_9MM(MessageType.NOZZLE_INDEX_9MM, NozzleType.NOZZLE_TYPE_9MM, 1, 1);
+// End of H.M.Wang 2021-1-19 追加9mm打印头
 
     public final int mIndex;
     public final int mType;
@@ -197,6 +201,9 @@ public enum PrinterNozzle {
             case NozzleType.NOZZLE_TYPE_1_INCH_FOUR:
                 mHeight = 320 * 4;
                 break;
+            case NozzleType.NOZZLE_TYPE_9MM:
+                mHeight = 112;
+                break;
         }
     }
 
@@ -269,7 +276,10 @@ public enum PrinterNozzle {
                 scaleW = 64f/152;
                 scaleH = 64f/152;
                 break;
-
+            case NozzleType.NOZZLE_TYPE_9MM:
+                scaleW = 104f/152;
+                scaleH = 104f/152;
+                break;
             default:
                 scaleW = 1f;
                 scaleH = 1f;
@@ -331,6 +341,9 @@ public enum PrinterNozzle {
 // End of H.M.Wang 2020-8-26 追加64SN打印头
                 ratio = 64f / 304;
                 break;
+            case NozzleType.NOZZLE_TYPE_9MM:
+                ratio = 1.0f * 9.0f / 104;
+                break;
             default:
                 break;
         }
@@ -356,7 +369,8 @@ public enum PrinterNozzle {
      * Nozzle height multiple of 152
      */
     public int factor() {
-        return mHeight/152;
+        if(this == MESSAGE_TYPE_9MM) return 1;
+        return mHeight / 152;
     }
 
     // H.M.Wang 2020-4-17 追加12.7R5头类型
@@ -548,6 +562,8 @@ public enum PrinterNozzle {
 // H.M.Wang 2020-8-26 追加64SN打印头
         public static final int NOZZLE_INDEX_64SN = 15;
 // End of H.M.Wang 2020-8-26 追加64SN打印头
+
+        public static final int NOZZLE_INDEX_9MM = 16;
     }
 
     public static class NozzleType {
@@ -583,5 +599,7 @@ public enum PrinterNozzle {
 // H.M.Wang 2020-8-26 追加64SN打印头
         public static final int NOZZLE_TYPE_64SN = 34;
 // End of H.M.Wang 2020-8-26 追加64SN打印头
+
+        public static final int NOZZLE_TYPE_9MM = 35;
     }
 }

@@ -149,7 +149,7 @@ public class DataTask {
 		if (mBgBuffer == null) {
 			return null;
 		}
-		Debug.d(TAG, "--->getPrintBuffer  111" );
+//		Debug.d(TAG, "--->getPrintBuffer  111" );
 		CharArrayReader cReader = new CharArrayReader(mBgBuffer);
 
 		// H.M.Wang 将1.bin写入打印缓冲区，然后将v*.bin写入缓冲区
@@ -469,6 +469,10 @@ public class DataTask {
 			div = 152f/64f;
 			scaleW = 152f/64;
 			scaleH = 152f/64;
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_9MM) {
+			div = 1.0f * 104/104;
+			scaleW = 152f / 104f * 2;
+			scaleH = 152f / 104f;
 		}
 
 //		scaleW = 1.0f * headType.getFactorScale() / headType.getScaleW();

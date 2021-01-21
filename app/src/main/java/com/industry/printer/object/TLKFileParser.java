@@ -504,6 +504,10 @@ public class TLKFileParser  extends TlkFile{
 		float dots = 0;
 		Debug.d(TAG, "--->setDotsPerClm type = " + type);
 		switch (type) {
+			case MESSAGE_TYPE_9MM:
+				dots = 112f;
+				mProportion = dots/Configs.gDots;
+				break;
 			case MESSAGE_TYPE_12_7:
 			case MESSAGE_TYPE_25_4:
 			case MESSAGE_TYPE_38_1:
