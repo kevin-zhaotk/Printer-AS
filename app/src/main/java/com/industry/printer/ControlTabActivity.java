@@ -1310,12 +1310,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						break;
 					}
 
-					FpgaGpioOperation.uninit();
 					if (mDTransThread != null) {
 						mDTransThread.finish();
 //						mDTransThread = null;
 //						initDTThread();
 					}
+
+					FpgaGpioOperation.uninit();
+
 					sendToRemote(Constants.pcOk( msg.getData().getString(Constants.PC_CMD)));
 					/*鎵撳嵃浠诲姟鍋滄鍚庡厑璁稿垏鎹㈡墦鍗板璞�*/
 					switchState(STATE_STOPPED);
@@ -1360,6 +1362,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					RTCDevice device = RTCDevice.getInstance(mContext);
 					device.writeCounter(mContext, mCounter);
 */
+					RTCDevice device = RTCDevice.getInstance(mContext);
+					device.writeCounter(mContext, mCounter);
 					refreshCount();
 					break;
 				case MESSAGE_REFRESH_POWERSTAT:
@@ -2287,10 +2291,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	@Override
 	public void onCountChanged() {
 		mCounter++;
-		RTCDevice device = RTCDevice.getInstance(mContext);
-		device.writeCounter(mContext, mCounter);
 
-		mHandler.sendEmptyMessage(MESSAGE_COUNT_CHANGE);
+		mHandler.removeMessages(MESSAGE_COUNT_CHANGE);
+		mHandler.sendEmptyMessageDelayed(MESSAGE_COUNT_CHANGE, 1);
 	}
 
 	@Override

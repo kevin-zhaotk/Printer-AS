@@ -73,6 +73,7 @@ public class DataTransferThread {
 	private static final int MESSAGE_EXCEED_TIMEOUT = 60 * 1000;
 	
 	public static boolean mRunning;
+	public static boolean mStopped;
 	public boolean pcReset;
 	public static volatile DataTransferThread mInstance;
 	
@@ -835,6 +836,8 @@ public class DataTransferThread {
 	public void finish() {
 		mRunning = false;
 
+		while(!mStopped) {try {Thread.sleep(1);} catch(Exception e){}}
+
 		if(null != mRemoteRecvedPromptDlg) {
 			mRemoteRecvedPromptDlg.dismiss();
 			mRemoteRecvedPromptDlg = null;
@@ -975,6 +978,7 @@ public class DataTransferThread {
 			mcountdown[i] = 0;
 		}
 
+		Arrays.fill(mThresHolds, 0);
 		// H.M.Wang 2019-10-10 注释掉添加初值的部分，如果初值为0，则表示该处置还没有初始化，待后续计算后添加
 //		for (int i = 0; i < mcountdown.length; i++) {
 //			mcountdown[i] = getInkThreshold(i);
@@ -1015,6 +1019,9 @@ public class DataTransferThread {
 // H.M.Wang 2020-10-23 修改计算Threshold的算法，改为以打印群组的所有任务的点数为准，单独任务作为一个元素的特殊群组
 	private int[] mPrintDots = new int[8];
 // End of H.M.Wang 2020-10-23 修改计算Threshold的算法，改为以打印群组的所有任务的点数为准，单独任务作为一个元素的特殊群组
+// H.M.Wang 2021-1-25 追加Threshold的保存，当处于快速打印（根据FIFO判断）时，不再计算，直接返回值，但这个对群组无效，因此只能适应快速打印
+	private int[] mThresHolds = new int[8];
+// H.M.Wang 2021-1-25 追加Threshold的保存，当处于快速打印（根据FIFO判断）时，不再计算，直接返回值，但这个对群组无效，因此只能适应快速打印
 	/**
 	 * 通过dot count计算RFID减1的阀值
 	 * @param head 喷头索引
@@ -1027,6 +1034,9 @@ public class DataTransferThread {
 
 //		int dotCount = getDotCount(mDataTask.get(index), head);
 		SystemConfigFile config = SystemConfigFile.getInstance(mContext);
+		if(config.getParam(SystemConfigFile.INDEX_FIFO_SIZE) > 1 && mThresHolds[head] > 0) {
+			return mThresHolds[head];
+		}
 // H.M.Wang2019-9-28 考虑1带多的情况
 //		int one2multiple = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_ONE_MULTIPLE);
 //		if( one2multiple == 2 || 		// 1带2
@@ -1108,6 +1118,8 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-4-19 追加12.7R5头。dotcount放大相应倍数
 
 		Debug.d(TAG, "--->dotCount[" + head + "]: " + mPrintDots[head] + "  bold=" + bold + "  dotrate=" + rate);
+
+		mThresHolds[head] = (int)(1.0f * Configs.DOTS_PER_PRINT/(mPrintDots[head] * bold)/rate);
 
 		return (int)(1.0f * Configs.DOTS_PER_PRINT/(mPrintDots[head] * bold)/rate);
 	}
@@ -1379,6 +1391,7 @@ public class DataTransferThread {
 			boolean dataSent = false;
 // End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 
+			mStopped = false;
 			while(mRunning == true) {
 				int writable = FpgaGpioOperation.pollState();
 
@@ -1485,6 +1498,7 @@ public class DataTransferThread {
 						LogIntercepter.getInstance(mContext).execute(getCurData());
 					}
 				}
+
 // H.M.Wang 2020-11-13 追加内容是否变化的判断
 // H.M.Wang 2021-1-4 在打印过程中，用户可能通过上下键（ControlTabActivity里的mMsgNext或者mMsgPrev，这回最终导致resetTask，在resetTask里面会对mDataTask清空，如果不排斥线程，这里可能会遇到空的情况而崩溃
  				synchronized (DataTransferThread.class) {
@@ -1591,6 +1605,7 @@ public class DataTransferThread {
 				//TO-DO list 下面需要把打印数据下发
 
 			}
+			mStopped = true;
 // H.M.Wang 2020-7-2 由于调整计数器增量策略，在打印完成时调整，因此无需rollback
 //			rollback();
 // End of H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整，因此无需rollback
