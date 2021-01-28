@@ -534,10 +534,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		sHandler.setNormalCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
 			@Override
 			public void onCommandReceived(int cmd, byte[] data) {
-				if( SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
-					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2 ||
+				if( SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1 ||
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2 ||
 // H.M.Wang 2020-7-17 追加串口7协议
-					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_7) {
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_7) {
 // End of H.M.Wang 2020-7-17 追加串口7协议
 					Debug.d(TAG, "CMD = " + Integer.toHexString(cmd) + "; DATA = [" + ByteArrayUtils.toHexString(data) + "]");
 					switch (cmd) {
@@ -588,6 +588,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_STOP_PRINT, 0, 0, 0, "Stop Print Done!");
 							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_STOP_PRINT, 1, 0, 0, "");
 							break;
+// H.M.Wang 2021-1-26 将17命令作为清洗命令
+						case EC_DOD_Protocol.CMD_START_PRINT_A:
+							DataTransferThread thread = DataTransferThread.getInstance(mContext);
+							thread.purge(mContext);
+							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_START_PRINT_A, 1, 0, 0, "");
+							break;
+// End of H.M.Wang 2021-1-26 将17命令作为清洗命令
 					}
 				}
 			}
@@ -1336,6 +1343,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						((SmartCardManager)mInkManager).shutdown();
 					}
 
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							FpgaGpioOperation.dispLog();
+						}
+					}).start();
+
 					break;
 				case MESSAGE_PRINT_END:
 					FpgaGpioOperation.uninit();
@@ -1994,7 +2008,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public int currentRfid = 0;
 	@Override
 	public void onClick(View v) {
-		
 		// ExtGpio.playClick();
 		switch (v.getId()) {
 			case R.id.StartPrint:
@@ -3350,7 +3363,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //			this.sendMsg("000B|0000|1000|" + index + "|0000|0000|0000|0000|0D0A");
 			// End of H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
 // H.M.Wang 2020-8-13 追加串口7协议
-			if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_7) {
+			if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_7) {
 				final SerialHandler serialHandler = SerialHandler.getInstance();
 // H.M.Wang 2020-11-18 cmdStatus=2,表示打印完成，msg里面放mCounter
 				serialHandler.sendCommandProcessResult(0, 1, 0, 2, String.valueOf(mCounter));

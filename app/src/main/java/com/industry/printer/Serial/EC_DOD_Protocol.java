@@ -84,7 +84,9 @@ public class EC_DOD_Protocol extends SerialProtocol {
 //    public final static int CMD_START_PRINT           = 0x3531;       // 启动喷码机开始喷印	0x0015
     public final static int CMD_STOP_PRINT            = 0x0016;       // 停机命令	0x0016
 //    public final static int CMD_STOP_PRINT            = 0x3631;       // 停机命令	0x0016
+// H.M.Wang 2021-1-26 将17命令作为清洗命令
     public final static int CMD_START_PRINT_A         = 0x0017;       // A喷头喷印	0x0017
+// End of H.M.Wang 2021-1-26 将17命令作为清洗命令
     public final static int CMD_START_PRINT_B         = 0x0018;       // B喷头喷印	0x0018
     public final static int CMD_STOP_PRINT_A          = 0x0019;       // A喷印完成	0x0019
     public final static int CMD_STOP_PRINT_B          = 0x0020;       // B喷印完成	0x0020
@@ -301,7 +303,7 @@ public class EC_DOD_Protocol extends SerialProtocol {
             case EC_DOD_Protocol.CMD_GET_REVERSE:                  // 读取喷头翻转喷印	0x0011
             case EC_DOD_Protocol.CMD_GET_USABLE_IDS:               // 获取当前文件中可用的ID	0x0012
             case EC_DOD_Protocol.CMD_SAVE_CURRENT_INFO:            // 保存当前信息	0x0014
-            case EC_DOD_Protocol.CMD_START_PRINT_A:                // A喷头喷印	0x0017
+//            case EC_DOD_Protocol.CMD_START_PRINT_A:                // A喷头喷印	0x0017
             case EC_DOD_Protocol.CMD_START_PRINT_B:                // B喷头喷印	0x0018
             case EC_DOD_Protocol.CMD_STOP_PRINT_A:                 // A喷印完成	0x0019
             case EC_DOD_Protocol.CMD_STOP_PRINT_B:                 // B喷印完成	0x0020
@@ -315,6 +317,7 @@ public class EC_DOD_Protocol extends SerialProtocol {
             case EC_DOD_Protocol.CMD_TEXT:                         // 发送一条文本	0x0013
             case EC_DOD_Protocol.CMD_START_PRINT:                  // 启动喷码机开始喷印	0x0015
             case EC_DOD_Protocol.CMD_STOP_PRINT:                   // 停机命令	0x0016
+            case EC_DOD_Protocol.CMD_START_PRINT_A:                // A喷头喷印	0x0017
                 procCommands(cmd, data);
                 break;
             default:

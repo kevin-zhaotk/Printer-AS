@@ -28,6 +28,7 @@ public class FpgaGpioOperation {
 // H.M.Wang 2020-12-25 追加两个命令
     public static final int FPGA_CMD_DATAGENRE = 0x07;
     public static final int FPGA_CMD_BUCKETSIZE = 0x08;
+    public static final int FPGA_CMD_DISPLOG = 0x09;
 
     public static final int DATA_GENRE_UPDATE   = 0;
     public static final int DATA_GENRE_NEW      = 1;
@@ -372,10 +373,10 @@ public class FpgaGpioOperation {
         // ioctl(fd, FPGA_CMD_SETTING, FPGA_STATE_OUTPUT);
 		/*启动内核轮训线程*/
         SystemConfigFile config = SystemConfigFile.getInstance(context);
-        ioctl(fd, FPGA_CMD_BUCKETSIZE, config.getParam(SystemConfigFile.INDEX_FIFO_SIZE));
         Debug.d(TAG, "FPGA_CMD_BUCKETSIZE -> " + config.getParam(SystemConfigFile.INDEX_FIFO_SIZE));
-        ioctl(fd, FPGA_CMD_STARTPRINT, 0);
+        ioctl(fd, FPGA_CMD_BUCKETSIZE, config.getParam(SystemConfigFile.INDEX_FIFO_SIZE));
         Debug.d(TAG, "FPGA_CMD_STARTPRINT");
+        ioctl(fd, FPGA_CMD_STARTPRINT, 0);
     }
 
     /**
@@ -390,11 +391,22 @@ public class FpgaGpioOperation {
 //        mListener = null;
 //        stop_mon(fd);
 // H.M.Wang 2021-1-11 增加1s睡眠，以保证打印完成后再发送停止
-        try{Thread.sleep(1000);}catch(Exception e){};
+//        try{Thread.sleep(1000);}catch(Exception e){};
 // End of H.M.Wang 2021-1-11 增加1s睡眠，以保证打印完成后再发送停止
-        ioctl(fd, FPGA_CMD_STOPPRINT, 0);
         Debug.d(TAG, "FPGA_CMD_STOPPRINT");
+        ioctl(fd, FPGA_CMD_STOPPRINT, 0);
     }
+
+    public static void dispLog() {
+        int fd = open();
+        if (fd <= 0) {
+            return;
+        }
+
+        Debug.d(TAG, "FPGA_CMD_DISPLOG");
+        ioctl(fd, FPGA_CMD_DISPLOG, 0);
+    }
+
 /*
     public static void stop_monitor() {
         Debug.d(TAG, "stop_monitor");

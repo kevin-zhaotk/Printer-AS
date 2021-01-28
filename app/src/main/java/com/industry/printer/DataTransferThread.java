@@ -667,8 +667,8 @@ public class DataTransferThread {
 		serialHandler.setPrintCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
 			@Override
 			public void onCommandReceived(int cmd, byte[] data) {
-				if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1 ||
-					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2) {
+				if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1 ||
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2) {
 
 					if (cmd == EC_DOD_Protocol.CMD_TEXT) {                         // 发送一条文本	0x0013
 						ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
@@ -679,9 +679,9 @@ public class DataTransferThread {
 						}
 
 						String datastring = new String(data, 7, data.length - 7);
-						if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_1) {
+						if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1) {
 							setRemoteTextFitCounter(datastring);
-						} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_2) {
+						} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2) {
 							setRemoteTextSeparated(datastring);
 						}
 						serialHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_TEXT, 1, 0, 0, "");
@@ -689,11 +689,11 @@ public class DataTransferThread {
 					} else if (cmd == EC_DOD_Protocol.CMD_SET_REVERSE) {
 						mNeedUpdate = true;
 					}
-				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_3) {
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_3) {
 					String datastring = new String(data, 0, data.length);
 					setRemoteTextDirect(datastring);
 					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
-				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_4) {
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_4) {
 					String datastring = new String(data, 0, data.length);
 					setRemoteTextDirect(datastring);
 					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
@@ -702,13 +702,13 @@ public class DataTransferThread {
 					setScanDataToDt(datastring);
 					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
 // H.M.Wang 2020-6-9 追加串口6协议
-				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_6) {
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_6) {
 					String datastring = new String(data, 0, data.length);
 					setSP6DataToDt(datastring);
 					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
 // End of H.M.Wang 2020-6-9 追加串口6协议
 // H.M.Wang 2020-8-13 追加串口7协议
-				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS231_7) {
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_7) {
 					if (cmd == SerialProtocol7.CMD_TEXT) {                         // 发送一条文本	0x0013
 						ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
 						for (BaseObject baseObject : objList) {
