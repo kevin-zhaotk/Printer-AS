@@ -75,6 +75,10 @@ public class PCCommand {
     public static final String CMD_HEARTBEAT = "Heartbeat";
 // End of H.M.Wang 2020-9-28 追加一个心跳协议
 
+// H.M.Wang 2021-2-4 追加软启动打印命令
+    public static final String CMD_SOFT_PHO = "SoftPho";
+// End of H.M.Wang 2021-2-4 追加软启动打印命令
+
     /** 包头 */
     public String header;
 

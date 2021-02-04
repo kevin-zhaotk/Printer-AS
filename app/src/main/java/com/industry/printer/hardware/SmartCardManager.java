@@ -146,13 +146,13 @@ public class SmartCardManager implements IInkDevice {
             mCards = new _device_status[] {
                     new _device_status(CARD_TYPE_PEN1, CARD_TYPE_LEVEL1, MAX_PEN_INK_VOLUME),
                     new _device_status(CARD_TYPE_PEN2, CARD_TYPE_LEVEL2, MAX_PEN_INK_VOLUME),
-                    new _device_status(CARD_TYPE_BULKX, 0, MAX_BAG_INK_VOLUME)
+                    new _device_status(CARD_TYPE_BULK1, 0, MAX_BAG_INK_VOLUME)
             };
         } else {
             mPenNum = 1;
             mCards = new _device_status[] {
                     new _device_status(CARD_TYPE_PEN1, CARD_TYPE_LEVEL1, MAX_PEN_INK_VOLUME),
-                    new _device_status(CARD_TYPE_BULKX, 0, MAX_BAG_INK_VOLUME)
+                    new _device_status(CARD_TYPE_BULK1, 0, MAX_BAG_INK_VOLUME)
             };
         }
         mCurPenIdx = 0;

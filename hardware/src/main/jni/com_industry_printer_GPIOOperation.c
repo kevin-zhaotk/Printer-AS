@@ -64,71 +64,6 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_ioctl
 	return ret;
 }
 
-static int sFd;
-static int keepRunning = 0;
-static int driverReady = 0;
-
-void timer_proc(int signo) {
-    if(SIGALRM == signo) {
-        if(sFd > 0) {
-            char buf = 0x00;
-            if(read(sFd, &buf, 1) > 0 && keepRunning) {
-//                ALOGD("driver ready");
-                driverReady = 1;
-            }
-        }
-    }
-}
-
-JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_start_monitor(JNIEnv *env, jclass arg, jint fd) {
-    ALOGD("enter monitor. 6");
-
-    sFd = fd;
-
-    keepRunning = 1;
-
-    jmethodID method = (*env)->GetStaticMethodID(env, arg, "onReady", "()V");
-    if(NULL == method) {
-        ALOGE("Failed to get JAVA receiver function id!");
-        return -1;
-    }
-
-    struct itimerval value, ovalue;
-
-    signal(SIGALRM, timer_proc);
-
-    value.it_value.tv_sec = 0;
-    value.it_value.tv_usec = 1000;
-    value.it_interval.tv_sec = 0;
-    value.it_interval.tv_usec = 1000;
-    setitimer(ITIMER_REAL, &value, &ovalue);
-
-    while(keepRunning) {
-        if(driverReady) {
-            (*env)->CallVoidMethod(env, arg, method);
-            driverReady = 0;
-        }
-        usleep(1000);
-    };
-
-    ALOGD("quit monitor");
-    return 0;
-}
-
-JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_stop_monitor(JNIEnv *env, jclass arg, jint fd) {
-    struct itimerval value,ovalue,value2;
-
-    value.it_value.tv_sec = 0;
-    value.it_value.tv_usec = 0;
-    value.it_interval.tv_sec = 0;
-    value.it_interval.tv_usec = 0;
-    setitimer(ITIMER_REAL, &value, &ovalue);
-
-    keepRunning = 0;
-
-    return 0;
-}
-
 JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_poll
        (JNIEnv *env, jclass arg, jint fd)
 {
@@ -147,10 +82,6 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_poll
     timeout.tv_usec = 100;
     ret = select(maxfd, NULL, &fds, NULL, &timeout);
     return ret;
-
-/*    char buf = 0x00;
-    return read(fd, &buf, 1);
-*/
 }
 
 JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_read

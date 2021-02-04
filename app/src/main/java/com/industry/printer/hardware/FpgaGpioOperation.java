@@ -29,6 +29,7 @@ public class FpgaGpioOperation {
     public static final int FPGA_CMD_DATAGENRE = 0x07;
     public static final int FPGA_CMD_BUCKETSIZE = 0x08;
     public static final int FPGA_CMD_DISPLOG = 0x09;
+    public static final int FPGA_CMD_SOFTPHO = 0x0A;
 
     public static final int DATA_GENRE_UPDATE   = 0;
     public static final int DATA_GENRE_NEW      = 1;
@@ -85,10 +86,6 @@ public class FpgaGpioOperation {
      * @return
      */
     static public native int ioctl(int fd, int cmd, long arg);
-
-    static public native int start_mon(int fd);
-
-    static public native int stop_mon(int fd);
 
     /**
      * 查询GPIO是否可写
@@ -388,11 +385,6 @@ public class FpgaGpioOperation {
             return;
         }
 
-//        mListener = null;
-//        stop_mon(fd);
-// H.M.Wang 2021-1-11 增加1s睡眠，以保证打印完成后再发送停止
-//        try{Thread.sleep(1000);}catch(Exception e){};
-// End of H.M.Wang 2021-1-11 增加1s睡眠，以保证打印完成后再发送停止
         Debug.d(TAG, "FPGA_CMD_STOPPRINT");
         ioctl(fd, FPGA_CMD_STOPPRINT, 0);
     }
@@ -407,34 +399,13 @@ public class FpgaGpioOperation {
         ioctl(fd, FPGA_CMD_DISPLOG, 0);
     }
 
-/*
-    public static void stop_monitor() {
-        Debug.d(TAG, "stop_monitor");
-        mListener = null;
-        stop_mon(0);
-    }
-
-    public static void start_monitor(FpgaStateListenner l) {
+    public static void softPho() {
         int fd = open();
         if (fd <= 0) {
             return;
         }
 
-        Debug.d(TAG, "start_monitor");
-        mListener = l;
-        start_mon(fd);
+        Debug.d(TAG, "FPGA_CMD_SOFTPHO");
+        ioctl(fd, FPGA_CMD_SOFTPHO, 0);
     }
-
-    public interface FpgaStateListenner {
-        public void onReady();
-    }
-    private static FpgaStateListenner mListener = null;
-
-    public static void onReady() {
-        Debug.d(TAG, "FPGA ready to receive data!");
-        if(null != mListener) {
-            mListener.onReady();
-        }
-    }
-*/
 }

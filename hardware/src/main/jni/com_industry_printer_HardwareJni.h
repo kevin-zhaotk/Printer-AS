@@ -96,9 +96,6 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_read
 JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_ioctl
 	(JNIEnv *env, jclass arg, jint fd, jint cmd, jlong arg1);
 
-JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_start_monitor(JNIEnv *env, jclass arg, jint fd);
-JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_stop_monitor(JNIEnv *env, jclass arg, jint fd);
-
 /**
  * Class:     com_industry_printer_GPIO
  * Method:    poll

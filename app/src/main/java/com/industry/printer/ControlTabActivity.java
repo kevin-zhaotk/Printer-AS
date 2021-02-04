@@ -126,9 +126,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static com.industry.printer.hardware.SmartCard.checkConsistency;
-import static com.industry.printer.hardware.SmartCard.readConsistency;
-
 public class ControlTabActivity extends Fragment implements OnClickListener, InkLevelListener, OnTouchListener, DataTransferThread.Callback {
 	public static final String TAG="ControlTabActivity";
 	
@@ -747,6 +744,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			mRfid = 0;
 		}
 //		Debug.d(TAG, "--->switchRfid to: " + mRfid);
+		Debug.d(TAG, "--- refreshInk ---");
 		refreshInk();
 		// refreshCount();
 		mHandler.sendEmptyMessageDelayed(MESSAGE_SWITCH_RFID, 3000);
@@ -767,7 +765,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		if(mInkManager instanceof RFIDManager) {
 			level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");
 		} else {
-			level = String.valueOf(mRfid + 1) + "-" + (ink >= 100f ? "100%" : (ink < 0f ? "-" : (String.format("%.1f", ink) + "%")));
+			level = (mRfid == mSysconfig.getPNozzle().mHeads ? "B" : "P" + (mRfid + 1)) + "-" + (ink >= 100f ? "100%" : (ink < 0f ? "-" : (String.format("%.1f", ink) + "%")));
 		}
 
 		if (!mInkManager.isValid(mRfid)) {
@@ -1100,6 +1098,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					dispPreview(mPreBitmap);
 // End of H.M.Wang 2020-6-23 打开注释，显示预览图
 
+					Debug.d(TAG, "--- refreshInk ---");
 					refreshInk();
 					refreshCount();
 					mMsgFile.setText(mObjPath);
@@ -1146,6 +1145,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					Bundle bundle = msg.getData();
 					int level = bundle.getInt("ink_level");
 					mFeatureCorrect = bundle.getBoolean("feature", true);
+					Debug.d(TAG, "--- refreshInk ---");
 					refreshInk();
 					break;
 				case MESSAGE_DISMISS_DIALOG:
@@ -1365,6 +1365,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					}
 					// }
 					/*鎵撳嵃鏅備笉鍐嶅鏅傛洿鏂板ⅷ姘撮噺*/
+					Debug.d(TAG, "--- refreshInk ---");
 					refreshInk();
 					// mInkManager.write(mHandler);
 					break;
@@ -1460,6 +1461,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					break;
 				case RFIDManager.MSG_RFID_WRITE_SUCCESS:
 					float ink = mInkManager.getLocalInk(0);
+					Debug.d(TAG, "--- refreshInk ---");
 					refreshInk();
 					break;
 				case MESSAGE_RFID_LOW:
@@ -2935,7 +2937,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 										mLastHeartBeat = System.currentTimeMillis();
 										this.sendmsg(Constants.pcOk(msg));
 // End of H.M.Wang 2020-9-28 追加一个心跳协议
-		                            } else {
+// H.M.Wang 2021-2-4 追加软启动打印命令
+                                    } else if(PCCommand.CMD_SOFT_PHO.equalsIgnoreCase(cmd.command)) {
+                                        FpgaGpioOperation.softPho();
+                                        this.sendmsg(Constants.pcOk(msg));
+// End of H.M.Wang 2021-2-4 追加软启动打印命令
+									} else {
 		                            	this.sendmsg(Constants.pcErr(msg));
 		                            }
 		                                          
