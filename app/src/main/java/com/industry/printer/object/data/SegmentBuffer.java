@@ -9,7 +9,6 @@ import org.apache.http.util.CharArrayBuffer;
 import android.content.Context;
 import android.util.Log;
 
-import com.industry.printer.BinInfo;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.data.BinCreater;
 import com.industry.printer.hardware.RFIDDevice;

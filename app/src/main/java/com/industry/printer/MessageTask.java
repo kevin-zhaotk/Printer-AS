@@ -10,6 +10,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -765,10 +766,13 @@ public class MessageTask {
 			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT)) {
 
 			// H.M.Wang 追加一个是否移位的参数
-			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth, bHeight, true), getNozzle().mHeads, false);
+			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth, bHeight, false), getNozzle().mHeads, false);
 		} else {
 			// H.M.Wang 追加一个是否移位的参数
-			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, true), msgObj.getPNozzle().mHeads,
+// H.M.Wang 2021-2-26 取消过滤选项，过滤选项的目的是使得图像平滑，但是会打乱图像的内容
+//			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, true), msgObj.getPNozzle().mHeads,
+// End of H.M.Wang 2021-2-26 取消过滤选项，过滤选项的目的是使得图像平滑，但是会打乱图像的内容
+			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, false), msgObj.getPNozzle().mHeads,
 				((getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
 				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
 				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||

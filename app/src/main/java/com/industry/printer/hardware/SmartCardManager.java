@@ -413,7 +413,12 @@ public class SmartCardManager implements IInkDevice {
                                 addInOff(cardIdx);
                             };
 
-                            try{Thread.sleep(2 * 60 * 1000);}catch(Exception e){};
+                            long startTiem = System.currentTimeMillis();
+                            while(true) {
+                                try{Thread.sleep(100);}catch(Exception e){};
+                                if(System.currentTimeMillis() - startTiem >= 32000) break;
+                            }
+
                             Debug.d(TAG, "Clear Adding Block!");
                             mCards[cardIdx].mInkAdding = false;
 

@@ -355,12 +355,14 @@ public class DataTask {
 			if (sysconf.getParam(15) > 0) {
 				revert |= 0x02;
 			}
-			if (sysconf.getParam(20) > 0) {
+// H.M.Wang 2021-2-20 修改原来笔误，20->22, 21->23
+			if (sysconf.getParam(22) > 0) {
 				revert |= 0x04;
 			}
-			if (sysconf.getParam(21) > 0) {
+			if (sysconf.getParam(23) > 0) {
 				revert |= 0x08;
 			}
+// End of H.M.Wang 2021-2-20 修改原来笔误，20->22, 21->23
 		}
 		if (revert > 0 ) {
 			return true;
@@ -554,7 +556,9 @@ public class DataTask {
 // End.
 				// Bitmap bmp = o.getScaledBitmap(mContext);
 				Debug.d(TAG,"--->cover barcode w = " + o.getWidth() + "  h = " + o.getHeight() + " total=" + (mBinInfo.getBytesFeed()*8) + " " + (o.getWidth()/scaleW) + " " + (o.getHeight()/scaleH));
-				Bitmap bmp = ((BarcodeObject)o).getPrintBitmap((int)(o.getWidth()/scaleW), mBinInfo.getBytesFeed()*8, (int)(o.getWidth()/scaleW), (int)(o.getHeight()/scaleH), (int)o.getY());
+// H.M.Wang 2021-2-20 o.getY()坐标直接传递改为除以scaleH后传递，因为这个是生成打印缓冲区，需要考虑scale
+				Bitmap bmp = ((BarcodeObject)o).getPrintBitmap((int)(o.getWidth()/scaleW), mBinInfo.getBytesFeed()*8, (int)(o.getWidth()/scaleW), (int)(o.getHeight()/scaleH), (int)(o.getY()/scaleH));
+// End of H.M.Wang 2021-2-20 o.getY()坐标直接传递改为除以scaleH后传递，因为这个是生成打印缓冲区，需要考虑scale
 				// BinCreater.saveBitmap(bmp, "bar.png");
 				BinInfo info = new BinInfo(mContext, bmp, mExtendStat);
 
@@ -999,15 +1003,19 @@ public class DataTask {
 			offsetDiv = 6;	// 打字机位移量除6
 		}
 
+		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
+
 		int[] shifts = new int[heads];
 		int[] mirrors = new int[heads];
 		for (int i = 0; i < heads; i++) {
 			shifts[i] = (object.getPNozzle().shiftEnable ? Configs.getMessageShift(i) : 0) / offsetDiv;
+// H.M.Wang 2021-2-26 位移量加权bold参数，加重打印时位移量相应提高
+//			shifts[i] *= sysconf.getParam(2) / 150;
+// End of H.M.Wang 2021-2-26 位移量加权bold参数，加重打印时位移量相应提高
 			mirrors[i] = object.getPNozzle().mirrorEnable ? Configs.getMessageDir(i) : SystemConfigFile.DIRECTION_NORMAL;
 		}
 
 		int revert = 0x00;
-		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
 		if (object.getPNozzle().reverseEnable) {
 			if (sysconf.getParam(14) > 0) {
 				revert |= 0x01;

@@ -177,7 +177,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	
 	public static int mFd;
 	
-	public BinInfo mBg;
 	BroadcastReceiver mReceiver;
 	public Handler mCallback;
 
@@ -511,6 +510,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				@Override
 				public void run() {
 					loadMessage();
+                    if(SystemConfigFile.getInstance().getParam(41) == 1) {
+//                        Toast.makeText(mContext, "Launching Print...", Toast.LENGTH_SHORT).show();
+                        mHandler.sendEmptyMessageDelayed(MESSAGE_OPEN_TLKFILE, 1000);
+                    }
 				}
 			}, 2000);
 
@@ -597,10 +600,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			}
 		});
 
-		if(SystemConfigFile.getInstance().getParam(41) == 1) {
-			Toast.makeText(mContext, "Launching Print...", Toast.LENGTH_SHORT).show();
-			mHandler.sendEmptyMessageDelayed(MESSAGE_OPEN_TLKFILE, 1000);
-		}
+// H.M.Wang 2021-3-1 移到延时线程里面
+//		if(SystemConfigFile.getInstance().getParam(41) == 1) {
+//			Toast.makeText(mContext, "Launching Print...", Toast.LENGTH_SHORT).show();
+//			mHandler.sendEmptyMessageDelayed(MESSAGE_OPEN_TLKFILE, 1000);
+//		}
+// End of H.M.Wang 2021-3-1 移到延时线程里面
 
 // H.M.Wang 2020-9-28 追加一个心跳协议
 		mLastHeartBeat = System.currentTimeMillis();

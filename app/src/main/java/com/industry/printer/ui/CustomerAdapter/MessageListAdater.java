@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.industry.printer.BinInfo;
 import com.industry.printer.MessageTask;
 import com.industry.printer.R;
 import com.industry.printer.Utils.ConfigPath;
