@@ -231,7 +231,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	 */
 	public String mObjPath=null;
 
-	private int mRfid = 100;
+// H.M.Wang 2021-3-2 修改初值为0
+//    private int mRfid = 100;
+    private int mRfid = 0;
+// End of H.M.Wang 2021-3-2 修改初值为0
 	/**
 	 * MESSAGE_OPEN_TLKFILE
 	 *   message tobe sent when open tlk file
@@ -505,17 +508,26 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		 * avoid endless loop of crash
 		 */
 		Debug.d(TAG, "--->loading: " + loading);
+// H.M.Wang 2021-3-2 移到这里，可能崩溃后不显示预览原因在这里
+        loadMessage();
+// End of H.M.Wang 2021-3-2 移到这里，可能崩溃后不显示预览原因在这里
+
 		if (!loading) {
-			mHandler.postDelayed(new Runnable() {
+//            loadMessage();
+			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					loadMessage();
                     if(SystemConfigFile.getInstance().getParam(41) == 1) {
+// H.M.Wang 2021-3-2 追加等待初始化成功事件
+                        while(!mRfidInit) {
+                            try {Thread.sleep(1000);} catch(InterruptedException e) {};
+                        }
+// End of H.M.Wang 2021-3-2 追加等待初始化成功事件
 //                        Toast.makeText(mContext, "Launching Print...", Toast.LENGTH_SHORT).show();
                         mHandler.sendEmptyMessageDelayed(MESSAGE_OPEN_TLKFILE, 1000);
                     }
 				}
-			}, 2000);
+			}).start();
 
 		}
 
@@ -1089,7 +1101,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 					break;
 				case MESSAGE_OPEN_MSG_SUCCESS:
-
 					Debug.d(TAG, "--->Print open message success");
 					if (mPreBitmap != null) {
 						BinFromBitmap.recyleBitmap(mPreBitmap);
