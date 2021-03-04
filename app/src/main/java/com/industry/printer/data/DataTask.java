@@ -493,6 +493,8 @@ public class DataTask {
 		Debug.d(TAG, "-----scaleW = " + scaleW + " div = " + div);
 		//mPreBitmap = Arrays.copyOf(mBg.mBits, mBg.mBits.length);
 
+// H.M.Wang 2021-3-3 由于从QR.txt文件当中读取的变量信息要对群组有效，在这里会导致每个任务都会读取一行，所以需要移植DataTransferThread类处理
+/*
 // H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持Barcode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
 		int strIndex = -1;
 		String[] recvStrs = new String[1];
@@ -514,6 +516,8 @@ public class DataTask {
 			strIndex = 0;
 		}
 // End of H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持Barcode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
+*/
+// End of H.M.Wang 2021-3-3 由于从QR.txt文件当中读取的变量信息要对群组有效，在这里会导致每个任务都会读取一行，所以需要移植DataTransferThread类处理
 
 		for(BaseObject o:mObjList)
 		{
@@ -531,6 +535,9 @@ public class DataTask {
 //				if (!prev) {
 // H.M.Wang 2020-5-18 由于数据源参数索引使用立即数，未及时发现修改，改为固定变量索引
 //				if (!prev && SystemConfigFile.getInstance().getParam(40) == SystemConfigFile.DATA_SOURCE_FILE) {
+
+// H.M.Wang 2021-3-3 由于从QR.txt文件当中读取的变量信息要对群组有效，在这里会导致每个任务都会读取一行，所以需要移植DataTransferThread类处理
+/*
 // H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
 //				if (!prev && SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE) {
 				if (!prev &&
@@ -554,6 +561,8 @@ public class DataTask {
 					}
 				}
 // End.
+*/
+// End of H.M.Wang 2021-3-3 由于从QR.txt文件当中读取的变量信息要对群组有效，在这里会导致每个任务都会读取一行，所以需要移植DataTransferThread类处理
 				// Bitmap bmp = o.getScaledBitmap(mContext);
 				Debug.d(TAG,"--->cover barcode w = " + o.getWidth() + "  h = " + o.getHeight() + " total=" + (mBinInfo.getBytesFeed()*8) + " " + (o.getWidth()/scaleW) + " " + (o.getHeight()/scaleH));
 // H.M.Wang 2021-2-20 o.getY()坐标直接传递改为除以scaleH后传递，因为这个是生成打印缓冲区，需要考虑scale
@@ -570,6 +579,9 @@ public class DataTask {
 // H.M.Wang 2020-5-22 串口数据启用DynamicText，取消代用CounterObject
             } else if(o instanceof DynamicText) {
 				Debug.d(TAG, "--->object index=" + o.getIndex());
+
+// H.M.Wang 2021-3-3 由于从QR.txt文件当中读取的变量信息要对群组有效，在这里会导致每个任务都会读取一行，所以需要移植DataTransferThread类处理
+/*
 // H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持QRCode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
 				if (!prev && SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE) {
 					Debug.d(TAG, "--->set content to DynamicText = " + recvStrs[strIndex]);
@@ -587,6 +599,9 @@ public class DataTask {
 				}
 // End of H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
 // End of H.M.Wang 2021-1-4 修改QR文件的应用范围，以前只支持QRCode，改为支持DT和Barcode，格式为：<序号>,DT0,DT1,DT2,DT3,DT4,DT5,DT6,DT7,DT8,DT9,QRString
+*/
+// End of H.M.Wang 2021-3-3 由于从QR.txt文件当中读取的变量信息要对群组有效，在这里会导致每个任务都会读取一行，所以需要移植DataTransferThread类处理
+
 // H.M.Wang 2020-10-29 修改DynamicText实时生成打印缓冲区，而不是使用Vbin贴图
                 Bitmap bmp = ((DynamicText)o).getPrintBitmap(scaleW, scaleH, headType.getHeight());
                 BinInfo info = new BinInfo(mContext, bmp, mExtendStat);

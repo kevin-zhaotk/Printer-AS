@@ -185,7 +185,7 @@ public class DynamicText extends BaseObject {
 
         // 按调整了大小的高度进行正常图片绘制
         Bitmap drawBmp = Bitmap.createBitmap(drawWidth, dstHeight, Configs.BITMAP_CONFIG);
-        Debug.d(TAG,"Create bitmap at width = " + drawWidth + ", height = " + dstHeight);
+        Debug.d(TAG,"Draw [" + mContent + "] at [" + drawWidth + ", " + dstHeight + "]");
         Canvas drawCanvas = new Canvas(drawBmp);
         drawCanvas.drawColor(Color.WHITE);
         drawCanvas.drawText(mContent, 0, drawY + drawHeight - fm.descent, paint);

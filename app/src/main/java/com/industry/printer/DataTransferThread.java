@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.industry.printer.FileFormat.PackageListReader;
+import com.industry.printer.FileFormat.QRReader;
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Rfid.IInkScheduler;
@@ -142,6 +144,9 @@ public class DataTransferThread {
 				mIndex = 0;
 			}
 		}
+// H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
+		if(index() == 0) setContentsFromQRFile();
+// End of H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
 		Debug.i(TAG, "--->next: " + mIndex);
 	}
 
@@ -1228,7 +1233,63 @@ public class DataTransferThread {
 	}
 // End of H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整
 
-// H.M.Wang 2020-5-6 参数设置页面，在未修改计数器的情况下，点击OK保存后，计数器会跳数，分析是因为设置了	mNeedUpdate=true，重新生成打印缓冲区，重新生成时计数器会自动增量，所以增加了一个重新下发的函数，而不重新生成缓冲区
+// H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
+	private boolean isReady = true;
+
+	private void setContentsFromQRFile() {
+		int strIndex = -1;
+		String[] recvStrs = new String[1];
+// H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
+//		if (!prev && SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE) {
+		if((SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE ||
+			SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE2)) {
+// End of H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
+			QRReader reader = QRReader.getInstance(mContext);
+			String content = reader.read();
+
+			if (TextUtils.isEmpty(content)) {
+				isReady = false;
+				return;
+			}
+			isReady = true;
+
+			recvStrs = content.split(",");
+			strIndex = 0;
+
+			for(DataTask dataTask : mDataTask) {
+				ArrayList<BaseObject> objList = dataTask.getObjList();
+				for(BaseObject baseObject: objList) {
+					if(baseObject instanceof DynamicText) {
+						if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE) {
+							if(strIndex < recvStrs.length) {
+								Debug.d(TAG, "DynamicText[" + strIndex + "]: " + recvStrs[strIndex]);
+								baseObject.setContent(recvStrs[strIndex++]);
+							}
+						}
+
+						if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE2) {
+							int dtIndex = ((DynamicText)baseObject).getDtIndex();
+							if(dtIndex >= 0 && dtIndex < recvStrs.length) {
+								baseObject.setContent(recvStrs[dtIndex]);
+							} else {
+								baseObject.setContent("");
+							}
+						}
+					} else if(baseObject instanceof BarcodeObject) {
+						if(recvStrs.length >= 11) {
+							Debug.d(TAG, "BarcodeObject: " + recvStrs[10]);
+							((BarcodeObject)baseObject).setContent(recvStrs[10]);
+						}
+					}
+				}
+			}
+		}
+
+	}
+// End of H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
+
+
+	// H.M.Wang 2020-5-6 参数设置页面，在未修改计数器的情况下，点击OK保存后，计数器会跳数，分析是因为设置了	mNeedUpdate=true，重新生成打印缓冲区，重新生成时计数器会自动增量，所以增加了一个重新下发的函数，而不重新生成缓冲区
 	public void resendBufferToFPGA() {
 		if(null != mPrintBuffer) {
 			FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
@@ -1284,6 +1345,10 @@ public class DataTransferThread {
 
 			//逻辑要求，必须先发数据
 			Debug.d(TAG, "--->print run");
+
+// H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
+			setContentsFromQRFile();
+// End of H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
 
 			mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true);
 			if (isLanPrint()) {
@@ -1446,6 +1511,18 @@ public class DataTransferThread {
 // H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 						if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) != SystemConfigFile.DATA_SOURCE_SCANER3) {
 							next();
+// H.M.Wang 2021-3-4 此断代码转移至此
+// H.M.Wang 2021-3-4 DataTask中的isReady变量，由于读QR文件的操作转移至这里，已经失效，在本类中追加isReady变量，并且据此进行判断操作
+//								if (!mDataTask.get(index()).isReady) {
+							if (!isReady) {
+// End of H.M.Wang 2021-3-4 DataTask中的isReady变量，由于读QR文件的操作转移至这里，已经失效，在本类中追加isReady变量，并且据此进行判断操作
+								if (mCallback != null) {
+									mCallback.OnFinished(CODE_BARFILE_END);
+								}
+								break;
+							}
+// End of H.M.Wang 2021-3-4 此断代码转移至此
+
 							if (isLanPrint()) {
 								mPrintBuffer = getLanBuffer(index());
 								Debug.i(TAG, "--->mPrintBuffer.length: " + mPrintBuffer.length);
@@ -1453,12 +1530,6 @@ public class DataTransferThread {
 // H.M.Wang 2020-5-19 QR文件打印最后一行后无反应问题。应该先生成打印缓冲区，而不是先判断是否到了终点。顺序不对
 								Debug.i(TAG, "mIndex: " + index());
 								mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
-								if (!mDataTask.get(index()).isReady) {
-									if (mCallback != null) {
-										mCallback.OnFinished(CODE_BARFILE_END);
-									}
-									break;
-								}
 //							Debug.i(TAG, "mIndex: " + index());
 //							mPrintBuffer = mDataTask.get(index()).getPrintBuffer();
 // End of H.M.Wang 2020-5-19 QR文件打印最后一行后无反应问题。应该先生成打印缓冲区，而不是先判断是否到了终点。顺序不对
@@ -1497,7 +1568,7 @@ public class DataTransferThread {
 						}
 						LogIntercepter.getInstance(mContext).execute(getCurData());
 					}
-				}
+                }
 
 // H.M.Wang 2020-11-13 追加内容是否变化的判断
 // H.M.Wang 2021-1-4 在打印过程中，用户可能通过上下键（ControlTabActivity里的mMsgNext或者mMsgPrev，这回最终导致resetTask，在resetTask里面会对mDataTask清空，如果不排斥线程，这里可能会遇到空的情况而崩溃
