@@ -102,6 +102,11 @@ public class SerialHandler {
             Scaner2Protocol p = new Scaner2Protocol(mSerialPort);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // End of H.M.Wang 2021-1-15 追加扫描协议3
+// H.M.Wang 2021-3-6 追加串口协议8
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_8) {
+            SerialProtocol8 p = new SerialProtocol8(mSerialPort);
+            p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
+// End of H.M.Wang 2021-3-6 追加串口协议8
         }
     }
 
@@ -145,6 +150,11 @@ public class SerialHandler {
             Scaner2Protocol p = new Scaner2Protocol(mSerialPort);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
 // End of H.M.Wang 2020-10-30 追加扫描2串口协议
+// H.M.Wang 2021-3-6 追加串口协议8
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_8) {
+            SerialProtocol8 p = new SerialProtocol8(mSerialPort);
+            p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
+// End of H.M.Wang 2021-3-6 追加串口协议8
         }
     }
 }

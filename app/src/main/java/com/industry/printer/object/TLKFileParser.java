@@ -505,6 +505,10 @@ public class TLKFileParser  extends TlkFile{
 		Debug.d(TAG, "--->setDotsPerClm type = " + type);
 		switch (type) {
 			case MESSAGE_TYPE_9MM:
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+			case MESSAGE_TYPE_E6X48:
+			case MESSAGE_TYPE_E6X50:
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 				dots = 112f;
 				mProportion = dots/Configs.gDots;
 				break;

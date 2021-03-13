@@ -286,11 +286,51 @@ public class DataTask {
 			mBuffer = caBuf.toCharArray();
 
             if(bSave) {
-                FileUtil.deleteFolder("/mnt/sdcard/printR5x6.bin");
-                BinCreater.saveBin("/mnt/sdcard/printR5x6.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R6_HEAD_NUM);
+                FileUtil.deleteFolder("/mnt/sdcard/printR6.bin");
+                BinCreater.saveBin("/mnt/sdcard/printR6.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R6_HEAD_NUM);
             }
 		}
 // End of H.M.Wang 2020-4-18 追加12.7R5头
+
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+		if( sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
+			sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+
+			CharArrayBuffer caBuf = new CharArrayBuffer(0);
+			int orgCharsOfHead = mBinInfo.mCharsPerHFeed * mTask.getNozzle().mHeads;
+			int orgCols = mBuffer.length / orgCharsOfHead;
+			char[] empty = new char[orgCharsOfHead];
+			Arrays.fill(empty, (char)0x0000);
+
+			int maxColNumPerUnit = 0;
+			if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48) {
+				maxColNumPerUnit = PrinterNozzle.E6X48_MAX_COL_NUM_EACH_UNIT;
+			} else if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+				maxColNumPerUnit = PrinterNozzle.E6X50_MAX_COL_NUM_EACH_UNIT;
+			}
+
+			for(int i=0; i<PrinterNozzle.E6_PRINT_COPY_NUM; i++) {
+				for(int k=0; k<maxColNumPerUnit; k++) {
+					for(int j=0; j<PrinterNozzle.E6_HEAD_NUM; j++) {
+						if((j % 2 == 0 && i == PrinterNozzle.E6_PRINT_COPY_NUM - 1) || 	// 单数行最后一列
+								(j % 2 != 0 && i == 0) ||    									// 双数行第一列
+								(k >= orgCols)) {												// 原始块中宽度不足部分
+							caBuf.append(empty, 0, orgCharsOfHead);
+						} else {
+							caBuf.append(mBuffer, k * orgCharsOfHead, orgCharsOfHead);
+						}
+					}
+				}
+			}
+
+			mBuffer = caBuf.toCharArray();
+
+			if(bSave) {
+				FileUtil.deleteFolder("/mnt/sdcard/printE6.bin");
+				BinCreater.saveBin("/mnt/sdcard/printE6.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM);
+			}
+		}
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 
 // H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
 		calDots();
@@ -471,7 +511,12 @@ public class DataTask {
 			div = 152f/64f;
 			scaleW = 152f/64;
 			scaleH = 152f/64;
-		} else if (headType == PrinterNozzle.MESSAGE_TYPE_9MM) {
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+//		} else if (headType == PrinterNozzle.MESSAGE_TYPE_9MM) {
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_9MM ||
+			headType == PrinterNozzle.MESSAGE_TYPE_E6X48 ||
+			headType == PrinterNozzle.MESSAGE_TYPE_E6X50 ) {
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			div = 1.0f * 104/104;
 			scaleW = 152f / 104f * 2;
 			scaleH = 152f / 104f;

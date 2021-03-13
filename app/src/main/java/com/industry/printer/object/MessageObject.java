@@ -70,6 +70,12 @@ public class MessageObject extends BaseObject {
 			mPNozzle = PrinterNozzle.MESSAGE_TYPE_12_7;
 		}
 // End of H.M.Wang 2020-5-9 12.7R5d打印头类型强制修改为12.7类型
+
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+		if(mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X48 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X50) {
+			mPNozzle = PrinterNozzle.MESSAGE_TYPE_9MM;
+		}
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 	}
 	
 	public void setType(String type) {
@@ -86,6 +92,11 @@ public class MessageObject extends BaseObject {
 					mPNozzle = PrinterNozzle.MESSAGE_TYPE_12_7;
 				}
 // End of H.M.Wang 2020-5-9 12.7R5d打印头类型强制修改为12.7类型
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+				if(mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X48 || mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X50) {
+					mPNozzle = PrinterNozzle.MESSAGE_TYPE_9MM;
+				}
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 				break;
 			}
 		}
@@ -243,7 +254,12 @@ public class MessageObject extends BaseObject {
 	public String[] getDisplayFSList() {
 		String[] size = new String[mBaseList.length];
 		Debug.d(TAG, "--->getDisplayFSList mPNozzle.mType = " + mPNozzle.mType);
-		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+//		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM ||
+			mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X48 ||
+			mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X50) {
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			size = new String[mBaseList_9mm.length];
 			for (int i = 0; i < size.length; i++) {
 				size[i] = String.valueOf(mBaseList_9mm[i]);
@@ -323,7 +339,12 @@ public class MessageObject extends BaseObject {
 			Debug.d(TAG, "--->exception: " + e.getMessage());
 		}
 		Debug.d(TAG, "--->h: " + h + ", type=" + mPNozzle.mType);
-		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+//		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM ||
+			mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X48 ||
+			mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X50) {
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			return h * 12.7f / 9;
 		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) {
 			return h;
@@ -446,7 +467,12 @@ public class MessageObject extends BaseObject {
 		float[] sizelist;
 
 		sizelist= mBaseList;
-		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+//		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM ||
+			mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X48 ||
+			mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X50) {
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			sizelist = mBaseList_9mm;
 		}
 //		if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_12_7) {
@@ -597,7 +623,12 @@ public class MessageObject extends BaseObject {
 //			h = mPNozzle.getScaleH() * size/PIXELS_PER_MM;
 			type = mPNozzle.factor();
 			h = type * size/PIXELS_PER_MM;
-			if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+//			if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM) {
+			if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_9MM ||
+				mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X48 ||
+				mPNozzle == PrinterNozzle.MESSAGE_TYPE_E6X50) {
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 				h = type * size/152*9;
 			}
 		}

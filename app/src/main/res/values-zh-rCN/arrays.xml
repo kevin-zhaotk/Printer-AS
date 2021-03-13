@@ -26,6 +26,9 @@
         <item>串口协议4</item>
         <item>串口协议6</item>
         <item>串口协议7</item>
+        <!--  H.M.Wang 2021-3-6 追加串口8 -->
+        <item>RS232-8</item>
+        <!--  End of H.M.Wang 2021-3-6 追加串口8 -->
     </string-array>
 <!-- End of H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
 
@@ -63,6 +66,10 @@
         <item>64SN</item>
         <!-- End of H.M.Wang 2020-8-26 追加64SN打印头 -->
         <item>9MM</item>
+        <!--  H.M.Wang 2021-3-6 追加E6X48,E6X50头 -->
+        <item>E6X48</item>
+        <item>E6X50</item>
+        <!--  End of H.M.Wang 2021-3-6 追加E6X48,E6X50头 -->
     </string-array>
 
     <string-array name="strFontArray">

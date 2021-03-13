@@ -337,6 +337,16 @@ public class FpgaGpioOperation {
         }
 // End of H.M.Wang 2020-5-7 12.7R5头的时候，设置头的数
 
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+        if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
+            config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+            data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_9MM;
+            data[16] &= 0xfc7f;        // Bit9-7
+            data[16] |= 0x0280;        // 6个头
+            data[24] *= 6;
+        }
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+
         //是否雙列打印
         data[25] = (char) config.getParam(31 - 1);
         //雙列偏移量

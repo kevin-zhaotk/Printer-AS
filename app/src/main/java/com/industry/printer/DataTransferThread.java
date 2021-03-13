@@ -40,6 +40,7 @@ import com.industry.printer.Serial.Scaner2Protocol;
 import com.industry.printer.Serial.SerialHandler;
 import com.industry.printer.Serial.SerialProtocol;
 import com.industry.printer.Serial.SerialProtocol7;
+import com.industry.printer.Serial.SerialProtocol8;
 import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
@@ -222,7 +223,8 @@ public class DataTransferThread {
 				head == PrinterNozzle.MESSAGE_TYPE_64_DOT);
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 
-		if (isRunning()) {
+// H.M.Wang2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数
+/*		if (isRunning()) {
 			FpgaGpioOperation.uninit();
 // 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 //			finish();
@@ -230,7 +232,9 @@ public class DataTransferThread {
 			FpgaGpioOperation.clean();
 			needRestore = true;
 		}
-		
+*/
+// End of H.M.Wang2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数
+
 		ThreadPoolManager.mThreads.execute(new Runnable() {
 			
 			@Override
@@ -260,15 +264,22 @@ public class DataTransferThread {
 //
 //				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
 //				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
-				if (needRestore) {
+
+// H.M.Wang2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数，结束purge之后，恢复到数据传输状态
+/*				if (needRestore) {
 // 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 //					launch(mContext);
 					FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
 					FpgaGpioOperation.init(mContext);
-					resendBufferToFPGA();
+// H.M.Wang 2021-3-5 暂时取消
+//					resendBufferToFPGA();
+// End of H.M.Wang 2021-3-5 暂时取消
 // End of 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 					needRestore = false;
 				}
+*/
+				FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
+// End of H.M.Wang2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数
 				isPurging = false;
 			}
 		
@@ -658,6 +669,45 @@ public class DataTransferThread {
 	}
 // End of H.M.Wang 2020-10-30 追加扫描2串口协议
 
+// H.M.Wang 2021-3-6 追加串口协议8
+	private void setSerialProtocol8DTs(final byte[] data) {
+		Debug.d(TAG, "String from Remote = [" + ByteArrayUtils.toHexString(data) + "]");
+
+		int writeValue = (0x000000ff & data[SerialProtocol8.TAG_WRITE_DATA_POS]);
+		writeValue *= 0x100;
+		writeValue += (0x000000ff & data[SerialProtocol8.TAG_WRITE_DATA_POS+1]);
+
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if(null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
+					mRemoteRecvedPromptDlg.setMessage(ByteArrayUtils.toHexString(data));
+				}
+			}
+		});
+
+		ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+		for (BaseObject baseObject : objList) {
+			if (baseObject instanceof DynamicText) {
+				int dtIndex = ((DynamicText)baseObject).getDtIndex();
+				if(dtIndex == 1) {
+					baseObject.setContent("" + writeValue % 10);
+				} else if(dtIndex == 0) {
+					StringBuilder sb = new StringBuilder();
+					for(int i=0; i<((DynamicText) baseObject).getBits(); i++) {
+						sb.append(" ");
+					}
+					sb.append(writeValue / 10);
+					baseObject.setContent(sb.substring(sb.length() - ((DynamicText) baseObject).getBits()));
+				}
+			}
+		}
+		mNeedUpdate = true;
+	}
+// End of H.M.Wang 2021-3-6 追加串口协议8
+
 //	private AlertDialog mRemoteRecvedPromptDlg = null;
 	private RemoteMsgPrompt mRemoteRecvedPromptDlg = null;
 
@@ -730,6 +780,10 @@ public class DataTransferThread {
 						mNeedUpdate = true;
 					}
 // End of H.M.Wang 2020-8-13 追加串口7协议
+// H.M.Wang 2021-3-6 追加串口协议8
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_8) {
+					setSerialProtocol8DTs(data);
+// End of H.M.Wang 2021-3-6 追加串口协议8
 // H.M.Wang 2020-10-30 追加扫描2串口协议
 				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER2) {
 					String datastring = new String(data, 0, data.length);
@@ -1122,6 +1176,14 @@ public class DataTransferThread {
         }
 // End of H.M.Wang 2020-4-19 追加12.7R5头。dotcount放大相应倍数
 
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+		if( config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
+			config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+			mPrintDots[head] *= (PrinterNozzle.E6_PRINT_COPY_NUM - 1);
+		}
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+
+
 		Debug.d(TAG, "--->dotCount[" + head + "]: " + mPrintDots[head] + "  bold=" + bold + "  dotrate=" + rate);
 
 		mThresHolds[head] = (int)(1.0f * Configs.DOTS_PER_PRINT/(mPrintDots[head] * bold)/rate);
@@ -1407,6 +1469,17 @@ public class DataTransferThread {
 						sb.append(mPrintDots[i]);
 					}
 // 2020-5-11
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+					if( SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
+						SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+//						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
+						sb.append(mPrintDots[i<6?0:i]*(PrinterNozzle.R6_PRINT_COPY_NUM - 1));
+// End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+					} else {
+						sb.append(mPrintDots[i]);
+					}
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+
 				}
 				sb.append("]");
 				Debug.d(TAG, sb.toString());
@@ -1513,14 +1586,17 @@ public class DataTransferThread {
 							next();
 // H.M.Wang 2021-3-4 此断代码转移至此
 // H.M.Wang 2021-3-4 DataTask中的isReady变量，由于读QR文件的操作转移至这里，已经失效，在本类中追加isReady变量，并且据此进行判断操作
+// H.M.Wang 2021-3-5 修改判断条件，只有在FILE和FILE2数据源时才判断是否为到了文件末尾而结束
 //								if (!mDataTask.get(index()).isReady) {
-							if (!isReady) {
-// End of H.M.Wang 2021-3-4 DataTask中的isReady变量，由于读QR文件的操作转移至这里，已经失效，在本类中追加isReady变量，并且据此进行判断操作
-								if (mCallback != null) {
-									mCallback.OnFinished(CODE_BARFILE_END);
-								}
+							if(((SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE ||
+								SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FILE2)) &&
+								!isReady &&
+								mCallback != null) {
+// End of H.M.Wang 2021-3-5 修改判断条件，只有在FILE和FILE2数据源时才判断是否为到了文件末尾而结束
+								mCallback.OnFinished(CODE_BARFILE_END);
 								break;
 							}
+// End of H.M.Wang 2021-3-4 DataTask中的isReady变量，由于读QR文件的操作转移至这里，已经失效，在本类中追加isReady变量，并且据此进行判断操作
 // End of H.M.Wang 2021-3-4 此断代码转移至此
 
 							if (isLanPrint()) {
@@ -1537,18 +1613,31 @@ public class DataTransferThread {
 
 							FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 							Debug.d(TAG, "--->FPGA data sent!");
+// H.M.Wang 2021-3-8 在实施了打印后调用
+							afterDataSent();
+// End of H.M.Wang 2021-3-8 在实施了打印后调用
 						} else {
 							if(dataSent) {
 								next();				// 扫描3的逻辑是没有收到扫描数据不打印，打印之打印一次。实现策略是初始和empty时不下发新的缓冲区，仅在更新时下发。因此，如果更新没下发就保持当前的记录
 													// 这个dataSent标识就是起到这个作用。初值为false，开始打印后第一个任务等待扫描数据，扫描数据下发后，更新下发。在更新下发结束后，dataSent置真。因此只有在有了更新下发以后，才为真
 								dataSent = false;	// 更改打印指针后，立即设置为false，以避免没下发数据，频繁来empty导致不必要指针调整（这个在新的img里面不会发生，因此这一句仅为保险设置，实际不设也行）
+// H.M.Wang 2021-3-8 在实施了打印后调用
+								afterDataSent();
+// End of H.M.Wang 2021-3-8 在实施了打印后调用
+								if(index() > 0 && index() < mDataTask.size()) {
+									mNeedUpdate = true;
+								}
 							}
-							if(index() > 0 && index() < mDataTask.size()) {
-								mNeedUpdate = true;
-							}
+// H.M.Wang 2021-3-8 对于扫描3，如果接收到了扫描数据，要逐个将群组当中的任务都打印一边，这个靠mNeedUpdate = true来控制，因此，需要放在执行打印的流程里面不应该在外面
+//							if(index() > 0 && index() < mDataTask.size()) {
+//								mNeedUpdate = true;
+//							}
+// End of H.M.Wang 2021-3-8 对于扫描3，如果接收到了扫描数据，要逐个将群组当中的任务都打印一边，这个靠mNeedUpdate = true来控制，因此，需要放在执行打印的流程里面不应该在外面
 						}
 // End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 
+// H.M.Wang 2021-3-8 这一部分的时候修正，应该在实施了打印以后再进行，反在这里的话，如果是扫描3，并且还没有下发数据，这里就会被频繁执行，导致计数频繁增加，提出来作为函数，然后在实施了打印后调用
+/*
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
 // End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
@@ -1567,6 +1656,8 @@ public class DataTransferThread {
 							mCallback.onComplete(index());
 						}
 						LogIntercepter.getInstance(mContext).execute(getCurData());
+*/
+// End of H.M.Wang 2021-3-8 这一部分的时候修正，应该在实施了打印以后再进行，反在这里的话，如果是扫描3，并且还没有下发数据，这里就会被频繁执行，导致计数频繁增加，提出来作为函数，然后在实施了打印后调用
 					}
                 }
 
@@ -1680,6 +1771,27 @@ public class DataTransferThread {
 // H.M.Wang 2020-7-2 由于调整计数器增量策略，在打印完成时调整，因此无需rollback
 //			rollback();
 // End of H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整，因此无需rollback
+		}
+
+		private void afterDataSent() {
+// 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
+			DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
+// End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
+
+// H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+			if(mCallback != null && mDataTask.size() > 1) {
+				mCallback.onPrint(index());
+			}
+// End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+
+			last = SystemClock.currentThreadTimeMillis();
+			countDown();
+//						mInkListener.onCountChanged();
+//						mScheduler.schedule();
+			if (mCallback != null) {
+				mCallback.onComplete(index());
+			}
+			LogIntercepter.getInstance(mContext).execute(getCurData());
 		}
 	}
 }

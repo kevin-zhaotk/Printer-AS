@@ -163,6 +163,13 @@ public class SystemConfigFile{
 	public static final int DATA_SOURCE_RS232_7 	= 15;		// 数据源使用串口协议7。与串口协议1一致，仅校验位奇偶校验
 // End of H.M.Wang 2020-8-13 追加串口协议7
 // End of H.M.Wang 11-13 调整各项目的排列顺序，使得相同接近的数据源排在一起。同时调整arrays.xml的数据源排列顺序
+// H.M.Wang 2021-3-6 追加串口协议8
+	public static final int DATA_SOURCE_RS232_8 	= 16;		// 数据源使用串口协议8。
+// End of H.M.Wang 2021-3-6 追加串口协议8
+
+// H.M.Wang 2021-3-6 追加串口协议8
+	public static final int INDEX_LOCAL_ID 			= 57;		// 用于串口协议8当中的本地机器ID。
+// End of H.M.Wang 2021-3-6 追加串口协议8
 
 // H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
 	public static final int DIRECTION_NORMAL = 0;
@@ -1230,9 +1237,23 @@ public class SystemConfigFile{
 			case PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT:
 				nozzle = PrinterNozzle.MESSAGE_TYPE_64_DOT;
 				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_R6X48;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_R6X50;
+				break;
 			case PrinterNozzle.MessageType.NOZZLE_INDEX_9MM:
 				nozzle = PrinterNozzle.MESSAGE_TYPE_9MM;
 				break;
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_E6X48;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_E6X50;
+				break;
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 		}
 
 		return nozzle;
@@ -1342,6 +1363,13 @@ public class SystemConfigFile{
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 				return 6;
 			}
+
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+			if( getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
+				getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+				return 6;
+			}
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			return 1;
 		}
 	}
@@ -1362,11 +1390,17 @@ public class SystemConfigFile{
 // H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 //			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
 			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
-					getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
+				getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 				return (head < 6 ? 0 : head);
 			}
 			// 2020-5-11
+// H.M.Wang 2021-3-6 追加E6X48,E6X50头
+			if( getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
+				getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+				return (head < 6 ? 0 : head);
+			}
+// End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			return head;
 		}
 	}
