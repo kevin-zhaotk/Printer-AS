@@ -110,14 +110,11 @@
 	<string name="strInsertSerial">Please connect device...</string>
 	<string name="strReinsertSerial">Error, please reconnect device</string>
 	<string name="str_net_error">Network communication error</string>
-
-	
-
-	
+<!--
 	<string-array name="strFontFile">
 	    <item>WelldrawH000</item>
 	</string-array>
-	
+-->
 
 	<string name="strCode">Code Type</string>
 	<string name="strBarsource">Data</string>
