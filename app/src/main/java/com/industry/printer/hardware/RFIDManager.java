@@ -90,12 +90,18 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 				mDevice.removeListener(RFIDManager.this);
 				Debug.d(TAG, "--->dev: " + mCurrent + "  ink:" + mDevice.getLocalInk());
 				mCurrent++;
-				if (mCurrent >= mLiveHeads) {
+// H.M.Wang 2021-3-16 修改不检测特征码的问题
+//				if (mCurrent >= mLiveHeads) {
+				if (mCurrent >= mLiveHeads && mDevice.isValid()) {
+// End of H.M.Wang 2021-3-16 修改不检测特征码的问题
 					Debug.d(TAG, "--->rfid check success");
 					mCallback.sendEmptyMessage(MSG_RFID_CHECK_SUCCESS);
 					break;
 				}
-				if (mCurrent >= mRfidDevices.size()) {
+// H.M.Wang 2021-3-16 修改不检测特征码的问题
+//				if (mCurrent >= mRfidDevices.size()) {
+				if (mCurrent >= mRfidDevices.size() || !mDevice.isValid()) {
+// End of H.M.Wang 2021-3-16 修改不检测特征码的问题
 					Debug.d(TAG, "--->rfid check failure");
 					mCallback.sendEmptyMessageDelayed(MSG_RFID_CHECK_FAIL, 100);
 					break;
@@ -115,7 +121,10 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 				}
 				break;
 			case MSG_RFID_CHECK_COMPLETE:
-				if (msg.arg1 > 0) {
+// H.M.Wang 2021-3-16 修改不检测特征码的问题
+//				if (msg.arg1 > 0) {
+				if (msg.arg1 > 0 && mDevice.isValid()) {
+// End of H.M.Wang 2021-3-16 修改不检测特征码的问题
 					mCallback.sendEmptyMessageDelayed(MSG_RFID_CHECK_SUCCESS, 100);
 				} else {
 					mCallback.sendEmptyMessageDelayed(MSG_RFID_CHECK_FAIL, 100);
