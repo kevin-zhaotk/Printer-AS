@@ -271,11 +271,15 @@ public class DataTask {
 			for(int i=0; i<PrinterNozzle.R6_PRINT_COPY_NUM; i++) {
 				for(int k=0; k<maxColNumPerUnit; k++) {
 					for(int j=0; j<PrinterNozzle.R6_HEAD_NUM; j++) {
-						if((j % 2 == 0 && i == PrinterNozzle.R6_PRINT_COPY_NUM - 1) || 	// 单数行最后一列
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
-						   (j % 2 != 0 && i == 0) ||    									// 双数行第一列
-						   (k >= orgCols)) {												// 原始块中宽度不足部分
+// H.M.Wang 2021-3-18 取消周后一个单元后面添加空格
+						if(j % 2 != 0 && i == 0) {							// 双数行第一列
 							caBuf.append(empty, 0, orgCharsOfHead);
+						} else if(k >= orgCols) {							// 原始块中宽度不足部分
+							if(i < PrinterNozzle.R6_PRINT_COPY_NUM) {		// 不是最后一列
+								caBuf.append(empty, 0, orgCharsOfHead);
+							}
+// End of H.M.Wang 2021-3-18 取消周后一个单元后面添加空格
 						} else {
 							caBuf.append(mBuffer, k * orgCharsOfHead, orgCharsOfHead);
 						}
@@ -312,10 +316,18 @@ public class DataTask {
 			for(int i=0; i<PrinterNozzle.E6_PRINT_COPY_NUM; i++) {
 				for(int k=0; k<maxColNumPerUnit; k++) {
 					for(int j=0; j<PrinterNozzle.E6_HEAD_NUM; j++) {
-						if((j % 2 == 0 && i == PrinterNozzle.E6_PRINT_COPY_NUM - 1) || 	// 单数行最后一列
-								(j % 2 != 0 && i == 0) ||    									// 双数行第一列
-								(k >= orgCols)) {												// 原始块中宽度不足部分
-							caBuf.append(empty, 0, orgCharsOfHead);
+// H.M.Wang 2021-3-18 取消奇数行(第一行为0)的向后位移一个单位的操作)
+//						if((j % 2 == 0 && i == PrinterNozzle.E6_PRINT_COPY_NUM - 1) || 	// 单数行最后一列
+//								(j % 2 != 0 && i == 0) ||    									// 双数行第一列
+						if(
+// End of H.M.Wang 2021-3-18 取消奇数行(第一行为0)的向后位移一个单位的操作)
+// H.M.Wang 2021-3-18 取消周后一个单元后面添加空格
+//								(k >= orgCols)) {												// 原始块中宽度不足部分
+								k >= orgCols) {	// 原始块中宽度不足部分
+							if(i < PrinterNozzle.E6_PRINT_COPY_NUM - 1) {    // 原始块中宽度不足部分
+								caBuf.append(empty, 0, orgCharsOfHead);
+							}
+// H.M.Wang 2021-3-18 取消奇数行(第一行为0)的向后位移一个单位的操作)
 						} else {
 							caBuf.append(mBuffer, k * orgCharsOfHead, orgCharsOfHead);
 						}

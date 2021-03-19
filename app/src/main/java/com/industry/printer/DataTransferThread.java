@@ -278,7 +278,11 @@ public class DataTransferThread {
 					needRestore = false;
 				}
 */
-				FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
+// H.M.Wang 2021-3-19 未开始打印前启动purge时，mDataTask为空，会导致崩溃
+				FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+//				FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
+// End of H.M.Wang 2021-3-19 未开始打印前启动purge时，mDataTask为空，会导致崩溃
+// H.M.Wang 2021-3-5 暂时取消
 // End of H.M.Wang2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数
 				isPurging = false;
 			}

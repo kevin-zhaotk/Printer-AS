@@ -398,7 +398,9 @@ public enum PrinterNozzle {
     public static final int     R6X50_MAX_COL_NUM_EACH_UNIT = 50 * 6;
 
 // H.M.Wang 2021-3-6 追加E6X48,E6X50头
-    public static final int     E6_PRINT_COPY_NUM = 6;
+// H.M.Wang 2021-3-18 取消奇数行(第一行为0)的向后位移一个单位的操作)
+    public static final int     E6_PRINT_COPY_NUM = 5;      // 没有单数行向后位移一个单位的操作，因此不像RX头一样，只复制5次
+// End of H.M.Wang 2021-3-18 取消奇数行(第一行为0)的向后位移一个单位的操作)
     public static final int     E6_HEAD_NUM = 6;
     public static final int     E6X48_MAX_COL_NUM_EACH_UNIT = 48 * 6;
     public static final int     E6X50_MAX_COL_NUM_EACH_UNIT = 50 * 6;
