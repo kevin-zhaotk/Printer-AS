@@ -290,8 +290,12 @@ public enum PrinterNozzle {
             case NozzleType.NOZZLE_TYPE_E6X48:
             case NozzleType.NOZZLE_TYPE_E6X50:
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+// H.M.Wang 2021-3-30 还应该是104
+// H.M.Wang 2021-3-22 原来的104没有考虑双字节，导致与高度设置的112不一致，生成的图片纵向变形
                 scaleW = 104f/152;
                 scaleH = 104f/152;
+// End of H.M.Wang 2021-3-22 原来的104没有考虑双字节，导致与高度设置的112不一致，生成的图片纵向变形
+// End of H.M.Wang 2021-3-30 还应该是104
                 break;
             default:
                 scaleW = 1f;
@@ -359,7 +363,9 @@ public enum PrinterNozzle {
             case NozzleType.NOZZLE_TYPE_E6X48:
             case NozzleType.NOZZLE_TYPE_E6X50:
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
-                ratio = 1.0f * 9.0f / 104;
+// H.M.Wang 2021-3-22 根据其他头类型的算式，这里应该是208，而不是104
+                ratio = 1.0f * 9.0f / 208;
+// H.M.Wang 2021-3-22 根据其他头类型的算式，这里应该是208，而不是104
                 break;
             default:
                 break;

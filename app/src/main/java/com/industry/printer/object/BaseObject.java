@@ -555,7 +555,7 @@ public class BaseObject{
 		if (!msgObj.getResolution() ) {
 			singleW = singleW / msgObj.getPNozzle().getFactorScale();
 		}
-		
+
 		Debug.d(TAG, "--->singleW=" + singleW);
 		
 		/* 最終生成v.bin使用的bitmap */

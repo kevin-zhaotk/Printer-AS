@@ -973,7 +973,7 @@ public class BarcodeObject extends BaseObject {
   
         tv.buildDrawingCache();  
         Bitmap bitmapCode=tv.getDrawingCache();
-        Debug.d(TAG, "===>width=" + width + ", bmp width=" + bitmapCode.getWidth());
+        Debug.d(TAG, "===>width=" + width + ", bmp width=" + bitmapCode.getWidth(
         return isBin?Bitmap.createScaledBitmap(bitmapCode, (int) (bitmapCode.getWidth()*div), bitmapCode.getHeight(), true) : bitmapCode;
 	}
 */

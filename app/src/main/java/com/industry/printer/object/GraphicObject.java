@@ -101,6 +101,7 @@ public class GraphicObject  extends BaseObject{
 	 * 
 	 */
 	public Bitmap makeBinBitmap(Context ctx, String content, int ctW, int ctH, String font) {
+		Debug.d(TAG, "====> ctW = " + ctW + "; ctH = " + ctH);
 		if (mBitmap != null) {
 			return Bitmap.createScaledBitmap(mBitmap, ctW, ctH, false);
 		}

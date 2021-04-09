@@ -751,7 +751,10 @@ public class MessageTask {
 //		Debug.d(TAG, "SaveTime: - Start maker.extract : " + System.currentTimeMillis());
 		// H.M.Wang 修改下列两行
 //		if (msgObj.getResolution() || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT) || (getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT)) {
-		if (msgObj.getResolution() ||
+// H.M.Wang 2021-4-9 将msgObj.getResolution()移到大字机分支，因为如果在这里，将导致300dpi的时候不会插空
+//		if (msgObj.getResolution() ||
+		if(
+// End of H.M.Wang 2021-4-9 将msgObj.getResolution()移到大字机分支，因为如果在这里，将导致300dpi的时候不会插空
 			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_16_DOT) ||
 			(getNozzle() == PrinterNozzle.MESSAGE_TYPE_32_DOT) ||
 // H.M.Wang 2020-7-23 追加32DN打印头
@@ -770,9 +773,12 @@ public class MessageTask {
 		} else {
 			// H.M.Wang 追加一个是否移位的参数
 // H.M.Wang 2021-2-26 取消过滤选项，过滤选项的目的是使得图像平滑，但是会打乱图像的内容
-//			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, true), msgObj.getPNozzle().mHeads,
+//			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, true), msgObj.getPNozzle().mHeads1
 // End of H.M.Wang 2021-2-26 取消过滤选项，过滤选项的目的是使得图像平滑，但是会打乱图像的内容
-			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, false), msgObj.getPNozzle().mHeads,
+// H.M.Wang 2021-4-9 将msgObj.getResolution()移到大字机分支，因为如果在这里，将导致300dpi的时候不会插空
+//			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, false), msgObj.getPNozzle().mHeads,
+			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/(msgObj.getResolution()?1:2), bHeight, false), msgObj.getPNozzle().mHeads,
+// End of H.M.Wang 2021-4-9 将msgObj.getResolution()移到大字机分支，因为如果在这里，将导致300dpi的时候不会插空
 				((getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
 				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||
 				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE ||

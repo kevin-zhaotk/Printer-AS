@@ -476,30 +476,32 @@ public class DataTask {
 		if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH) {
 // H.M.Wang 修改
 //			div = 1;
-			div = 1.0f * 304/308;
-			scaleW = 1;
+//			scaleW = 1;
+			scaleW /= 1.0f * 308 / 152;
+			div = scaleW;
 			scaleH = 0.5f;
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
 // H.M.Wang 修改
 //			div = 0.5f;
-			div = 1.0f * 304/308/2;
-			scaleW = 0.5f;
+//			scaleW = 0.5f;
+			scaleW /= 2.0f * 308 / 152;
+			div = scaleW;
 			scaleH = 0.25f;
-
 		// H.M.Wang 追加下列8行
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE) {
 // H.M.Wang 修改
 //			div = 0.3333333333f;
-			div = 1.0f * 304/308/3;
-			scaleW = 0.3333333333f;
+//			scaleW = 0.3333333333f;
+			scaleW /= 3.0f * 308 / 152;
+			div = scaleW;
 			scaleH = 0.1666666667f;
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH_FOUR) {
 // H.M.Wang 修改
 //			div = 0.25f;
-			div = 1.0f * 304/308/4;
-			scaleW = 0.25f;
+//			scaleW = 0.25f;
+			scaleW /= 4.0f * 308 / 152;
+			div = scaleW;
 			scaleH = 0.125f;
-
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_16_DOT) {
 			div = 152f/16f;
 			scaleW = 152f/16;
@@ -542,9 +544,18 @@ public class DataTask {
 
 		/**if high resolution message, do not divide width by 2 */
 		if (msg.getResolution()) {
-			Debug.d(TAG, "--->High Resolution");
-			scaleW = scaleW/2;
-			div = div/2;
+// H.M.Wang 2021-4-9 修改为只有在非大字机的时候才处理高清
+			if((headType != PrinterNozzle.MESSAGE_TYPE_16_DOT) &&
+				(headType != PrinterNozzle.MESSAGE_TYPE_32_DOT) &&
+				(headType != PrinterNozzle.MESSAGE_TYPE_32DN) &&
+				(headType != PrinterNozzle.MESSAGE_TYPE_32SN) &&
+				(headType != PrinterNozzle.MESSAGE_TYPE_64SN) &&
+				(headType != PrinterNozzle.MESSAGE_TYPE_64_DOT)) {
+				Debug.d(TAG, "--->High Resolution");
+				scaleW = scaleW / 2;
+				div = div / 2;
+			}
+// End of H.M.Wang 2021-4-9 修改为只有在非大字机的时候才处理高清
 		}
 //		div = div/stat.getScale();
 		Debug.d(TAG, "-----scaleW = " + scaleW + " div = " + div);
@@ -583,9 +594,11 @@ public class DataTask {
 // H.M.Wang 2020-7-31 该判断的内容相当于非动态二维码不继续执行后续代码，但是由于存在超文本，可能内容会发生变化
 //				Debug.d(TAG, "+++++++++++++>source: " + o.getSource());
 //				/* 如果二維碼從QR文件中讀 */
-//				if (!o.getSource()) {
-//					continue;
-//				}
+// H.M.Wang 2021-4-4 恢复如果是静态二维码，则不再生成二维码图片
+				if (!o.getSource()) {
+					continue;
+				}
+// End of H.M.Wang 2021-4-4 恢复如果是静态二维码，则不再生成二维码图片
 // End of H.M.Wang 2020-7-31 该判断的内容相当于非动态二维码不继续执行后续代码，但是由于存在超文本，可能内容会发生变化
 // 2019-12-18 H.M.Wang 当数据源为外部的时候，不去读取内部的QR文件。并且修改content的设置方式，原来的方式如果不从reader读数据，则可能就是“123456789”，新的方式是如果读并且读到，则设置，否则跳过
 //				String content = "123456789";

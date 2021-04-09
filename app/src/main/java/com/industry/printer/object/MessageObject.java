@@ -52,7 +52,10 @@ public class MessageObject extends BaseObject {
 		mContent = name;
 		// mType = 0;
 		mPNozzle = PrinterNozzle.getInstance(0);
-		mHighResolution = false;
+// H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的
+//		mHighResolution = false;
+		mHighResolution = true;
+// End of H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的
 	}
 	
 	public void setType(int i)
@@ -115,11 +118,15 @@ public class MessageObject extends BaseObject {
 
 	
 	public void setHighResolution(boolean resolution) {
-		mHighResolution = resolution;
+// H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的。取消中途设置
+//		mHighResolution = resolution;
+// End of H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的。取消中途设置
 	}
 	
 	public void setHighResolution(int resolution) {
-		mHighResolution = resolution == 0 ? false : true;
+// H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的。取消中途设置
+//		mHighResolution = resolution == 0 ? false : true;
+// End of H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的。取消中途设置
 	}
 	
 	public boolean getResolution() {

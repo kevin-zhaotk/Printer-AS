@@ -103,6 +103,11 @@ public class RfidTask implements RfidCallback{
 		if (dev == null) {
 			return ;
 		}
+
+// H.M.Wang 2021-3-23 追加UID检查，以防止打印中途换卡
+// 暂时取消，留待以后测试		manager.checkUID(mIndex);
+// End of H.M.Wang 2021-3-23 追加UID检查，以防止打印中途换卡
+
 		switch (dev.getState()) {
 			case RFIDDevice.STATE_RFID_CONNECTED:
 				if(RFIDDevice.isNewModel) {

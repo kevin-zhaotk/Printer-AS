@@ -47,6 +47,11 @@
 #include <common_log.h>
 #include <src/sc_common_mem_access.h>
 
+// H.M.Wang 2021-3-31 根据头的种类设置字段名称获取函数
+extern char *inkFamilyGetFiledName(uint8_t id);
+extern char *supplyFamilyGetFiledName(uint8_t id);
+// End of H.M.Wang 2021-3-31 根据头的种类设置字段名称获取函数
+
 #define DBG_SMART_CARD_ID           "SC"
 
 #define NUM_SMART_CARD_DEVICES      HP_SMART_CARD_DEVICE_NUM_DEVICES
@@ -567,7 +572,15 @@ void LIB_HP_SMART_CARD_init(void)
     for (i = 0; i < NUM_SMART_CARD_DEVICES; i++)
     {
 // Added by H.M.Wang for initializing the log output functions for each devices
-        FIELD_NAME[i] = tag0GetFieldName;
+// H.M.Wang 2021-3-31 根据头的种类设置字段名称获取函数
+        if(i == HP_SMART_CARD_DEVICE_PEN1 || i == HP_SMART_CARD_DEVICE_PEN2) {
+            FIELD_NAME[i] = inkFamilyGetFiledName;
+        } else if(i == HP_SMART_CARD_DEVICE_BULK1 || i == HP_SMART_CARD_DEVICE_BULK2) {
+            FIELD_NAME[i] = supplyFamilyGetFiledName;
+        } else {
+            FIELD_NAME[i] = tag0GetFieldName;
+        }
+// End of H.M.Wang 2021-3-31 根据头的种类设置字段名称获取函数
 // End of Added by H.M.Wang for initializing the log output functions for each devices
         smart_card_state[i] = HP_SMART_CARD_STATE_UNINITIALIZED;
     }

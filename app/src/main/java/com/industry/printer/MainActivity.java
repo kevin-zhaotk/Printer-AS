@@ -1095,11 +1095,14 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	}
 	
 	private void setScreenBrightness(boolean save) {
+		Debug.d(TAG, "--->setScreenBrightness. mScreensaveMode=" + mScreensaveMode + " ;save=" + save);
 		if (save == false) {
+			Debug.d(TAG, "--->setScreenBrightness. save == false");
 			mHander.removeMessages(ENTER_LOWLIGHT_MODE);
 //			mHander.removeMessages(ENTER_SCREENSAVE_MODE);
 			mHander.sendEmptyMessageDelayed(ENTER_LOWLIGHT_MODE, 10 * 1000);
 		} else {
+			Debug.d(TAG, "--->setScreenBrightness. save == true");
 			mHander.removeMessages(ENTER_LOWLIGHT_MODE);
 //			mHander.sendEmptyMessageDelayed(ENTER_SCREENSAVE_MODE, 10 * 6 * 1000);
 		}
@@ -1113,6 +1116,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		Window window = getWindow();
 		WindowManager.LayoutParams localLP = window.getAttributes();
 		float f = brightness / 255.0f;
+		Debug.d(TAG, "--->setScreenBrightness. f=" + f);
 		localLP.screenBrightness = f;
 		window.setAttributes(localLP);
 	}

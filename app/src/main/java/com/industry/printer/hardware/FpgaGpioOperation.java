@@ -276,10 +276,22 @@ public class FpgaGpioOperation {
             data[3] = 100 * 4;
             data[4] = 1000;
             data[5] = 100 * 4;
-            data[15] = 1;
+// H.M.Wang 2021-4-1 当清洗时，将bold设为头数，以避免清洗变淡
+//            data[15] = 1;
+            data[15] = (char)(config.getPNozzle().mHeads);
+            if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50 ||
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+                data[15] = 6;
+            }
+// End of H.M.Wang 2021-4-1 当清洗时，将bold设为头数，以避免清洗变淡
         }
         if (type == SETTING_TYPE_PURGE1) {
             data[4] = (char) (data[4] * 2);
+// H.M.Wang 2021-3-30 当清洗时，头类型设为25.4x4
+            data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_1_INCH_FOUR;
+// End of H.M.Wang 2021-3-30 当清洗时，头类型设为25.4x4
             data[17] = (char) (data[17] | 0x010);
         } else if (type == SETTING_TYPE_PURGE2) {
             data[4] = (char) (data[4] * 2);
