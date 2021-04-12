@@ -79,6 +79,7 @@ public class SerialProtocol8 extends SerialProtocol {
     private int mCmd = 0;
     private static int mLastValue = 0;
 
+    
     public SerialProtocol8(SerialPort serialPort){
         super(serialPort);
 
