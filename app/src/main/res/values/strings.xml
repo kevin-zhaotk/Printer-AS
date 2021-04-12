@@ -570,4 +570,6 @@
 	<string name="invalid_protocol">Invalid Protocol</string>
 	<string name="decoding">Decoding...</string>
 
+	<string name="printDpiNotMatchError">Print DPI not match, please modify the message and try it again.</string>
+
 </resources>

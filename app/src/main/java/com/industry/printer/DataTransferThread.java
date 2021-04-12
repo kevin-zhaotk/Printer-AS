@@ -677,6 +677,16 @@ public class DataTransferThread {
 	private void setSerialProtocol8DTs(final byte[] data) {
 		Debug.d(TAG, "String from Remote = [" + ByteArrayUtils.toHexString(data) + "]");
 
+// H.M.Wang 2021-4-11 追加4字节品种代码
+        int proCode = (0x000000ff & data[SerialProtocol8.TAG_PRODUCT_TYPE_POS]);
+        proCode *= 0x100;
+        proCode += (0x000000ff & data[SerialProtocol8.TAG_PRODUCT_TYPE_POS+1]);
+        proCode *= 0x100;
+        proCode += (0x000000ff & data[SerialProtocol8.TAG_PRODUCT_TYPE_POS+2]);
+        proCode *= 0x100;
+        proCode += (0x000000ff & data[SerialProtocol8.TAG_PRODUCT_TYPE_POS+3]);
+// End of H.M.Wang 2021-4-11 追加4字节品种代码
+
 		int writeValue = (0x000000ff & data[SerialProtocol8.TAG_WRITE_DATA_POS]);
 		writeValue *= 0x100;
 		writeValue += (0x000000ff & data[SerialProtocol8.TAG_WRITE_DATA_POS+1]);
@@ -696,7 +706,18 @@ public class DataTransferThread {
 		for (BaseObject baseObject : objList) {
 			if (baseObject instanceof DynamicText) {
 				int dtIndex = ((DynamicText)baseObject).getDtIndex();
-				if(dtIndex == 1) {
+// H.M.Wang 2021-4-11 追加4字节品种代码
+                if(dtIndex == 3) {
+					StringBuilder sb = new StringBuilder();
+					for(int i=0; i<((DynamicText) baseObject).getBits(); i++) {
+						sb.append(" ");
+					}
+					sb.append(proCode / 10);
+					baseObject.setContent(sb.substring(sb.length() - ((DynamicText) baseObject).getBits()));
+				} else if(dtIndex == 2) {
+					baseObject.setContent("" + proCode % 10);
+				} else if(dtIndex == 1) {
+// End of H.M.Wang 2021-4-11 追加4字节品种代码
 					baseObject.setContent("" + writeValue % 10);
 				} else if(dtIndex == 0) {
 					StringBuilder sb = new StringBuilder();

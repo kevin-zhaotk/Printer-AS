@@ -23,6 +23,7 @@ import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.FileUtil;
+import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
 import com.industry.printer.object.BarcodeObject;
@@ -543,7 +544,10 @@ public class DataTask {
 // End of H.M.Wang 2021-1-8 取消这个计算好像不行，12.7多头的时候似乎有问题
 
 		/**if high resolution message, do not divide width by 2 */
-		if (msg.getResolution()) {
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+//		if (msg.getResolution()) {
+		if (Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_300) {
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 // H.M.Wang 2021-4-9 修改为只有在非大字机的时候才处理高清
 			if((headType != PrinterNozzle.MESSAGE_TYPE_16_DOT) &&
 				(headType != PrinterNozzle.MESSAGE_TYPE_32_DOT) &&

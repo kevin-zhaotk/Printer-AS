@@ -36,6 +36,7 @@ import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.data.BinFromBitmap;
 import com.industry.printer.exception.PermissionDeniedException;
 import com.industry.printer.exception.TlkNotFoundException;
+import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
@@ -777,7 +778,10 @@ public class MessageTask {
 // End of H.M.Wang 2021-2-26 取消过滤选项，过滤选项的目的是使得图像平滑，但是会打乱图像的内容
 // H.M.Wang 2021-4-9 将msgObj.getResolution()移到大字机分支，因为如果在这里，将导致300dpi的时候不会插空
 //			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/2, bHeight, false), msgObj.getPNozzle().mHeads,
-			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/(msgObj.getResolution()?1:2), bHeight, false), msgObj.getPNozzle().mHeads,
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+//			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/(msgObj.getResolution()?1:2), bHeight, false), msgObj.getPNozzle().mHeads,
+			mDots = maker.extract(Bitmap.createScaledBitmap(bmp, bWidth/(Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_300 ? 1 : 2), bHeight, false), msgObj.getPNozzle().mHeads,
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 // End of H.M.Wang 2021-4-9 将msgObj.getResolution()移到大字机分支，因为如果在这里，将导致300dpi的时候不会插空
 				((getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH ||
 				  getNozzle() == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL ||

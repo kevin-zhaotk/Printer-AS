@@ -30,6 +30,15 @@ public class FpgaGpioOperation {
     public static final int FPGA_CMD_BUCKETSIZE = 0x08;
     public static final int FPGA_CMD_DISPLOG = 0x09;
     public static final int FPGA_CMD_SOFTPHO = 0x0A;
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+    public static final int FPGA_CMD_GET_DPI_VER = 0x0B;
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+    public static final int DPI_VERSION_NONE  = 0;
+    public static final int DPI_VERSION_150   = 1;
+    public static final int DPI_VERSION_300   = 2;
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 
     public static final int DATA_GENRE_UPDATE   = 0;
     public static final int DATA_GENRE_NEW      = 1;
@@ -430,4 +439,16 @@ public class FpgaGpioOperation {
         Debug.d(TAG, "FPGA_CMD_SOFTPHO");
         ioctl(fd, FPGA_CMD_SOFTPHO, 0);
     }
+
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+    public static int getDpiVersion() {
+        int fd = open();
+        if (fd <= 0) {
+            return DPI_VERSION_150;
+        }
+
+        Debug.d(TAG, "FPGA_CMD_GET_DPI_VER");
+        return ioctl(fd, FPGA_CMD_GET_DPI_VER, 0);
+    }
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 }

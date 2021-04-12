@@ -4,8 +4,10 @@ import android.content.Context;
 
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.R;
+import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
+import com.industry.printer.hardware.FpgaGpioOperation;
 
 public class MessageObject extends BaseObject {
 	private static final String TAG = MessageObject.class.getSimpleName();
@@ -13,7 +15,10 @@ public class MessageObject extends BaseObject {
 	public int mDots = 0;
 	public int[] mDotPer = new int[8];
 //	public int mType;
-	public boolean mHighResolution;
+// H.M.Wang 2021-4-11 修改该变量为整形
+//	public boolean mHighResolution;
+    public int mPrintDpi;
+// H.M.Wang 2021-4-11 修改该变量为整形
 
 	public PrinterNozzle mPNozzle;
 	
@@ -54,7 +59,10 @@ public class MessageObject extends BaseObject {
 		mPNozzle = PrinterNozzle.getInstance(0);
 // H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的
 //		mHighResolution = false;
-		mHighResolution = true;
+// H.M.Wang 2021-4-11 修改该变量为整形
+//		mHighResolution = true;
+        mPrintDpi = FpgaGpioOperation.DPI_VERSION_150;
+// End of H.M.Wang 2021-4-11 修改该变量为整形
 // End of H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的
 	}
 	
@@ -122,17 +130,21 @@ public class MessageObject extends BaseObject {
 //		mHighResolution = resolution;
 // End of H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的。取消中途设置
 	}
-	
-	public void setHighResolution(int resolution) {
+
+// H.M.Wang 2021-4-11 修改该变量为整形
+	public void setPrintDpi(int resolution) {
 // H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的。取消中途设置
 //		mHighResolution = resolution == 0 ? false : true;
+        mPrintDpi = (resolution == FpgaGpioOperation.DPI_VERSION_NONE ? FpgaGpioOperation.DPI_VERSION_150 : resolution);
 // End of H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的。取消中途设置
 	}
 	
-	public boolean getResolution() {
-		return mHighResolution;
+	public int getmPrintDpi() {
+//		return mHighResolution;
+        return mPrintDpi;
 	}
-	
+// End of H.M.Wang 2021-4-11 修改该变量为整形
+
 	public String getPrinterName() {
 		String[] printer =	mContext.getResources().getStringArray(R.array.strPrinterArray);
 		if (printer == null || printer.length == 0) {
@@ -196,7 +208,10 @@ public class MessageObject extends BaseObject {
 			builder.append("^");
 			builder.append("00000^00000^00000^00000^0^000^")
 				.append(BaseObject.intToFormatString(mPNozzle.mType,3))
-				.append("^000^000^000^000^")
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+//				.append("^000^000^000^000^")
+				.append("^" + Configs.GetDpiVersion() + "^000^000^")
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 				.append(BaseObject.intToFormatString(mDots, 7))
 				.append("^00000000^00000000^00000000^0000^0000^0000^000^")
 				.append(mContent);
@@ -226,7 +241,10 @@ public class MessageObject extends BaseObject {
 //			Debug.d(TAG, "file string ["+str+"]");		
 			builder.append("^00000^00000^00000^00000^0^000^")
 				.append(BaseObject.intToFormatString(mPNozzle.mType,3))
-				.append("^000^")
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+//				.append("^000^")
+				.append("^" + Configs.GetDpiVersion() + "^")
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 				.append(intToFormatString(mDotPer[0] * ratio, 7))
 				.append("^")
 				.append(intToFormatString(mDotPer[1] * ratio, 7))

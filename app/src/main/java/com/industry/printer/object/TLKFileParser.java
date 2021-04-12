@@ -225,7 +225,7 @@ public class TLKFileParser  extends TlkFile{
 				((MessageObject) obj).setType(conf.getParam(SystemConfigFile.INDEX_HEAD_TYPE));
 // End of H.M.Wang 2020-7-27 修改打印头的获取方式，不依据信息中的打印头信息获取，而是依据系统参数设置获取
 				int resolution = Integer.parseInt(attr[9]);
-				((MessageObject) obj).setHighResolution(resolution);
+				((MessageObject) obj).setPrintDpi(resolution);
 				((MessageObject) obj).setDotCount(Integer.parseInt(attr[13]));
 				mDots[0] = Integer.parseInt(attr[10]);
 				mDots[1] = Integer.parseInt(attr[11]);

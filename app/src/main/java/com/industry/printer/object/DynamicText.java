@@ -13,6 +13,7 @@ import com.industry.printer.Utils.Debug;
 import com.industry.printer.cache.FontCache;
 import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.data.BinFromBitmap;
+import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.object.data.BitmapWriter;
 
 public class DynamicText extends BaseObject {
@@ -284,7 +285,10 @@ public class DynamicText extends BaseObject {
 
         /** if message isn`t high resolution, divid by 2 because the buffer bitmap is halfed, so the variable buffer should be half too*/
         MessageObject msgObj = mTask.getMsgObject();
-        if (!msgObj.getResolution() ) {
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+//        if (!msgObj.getResolution() ) {
+        if (Configs.GetDpiVersion() != FpgaGpioOperation.DPI_VERSION_300) {
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
             singleW = singleW / msgObj.getPNozzle().getFactorScale();
         }
 

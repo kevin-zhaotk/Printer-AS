@@ -498,7 +498,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		/***PG1 PG2杈撳嚭鐘舵�佷负 0x11锛屾竻闆舵ā寮�**/
 		FpgaGpioOperation.clean();
-		
+
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+		Configs.GetSystemDpiVersion();
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+
 		//Debug.d(TAG, "===>loadMessage");
 		// 閫氳繃鐩戝惉绯荤粺骞挎挱鍔犺浇
 		SharedPreferences p = mContext.getSharedPreferences(SettingsTabActivity.PREFERENCE_NAME, Context.MODE_PRIVATE);
@@ -1715,6 +1719,16 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			mDTransThread.setCallback(this);
 		}
 		Debug.d(TAG, "--->init");
+
+// H.M.Wang 2021-4-11 追加检查任务的分辨率和设备的分辨率是否一致，不一致则停止打印
+//        for(MessageTask msgTask: mMsgTask) {
+//            if(msgTask.getMsgObject().getmPrintDpi() != Configs.GetDpiVersion()) {
+//                ToastUtil.show(mContext, R.string.printDpiNotMatchError);
+//                mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
+//                return;
+//            }
+//        }
+// End of H.M.Wang 2021-4-11 追加检查任务的分辨率和设备的分辨率是否一致，不一致则停止打印
 
 		// 鍒濆鍖朾uffer
 		mDTransThread.initDataBuffer(mContext, mMsgTask);

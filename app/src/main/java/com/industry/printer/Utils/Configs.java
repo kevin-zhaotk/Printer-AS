@@ -17,6 +17,7 @@ import android.view.ViewDebug.FlagToString;
 
 import com.industry.printer.R;
 import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.data.SegmentBuffer;
 
@@ -49,8 +50,11 @@ public class Configs {
 	 * slant 参数，>=100时固定的buffer拓宽倍数
 	 */
 	public static final int CONST_EXPAND = 32;
-	
-	
+
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+	private static int DPI_VERSION = FpgaGpioOperation.DPI_VERSION_150;
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+
 	/** 每列的有效点阵数 **/
 	public static int gDots;
 	/** 每列的总字节数 **/
@@ -429,4 +433,17 @@ public class Configs {
 	public static int getEvenShift() {
 		return mSysconfig.getParam(52);
 	}
+
+// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+	public static void GetSystemDpiVersion() {
+//		DPI_VERSION = FpgaGpioOperation.getDpiVersion();
+//        DPI_VERSION = (DPI_VERSION == FpgaGpioOperation.DPI_VERSION_NONE ? FpgaGpioOperation.DPI_VERSION_150 : DPI_VERSION);
+		DPI_VERSION = FpgaGpioOperation.DPI_VERSION_300;
+	}
+
+	public static int GetDpiVersion() {
+		return DPI_VERSION;
+	}
+
+// End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 }

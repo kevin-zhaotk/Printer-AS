@@ -37,10 +37,12 @@ public class SerialProtocol8 extends SerialProtocol {
                 | 本机ID
 
     2. 写入
-       接收报文： 01 10 00 00 00 02 04 03 E9 00 00 22 1F
-                == == ===== ===== == =========== =====
-                |  |    |     |   |       |        | CRC-16校验码
-                |  |    |     |   |       | 写入数据
+// H.M.Wang 2021-4-11 追加4字节品种代码
+       接收报文： 01 10 00 00 00 02 04 00 00 00 00 03 E9 00 00 22 1F
+                == == ===== ===== == =========== =========== =====
+                |  |    |     |   |       |           |        | CRC-16校验码
+                |  |    |     |   |       |           | 写入数据
+                |  |    |     |   |       | 品种代码（最后一位给dt3，倒数第2，3位给dt2）
                 |  |    |     |   | 收到数据字节数
                 |  |    |     | 数据双字节无用
                 |  |    | 内存地址无用
@@ -62,8 +64,11 @@ public class SerialProtocol8 extends SerialProtocol {
     private final static int TAG_DEVICE_ID_POS         = 0;
     private final static int TAG_CMDID_POS             = 1;
     private final static int TAG_READ_CRC_POS          = 6;
-    private final static int TAG_WRITE_CRC_POS         = 11;
-    public  final static int TAG_WRITE_DATA_POS        = 7;
+// H.M.Wang 2021-4-11 追加4字节品种代码，相应调整CRC位置设置
+    private final static int TAG_WRITE_CRC_POS         = 15;
+    public  final static int TAG_PRODUCT_TYPE_POS      = 7;
+    public  final static int TAG_WRITE_DATA_POS        = 11;
+// End of H.M.Wang 2021-4-11 追加4字节品种代码，相应调整CRC位置设置
 
     private final static int ERROR_ID_NOT_MATCH        = 0x81000000;   // 与本地ID不匹配
     private final static int ERROR_UNKNOWN_CMD         = 0x83000000;   // 不可识别的命令(CMD_READ,CMD_WRITE以外的值)
@@ -88,9 +93,11 @@ public class SerialProtocol8 extends SerialProtocol {
         try {
             byte[] msg = recvMsg.toByteArray();
 
-            int localID = (msg[TAG_DEVICE_ID_POS] / 16 * 10 + msg[TAG_DEVICE_ID_POS] % 16) & 0x00ff;
-
-            if(mLocalID != localID) {
+// 2021-4-9 取消将16进制数值按BCD换算的操作
+//            int localID = (msg[TAG_DEVICE_ID_POS] / 16 * 10 + msg[TAG_DEVICE_ID_POS] % 16) & 0x00ff;
+//            if(mLocalID != localID) {
+            if(mLocalID != msg[TAG_DEVICE_ID_POS]) {
+// End of 2021-4-9 取消将16进制数值按BCD换算的操作
                 return ERROR_ID_NOT_MATCH;
             }
 
