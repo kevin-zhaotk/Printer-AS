@@ -223,8 +223,9 @@ public class DataTransferThread {
 				head == PrinterNozzle.MESSAGE_TYPE_64_DOT);
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 
-// H.M.Wang2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数
-/*		if (isRunning()) {
+// H.M.Wang 2021-4-13 取消3-5修改内容，恢复原来的停止和打开操作
+// H.M.Wang 2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数
+		if (isRunning()) {
 			FpgaGpioOperation.uninit();
 // 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 //			finish();
@@ -232,8 +233,8 @@ public class DataTransferThread {
 			FpgaGpioOperation.clean();
 			needRestore = true;
 		}
-*/
 // End of H.M.Wang2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数
+// End of H.M.Wang 2021-4-13 取消3-5修改内容，恢复原来的停止和打开操作
 
 		ThreadPoolManager.mThreads.execute(new Runnable() {
 			
@@ -265,25 +266,24 @@ public class DataTransferThread {
 //				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE1);
 //				purge(mContext, task, buffer, FpgaGpioOperation.SETTING_TYPE_PURGE2);
 
-// H.M.Wang2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数，结束purge之后，恢复到数据传输状态
-/*				if (needRestore) {
+// H.M.Wang 2021-4-13 取消3-5修改内容，恢复原来的停止和打开操作
+// H.M.Wang 2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数，结束purge之后，恢复到数据传输状态
+				if (needRestore) {
 // 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 //					launch(mContext);
-					FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
+// End of 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
+// H.M.Wang 2021-3-19 未开始打印前启动purge时，mDataTask为空，会导致崩溃
+					FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+//    				FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
+// End of H.M.Wang 2021-3-19 未开始打印前启动purge时，mDataTask为空，会导致崩溃
 					FpgaGpioOperation.init(mContext);
 // H.M.Wang 2021-3-5 暂时取消
 //					resendBufferToFPGA();
 // End of H.M.Wang 2021-3-5 暂时取消
-// End of 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 					needRestore = false;
 				}
-*/
-// H.M.Wang 2021-3-19 未开始打印前启动purge时，mDataTask为空，会导致崩溃
-				FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
-//				FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
-// End of H.M.Wang 2021-3-19 未开始打印前启动purge时，mDataTask为空，会导致崩溃
-// H.M.Wang 2021-3-5 暂时取消
-// End of H.M.Wang2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数
+// End of H.M.Wang 2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数
+// End of H.M.Wang 2021-4-13 取消3-5修改内容，恢复原来的停止和打开操作
 				isPurging = false;
 			}
 		
