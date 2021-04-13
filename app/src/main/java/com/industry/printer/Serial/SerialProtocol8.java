@@ -38,17 +38,19 @@ public class SerialProtocol8 extends SerialProtocol {
 
     2. 写入
 // H.M.Wang 2021-4-11 追加4字节品种代码
+// H.M.Wang 2021-4-13 修改写入数据和品种代码的数据格式及处理方法
        接收报文： 01 10 00 00 00 02 04 00 00 00 00 03 E9 00 00 22 1F
                 == == ===== ===== == =========== =========== =====
                 |  |    |     |   |       |           |        | CRC-16校验码
-                |  |    |     |   |       |           | 写入数据
-                |  |    |     |   |       | 品种代码（最后一位给dt3，倒数第2，3位给dt2）
+                |  |    |     |   |       |           | 品种代码
+                |  |    |     |   |       | 写入数据
                 |  |    |     |   | 收到数据字节数
                 |  |    |     | 数据双字节无用
                 |  |    | 内存地址无用
                 |  | 写命令
                 | 本机ID
-           * 写入数据只是用前两个字节(03E9)，变换为10进制后为n位数字(03E9为1001)，最后一位付给DT1，前面其他的数值付给DT0，不足DT0宽度的话，前面置空格
+           * 写入数据为后两个字节为高位，前两个字节为低位，但内部则高位在前，如(03E90000)，解析为(000003E9)，然后变换为10进制后为n位数字(03E9为1001)，最后一位(1)赋给DT1，前面其他的数值(100)赋给DT0，不足DT0宽度的话，前面置空格
+           * 品种代码的处理方法如写入数据
        回复报文： 01 10 00 00 00 02 41 C8.
                 == == ===== ===== =====
                 |  |    |     |     | CRC-16校验码
@@ -66,8 +68,8 @@ public class SerialProtocol8 extends SerialProtocol {
     private final static int TAG_READ_CRC_POS          = 6;
 // H.M.Wang 2021-4-11 追加4字节品种代码，相应调整CRC位置设置
     private final static int TAG_WRITE_CRC_POS         = 15;
-    public  final static int TAG_PRODUCT_TYPE_POS      = 7;
-    public  final static int TAG_WRITE_DATA_POS        = 11;
+    public  final static int TAG_PRODUCT_TYPE_POS      = 11;
+    public  final static int TAG_WRITE_DATA_POS        = 7;
 // End of H.M.Wang 2021-4-11 追加4字节品种代码，相应调整CRC位置设置
 
     private final static int ERROR_ID_NOT_MATCH        = 0x81000000;   // 与本地ID不匹配
@@ -79,7 +81,6 @@ public class SerialProtocol8 extends SerialProtocol {
     private int mCmd = 0;
     private static int mLastValue = 0;
 
-    
     public SerialProtocol8(SerialPort serialPort){
         super(serialPort);
 
