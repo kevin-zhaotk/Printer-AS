@@ -197,6 +197,22 @@ public class SerialProtocol8 extends SerialProtocol {
             // 添加0002
             sendBuffer.append(0x00);
             sendBuffer.append(0x02);
+            // 添加数据高位
+            sendBuffer.append((byte)((mLastValue >> 8) & 0x000000ff));
+            // 添加数据低位
+            sendBuffer.append((byte)(mLastValue & 0x000000ff));
+            // 添加数据高位
+            sendBuffer.append((byte)((mLastValue >> 24) & 0x000000ff));
+            // 添加数据低位
+            sendBuffer.append((byte)((mLastValue >> 16) & 0x000000ff));
+            // 添加数据高位
+            sendBuffer.append((byte)((mTypeCode >> 8) & 0x000000ff));
+            // 添加数据低位
+            sendBuffer.append((byte)(mTypeCode & 0x000000ff));
+            // 添加数据高位
+            sendBuffer.append((byte)((mTypeCode >> 24) & 0x000000ff));
+            // 添加数据低位
+            sendBuffer.append((byte)((mTypeCode >> 16) & 0x000000ff));
         }
 
         short crc = CRC16_MODBUS.getCRCCode(sendBuffer.toByteArray());
