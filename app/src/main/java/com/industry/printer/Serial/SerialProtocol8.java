@@ -98,7 +98,7 @@ public class SerialProtocol8 extends SerialProtocol {
         try {
             byte[] msg = recvMsg.toByteArray();
 // H.M.Wang 2021-4-15 增加命令合法性检验
-            if(msg.length < TAG_WRITE_CRC_POS + 2) {
+            if(msg.length < TAG_CMDID_POS + 1) {
                 return ERROR_UNKNOWN_CMD;
             }
 // End of H.M.Wang 2021-4-15 增加命令合法性检验
@@ -113,8 +113,18 @@ public class SerialProtocol8 extends SerialProtocol {
 
             mCmd = msg[TAG_CMDID_POS];
             if(mCmd == CMD_READ) {
+// H.M.Wang 2021-4-15 增加命令合法性检验
+                if(msg.length < TAG_READ_CRC_POS + 2) {
+                    return ERROR_UNKNOWN_CMD;
+                }
+// End of H.M.Wang 2021-4-15 增加命令合法性检验
                 crcPos = TAG_READ_CRC_POS;
             } else if(mCmd == CMD_WRITE) {
+// H.M.Wang 2021-4-15 增加命令合法性检验
+                if(msg.length < TAG_WRITE_CRC_POS + 2) {
+                    return ERROR_UNKNOWN_CMD;
+                }
+// End of H.M.Wang 2021-4-15 增加命令合法性检验
                 crcPos = TAG_WRITE_CRC_POS;
                 mLastValue =
                         (((msg[TAG_WRITE_DATA_POS+2] & 0x000000ff) << 24) +
