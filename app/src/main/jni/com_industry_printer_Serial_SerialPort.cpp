@@ -278,6 +278,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
                     jbyteArray ret_buf = env->NewByteArray(recv_num);
                     env->SetByteArrayRegion(ret_buf, 0, recv_num, (jbyte*)recv_buf);
                     env->CallVoidMethod(object, method, ret_buf);
+                    env->DeleteLocalRef(ret_buf);
 
                     recv_num = 0;
                     memset(recv_buf, 0x00, MAX_RETRIVAL_BUFFER_LEN);
@@ -289,7 +290,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
 
     LOGD("Quit reading process. (fd = %d)", fd);
 
-    mKeepRunning = true;
+//    mKeepRunning = true;
 
     env->DeleteLocalRef(SerialPortClass);
 
@@ -330,7 +331,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_write
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
-    LOGI("SerialPort.so 1.0.51 Loaded.");
+    LOGI("SerialPort.so 1.0.52 Loaded.");
 
 
     return JNI_VERSION_1_4;     //这里很重要，必须返回版本，否则加载会失败。

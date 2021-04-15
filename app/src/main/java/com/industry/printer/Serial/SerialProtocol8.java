@@ -99,7 +99,7 @@ public class SerialProtocol8 extends SerialProtocol {
             byte[] msg = recvMsg.toByteArray();
 // H.M.Wang 2021-4-15 增加命令合法性检验
             if(msg.length < TAG_CMDID_POS + 1) {
-                return ERROR_UNKNOWN_CMD;
+                return ERROR_FAILED;
             }
 // End of H.M.Wang 2021-4-15 增加命令合法性检验
 
@@ -244,9 +244,6 @@ public class SerialProtocol8 extends SerialProtocol {
         switch(result & ERROR_MASK) {
             case ERROR_ID_NOT_MATCH:                // 本地ID不匹配错误
                 Debug.e(TAG, "ERROR_ID_NOT_MATCH");
-// H.M.Wang 2021-4-15 增加错误报文发送
-                sendCommandProcessResult(0,0,0,1,"Device ID not match");
-// End of H.M.Wang 2021-4-15 增加错误报文发送
                 break;
             case ERROR_CRC_FAILED:                  // CRC校验失败
                 Debug.e(TAG, "ERROR_CRC_FAILED");
@@ -262,18 +259,12 @@ public class SerialProtocol8 extends SerialProtocol {
                 break;
             case ERROR_FAILED:                      // 解析帧失败
                 Debug.e(TAG, "ERROR_FAILED");
-// H.M.Wang 2021-4-15 增加错误报文发送
-                sendCommandProcessResult(0,0,0,1,"Failed");
-// End of H.M.Wang 2021-4-15 增加错误报文发送
                 break;
             case ERROR_SUCESS:
                 if(CMD_WRITE == mCmd) procCommands(mCmd, recvData);
                 sendCommandProcessResult(0,0,0,0,"");
                 break;
             default:
-// H.M.Wang 2021-4-15 增加错误报文发送
-                sendCommandProcessResult(0,0,0,1,"Failed");
-// End of H.M.Wang 2021-4-15 增加错误报文发送
                 break;
         }
     }
