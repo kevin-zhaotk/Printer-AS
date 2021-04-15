@@ -97,6 +97,11 @@ public class SerialProtocol8 extends SerialProtocol {
 
         try {
             byte[] msg = recvMsg.toByteArray();
+// H.M.Wang 2021-4-15 增加命令合法性检验
+            if(msg.length < TAG_WRITE_CRC_POS + 2) {
+                return ERROR_UNKNOWN_CMD;
+            }
+// End of H.M.Wang 2021-4-15 增加命令合法性检验
 
 // 2021-4-9 取消将16进制数值按BCD换算的操作
 //            int localID = (msg[TAG_DEVICE_ID_POS] / 16 * 10 + msg[TAG_DEVICE_ID_POS] % 16) & 0x00ff;
@@ -150,6 +155,12 @@ public class SerialProtocol8 extends SerialProtocol {
 //        Debug.d(TAG, "[" + ByteArrayUtils.toHexString(msg) + "]");
 
         ByteArrayBuffer sendBuffer = new ByteArrayBuffer(0);
+
+// H.M.Wang 2021-4-15 增加错误报文发送
+        if(cmdStatus == 1) {
+            return msg;
+        }
+// End of H.M.Wang 2021-4-15 增加错误报文发送
 
         // 添加本机ID
 // 2021-4-14 取消将16进制数值按BCD换算的操作,4-9日修改漏改
@@ -207,21 +218,36 @@ public class SerialProtocol8 extends SerialProtocol {
         switch(result & ERROR_MASK) {
             case ERROR_ID_NOT_MATCH:                // 本地ID不匹配错误
                 Debug.e(TAG, "ERROR_ID_NOT_MATCH");
+// H.M.Wang 2021-4-15 增加错误报文发送
+                sendCommandProcessResult(0,0,0,1,"Device ID not match");
+// End of H.M.Wang 2021-4-15 增加错误报文发送
                 break;
             case ERROR_CRC_FAILED:                  // CRC校验失败
                 Debug.e(TAG, "ERROR_CRC_FAILED");
+// H.M.Wang 2021-4-15 增加错误报文发送
+                sendCommandProcessResult(0,0,0,1,"CRC failed");
+// End of H.M.Wang 2021-4-15 增加错误报文发送
                 break;
             case ERROR_UNKNOWN_CMD:                 // 解析帧失败
                 Debug.e(TAG, "ERROR_UNKNOWN_CMD");
+// H.M.Wang 2021-4-15 增加错误报文发送
+                sendCommandProcessResult(0,0,0,1,"Unknown command");
+// End of H.M.Wang 2021-4-15 增加错误报文发送
                 break;
             case ERROR_FAILED:                      // 解析帧失败
                 Debug.e(TAG, "ERROR_FAILED");
+// H.M.Wang 2021-4-15 增加错误报文发送
+                sendCommandProcessResult(0,0,0,1,"Failed");
+// End of H.M.Wang 2021-4-15 增加错误报文发送
                 break;
             case ERROR_SUCESS:
                 if(CMD_WRITE == mCmd) procCommands(mCmd, recvData);
                 sendCommandProcessResult(0,0,0,0,"");
                 break;
             default:
+// H.M.Wang 2021-4-15 增加错误报文发送
+                sendCommandProcessResult(0,0,0,1,"Failed");
+// End of H.M.Wang 2021-4-15 增加错误报文发送
                 break;
         }
     }

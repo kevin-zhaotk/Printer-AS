@@ -1721,16 +1721,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		Debug.d(TAG, "--->init");
 
-// H.M.Wang 2021-4-11 追加检查任务的分辨率和设备的分辨率是否一致，不一致则停止打印
-        for(MessageTask msgTask: mMsgTask) {
-            if(msgTask.getMsgObject().getmPrintDpi() != Configs.GetDpiVersion()) {
-                ToastUtil.show(mContext, R.string.printDpiNotMatchError);
-                mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
-                return;
-            }
-        }
-// End of H.M.Wang 2021-4-11 追加检查任务的分辨率和设备的分辨率是否一致，不一致则停止打印
-
 		// 鍒濆鍖朾uffer
 		mDTransThread.initDataBuffer(mContext, mMsgTask);
 		// TLKFileParser parser = new TLKFileParser(mContext, mObjPath);
@@ -1738,7 +1728,16 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		mDTransThread.setDotCount(mMsgTask);
 		// 璁剧疆UI鍥炶皟
 		mDTransThread.setOnInkChangeListener(this);
-		
+
+// H.M.Wang 2021-4-11 追加检查任务的分辨率和设备的分辨率是否一致，不一致则停止打印
+		for(MessageTask msgTask: mMsgTask) {
+			if(msgTask.getMsgObject().getmPrintDpi() != Configs.GetDpiVersion()) {
+				ToastUtil.show(mContext, R.string.printDpiNotMatchError);
+				mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
+				return;
+			}
+		}
+// End of H.M.Wang 2021-4-11 追加检查任务的分辨率和设备的分辨率是否一致，不一致则停止打印
 	}
 	
 	private final int STATE_PRINTING = 0;
