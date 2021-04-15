@@ -28,9 +28,11 @@ public class SerialProtocol8 extends SerialProtocol {
            * 本机通过参数58设置本机ID值，报文的本机ID必须与本机的参数58设定参数一致才做反应，否则忽略
            * 本机ID值为10进制数值（即，虽然内部保存的是16进制的10，但是需要按10进制10处理）
              （另外一种解释：参数58输入参数值为10时，要与报文第一字节的0x10做匹配）
-       回复报文： 01 03 04 03 E8 00 00 7A 43.
-                == == == =========== =====
-                |  |  |       |        | CRC-16校验码
+// H.M.Wang 2021-4-15 回复报文增加品种代码
+       回复报文： 01 03 04 03 E8 00 00 03 E8 00 00 7A 43.
+                == == == =========== =========== =====
+                |  |  |       |           |        | CRC-16校验码
+                |  |  |       |           | 品种代码
                 |  |  |       | 返回数据
                 |  |  | 返回数据字节数
                 |  | 读命令
@@ -80,6 +82,7 @@ public class SerialProtocol8 extends SerialProtocol {
     private int mLocalID = 0;
     private int mCmd = 0;
     private static int mLastValue = 0;
+    private static int mTypeCode = 0;
 
     public SerialProtocol8(SerialPort serialPort){
         super(serialPort);
@@ -108,7 +111,16 @@ public class SerialProtocol8 extends SerialProtocol {
                 crcPos = TAG_READ_CRC_POS;
             } else if(mCmd == CMD_WRITE) {
                 crcPos = TAG_WRITE_CRC_POS;
-                mLastValue = ((msg[TAG_WRITE_DATA_POS] & 0x000000ff) << 8) + (0x000000ff & msg[TAG_WRITE_DATA_POS+1]);
+                mLastValue =
+                        (((msg[TAG_WRITE_DATA_POS+2] & 0x000000ff) << 24) +
+                         ((msg[TAG_WRITE_DATA_POS+3] & 0x000000ff) << 16) +
+                         ((msg[TAG_WRITE_DATA_POS] & 0x000000ff) << 8) +
+                         (msg[TAG_WRITE_DATA_POS+1] & 0x000000ff));
+                mTypeCode =
+                        (((msg[TAG_PRODUCT_TYPE_POS+2] & 0x000000ff) << 24) +
+                         ((msg[TAG_PRODUCT_TYPE_POS+3] & 0x000000ff) << 16) +
+                         ((msg[TAG_PRODUCT_TYPE_POS] & 0x000000ff) << 8) +
+                         (msg[TAG_PRODUCT_TYPE_POS+1] & 0x000000ff));
             } else {
                 return ERROR_UNKNOWN_CMD;
             }
@@ -155,9 +167,18 @@ public class SerialProtocol8 extends SerialProtocol {
             sendBuffer.append((byte)((mLastValue >> 8) & 0x000000ff));
             // 添加数据低位
             sendBuffer.append((byte)(mLastValue & 0x000000ff));
-            // 添加0000
-            sendBuffer.append(0x00);
-            sendBuffer.append(0x00);
+            // 添加数据高位
+            sendBuffer.append((byte)((mLastValue >> 24) & 0x000000ff));
+            // 添加数据低位
+            sendBuffer.append((byte)((mLastValue >> 16) & 0x000000ff));
+            // 添加数据高位
+            sendBuffer.append((byte)((mTypeCode >> 8) & 0x000000ff));
+            // 添加数据低位
+            sendBuffer.append((byte)(mTypeCode & 0x000000ff));
+            // 添加数据高位
+            sendBuffer.append((byte)((mTypeCode >> 24) & 0x000000ff));
+            // 添加数据低位
+            sendBuffer.append((byte)((mTypeCode >> 16) & 0x000000ff));
         } else if(CMD_WRITE == mCmd) {
             // 添加0000
             sendBuffer.append(0x00);

@@ -1561,15 +1561,15 @@ public class DataTransferThread {
 // End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 
 			mStopped = false;
-			long startMillis = System.currentTimeMillis();
+////			long startMillis = System.currentTimeMillis();
 			while(mRunning == true) {
 				int writable = FpgaGpioOperation.pollState();
 
-				if(System.currentTimeMillis() - startMillis > 1000) {
+/*				if(System.currentTimeMillis() - startMillis > 1000) {
 					Debug.d(TAG, "Running... ");
 					startMillis = System.currentTimeMillis();
 				}
-
+*/
 				if (writable == 0) { //timeout
 //					Debug.e(TAG, "--->FPGA timeout");
 //					if (isLanPrint() && pcReset == true) {

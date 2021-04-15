@@ -436,9 +436,8 @@ public class Configs {
 
 // H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 	public static void GetSystemDpiVersion() {
-//		DPI_VERSION = FpgaGpioOperation.getDpiVersion();
-//        DPI_VERSION = (DPI_VERSION == FpgaGpioOperation.DPI_VERSION_NONE ? FpgaGpioOperation.DPI_VERSION_150 : DPI_VERSION);
-		DPI_VERSION = FpgaGpioOperation.DPI_VERSION_300;
+		DPI_VERSION = FpgaGpioOperation.getDpiVersion();
+        DPI_VERSION = (DPI_VERSION == FpgaGpioOperation.DPI_VERSION_NONE ? FpgaGpioOperation.DPI_VERSION_150 : DPI_VERSION);
 	}
 
 	public static int GetDpiVersion() {

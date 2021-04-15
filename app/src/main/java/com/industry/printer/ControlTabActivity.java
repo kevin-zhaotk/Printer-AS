@@ -501,6 +501,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 // H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 		Configs.GetSystemDpiVersion();
+		Debug.d(TAG, "SystemDpiVersion: " + Configs.GetDpiVersion());
 // End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 
 		//Debug.d(TAG, "===>loadMessage");
@@ -1721,13 +1722,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		Debug.d(TAG, "--->init");
 
 // H.M.Wang 2021-4-11 追加检查任务的分辨率和设备的分辨率是否一致，不一致则停止打印
-//        for(MessageTask msgTask: mMsgTask) {
-//            if(msgTask.getMsgObject().getmPrintDpi() != Configs.GetDpiVersion()) {
-//                ToastUtil.show(mContext, R.string.printDpiNotMatchError);
-//                mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
-//                return;
-//            }
-//        }
+        for(MessageTask msgTask: mMsgTask) {
+            if(msgTask.getMsgObject().getmPrintDpi() != Configs.GetDpiVersion()) {
+                ToastUtil.show(mContext, R.string.printDpiNotMatchError);
+                mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
+                return;
+            }
+        }
 // End of H.M.Wang 2021-4-11 追加检查任务的分辨率和设备的分辨率是否一致，不一致则停止打印
 
 		// 鍒濆鍖朾uffer
