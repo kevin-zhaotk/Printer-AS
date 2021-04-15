@@ -140,7 +140,10 @@ public class SerialProtocol8 extends SerialProtocol {
         ByteArrayBuffer sendBuffer = new ByteArrayBuffer(0);
 
         // 添加本机ID
-        sendBuffer.append((byte)(mLocalID/10*16+mLocalID%10));
+// 2021-4-14 取消将16进制数值按BCD换算的操作,4-9日修改漏改
+//        sendBuffer.append((byte)(mLocalID/10*16+mLocalID%10));
+        sendBuffer.append((byte)(mLocalID));
+// End of 2021-4-14 取消将16进制数值按BCD换算的操作,4-9日修改漏改
 
         // 添加命令
         sendBuffer.append(mCmd);
