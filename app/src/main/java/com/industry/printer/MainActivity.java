@@ -336,6 +336,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		
 		mSettings = (RelativeLayout) findViewById(R.id.settings_view);
 		mSettingTitle = (TextView) findViewById(R.id.setting_ext_view);
+// H.M.Wang 2021-4-16 追加机器类型码的取得和显示
+		mSettingTitle.setText(PlatformInfo.getImgUniqueCode());
+// End of H.M.Wang 2021-4-16 追加机器类型码的取得和显示
 		mVersion = (TextView) findViewById(R.id.setting_version);
 		mVerTitle = (TextView) findViewById(R.id.setting_version_key);
 		
@@ -568,8 +571,10 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				int hour = calendar.get(Calendar.HOUR_OF_DAY);
 				int min = calendar.get(Calendar.MINUTE);
 				int second = calendar.get(Calendar.SECOND);
-				String time = String.format(getResources().getString(R.string.str_time_format), year, month, day, hour, min, second);
-				mSettingTitle.setText(time);
+// H.M.Wang 2021-4-16 追加机器类型码的取得和显示
+//				String time = String.format(getResources().getString(R.string.str_time_format), year, month, day, hour, min, second);
+//				mSettingTitle.setText(time);
+// End of H.M.Wang 2021-4-16 追加机器类型码的取得和显示
 // H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
 				mDispDate.setText(String.format("%04d-%02d-%02d", year, month, day));
 				mDispTime.setText(String.format("%02d:%02d:%02d", hour, min, second));

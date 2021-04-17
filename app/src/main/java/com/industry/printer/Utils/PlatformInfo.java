@@ -31,6 +31,12 @@ public class PlatformInfo {
 	private static final String PROPERTY_PRODUCT = "ro.build.product";
 	private static final String PROPERTY_INK_DEVICE = "ro.product.inkdevice";
 
+// H.M.Wang 2021-4-16 追加机器类型码的取得和显示
+	private static final String PROPERTY_BUILD_ID = "ro.build.id";
+	private static final String PROPERTY_BUILD_VERSION_INC = "ro.build.version.incremental";
+// End of H.M.Wang 2021-4-16 追加机器类型码的取得和显示
+
+	// H.M.Wang 2021-4-16 追加机器类型码的取得和显示
 	public static final String DEVICE_SMARTCARD = "smartcard";
 	public static final String PRODUCT_SMFY_SUPER3 = "smfy_super3";
 	public static final String PRODUCT_3INCH = "3inch";
@@ -102,6 +108,28 @@ public class PlatformInfo {
 		Debug.d(TAG, "===>product: " + mProduct);
 		return mProduct;
 	}
+
+// H.M.Wang 2021-4-16 追加机器类型码的取得和显示
+	public static String getImgUniqueCode() {
+		try {
+			Class<?> mClassType = Class.forName("android.os.SystemProperties");
+			Method mGetMethod = mClassType.getDeclaredMethod("get", String.class);
+			String buildID = (String) mGetMethod.invoke(mClassType, PROPERTY_BUILD_ID);
+			String verInc = (String) mGetMethod.invoke(mClassType, PROPERTY_BUILD_VERSION_INC);
+			String ret = "";
+			if("JDQ39".equals(buildID)) {
+				ret = "OLD-" + verInc;
+			} else {
+				ret = buildID.substring(0,2) + "xx" + verInc.substring(1);
+			}
+			Debug.d(TAG, "===>Img Unique Code: " + ret);
+			return ret;
+		} catch (Exception e) {
+			Debug.d(TAG, "Exception: " + e.getMessage());
+		}
+		return "";
+	}
+// End of H.M.Wang 2021-4-16 追加机器类型码的取得和显示
 
 	/**
 	 * read system property
@@ -205,10 +233,11 @@ public class PlatformInfo {
 		return SMALL_SCREEN_FULL;
 	}
 	public static int  SetDotMatrixType(int Type) {
-		DotMatrixType=Type;
+// H.M.Wang 2021-4-17 如果DotMatrixType==1，则很多地方会走DotMatrix路径，有时会造成死机，因为DotMatrix都不用了，所以废止该变量的使用，=2的情况也没有被用到
+//		DotMatrixType=Type;
+// End of H.M.Wang 2021-4-17 如果DotMatrixType==1，则很多地方会走DotMatrix路径，有时会造成死机，因为DotMatrix都不用了，所以废止该变量的使用，=2的情况也没有被用到
 		 return 0;
-		 
-	}		
+	}
 	
 	/** 
      * 获取版本名 

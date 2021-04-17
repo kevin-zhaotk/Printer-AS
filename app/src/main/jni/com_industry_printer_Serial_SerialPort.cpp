@@ -331,7 +331,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_write
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
-    LOGI("SerialPort.so 1.0.52 Loaded.");
+    LOGI("SerialPort.so 1.0.53 Loaded.");
 
 
     return JNI_VERSION_1_4;     //这里很重要，必须返回版本，否则加载会失败。
