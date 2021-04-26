@@ -506,7 +506,10 @@ JNIEXPORT jstring JNICALL Java_com_Smartcard_readConsistency(JNIEnv *env, jclass
         title, ink_designator, ink_formulator_id, ink_family, ink_color_code, ink_family_member, density, weight, drop_volume,buf[3], buf[2], buf[1], buf[0],out_of_ink,x
     );
 
-    return (*env)->NewStringUTF(env, strTemp);
+    jstring result = (*env)->NewStringUTF(env, strTemp);
+//    (*env)->ReleaseStringUTFChars(env, result, strTemp);
+
+    return result;
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_checkOIB(JNIEnv *env, jclass arg, jint card) {

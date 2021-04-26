@@ -1559,6 +1559,9 @@ public class DataTransferThread {
 // H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 			boolean dataSent = false;
 // End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
+// H.M.Wang 2021-4-20 增加一个放置频繁打印"--->FPGA buffer is empty"的逻辑锁，这种频繁打印会发生在网络快速打印的首发之前和SCAN3串口协议的时候
+			boolean reportEmpty = true;
+// End of H.M.Wang 2021-4-20 增加一个放置频繁打印"--->FPGA buffer is empty"的逻辑锁，这种频繁打印会发生在网络快速打印的首发之前和SCAN3串口协议的时候
 
 			mStopped = false;
 ////			long startMillis = System.currentTimeMillis();
@@ -1577,10 +1580,13 @@ public class DataTransferThread {
 //						FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length * 2);
 //						pcReset = false;
 //					}
+					reportEmpty = true;
 				} else if (writable == -1) {
 //					Debug.e(TAG, "--->FPGA error");
+					reportEmpty = true;
 				} else {
-					Debug.d(TAG, "--->FPGA buffer is empty");
+					if(reportEmpty) Debug.d(TAG, "--->FPGA buffer is empty");
+					reportEmpty = false;
 ////					Debug.d(TAG, "Printed: " + FpgaGpioOperation.getPrintedCount());
 // 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
 					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
@@ -1597,13 +1603,15 @@ public class DataTransferThread {
 					}
 					mInterval = SystemClock.currentThreadTimeMillis() - last;
 					mHandler.removeMessages(MESSAGE_DATA_UPDATE);
-					mNeedUpdate = false;
+// H.M.Wang 2021-4-20 移到下面具体处理的next函数调用之前，如果放在这里，会导致SCAN3或者网络快速打印的第一次操作之前对计数器频繁调整
+//					mNeedUpdate = false;
 
 // H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整，取消从前在生成打印缓冲区时调整
 // H.M.Wang 2020-12-17 以前没有参数，遍历打印群组，会出现打印一个任务，所有相关计数器都被更新的问题，追加参数，仅对当前任务进行修改
-					setCounterNext(mDataTask.get(index()));
+//					setCounterNext(mDataTask.get(index()));
 // End of H.M.Wang 2020-12-17 以前没有参数，遍历打印群组，会出现打印一个任务，所有相关计数器都被更新的问题，追加参数，仅对当前任务进行修改
 // End of H.M.Wang 2020-7-2 调整计数器增量策略
+// End of H.M.Wang 2021-4-20 移到下面具体处理的next函数调用之前，如果放在这里，会导致SCAN3或者网络快速打印的第一次操作之前对计数器频繁调整
 
 					synchronized (DataTransferThread.class) {
 ////////////////////////////////////////////////////////
@@ -1618,6 +1626,9 @@ public class DataTransferThread {
 ////////////////////////////////////////////////////////
 // H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 						if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) != SystemConfigFile.DATA_SOURCE_SCANER3) {
+// H.M.Wang 2021-4-20 该函数的调用移到这里
+							setCounterNext(mDataTask.get(index()));
+// End of H.M.Wang 2021-4-20 该函数的调用移到这里
 							next();
 // H.M.Wang 2021-3-4 此断代码转移至此
 // H.M.Wang 2021-3-4 DataTask中的isReady变量，由于读QR文件的操作转移至这里，已经失效，在本类中追加isReady变量，并且据此进行判断操作
@@ -1648,11 +1659,18 @@ public class DataTransferThread {
 
 							FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
 							Debug.d(TAG, "--->FPGA data sent!");
+							reportEmpty = true;
+// H.M.Wang 2021-4-20 该函数的调用移到这里。否则在网络快速打印的首发之前，或者SCAN3协议的时候可能需要发送时被错误清除
+							mNeedUpdate = false;
+// End of H.M.Wang 2021-4-20 该函数的调用移到这里，或者SCAN3协议的时候可能需要发送时被错误清除
 // H.M.Wang 2021-3-8 在实施了打印后调用
 							afterDataSent();
 // End of H.M.Wang 2021-3-8 在实施了打印后调用
 						} else {
 							if(dataSent) {
+// H.M.Wang 2021-4-20 该函数的调用移到这里
+								setCounterNext(mDataTask.get(index()));
+// End of H.M.Wang 2021-4-20 该函数的调用移到这里
 								next();				// 扫描3的逻辑是没有收到扫描数据不打印，打印之打印一次。实现策略是初始和empty时不下发新的缓冲区，仅在更新时下发。因此，如果更新没下发就保持当前的记录
 													// 这个dataSent标识就是起到这个作用。初值为false，开始打印后第一个任务等待扫描数据，扫描数据下发后，更新下发。在更新下发结束后，dataSent置真。因此只有在有了更新下发以后，才为真
 								dataSent = false;	// 更改打印指针后，立即设置为false，以避免没下发数据，频繁来empty导致不必要指针调整（这个在新的img里面不会发生，因此这一句仅为保险设置，实际不设也行）
@@ -1726,9 +1744,21 @@ public class DataTransferThread {
 //						BinCreater.saveBin("/mnt/sdcard/print.bin", buffer, mDataTask.get(mIndex).getInfo().mBytesPerHFeed * 8 * mDataTask.get(mIndex).getPNozzle().mHeads);
 //						// End.
 //						try {sleep(30);}catch(Exception e){};
+// H.M.Wang 2021-4-20 增加是否为串口协议3的判断，否则，串口协议3的时候，底层会不断的申请数据，原来的判断会跳过下发数据
+						if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER3) {
+						    if(!dataSent) {
+								FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+// H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
+								dataSent = true;
+								reportEmpty = true;
+// End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
+// End of H.M.Wang 2021-4-20 增加是否为串口协议3的判断，否则，串口协议3的时候，底层会不断的申请数据，原来的判断会跳过下发数据
+							}
 // H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
-						if(FpgaGpioOperation.pollState() == 0) {
-							FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+						} else {
+							if(FpgaGpioOperation.pollState() == 0) {
+								FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+							}
 						}
 // End of H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
@@ -1743,11 +1773,13 @@ public class DataTransferThread {
 // End of 2020-7-3 追加判断是否有网络快速打印数据更新
 						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
 						Debug.d(TAG, "First print buffer deliver to FPGA. size = " + mPrintBuffer.length);
+// H.M.Wang 2021-4-20 取消判断，因为此时底层正在申请数据，所以返回肯定是1，这个下发可能会被跳过
 // H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
-						if(FpgaGpioOperation.pollState() == 0) {
-							FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
-						}
+//						if(FpgaGpioOperation.pollState() == 0) {
+							FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
+//						}
 // End of H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
+// End of H.M.Wang 2021-4-20 取消判断，因为此时底层正在申请数据，所以返回肯定是1，这个下发可能会被跳过
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
 // End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
@@ -1784,10 +1816,6 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-7-14 设置计数器后再次向PC发送0001，要数据
 					}
 // End of 2020-6-30 网络快速打印时第一次收到网络数据后下发
-
-// H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
-					dataSent = true;
-// End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
 				}
 
 //				if(System.currentTimeMillis() - startMillis > 10) Debug.d(TAG, "Process time: " + (System.currentTimeMillis() - startMillis) + " from: " + writable);

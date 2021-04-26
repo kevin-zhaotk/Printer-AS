@@ -268,6 +268,9 @@ public class DataTask {
 			} else if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
 				maxColNumPerUnit = PrinterNozzle.R6X50_MAX_COL_NUM_EACH_UNIT;
 			}
+// H.M.Wang 2021-4-23 增加根据DPI对列数进行调整
+			maxColNumPerUnit *= Configs.GetDpiVersion();
+// End of H.M.Wang 2021-4-23 增加根据DPI对列数进行调整
 
 			for(int i=0; i<PrinterNozzle.R6_PRINT_COPY_NUM; i++) {
 				for(int k=0; k<maxColNumPerUnit; k++) {
@@ -313,6 +316,10 @@ public class DataTask {
 			} else if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
 				maxColNumPerUnit = PrinterNozzle.E6X50_MAX_COL_NUM_EACH_UNIT;
 			}
+
+// H.M.Wang 2021-4-23 增加根据DPI对列数进行调整
+			maxColNumPerUnit *= Configs.GetDpiVersion();
+// End of H.M.Wang 2021-4-23 增加根据DPI对列数进行调整
 
 			for(int i=0; i<PrinterNozzle.E6_PRINT_COPY_NUM; i++) {
 				for(int k=0; k<maxColNumPerUnit; k++) {
@@ -532,8 +539,11 @@ public class DataTask {
 			headType == PrinterNozzle.MESSAGE_TYPE_E6X48 ||
 			headType == PrinterNozzle.MESSAGE_TYPE_E6X50 ) {
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
-			div = 1.0f * 104/104;
+// H.M.Wang 2021-4-23 修改div和scaleW的计算公式，当前的计算可能不对
+//			div = 1.0f * 104/104;
 			scaleW = 152f / 104f * 2;
+			div = scaleW;
+// H.M.Wang 2021-4-23 修改div和scaleW的计算公式，当前的计算可能不对
 			scaleH = 152f / 104f;
 		}
 
