@@ -1564,15 +1564,15 @@ public class DataTransferThread {
 // End of H.M.Wang 2021-4-20 增加一个放置频繁打印"--->FPGA buffer is empty"的逻辑锁，这种频繁打印会发生在网络快速打印的首发之前和SCAN3串口协议的时候
 
 			mStopped = false;
-////			long startMillis = System.currentTimeMillis();
+			long startMillis = System.currentTimeMillis();
 			while(mRunning == true) {
 				int writable = FpgaGpioOperation.pollState();
 
-/*				if(System.currentTimeMillis() - startMillis > 1000) {
+				if(System.currentTimeMillis() - startMillis > 1000) {
 					Debug.d(TAG, "Running... ");
 					startMillis = System.currentTimeMillis();
 				}
-*/
+
 				if (writable == 0) { //timeout
 //					Debug.e(TAG, "--->FPGA timeout");
 //					if (isLanPrint() && pcReset == true) {
@@ -1830,6 +1830,7 @@ public class DataTransferThread {
 				//TO-DO list 下面需要把打印数据下发
 
 			}
+            Debug.d(TAG, "Running...Quit! ");
 			mStopped = true;
 // H.M.Wang 2020-7-2 由于调整计数器增量策略，在打印完成时调整，因此无需rollback
 //			rollback();

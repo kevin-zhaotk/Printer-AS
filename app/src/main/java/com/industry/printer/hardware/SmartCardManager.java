@@ -16,6 +16,8 @@ import com.industry.printer.Utils.Debug;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SmartCardManager implements IInkDevice {
     private static final String TAG = SmartCardManager.class.getSimpleName();
@@ -96,6 +98,8 @@ public class SmartCardManager implements IInkDevice {
 
     private Timer mTimer = null;
 
+    ExecutorService mCachedThreadPool = null;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -140,6 +144,8 @@ public class SmartCardManager implements IInkDevice {
         Debug.d(TAG, "---> enter SmartCardManager()");
         mContext = context;
 
+        mCachedThreadPool = Executors.newCachedThreadPool();
+
         mBagNum = 1;        // 暂时墨袋只有一个
         if(SystemConfigFile.getInstance().getPNozzle() == PrinterNozzle.MESSAGE_TYPE_25_4) {
             mPenNum = 2;
@@ -180,7 +186,7 @@ public class SmartCardManager implements IInkDevice {
         if(mLibInited) return;
         mLibInited = true;
 
-        new Thread(new Runnable() {
+        mCachedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
                 if(mCallback == null) {
@@ -234,7 +240,7 @@ public class SmartCardManager implements IInkDevice {
                     }
                 }
             }
-        }).start();
+        });
     }
 
     private void checkConsistency(int penIdx, int bagIdx) {
@@ -377,20 +383,20 @@ public class SmartCardManager implements IInkDevice {
             if(!mCards[cardIdx].mInkAdding) {
                 if(mCards[cardIdx].mInkAddedTimes >= ADD_INK_TRY_LIMITS) {
                     mCards[cardIdx].mAddInkFailed = true;
-                    new Thread() {
+                    mCachedThreadPool.execute(new Runnable() {
                         @Override
                         public void run() {
                             try{
                                 ExtGpio.playClick();
-                                sleep(50);
+                                Thread.sleep(50);
                                 ExtGpio.playClick();
-                                sleep(50);
+                                Thread.sleep(50);
                                 ExtGpio.playClick();
                             } catch (Exception e) {
                                 Debug.e(TAG, e.getMessage());
                             }
                         }
-                    }.start();
+                    });
 // H.M.Wang 2020-11-13 当墨量<5%时，如果3次加墨失败则写OIB，本人认为这个操作不太好
 // H.M.Wang 2020-11-27 修改<5%的数值BUG，getLocalInkPercentage函数返回的是0-100的值，不是0-1的值
                     if(mCards[mCurBagIdx].mInkLevel / mCards[mCurBagIdx].mMaxVolume < 0.05f) {
@@ -404,7 +410,7 @@ public class SmartCardManager implements IInkDevice {
 // End of H.M.Wang 2020-11-24 追加加墨10次失败后停止打印
                 } else {
                     mCards[cardIdx].mInkAdding = true;
-                    new Thread() {
+                    mCachedThreadPool.execute(new Runnable() {
                         @Override
                         public void run() {
                             addInkOn(cardIdx);
@@ -424,7 +430,7 @@ public class SmartCardManager implements IInkDevice {
 
                             mCards[cardIdx].mInkAddedTimes++;
                         }
-                    }.start();
+                    });
                 }
             }
         } else {
@@ -436,7 +442,7 @@ public class SmartCardManager implements IInkDevice {
 
     public void updateLevel() {
         Debug.d(TAG, "---> enter updateLevel()");
-        new Thread(new Runnable() {
+        mCachedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
                 for(int i=0; i<mPenNum; i++) {
@@ -445,7 +451,7 @@ public class SmartCardManager implements IInkDevice {
                 }
                 mHandler.sendEmptyMessage(MSG_SHOW_LEVEL);
             }
-        }).start();
+        });
     }
 
     @Override

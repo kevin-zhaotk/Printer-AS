@@ -116,6 +116,7 @@
 	</string-array>
 -->
 
+	<string name="strGroup">Group</string>
 	<string name="strCode">Code Type</string>
 	<string name="strBarsource">Data</string>
 	<string name="strLinetype">Line Type</string>

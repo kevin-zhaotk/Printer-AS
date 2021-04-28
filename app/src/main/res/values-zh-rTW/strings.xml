@@ -110,6 +110,8 @@
 	<string name="strFrame">邊框</string>
 	<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
 
+	<string name="strGroup">群組</string>
+
 	<!-- object list -->
 	<string name="objectListName">Show List</string>
 	<string name="objectInfoName">顯示對象信息</string>

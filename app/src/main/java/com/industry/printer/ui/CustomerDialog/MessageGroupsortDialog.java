@@ -143,12 +143,21 @@ public class MessageGroupsortDialog extends CustomerDialogBase implements View.O
                     if (i != mDispIndex.size() - 1) result.append("^");
                 }
                 /* save group */
-                String group = "G-" + getSuffix();
-                MessageTask.saveGroup(group, result.toString());
-                if (pListener != null) {
-                    pListener.onClick(group);
-                }
-                dismiss();
+// H.M.Wang 2021-4-28 追加群组命名对话窗
+                final String resString = result.toString();
+                GroupNamingDialog gnDlg = new GroupNamingDialog(getContext(), ""+getSuffix());
+                gnDlg.setOKListener(new GroupNamingDialog.OnOKListener() {
+                    @Override
+                    public void onOK(String name) {
+                        String group = "G-" + name;
+                        MessageTask.saveGroup(group, resString);
+                        if (pListener != null) {
+                            pListener.onClick(group);
+                        }
+                        dismiss();
+                    }
+                });
+                gnDlg.show();
                 break;
 
         }
