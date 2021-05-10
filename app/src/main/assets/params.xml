@@ -63,15 +63,15 @@
 	</param>
 	<param>
 	    <id>11</id>
-		<min>1</min>
+		<min>0</min>
 		<max>9999</max>
-		<default>1</default>
+		<default>0</default>
 	</param>
 	<param>
 	    <id>12</id>
-		<min>1</min>
+		<min>0</min>
 		<max>9999</max>
-		<default>1</default>
+		<default>0</default>
 	</param>
 	<param>
 	    <id>13</id>
@@ -105,15 +105,15 @@
 	</param>
 	<param>
 	    <id>19</id>
-		<min>1</min>
+		<min>0</min>
 		<max>9999</max>
-		<default>1</default>
+		<default>0</default>
 	</param>
 	<param>
 	    <id>20</id>
-		<min>1</min>
+		<min>0</min>
 		<max>9999</max>
-		<default>1</default>
+		<default>0</default>
 	</param>
 	<param>
 	    <id>21</id>

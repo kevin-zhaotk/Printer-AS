@@ -480,6 +480,16 @@ public class HyperTextObject extends BaseObject {
     }
 // End of H.M.Wang 2020-7-31 追加超文本的计数器打印后调整
 
+// H.M.Wang 2021-5-7 追加实际打印数调整函数
+    public void goPrintedNext() {
+        for(BaseObject o : mSubObjs) {
+            if (o instanceof CounterObject) {
+                ((CounterObject) o).goPrintedNext();
+            }
+        }
+    }
+// End of H.M.Wang 2021-5-7 追加实际打印数调整函数
+
     public void setShiftTime(int shift, String time) {
         for(BaseObject o : mSubObjs) {
             if(o instanceof ShiftObject) {

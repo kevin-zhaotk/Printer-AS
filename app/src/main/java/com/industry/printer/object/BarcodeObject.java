@@ -379,6 +379,12 @@ public class BarcodeObject extends BaseObject {
 	}
 // End of H.M.Wang 2020-7-31 追加超文本的计数器打印后调整
 
+// H.M.Wang 2021-5-7 追加实际打印数调整函数
+	public void goPrintedNext() {
+		mHTContent.goPrintedNext();
+	}
+// End of H.M.Wang 2021-5-7 追加实际打印数调整函数
+
 	// H.M.Wang 修改该函数。以对应于纵向和横向的比例变化
 	public Bitmap getScaledBitmap(Context context) {
 		Debug.i(TAG, "getScaledBitmap()");

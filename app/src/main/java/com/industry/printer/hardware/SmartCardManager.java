@@ -360,8 +360,8 @@ public class SmartCardManager implements IInkDevice {
         }
     }
 
-    private void addInOff(int cardIdx) {
-        Debug.d(TAG, "---> enter addInOff(" + cardIdx + ")");
+    private void addInkOff(int cardIdx) {
+        Debug.d(TAG, "---> enter addInkOff(" + cardIdx + ")");
 
         ExtGpio.rfidSwitch(ExtGpio.RFID_CARD1);
     }
@@ -383,7 +383,7 @@ public class SmartCardManager implements IInkDevice {
             if(!mCards[cardIdx].mInkAdding) {
                 if(mCards[cardIdx].mInkAddedTimes >= ADD_INK_TRY_LIMITS) {
                     mCards[cardIdx].mAddInkFailed = true;
-                    mCachedThreadPool.execute(new Runnable() {
+                    new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try{
@@ -396,7 +396,7 @@ public class SmartCardManager implements IInkDevice {
                                 Debug.e(TAG, e.getMessage());
                             }
                         }
-                    });
+                    }).start();
 // H.M.Wang 2020-11-13 当墨量<5%时，如果3次加墨失败则写OIB，本人认为这个操作不太好
 // H.M.Wang 2020-11-27 修改<5%的数值BUG，getLocalInkPercentage函数返回的是0-100的值，不是0-1的值
                     if(mCards[mCurBagIdx].mInkLevel / mCards[mCurBagIdx].mMaxVolume < 0.05f) {
@@ -409,28 +409,30 @@ public class SmartCardManager implements IInkDevice {
                     if(null != mCallback) mCallback.sendEmptyMessage(ControlTabActivity.MESSAGE_PRINT_STOP);
 // End of H.M.Wang 2020-11-24 追加加墨10次失败后停止打印
                 } else {
-                    mCards[cardIdx].mInkAdding = true;
-                    mCachedThreadPool.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            addInkOn(cardIdx);
+                    if(!mCards[cardIdx].mInkAdding) {
+                        mCachedThreadPool.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                mCards[cardIdx].mInkAdding = true;
+                                addInkOn(cardIdx);
 
-                            try{Thread.sleep(100);addInOff(cardIdx);}catch(Exception e){
-                                addInOff(cardIdx);
-                            };
+                                try{Thread.sleep(100);addInkOff(cardIdx);}catch(Exception e){
+                                    addInkOff(cardIdx);
+                                };
 
-                            long startTiem = System.currentTimeMillis();
-                            while(true) {
-                                try{Thread.sleep(100);}catch(Exception e){};
-                                if(System.currentTimeMillis() - startTiem >= 32000) break;
+                                long startTiem = System.currentTimeMillis();
+                                while(true) {
+                                    try{Thread.sleep(100);}catch(Exception e){};
+                                    if(System.currentTimeMillis() - startTiem >= 11500) break;
+                                }
+
+                                Debug.d(TAG, "Clear Adding Block!");
+                                mCards[cardIdx].mInkAdding = false;
+
+                                mCards[cardIdx].mInkAddedTimes++;
                             }
-
-                            Debug.d(TAG, "Clear Adding Block!");
-                            mCards[cardIdx].mInkAdding = false;
-
-                            mCards[cardIdx].mInkAddedTimes++;
-                        }
-                    });
+                        });
+                    }
                 }
             }
         } else {

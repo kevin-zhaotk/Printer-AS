@@ -90,7 +90,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_GPIO_read
        int ret=0;
        char buf[4];
        ret = read(fd, buf, sizeof(buf));
-       ALOGD("*****read %s\n", buf);
+//       ALOGD("*****read %s\n", buf);
        return ret;
 }
 

@@ -911,18 +911,29 @@ public class DataTransferThread {
         });
 // End of H.M.Wang 2020-6-3 解决提示对话窗在显示时，扫码枪的信息被其劫持，而无法识别的问题
 
-		mRunning = true;
-
-		mPrinter = new PrintTask();
 		if (!isBufferReady || mDataTask == null) {
 			return false;
 		}
 
+// H.M.Wang 2021-5-6 只有在FIFO的size大于1，并且不是群组打印的时候，才启动该标识
+		mUsingFIFO = (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_FIFO_SIZE) > 1) && (mDataTask.size() == 1);
+		mPrintedCount = 0;
+// End of H.M.Wang 2021-5-6 只有在FIFO的size大于1，并且不是群组打印的时候，才启动该标识
+
+		mPrinter = new PrintTask();
 		mPrinter.start();
+
+		mRunning = true;
+
 //		thread.start();
 		return true;
 	}
-	
+
+// H.M.Wang 2021-5-6 追击是否正在使用FIFO的标识，用来控制当使用计数器的时候，如果FIFO当中还残留未打印的任务，会导致计数器在下次开始打印时跳数
+	private boolean mUsingFIFO = false;
+	private int mPrintedCount = 0;
+// End of H.M.Wang 2021-5-6 追击是否正在使用FIFO的标识，用来控制当使用计数器的时候，如果FIFO当中还残留未打印的任务，会导致计数器在下次开始打印时跳数
+
 	public void finish() {
 		mRunning = false;
 
@@ -1314,17 +1325,50 @@ public class DataTransferThread {
 			for (BaseObject object : task.getObjList()) {
 				if (object instanceof CounterObject) {
 					((CounterObject) object).goNext();
+// H.M.Wang 2021-5-7 当不是FIFO模式的时候，在这里对实际打印次数进行修正
+					if(!mUsingFIFO) {
+						((CounterObject) object).goPrintedNext();
+					}
+// End of H.M.Wang 2021-5-7 当不是FIFO模式的时候，在这里对实际打印次数进行修正
 // H.M.Wang 2020-7-31 追加超文本及条码当中超文本的计数器打印后调整
 				} else if (object instanceof HyperTextObject) {
 					((HyperTextObject) object).goNext();
+// H.M.Wang 2021-5-7 当不是FIFO模式的时候，在这里对实际打印次数进行修正
+					if(!mUsingFIFO) {
+						((HyperTextObject) object).goPrintedNext();
+					}
+// End of H.M.Wang 2021-5-7 当不是FIFO模式的时候，在这里对实际打印次数进行修正
 				} else if (object instanceof BarcodeObject) {
 					((BarcodeObject) object).goNext();
+// H.M.Wang 2021-5-7 当不是FIFO模式的时候，在这里对实际打印次数进行修正
+					if(!mUsingFIFO) {
+						((BarcodeObject) object).goPrintedNext();
+					}
+// End of H.M.Wang 2021-5-7 当不是FIFO模式的时候，在这里对实际打印次数进行修正
 // End of H.M.Wang 2020-7-31 追加超文本及条码当中超文本的计数器打印后调整
 				}
 			}
 //		}
 	}
 // End of H.M.Wang 2020-7-2 调整计数器增量策略，在打印完成时调整
+
+// H.M.Wang 2021-5-7 当在FIFO模式的时候，在这里对实际打印次数进行修正
+private void setCounterPrintedNext(DataTask task, int count) {
+	Debug.d(TAG, "--->setCounterPrintedNext");
+
+	for(int i=0; i<count; i++) {
+		for (BaseObject object : task.getObjList()) {
+			if (object instanceof CounterObject) {
+				((CounterObject) object).goPrintedNext();
+			} else if (object instanceof HyperTextObject) {
+				((HyperTextObject) object).goPrintedNext();
+			} else if (object instanceof BarcodeObject) {
+				((BarcodeObject) object).goPrintedNext();
+			}
+		}
+	}
+}
+// H.M.Wang 2021-5-7 当在FIFO模式的时候，在这里对实际打印次数进行修正
 
 // H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
 	private boolean isReady = true;
@@ -1564,14 +1608,29 @@ public class DataTransferThread {
 // End of H.M.Wang 2021-4-20 增加一个放置频繁打印"--->FPGA buffer is empty"的逻辑锁，这种频繁打印会发生在网络快速打印的首发之前和SCAN3串口协议的时候
 
 			mStopped = false;
-			long startMillis = System.currentTimeMillis();
+//			long startMillis = System.currentTimeMillis();
+			int lastPrintedCount = 0;
+
 			while(mRunning == true) {
+// H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
+// H.M.Wang 2021-5-7 当在FIFO模式的时候，在这里对实际打印次数进行修正
+				lastPrintedCount = FpgaGpioOperation.getPrintedCount();
+				if(lastPrintedCount != mPrintedCount) {
+					if(mUsingFIFO) {
+						setCounterPrintedNext(mDataTask.get(index()), lastPrintedCount - mPrintedCount);
+					}
+					mPrintedCount = lastPrintedCount;
+					afterDataSent();
+				}
+// End of H.M.Wang 2021-5-7 当在FIFO模式的时候，在这里对实际打印次数进行修正
+// End of H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
+
 				int writable = FpgaGpioOperation.pollState();
 
-				if(System.currentTimeMillis() - startMillis > 1000) {
-					Debug.d(TAG, "Running... ");
-					startMillis = System.currentTimeMillis();
-				}
+//				if(System.currentTimeMillis() - startMillis > 1000) {
+//					Debug.d(TAG, "Running... ");
+//					startMillis = System.currentTimeMillis();
+//				}
 
 				if (writable == 0) { //timeout
 //					Debug.e(TAG, "--->FPGA timeout");
@@ -1587,7 +1646,6 @@ public class DataTransferThread {
 				} else {
 					if(reportEmpty) Debug.d(TAG, "--->FPGA buffer is empty");
 					reportEmpty = false;
-////					Debug.d(TAG, "Printed: " + FpgaGpioOperation.getPrintedCount());
 // 2020-7-3 在网络快速打印状态下，如果没有接收到新的数据，即使触发也不生成新的打印缓冲区下发
 					if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
 						if(!mDataUpdatedForFastLan) {
@@ -1664,7 +1722,9 @@ public class DataTransferThread {
 							mNeedUpdate = false;
 // End of H.M.Wang 2021-4-20 该函数的调用移到这里，或者SCAN3协议的时候可能需要发送时被错误清除
 // H.M.Wang 2021-3-8 在实施了打印后调用
-							afterDataSent();
+// H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
+//							afterDataSent();
+// End of H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
 // End of H.M.Wang 2021-3-8 在实施了打印后调用
 						} else {
 							if(dataSent) {
@@ -1675,7 +1735,9 @@ public class DataTransferThread {
 													// 这个dataSent标识就是起到这个作用。初值为false，开始打印后第一个任务等待扫描数据，扫描数据下发后，更新下发。在更新下发结束后，dataSent置真。因此只有在有了更新下发以后，才为真
 								dataSent = false;	// 更改打印指针后，立即设置为false，以避免没下发数据，频繁来empty导致不必要指针调整（这个在新的img里面不会发生，因此这一句仅为保险设置，实际不设也行）
 // H.M.Wang 2021-3-8 在实施了打印后调用
-								afterDataSent();
+// H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
+//								afterDataSent();
+// End of H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
 // End of H.M.Wang 2021-3-8 在实施了打印后调用
 								if(index() > 0 && index() < mDataTask.size()) {
 									mNeedUpdate = true;
@@ -1782,7 +1844,7 @@ public class DataTransferThread {
 // End of H.M.Wang 2021-4-20 取消判断，因为此时底层正在申请数据，所以返回肯定是1，这个下发可能会被跳过
 // 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
 						DataRatio = (mPrintBuffer.length * 2 - 1) / (16 * 1024);
-// End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4)
+// End of 2020-7-21 为修改计算等待时间添加倍率变量（新公式为：N=(打印缓冲区字节数-1）/16K；时长=3/(2N+4
 						mNeedUpdate = false;
 						mFirstForLanFast = false;
 // H.M.Wang 2020-7-9 解决开始打印后，首次内容被打印两次的问题
@@ -1830,7 +1892,7 @@ public class DataTransferThread {
 				//TO-DO list 下面需要把打印数据下发
 
 			}
-            Debug.d(TAG, "Running...Quit! ");
+//            Debug.d(TAG, "Running...Quit! ");
 			mStopped = true;
 // H.M.Wang 2020-7-2 由于调整计数器增量策略，在打印完成时调整，因此无需rollback
 //			rollback();

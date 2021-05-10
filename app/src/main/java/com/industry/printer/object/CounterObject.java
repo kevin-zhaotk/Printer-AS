@@ -30,6 +30,9 @@ public class CounterObject extends BaseObject {
 	private int mEnd;
 	private Direction mDirection;
 	private int mValue;
+// H.M.Wang 2021-5-7 追加实际打印计数器变量，目的是记忆实际打印（而非apk下发，这个在FIFO打印时可能不一致）数量
+	private int mPritedValue;
+// End of H.M.Wang 2021-5-7 追加实际打印计数器变量，目的是记忆实际打印（而非apk下发，这个在FIFO打印时可能不一致）数量
 	private int mStepLen;
 	// 计数器初始值对应设置里10个计数器值的编号
 	private int mCounterIndex;
@@ -41,6 +44,7 @@ public class CounterObject extends BaseObject {
 		mStart = 0;
 		mEnd = 99999;
 		mValue = 0;
+		mPritedValue = 0;
 		mDirection = Direction.INCREASE;
 		mStepLen=1;
 		mCounterIndex = 0;
@@ -151,6 +155,7 @@ public class CounterObject extends BaseObject {
 		if(mValue == value) return;
 
 		mValue = Math.min(Math.max(value, Math.min(mStart, mEnd)), Math.max(mStart, mEnd));
+		mPritedValue = mValue;
 
 		SystemConfigFile.getInstance(mContext).setParamBroadcast(mCounterIndex + SystemConfigFile.INDEX_COUNT_1, mValue);
 		RTCDevice.getInstance(mContext).write(mValue, mCounterIndex);
@@ -172,7 +177,20 @@ public class CounterObject extends BaseObject {
 
 	public void goNext() {
 		int value = (mDirection == Direction.INCREASE ? mValue + mStepLen : mValue - mStepLen);
-		setValue(mDirection == Direction.INCREASE ? (value > mEnd ? mStart : value) : (value < mEnd ? mStart : value));
+		mValue = (mDirection == Direction.INCREASE ? (value > mEnd ? mStart : value) : (value < mEnd ? mStart : value));
+		super.setContent(BaseObject.intToFormatString(mValue, mBits));
+
+		Debug.d(TAG, "Go Next: " + mValue);
+	}
+
+	public void goPrintedNext() {
+		int value = (mDirection == Direction.INCREASE ? mPritedValue + mStepLen : mPritedValue - mStepLen);
+		mPritedValue = (mDirection == Direction.INCREASE ? (value > mEnd ? mStart : value) : (value < mEnd ? mStart : value));
+
+		SystemConfigFile.getInstance(mContext).setParamBroadcast(mCounterIndex + SystemConfigFile.INDEX_COUNT_1, mPritedValue);
+		RTCDevice.getInstance(mContext).write(mPritedValue, mCounterIndex);
+
+		Debug.d(TAG, "Go Printed Next: " + mPritedValue);
 	}
 
 	public void setCounterIndex(int index) {
