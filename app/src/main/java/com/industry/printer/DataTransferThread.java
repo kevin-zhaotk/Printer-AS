@@ -1618,9 +1618,11 @@ private void setCounterPrintedNext(DataTask task, int count) {
 				if(lastPrintedCount != mPrintedCount) {
 					if(mUsingFIFO) {
 						setCounterPrintedNext(mDataTask.get(index()), lastPrintedCount - mPrintedCount);
+						for(int i=0; i<lastPrintedCount - mPrintedCount; i++) {
+							afterDataSent();
+						}
 					}
 					mPrintedCount = lastPrintedCount;
-					afterDataSent();
 				}
 // End of H.M.Wang 2021-5-7 当在FIFO模式的时候，在这里对实际打印次数进行修正
 // End of H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
@@ -1723,7 +1725,9 @@ private void setCounterPrintedNext(DataTask task, int count) {
 // End of H.M.Wang 2021-4-20 该函数的调用移到这里，或者SCAN3协议的时候可能需要发送时被错误清除
 // H.M.Wang 2021-3-8 在实施了打印后调用
 // H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
-//							afterDataSent();
+							if(!mUsingFIFO) {
+								afterDataSent();
+							}
 // End of H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
 // End of H.M.Wang 2021-3-8 在实施了打印后调用
 						} else {
@@ -1736,7 +1740,9 @@ private void setCounterPrintedNext(DataTask task, int count) {
 								dataSent = false;	// 更改打印指针后，立即设置为false，以避免没下发数据，频繁来empty导致不必要指针调整（这个在新的img里面不会发生，因此这一句仅为保险设置，实际不设也行）
 // H.M.Wang 2021-3-8 在实施了打印后调用
 // H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
-//								afterDataSent();
+								if(!mUsingFIFO) {
+									afterDataSent();
+								}
 // End of H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
 // End of H.M.Wang 2021-3-8 在实施了打印后调用
 								if(index() > 0 && index() < mDataTask.size()) {
@@ -1917,7 +1923,20 @@ private void setCounterPrintedNext(DataTask task, int count) {
 			if (mCallback != null) {
 				mCallback.onComplete(index());
 			}
+			if (mCusCallback != null) {
+				mCusCallback.onComplete(index());
+			}
 			LogIntercepter.getInstance(mContext).execute(getCurData());
 		}
+	}
+
+	public interface CustomCallback {
+		public void onComplete(int index);
+	}
+
+	private CustomCallback mCusCallback;
+
+	public void setCusCallback(CustomCallback cb) {
+		mCusCallback = cb;
 	}
 }

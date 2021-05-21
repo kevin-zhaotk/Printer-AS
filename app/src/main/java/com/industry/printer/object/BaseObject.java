@@ -1097,7 +1097,10 @@ public class BaseObject{
 	{
 // H.M.Wang 2020-8-31 只有字体发生变化的时候再重新设置字体，并且重新计算宽度
 //		if(font== null)
-		if(font== null || font == mFont)
+// H.M.Wang 2021-5-20 修改font与mFont相等判断，不能用简单的等号，因为是字符串，需要用字符串相同判断
+//		if(font== null || font == mFont)
+		if(font== null || font.equals(mFont))
+// End of H.M.Wang 2021-5-20 修改font与mFont相等判断，不能用简单的等号，因为是字符串，需要用字符串相同判断
 // End of H.M.Wang 2020-8-31 只有字体发生变化的时候再重新设置字体，并且重新计算宽度
 			return;
 

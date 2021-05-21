@@ -177,7 +177,8 @@ public class BinFromBitmap extends BinCreater {
 //    	Debug.d(TAG, "===============000000");
     	//bmp.setPixels(pixels, 0, columns, 0, 0, columns, row);
 //    	Debug.d(TAG, "===============111111");
-    	return Bitmap.createScaledBitmap(bmp, columns, 150, true);
+    	return bmp;
+//		return Bitmap.createScaledBitmap(bmp, columns, 150, true);
     }
 
     public static void recyleBitmap(Bitmap bmp)

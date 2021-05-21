@@ -77,7 +77,7 @@ public class GraphicObject  extends BaseObject{
 	}
 */
 	public String getImage() {
-		return mContent;
+		return mImage;
 	}
 
 

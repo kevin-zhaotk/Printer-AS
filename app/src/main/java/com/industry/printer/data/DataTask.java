@@ -1321,6 +1321,10 @@ public char[] bitShiftFor64SN() {
 		return BinFromBitmap.Bin2Bitmap(preview, mBinInfo.mColumn, mBinInfo.mCharsFeed*16);
 	}
 
+	public Bitmap getBgPreview() {
+		return BinFromBitmap.Bin2Bitmap(mBgBuffer, mBinInfo.mColumn, mBinInfo.mCharsFeed*16);
+	}
+
 	/**
 	 * expend along horizontal space, 1 column to 32 or any columns
 	 * big dot machine

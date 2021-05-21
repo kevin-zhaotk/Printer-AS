@@ -40,7 +40,13 @@ public class Configs {
 //	public static final boolean READING = true;
 	public static final boolean READING = false;
 
-	
+// H.M.Wang 2021-5-21 追加用户特色页面显示开关标识
+	public static final int USER_MODE_NONE 	= 0;
+	public static final int USER_MODE_1 	= 1;
+
+	public static final int USER_MODE = USER_MODE_NONE;
+// End of H.M.Wang 2021-5-21 追加用户特色页面显示开关标识
+
 	/**
 	 * 开关配置：大字机的特殊版本，buffer宽度x8
 	 */

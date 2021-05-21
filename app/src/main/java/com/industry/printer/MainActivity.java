@@ -96,6 +96,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public RadioButton	mRadioCtl;
 	public RadioButton	mRadioSet;
 	public RadioButton	mRadioEdit;
+	public RadioButton	mRadioCustom;
 	public RadioButton	btn_Other;
 	public TextView		mExtStatus;
 	
@@ -104,7 +105,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public EditMultiTabActivity mEditFullTab;
 	public EditTabSmallActivity mEditSmallTab;
 	public SettingsTabActivity	mSettingsTab;
-	
+	public CustomTabActivity	mCustomTab;
+	public RelativeLayout 		mCustomExtra;
+
 	public RelativeLayout mCtrlExtra;
 // H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
 //	public TextView mCtrlTitle;
@@ -189,7 +192,16 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	    mRadioSet = (RadioButton) findViewById(R.id.btn_setting);
 	    mRadioSet.setOnCheckedChangeListener(this);
 	    mRadioSet.setOnTouchListener(this);
-	    
+
+		mRadioCustom = (RadioButton) findViewById(R.id.btn_custom);
+		mRadioCustom.setOnCheckedChangeListener(this);
+		mRadioCustom.setOnTouchListener(this);
+// H.M.Wang 2021-5-21 追加用户特色页面显示开关标识
+		if(Configs.USER_MODE == Configs.USER_MODE_NONE) {
+			mRadioCustom.setVisibility(View.GONE);
+		}
+// End of H.M.Wang 2021-5-21 追加用户特色页面显示开关标识
+
 	    btn_Other = (RadioButton) findViewById(R.id.btn_Other);
 	   
 	   
@@ -341,7 +353,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 // End of H.M.Wang 2021-4-16 追加机器类型码的取得和显示
 		mVersion = (TextView) findViewById(R.id.setting_version);
 		mVerTitle = (TextView) findViewById(R.id.setting_version_key);
-		
+
+		mCustomExtra = (RelativeLayout) findViewById(R.id.custom_extra);
+
 		mCopy = (ImageButton) findViewById(R.id.msg_transfer);
 		mCopy.setOnClickListener(this);
 		
@@ -359,6 +373,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mEditSmallTab = new EditTabSmallActivity();
 		mEditFullTab = new EditMultiTabActivity();
 		mSettingsTab = new SettingsTabActivity();
+		mCustomTab = new CustomTabActivity();
 
 		mControlTab.setCallback(mHander);
 		
@@ -391,6 +406,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			transaction.add(R.id.tab_content, mEditTab);
 		}
 		transaction.add(R.id.tab_content, mSettingsTab);
+		transaction.add(R.id.tab_content, mCustomTab);
+
 		Debug.d(TAG, "===>transaction");
 		// transaction.add(R.id.tv_counter_msg, mCtrlTitle);
 		// transaction.add(R.id.tv_counter_msg, mEditTitle);
@@ -404,6 +421,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			transaction.hide(mEditTab);
 		}
 		transaction.hide(mSettingsTab);
+		transaction.hide(mCustomTab);
 		transaction.show(mControlTab);
 		Debug.d(TAG, "===>show");
 
@@ -492,6 +510,30 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				} else {
 					fts.hide(mSettingsTab);
 					mSettings.setVisibility(View.GONE);
+					//mSettingTitle.setVisibility(View.GONE);
+					//mVersion.setVisibility(View.GONE);
+//					mHander.removeMessages(REFRESH_TIME_DISPLAY);
+				}
+				break;
+			case R.id.btn_custom:
+				Debug.d(TAG, "====>custom checked?"+arg1);
+
+				if (arg1 == true) {
+					Debug.d(TAG, "--->show CustomTab");
+					mCustomTab.setObjPath(mControlTab.mObjPath);
+					mCustomTab.setCtrlHandler(mControlTab.mHandler);
+					mCustomTab.refreshView();
+					fts.show(mCustomTab);
+					Debug.d(TAG, "--->show CustomTab ok");
+					mCustomExtra.setVisibility(View.VISIBLE);
+					Debug.d(TAG, "--->show CustomExtra visible");
+					// mSettingTitle.setVisibility(View.VISIBLE);
+					// mVersion.setVisibility(View.VISIBLE);
+//					mHander.sendEmptyMessage(REFRESH_TIME_DISPLAY);
+
+				} else {
+					fts.hide(mCustomTab);
+					mCustomExtra.setVisibility(View.GONE);
 					//mSettingTitle.setVisibility(View.GONE);
 					//mVersion.setVisibility(View.GONE);
 //					mHander.removeMessages(REFRESH_TIME_DISPLAY);
@@ -618,6 +660,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		fts.remove(mSettingsTab);
 		fts.remove(mEditSmallTab);
 		fts.remove(mEditFullTab);
+		fts.remove(mCustomTab);
 		FpgaGpioOperation.close();
 	}
 

@@ -291,7 +291,7 @@ public class FpgaGpioOperation {
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50 ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
-                data[15] = 6;
+                data[15] = 9;
             }
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT ||
@@ -313,6 +313,14 @@ public class FpgaGpioOperation {
                 data[15] = (char) (Configs.GetDpiVersion() == DPI_VERSION_300 ? 2 : 1);
 // End of H.M.Wang 2021-4-22 如果打印头的类型是打字机，则取消加重的设置。如果img为300dpi的话，强制设置为300dpi，如果img为150dpi的话，设置为150dpi
             }
+// H.M.Wang 2021-5-20 25.4x(1-4)头，打印的时候，S18[4]强制设为1
+            if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH ||
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL ||
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_TRIPLE ||
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR) {
+                data[17] |= 0x0010;
+            }
+// End of H.M.Wang 2021-5-20 25.4x(1-4)头，打印的时候，S18[4]强制设为1
         }
 
         if (type == SETTING_TYPE_PURGE1) {
@@ -320,7 +328,10 @@ public class FpgaGpioOperation {
 // H.M.Wang 2021-3-30 当清洗时，头类型设为25.4x4
             data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_1_INCH_FOUR;
 // End of H.M.Wang 2021-3-30 当清洗时，头类型设为25.4x4
-            data[17] = (char) (data[17] | 0x010);
+// H.M.Wang 2021-5-20 清洗的时候，都选反表，S18[3:0]都设为1
+//            data[17] = (char) (data[17] | 0x010);
+            data[17] = (char) (data[17] | 0x001F);
+// End of H.M.Wang 2021-5-20 清洗的时候，都选反表，S18[3:0]都设为1
         } else if (type == SETTING_TYPE_PURGE2) {
             data[4] = (char) (data[4] * 2);
             data[17] = (char) (data[17] & 0xffef);

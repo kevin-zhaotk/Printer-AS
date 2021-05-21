@@ -109,12 +109,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -985,6 +987,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					}
 					Debug.d(TAG, "--->mObjPath: " + mObjPath);
 					mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
+					Debug.d(TAG, "--->mPreBitmap: " + mPreBitmap);
 
 					dispPreview(mPreBitmap);
 					mMsgFile.setText(mObjPath);
@@ -1617,7 +1620,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 	}
 
-	private void dispPreview(Bitmap bmp) {
+	private void dispPreview(final Bitmap bmp) {
 		int x=0,y=0;
 		int cutWidth = 0;
 		float scale = 1;
@@ -1633,6 +1636,23 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		float height = mllPreview.getHeight();
 		scale = (height/bmp.getHeight());
 		mllPreview.removeAllViews();
+
+// H.M.Wang 2021-5-21 修改预览页面显示方法
+		mllPreview.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				ImageView imgView = new ImageView(mContext);
+				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)(1.0f * bmp.getWidth()/bmp.getHeight() * mllPreview.getHeight()), mllPreview.getHeight());
+				params.gravity = Gravity.LEFT;
+				imgView.setLayoutParams(params);
+				imgView.setScaleType(ScaleType.FIT_XY);
+				imgView.setBackgroundColor(Color.WHITE);
+				imgView.setImageBitmap(bmp);
+				mllPreview.addView(imgView);
+			}
+		}, 10);
+
+/*
 			for (int i = 0;x < bmp.getWidth(); i++) {
 				if (x + 1200 > bmp.getWidth()) {
 					cutWidth = bmp.getWidth() - x;
@@ -1661,7 +1681,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				imgView.setImageBitmap(scaledChild);
 				mllPreview.addView(imgView);
 				// scaledChild.recycle();
-			}
+			}*/
+// End of H.M.Wang 2021-5-21 修改预览页面显示方法
 	}
 	
 	private int mRfiAlarmTimes = 0;
