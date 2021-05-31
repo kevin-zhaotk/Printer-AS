@@ -20,6 +20,7 @@
         <item>扫描1</item>
         <item>扫描2</item>
         <item>扫描3</item>
+        <item>扫描4</item>
         <item>串口协议1</item>
         <item>串口协议2</item>
         <item>串口协议3</item>
@@ -260,6 +261,11 @@
         <item>450</item>
         <item>600</item>
         <item>750</item>
+        <!-- 2021-5-22 增加加重权值 -->
+        <item>900</item>
+        <item>1200</item>
+        <item>1800</item>
+        <item>2400</item>
     </string-array>
 
     <string-array name="pens_item_entries">

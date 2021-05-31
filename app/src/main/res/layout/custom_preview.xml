@@ -106,7 +106,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FFAAAAAA" >
+            android:background="#FFDDDDDD" >
             <ImageView
                 android:id="@+id/tv_preview_img"
                 android:layout_width="match_parent"

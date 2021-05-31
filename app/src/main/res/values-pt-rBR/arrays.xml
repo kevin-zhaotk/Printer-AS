@@ -20,6 +20,7 @@
         <item>Scaner-1</item>
         <item>Scaner-2</item>
         <item>Scaner-3</item>
+        <item>Scaner-4</item>
         <item>RS232-1</item>
         <item>RS232-2</item>
         <item>RS232-3</item>
@@ -266,6 +267,11 @@
         <item>450</item>
         <item>600</item>
         <item>750</item>
+        <!-- 2021-5-22 增加加重权值 -->
+        <item>900</item>
+        <item>1200</item>
+        <item>1800</item>
+        <item>2400</item>
     </string-array>
 
     <string-array name="pens_item_entries">

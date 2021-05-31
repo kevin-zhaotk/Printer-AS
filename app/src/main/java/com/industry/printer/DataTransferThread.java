@@ -296,7 +296,7 @@ public class DataTransferThread {
 		FpgaGpioOperation.updateSettings(context, task, purgeType);
 		FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 		try {
-			Thread.sleep(2500);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -431,6 +431,9 @@ public class DataTransferThread {
 // H.M.Wang 2019-12-15 支持串口文本通过间隔符分割，对于计数器的文本如果超过位数，多余部分切割功能移至计数器Object类，不在这里处理
 					if(strIndex < recvStrs.length) {
 						Debug.d(TAG, "DynamicText[" + strIndex + "]: " + recvStrs[strIndex]);
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+						SystemConfigFile.getInstance().setDTBuffer(((DynamicText) baseObject).getDtIndex(), recvStrs[strIndex]);
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 						baseObject.setContent(recvStrs[strIndex]);
 						strIndex++;
 						needUpdate = true;
@@ -482,6 +485,9 @@ public class DataTransferThread {
 					if(strIndex < data.length()) {
 						int readLen = Math.min(((DynamicText)baseObject).getBits(), data.length() - strIndex);
 						Debug.d(TAG, "DynamicText[" + counterIndex + "]: " + data.substring(strIndex, strIndex + readLen));
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+						SystemConfigFile.getInstance().setDTBuffer(((DynamicText) baseObject).getDtIndex(), data.substring(strIndex, strIndex + readLen));
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 						baseObject.setContent(data.substring(strIndex, strIndex + readLen));
 						strIndex += readLen;
 						needUpdate = true;
@@ -520,6 +526,9 @@ public class DataTransferThread {
 			for(BaseObject baseObject: objList) {
 				if(baseObject instanceof DynamicText) {
 					Debug.d(TAG, "DynamicText[0]: " + data);
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+					SystemConfigFile.getInstance().setDTBuffer(((DynamicText) baseObject).getDtIndex(), data);
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 					baseObject.setContent(data);
 					needUpdate = true;
 					break;
@@ -585,6 +594,9 @@ public class DataTransferThread {
 // H.M.Wang 2020-6-7 修改支持包号->批号检索功能
 					if(dtIndex >= 0 && dtIndex < 8) {
 // End of H.M.Wang 2020-6-7 修改支持包号->批号检索功能
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+						SystemConfigFile.getInstance().setDTBuffer(dtIndex, dts[dtIndex]);
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 						baseObject.setContent(dts[dtIndex]);
 						mNeedUpdate = true;
 					}
@@ -629,6 +641,9 @@ public class DataTransferThread {
 				if(baseObject instanceof DynamicText) {
 					int dtIndex = ((DynamicText)baseObject).getDtIndex();
 					if(dtIndex >= 0 && dtIndex < 6) {
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+						SystemConfigFile.getInstance().setDTBuffer(dtIndex, dts[dtIndex]);
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 						baseObject.setContent(dts[dtIndex]);
 					} else {
 						baseObject.setContent("");
@@ -662,6 +677,9 @@ public class DataTransferThread {
 				if(baseObject instanceof DynamicText) {
                     int dtIndex = ((DynamicText)baseObject).getDtIndex();
                     if(dtIndex >= 0 && dtIndex < recvStrs.length) {
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+						SystemConfigFile.getInstance().setDTBuffer(dtIndex, recvStrs[dtIndex]);
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
                         baseObject.setContent(recvStrs[dtIndex]);
                     } else {
 						baseObject.setContent("");
@@ -672,6 +690,49 @@ public class DataTransferThread {
 		}
 	}
 // End of H.M.Wang 2020-10-30 追加扫描2串口协议
+
+// H.M.Wang 2021-5-21 追加扫描协议4
+	private int mDtIndex = 0;
+	private String mLastRecvString = "";
+//	private String[] mDTBuffer = {""};
+
+	public void setScan4DataToDt(final String data) {
+		Debug.d(TAG, "String from Remote = [" + data + "]");
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if(null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
+					mRemoteRecvedPromptDlg.setMessage(data);
+				}
+			}
+		});
+
+		if(data.startsWith("Resetcode7799")) {
+			mDtIndex = 0;
+		} else if(!data.equals(mLastRecvString)) {
+			for(DataTask dataTask : mDataTask) {
+				ArrayList<BaseObject> objList = dataTask.getObjList();
+				for(BaseObject baseObject: objList) {
+					if(baseObject instanceof DynamicText) {
+						int dtIndex = ((DynamicText)baseObject).getDtIndex();
+						if(dtIndex == mDtIndex) {
+							baseObject.setContent(data);
+							mNeedUpdate = true;
+						}
+					}
+				}
+			}
+
+			mLastRecvString = data;
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+			SystemConfigFile.getInstance().setDTBuffer(mDtIndex++, data);
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+			mDtIndex %= 10;
+		}
+	}
+// End of H.M.Wang 2021-5-21 追加扫描协议4
 
 // H.M.Wang 2021-3-6 追加串口协议8
 	private void setSerialProtocol8DTs(final byte[] data) {
@@ -719,6 +780,9 @@ public class DataTransferThread {
 						sb.append(" ");
 					}
 					sb.append(proCode / 10);
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+					SystemConfigFile.getInstance().setDTBuffer(dtIndex, sb.substring(sb.length() - ((DynamicText) baseObject).getBits()));
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 					baseObject.setContent(sb.substring(sb.length() - ((DynamicText) baseObject).getBits()));
 				} else if(dtIndex == 3) {
 					baseObject.setContent("" + proCode % 10);
@@ -731,6 +795,9 @@ public class DataTransferThread {
 						sb.append(" ");
 					}
 					sb.append(writeValue / 10);
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+					SystemConfigFile.getInstance().setDTBuffer(dtIndex, sb.substring(sb.length() - ((DynamicText) baseObject).getBits()));
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 					baseObject.setContent(sb.substring(sb.length() - ((DynamicText) baseObject).getBits()));
 				}
 			}
@@ -757,12 +824,14 @@ public class DataTransferThread {
 					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2) {
 
 					if (cmd == EC_DOD_Protocol.CMD_TEXT) {                         // 发送一条文本	0x0013
-						ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
-						for (BaseObject baseObject : objList) {
-							if (baseObject instanceof DynamicText) {
-								baseObject.setContent("");
-							}
-						}
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+//						ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+//						for (BaseObject baseObject : objList) {
+//							if (baseObject instanceof DynamicText) {
+//								baseObject.setContent("");
+//							}
+//						}
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 
 						String datastring = new String(data, 7, data.length - 7);
 						if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1) {
@@ -796,15 +865,17 @@ public class DataTransferThread {
 // H.M.Wang 2020-8-13 追加串口7协议
 				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_7) {
 					if (cmd == SerialProtocol7.CMD_TEXT) {                         // 发送一条文本	0x0013
-						ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
-						for (BaseObject baseObject : objList) {
-							if (baseObject instanceof DynamicText) {
-								baseObject.setContent("");
-							}
-						}
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+//						ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+//						for (BaseObject baseObject : objList) {
+//							if (baseObject instanceof DynamicText) {
+//								baseObject.setContent("");
+//							}
+//						}
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 
-						String datastring = new String(data, 7, data.length - 7);
-						setRemoteTextSeparated(datastring);
+						String dataString = new String(data, 7, data.length - 7);
+						setRemoteTextSeparated(dataString);
 						serialHandler.sendCommandProcessResult(SerialProtocol7.CMD_TEXT, 1, 0, 0, "");
 						// H.M.Wang 2019-12-7 反转命令立即生效
 					} else if (cmd == SerialProtocol7.CMD_SET_REVERSE) {
@@ -856,6 +927,17 @@ public class DataTransferThread {
 				}
 			});
 // End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
+// H.M.Wang 2021-5-21 追加扫描协议4
+		} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER4) {
+			mDtIndex = 0;
+			mLastRecvString = "";
+			BarcodeScanParser.setListener(new BarcodeScanParser.OnScanCodeListener() {
+				@Override
+				public void onCodeReceived(String code) {
+					setScan4DataToDt(code);
+				}
+			});
+// End of H.M.Wang 2021-5-21 追加扫描协议4
 		}
 // End of H.M.Wang 2020-10-30 追加数据源判断，启动扫描处理，因为有两个处理从一个扫码枪途径获取数据
 

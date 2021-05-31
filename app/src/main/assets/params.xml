@@ -16,8 +16,8 @@
 	<param>
 	    <id>3</id>
 		<min>150</min>
-		<max>750</max>
-		<default>150</default>
+		<max>2400</max>
+		<default>300</default>
 	</param>
 	<param>
 	    <id>4</id>

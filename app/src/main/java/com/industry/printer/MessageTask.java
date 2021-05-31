@@ -358,7 +358,9 @@ public class MessageTask {
 					|| (object instanceof HyperTextObject)
 // End of H.M.Wang 2020-2-16 追加HyperText控件
 // H.M.Wang 2020-6-10 追加DynamicText控件
-					|| (object instanceof DynamicText)
+// H.M.Wang 2021-5-25 取消DynamicText控件生成vbin
+//					|| (object instanceof DynamicText)
+// End of H.M.Wang 2021-5-25 取消DynamicText控件生成vbin
 // End of H.M.Wang 2020-6-10 追加DynamicText控件
 					|| (object instanceof WeekOfYearObject)
 					|| (object instanceof WeekDayObject))

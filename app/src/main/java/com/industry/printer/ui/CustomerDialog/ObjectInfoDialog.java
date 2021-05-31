@@ -1,5 +1,6 @@
 package com.industry.printer.ui.CustomerDialog;
 
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.R;
 import com.industry.printer.R.id;
@@ -591,7 +592,10 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 							} catch (NumberFormatException e) {
 								((DynamicText) mObject).setBits(0);
 							}
-							((DynamicText) mObject).setContent(mContent.getText().toString());
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+//							((DynamicText) mObject).setContent(mContent.getText().toString());
+							((DynamicText) mObject).setContent(SystemConfigFile.getInstance().getDTBuffer(((DynamicText) mObject).getDtIndex()));
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 							((DynamicText) mObject).adjustWidth();
 // End of H.M.Wang 2020-6-10 追加DynamicText控件
 						} else if (mObject instanceof GraphicObject) {
@@ -756,7 +760,10 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 				} else if(mObject instanceof DynamicText) {
 					mIndex.setText(String.valueOf(((DynamicText) mObject).getDtIndex()));
 					mDigits.setText(String.valueOf( ((DynamicText) mObject).getBits()));
-					mContent.setText(String.valueOf( ((DynamicText) mObject).getContent()));
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+//					mContent.setText(String.valueOf( ((DynamicText) mObject).getContent()));
+					mContent.setText("#####");
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 // End of H.M.Wang 2020-6-10 追加DynamicText控件
 				}
 				else if(mObject instanceof CounterObject)
@@ -830,12 +837,12 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			return ;
 		
 		if(mObject instanceof RealtimeObject ||
-// H.M.Wang 2020-6-11 追加HyperText控件
-//			mObject instanceof DynamicText ||
-// End of H.M.Wang 2020-6-11 追加HyperText控件
 // H.M.Wang 2020-7-3 CounterObject内容不参与编辑
-				mObject instanceof CounterObject ||
+			mObject instanceof CounterObject ||
 // End of H.M.Wang 2020-7-3 CounterObject内容不参与编辑
+// H.M.Wang 2021-5-21 追加动态文本内容框失效
+			mObject instanceof DynamicText ||
+// End of H.M.Wang 2021-5-21 追加动态文本内容框失效
 			mObject instanceof GraphicObject ||
 			mObject instanceof RealtimeSecond ||
 			mObject instanceof ShiftObject ||

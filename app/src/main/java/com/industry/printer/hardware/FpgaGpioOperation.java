@@ -291,7 +291,7 @@ public class FpgaGpioOperation {
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50 ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
-                data[15] = 9;
+                data[15] = 16;
             }
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT ||
@@ -313,14 +313,23 @@ public class FpgaGpioOperation {
                 data[15] = (char) (Configs.GetDpiVersion() == DPI_VERSION_300 ? 2 : 1);
 // End of H.M.Wang 2021-4-22 如果打印头的类型是打字机，则取消加重的设置。如果img为300dpi的话，强制设置为300dpi，如果img为150dpi的话，设置为150dpi
             }
+// H.M.Wang 2021-5-22 25.4x(1-4)头，打印的时候，S18[4]强制设为0
 // H.M.Wang 2021-5-20 25.4x(1-4)头，打印的时候，S18[4]强制设为1
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_TRIPLE ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR) {
-                data[17] |= 0x0010;
+//                data[17] |= 0x0010;
+                data[17] &= 0xFF0F;
             }
 // End of H.M.Wang 2021-5-20 25.4x(1-4)头，打印的时候，S18[4]强制设为1
+// End of H.M.Wang 2021-5-22 25.4x(1-4)头，打印的时候，S18[4]强制设为0
+// H.M.Wang 2021-5-22 打印的时候，E6不能允许选反表， 即S18[3:0]取0
+            if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+                data[17] &= 0xFFF0;
+            }
+// End of H.M.Wang 2021-5-22 打印的时候，E6不能允许选反表， 即S18[3:0]取0
         }
 
         if (type == SETTING_TYPE_PURGE1) {

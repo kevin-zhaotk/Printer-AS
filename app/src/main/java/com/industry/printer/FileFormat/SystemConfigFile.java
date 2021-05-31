@@ -152,19 +152,27 @@ public class SystemConfigFile{
 // H.M.Wang 2021-1-15 追加扫描协议3
     public static final int DATA_SOURCE_SCANER3 	= 9;		// 与扫描2一致，但仅允许打印一回，打印完成后即使再次触发也不打印
 // End of H.M.Wang 2021-1-15 追加扫描协议3
-	public static final int DATA_SOURCE_RS232_1 	= 10;		// 数据源使用串口协议1。EC_DOD协议，按位数紧凑填充前面的计数器。位数不足时，后续计数器不填充，位数超出所有计数器的位数总和时，后面的剪切
-	public static final int DATA_SOURCE_RS232_2 	= 11;		// 数据源使用串口协议2。EC_DOD协议，用逗号等分隔符分开各计数器的内容。每个计数器的接收位数大于计数器的预设位数时剪切
-	public static final int DATA_SOURCE_RS232_3 	= 12;		// 数据源使用串口协议3。平文直接填充第一个计数器。超出计数器位数部分剪切
-	public static final int DATA_SOURCE_RS232_4 	= 13;		// 数据源使用串口协议4。XK3190协议
+// H.M.Wang 2021-5-21 追加扫描协议4
+	public static final int DATA_SOURCE_SCANER4 	= 10;		// 	添加scanner 4.
+																// 1. 扫描reset 码 （内容是Resetcode7799*********后面不管， 只看前13字符）此时指针指向DT0
+																// 2. 扫描如以前协议，值给DT0
+																// 3. 同上， 但是检查， 如果新内容和老内容相同， 不动作
+																// 3. 以此类推， 至DT9
+																// 4. DT9 以后回DT0
+// End of H.M.Wang 2021-5-21 追加扫描协议4
+	public static final int DATA_SOURCE_RS232_1 	= 11;		// 数据源使用串口协议1。EC_DOD协议，按位数紧凑填充前面的计数器。位数不足时，后续计数器不填充，位数超出所有计数器的位数总和时，后面的剪切
+	public static final int DATA_SOURCE_RS232_2 	= 12;		// 数据源使用串口协议2。EC_DOD协议，用逗号等分隔符分开各计数器的内容。每个计数器的接收位数大于计数器的预设位数时剪切
+	public static final int DATA_SOURCE_RS232_3 	= 13;		// 数据源使用串口协议3。平文直接填充第一个计数器。超出计数器位数部分剪切
+	public static final int DATA_SOURCE_RS232_4 	= 14;		// 数据源使用串口协议4。XK3190协议
 // H.M.Wang 2020-6-9 追加串口6协议
-	public static final int DATA_SOURCE_RS232_6 	= 14;		// 数据源使用串口协议6。接收19位字符串，第8, 9, 10, 11, 13, 14分别设置给DT0-DT5
+	public static final int DATA_SOURCE_RS232_6 	= 15;		// 数据源使用串口协议6。接收19位字符串，第8, 9, 10, 11, 13, 14分别设置给DT0-DT5
 // End of H.M.Wang 2020-6-9 追加串口6协议
 // H.M.Wang 2020-8-13 追加串口协议7
-	public static final int DATA_SOURCE_RS232_7 	= 15;		// 数据源使用串口协议7。与串口协议1一致，仅校验位奇偶校验
+	public static final int DATA_SOURCE_RS232_7 	= 16;		// 数据源使用串口协议7。与串口协议1一致，仅校验位奇偶校验
 // End of H.M.Wang 2020-8-13 追加串口协议7
 // End of H.M.Wang 11-13 调整各项目的排列顺序，使得相同接近的数据源排在一起。同时调整arrays.xml的数据源排列顺序
 // H.M.Wang 2021-3-6 追加串口协议8
-	public static final int DATA_SOURCE_RS232_8 	= 16;		// 数据源使用串口协议8。
+	public static final int DATA_SOURCE_RS232_8 	= 17;		// 数据源使用串口协议8。
 // End of H.M.Wang 2021-3-6 追加串口协议8
 
 // H.M.Wang 2021-3-6 追加串口协议8
@@ -209,6 +217,22 @@ public class SystemConfigFile{
 	public static final int INDEX_COUNT_10 = 53;
 
     public static final int INDEX_QRCODE_LAST = 54;
+
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+	private String[] mDTBuffer = new String[] {
+		"#####", "#####", "#####", "#####", "#####", "#####", "#####", "#####", "#####", "#####"
+	};
+
+	public String getDTBuffer(int index) {
+		if(index < 0 || index > 9) return "";
+		return mDTBuffer[index];
+	}
+
+	public void setDTBuffer(int index, String dtStr) {
+		if(index < 0 || index > 9) return;
+		mDTBuffer[index] = dtStr;
+	}
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 
 // H.M.Wang 2020-12-28 追加FIFO打印缓冲区数量设置
 	public static final int INDEX_FIFO_SIZE = 55;

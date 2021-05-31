@@ -69,7 +69,7 @@ public class DynamicText extends BaseObject {
         String setString = getValidString(cnt);
         if(mContent.equals(setString)) return;
         super.setContent(setString);
-        Debug.d(TAG, "setContent: [" + cnt + "] -> [" + mContent + "]");
+        Debug.d(TAG, "setContent: [" + cnt + "] -> [" + mContent + "] at " + mDtIndex);
 //        在measureText之前，必须setTypeface和setTextSize，否则可能不准确，由于原来代码当中，在draw函数里面重新测量宽度，这里如果设置宽度，由于如果上述两个设置内容有变，或者设置不全，会带来不良结果。因此这里取消设置，
 //        mPaint.setTextSize(getfeed());
 //        setWidth(mPaint.measureText(getMeatureString()));
@@ -292,7 +292,7 @@ public class DynamicText extends BaseObject {
             singleW = singleW / msgObj.getPNozzle().getFactorScale();
         }
 
-        Debug.d(TAG, "--->singleW=" + singleW);
+        Debug.d(TAG, "--->mWidth=" + mWidth + " ;scaleW=" + scaleW + " ;mContent.length()=" + mContent.length());
 
 		/* 最終生成v.bin使用的bitmap */
         Bitmap gBmp = Bitmap.createBitmap(singleW*128, dstH, Configs.BITMAP_CONFIG);

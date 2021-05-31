@@ -323,7 +323,7 @@
 	<string name="str_invalid_ink">--</string>
 	<string name="str_state_battery">电量:%1$d</string>
 	<string name="str_hint_preview">信息预览</string>
-	<string name="str_print_count">计数: %1$d</string>
+	<string name="str_print_count">计数: </string>
 	<string name="str_print_count_default">0</string>
 	<string name="str_print_printing">打印任务运行中...</string>
 	<string name="str_print_startok">打印任务已启动...</string>

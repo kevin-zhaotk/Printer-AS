@@ -375,7 +375,10 @@ public class TLKFileParser  extends TlkFile{
 				obj = new DynamicText(mContext, 0);
 				((DynamicText) obj).setDtIndex(Integer.parseInt(attr[16]));
 				((DynamicText) obj).setBits(Integer.parseInt(attr[8]));
-				obj.setContent(new String(attr[21].getBytes(), "UTF-8"));
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+//				obj.setContent(new String(attr[21].getBytes(), "UTF-8"));
+				((DynamicText) obj).setContent(SystemConfigFile.getInstance().getDTBuffer(((DynamicText) obj).getDtIndex()));
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 			} else {
 				Debug.d(TAG, "Unknown object type: " + attr[1]);
 				return null;
