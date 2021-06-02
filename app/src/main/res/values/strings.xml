@@ -522,8 +522,10 @@
 	<string name="str_net_tips">Hint</string>
 	<string name="str_net_textview">TextView</string>
 	<string name="str_net_ipdefault">192.168.1.101</string>
-	
-	
+
+	<string name="str_quit">Quit</string>
+	<string name="str_quit_confirm">Confirm to quit</string>
+
 	<string name="str_tip_nothing">~ There is no picture !!!</string>
 	<string name="str_no_permission">Permission denied for access the files</string>
 	
@@ -550,6 +552,7 @@
 	<string name="toast_content_empty">Content shouldn`t be empty</string>
 	<string name="toast_rfid_changed">Rfid changed</string>
 
+	<string name="tips_import">Import</string>
 	<string name="tips_import_message">Importing messages</string>
 	<string name="tips_import_resource">Importing resources</string>
 	<string name="tips_import_sysconf">Importing System configs</string>

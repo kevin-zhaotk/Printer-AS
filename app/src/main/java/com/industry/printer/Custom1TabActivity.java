@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.industry.printer.Constants.Constants;
@@ -45,14 +46,16 @@ import com.industry.printer.ui.CustomerDialog.MessageBrowserDialog;
 import com.industry.printer.ui.CustomerDialog.PictureBrowseDialog;
 import com.industry.printer.ui.Items.PictureItem;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 /**
  * Created by hmwan on 2021/5/14.
  */
 
-public class CustomTabActivity extends Fragment {
-    private static final String TAG = CustomTabActivity.class.getSimpleName();
+public class Custom1TabActivity extends Fragment {
+    private static final String TAG = Custom1TabActivity.class.getSimpleName();
 
     private Context mContext;
 
@@ -118,7 +121,10 @@ public class CustomTabActivity extends Fragment {
 
                     break;
                 case MSG_PRINTER_LAUNCHED:
-                    mPreView.setImageBitmap(mDataTransferThread.getCurData().getBgPreview());
+//                    mPreView.setImageBitmap(mDataTransferThread.getCurData().getBgPreview());
+                    Bitmap bmp = BitmapFactory.decodeFile(mMsgTask.getPreview());
+                    bmp = getProperSizeBmp(bmp);
+                    mPreView.setImageBitmap(bmp);
                     mProcBar.setVisibility(View.GONE);
                     mPreView.setVisibility(View.VISIBLE);
                     break;
@@ -134,7 +140,7 @@ public class CustomTabActivity extends Fragment {
         }
     };
 
-    public CustomTabActivity() {
+    public Custom1TabActivity() {
     }
 
     @Override
@@ -145,13 +151,14 @@ public class CustomTabActivity extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        return inflater.inflate(R.layout.custom_frame, container, false);
+        return inflater.inflate(R.layout.custom1_frame, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mPrintedCount = 0;
         mContext = this.getActivity();
         mDataTransferThread = DataTransferThread.getInstance(mContext);
 
@@ -170,7 +177,7 @@ public class CustomTabActivity extends Fragment {
                 mTxtAdapter.saveObjs();
                 mMsgTask.save(mHandler);
 
-                View popupView = LayoutInflater.from(mContext).inflate(R.layout.custom_preview, null);
+                View popupView = LayoutInflater.from(mContext).inflate(R.layout.custom1_preview, null);
 
                 mPopupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
                 mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#fffefefe")));
@@ -362,13 +369,37 @@ public class CustomTabActivity extends Fragment {
         super.onDestroy();
     }
 
+    private Bitmap getProperSizeBmp(Bitmap src) {
+        if (src != null) {
+            int width = src.getWidth();
+            int height = src.getHeight();
+            if (width > 4096 || height > 4096) {
+                int inSampleSize;
+                int heightRatio = Math.round((float) height / (float) 4096);
+                int widthRatio = Math.round((float) width / (float) 4096);
+                inSampleSize = heightRatio < widthRatio ? widthRatio : heightRatio;
+                if (inSampleSize == 1) {
+                    inSampleSize = 2;
+                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                src.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = inSampleSize;
+                options.inJustDecodeBounds = false;
+                src = BitmapFactory.decodeStream(isBm, null, options);
+            }
+        }
+        return src;
+    }
+
     public void refreshView() {
         mPicAdapter.createObjs();
         mTxtAdapter.createObjs();
-        mPrintedCount = 0;
     }
 
     public void setObjPath(String path) {
+        Debug.d(TAG, "path = " + path);
         if(null == path) return;
         mObjPath = path;
         mMsgTask = new MessageTask(mContext, mObjPath);
@@ -434,7 +465,7 @@ public class CustomTabActivity extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.custom_frame_pic_list_item, null);
+                convertView = mInflater.inflate(R.layout.custom1_frame_pic_list_item, null);
             }
 
             ImageView picIV = (ImageView)convertView.findViewById(R.id.pic_item);
@@ -502,7 +533,7 @@ public class CustomTabActivity extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.custom_frame_txt_list_item, null);
+                convertView = mInflater.inflate(R.layout.custom1_frame_txt_list_item, null);
                 final EditText txtET = (EditText)convertView.findViewById(R.id.text_item);
                 txtET.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -519,7 +550,7 @@ public class CustomTabActivity extends Fragment {
                     public void afterTextChanged(Editable s) {
                         int pos = (Integer)txtET.getTag();
                         mObjCnts.get(pos).mContent = s.toString();
-                        Debug.d(TAG, mObjCnts.get(pos).mContent);
+//                        Debug.d(TAG, mObjCnts.get(pos).mContent);
                     }
                 });
             }

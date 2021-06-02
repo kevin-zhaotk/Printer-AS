@@ -1621,9 +1621,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	}
 
 	private void dispPreview(final Bitmap bmp) {
-		int x=0,y=0;
-		int cutWidth = 0;
-		float scale = 1;
+// H.M.Wang 2021-6-1 修改预览页面显示方法。保修切割图片，延迟显示方法
+//		int x=0,y=0;
+//		int cutWidth = 0;
+//		float scale = 1;
 		if (bmp == null) {
 			Debug.e(TAG, "--->dispPreview error: bmp is NULL!!!");
 			return;
@@ -1633,56 +1634,65 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //		DisplayMetrics dm = new DisplayMetrics();
 //		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 //		Debug.d(TAG, "--->screen width: " + dm.widthPixels + " height: " + dm.heightPixels + "  dpi= " + dm.densityDpi);
-		float height = mllPreview.getHeight();
-		scale = (height/bmp.getHeight());
-		mllPreview.removeAllViews();
+
+//		float height = mllPreview.getHeight();
+//		scale = (height/bmp.getHeight());
+//		mllPreview.removeAllViews();
 
 // H.M.Wang 2021-5-21 修改预览页面显示方法
 		mllPreview.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				ImageView imgView = new ImageView(mContext);
-				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)(1.0f * bmp.getWidth()/bmp.getHeight() * mllPreview.getHeight()), mllPreview.getHeight());
-				params.gravity = Gravity.LEFT;
-				imgView.setLayoutParams(params);
-				imgView.setScaleType(ScaleType.FIT_XY);
-				imgView.setBackgroundColor(Color.WHITE);
-				imgView.setImageBitmap(bmp);
-				mllPreview.addView(imgView);
-			}
-		}, 10);
+				int x=0,y=0;
+				int cutWidth = 0;
+				float scale = 1;
+				float height = mllPreview.getHeight();
+				scale = (height/bmp.getHeight());
+				mllPreview.removeAllViews();
 
-/*
-			for (int i = 0;x < bmp.getWidth(); i++) {
-				if (x + 1200 > bmp.getWidth()) {
-					cutWidth = bmp.getWidth() - x;
-				} else {
-					cutWidth =1200;
-				}
-				Bitmap child = Bitmap.createBitmap(bmp, x, 0, cutWidth, bmp.getHeight());
-				if (cutWidth * scale < 1 || bmp.getHeight() * scale < 1) {
-					child.recycle();
-					break;
-				}
-				Debug.d(TAG, "-->child: " + child.getWidth() + "  " + child.getHeight() + "   view h: " + mllPreview.getHeight());
-				Bitmap scaledChild = Bitmap.createScaledBitmap(child, (int) (cutWidth*scale), (int) (bmp.getHeight() * scale), true);
-				//child.recycle();
-				//Debug.d(TAG, "--->scaledChild  width = " + child.getWidth() + " scale= " + scale);
-				x += cutWidth; 
-				ImageView imgView = new ImageView(mContext);
-				imgView.setScaleType(ScaleType.FIT_XY);
+//				ImageView imgView = new ImageView(mContext);
+//				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)(1.0f * bmp.getWidth()/bmp.getHeight() * mllPreview.getHeight()), mllPreview.getHeight());
+//				params.gravity = Gravity.LEFT;
+//				imgView.setLayoutParams(params);
+//				imgView.setScaleType(ScaleType.FIT_XY);
+//				imgView.setBackgroundColor(Color.WHITE);
+//				imgView.setImageBitmap(bmp);
+//				mllPreview.addView(imgView);
+
+
+				for (int i = 0;x < bmp.getWidth(); i++) {
+					if (x + 1200 > bmp.getWidth()) {
+						cutWidth = bmp.getWidth() - x;
+					} else {
+						cutWidth =1200;
+					}
+					Bitmap child = Bitmap.createBitmap(bmp, x, 0, cutWidth, bmp.getHeight());
+					if (cutWidth * scale < 1 || bmp.getHeight() * scale < 1) {
+						child.recycle();
+						break;
+					}
+					Debug.d(TAG, "-->child: " + child.getWidth() + "  " + child.getHeight() + "   view h: " + mllPreview.getHeight());
+					Bitmap scaledChild = Bitmap.createScaledBitmap(child, (int) (cutWidth*scale), (int) (bmp.getHeight() * scale), true);
+					//child.recycle();
+					//Debug.d(TAG, "--->scaledChild  width = " + child.getWidth() + " scale= " + scale);
+					x += cutWidth;
+					ImageView imgView = new ImageView(mContext);
+					imgView.setScaleType(ScaleType.FIT_XY);
 //				if (density == 1) {
 					imgView.setLayoutParams(new LayoutParams(scaledChild.getWidth(),scaledChild.getHeight()));
 //				} else {
 //					imgView.setLayoutParams(new LayoutParams(cutWidth,LayoutParams.MATCH_PARENT));
 //				}
-				
-				imgView.setBackgroundColor(Color.WHITE);
-				imgView.setImageBitmap(scaledChild);
-				mllPreview.addView(imgView);
-				// scaledChild.recycle();
-			}*/
+
+					imgView.setBackgroundColor(Color.WHITE);
+					imgView.setImageBitmap(scaledChild);
+					mllPreview.addView(imgView);
+					// scaledChild.recycle();
+				}
+			}
+		}, 10);
 // End of H.M.Wang 2021-5-21 修改预览页面显示方法
+// End of H.M.Wang 2021-6-1 修改预览页面显示方法。保修切割图片，延迟显示方法
 	}
 	
 	private int mRfiAlarmTimes = 0;

@@ -531,5 +531,9 @@
 	<string name="str_print_thread_create_err">任务创建失败</string>
 	<string name="str_tlk_not_found">1.TLK缺失</string>
 
+	<string name="str_quit">退出</string>
+	<string name="str_quit_confirm">确定要退出吗？</string>
+	<string name="tips_import">导入</string>
+
 	<string name="printDpiNotMatchError">打印分辨率不匹配，请重新保存信息后，再次尝试打印</string>
 </resources>

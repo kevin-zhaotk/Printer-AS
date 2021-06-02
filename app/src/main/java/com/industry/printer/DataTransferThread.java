@@ -198,7 +198,7 @@ public class DataTransferThread {
 	
 	boolean needRestore = false;
 // H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
-	boolean isPurging = false;
+	public boolean isPurging = false;
 // End of H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
 
 	public void purge(final Context context) {

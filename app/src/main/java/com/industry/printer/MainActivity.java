@@ -19,10 +19,13 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
@@ -105,7 +108,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public EditMultiTabActivity mEditFullTab;
 	public EditTabSmallActivity mEditSmallTab;
 	public SettingsTabActivity	mSettingsTab;
-	public CustomTabActivity	mCustomTab;
+	public Custom1TabActivity   mCustomTab1;
+	public Custom2TabActivity   mCustomTab2;
 	public RelativeLayout 		mCustomExtra;
 
 	public RelativeLayout mCtrlExtra;
@@ -121,7 +125,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public TextView mVersion;
 	private TextView mVerTitle;
 	private ImageButton mCopy;
-	
+
+	public TextView		mQuitBtn;
+
 	private RelativeLayout mPgBack;
 	private RelativeLayout mPgFore;
 
@@ -197,8 +203,14 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mRadioCustom.setOnCheckedChangeListener(this);
 		mRadioCustom.setOnTouchListener(this);
 // H.M.Wang 2021-5-21 追加用户特色页面显示开关标识
-		if(Configs.USER_MODE == Configs.USER_MODE_NONE) {
-			mRadioCustom.setVisibility(View.GONE);
+		if(Configs.USER_MODE != Configs.USER_MODE_NONE) {
+			mRadioCustom.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					mRadioCtl.setChecked(false);
+					mRadioCustom.setChecked(true);
+				}
+			}, 500);
 		}
 // End of H.M.Wang 2021-5-21 追加用户特色页面显示开关标识
 
@@ -373,7 +385,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mEditSmallTab = new EditTabSmallActivity();
 		mEditFullTab = new EditMultiTabActivity();
 		mSettingsTab = new SettingsTabActivity();
-		mCustomTab = new CustomTabActivity();
+		if(Configs.USER_MODE == Configs.USER_MODE_1) {
+			mCustomTab1 = new Custom1TabActivity();
+		}
+		if(Configs.USER_MODE == Configs.USER_MODE_2) {
+			mCustomTab2 = new Custom2TabActivity();
+		}
 
 		mControlTab.setCallback(mHander);
 		
@@ -394,6 +411,34 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mDispTime = (TextView) findViewById(R.id.disp_time);
 // End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
 
+		mQuitBtn = (TextView) findViewById(R.id.quitBtn);
+		mQuitBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(Configs.USER_MODE == Configs.USER_MODE_1 || Configs.USER_MODE == Configs.USER_MODE_2) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+					builder.setTitle(R.string.str_quit)
+							.setMessage(R.string.str_quit_confirm)
+							.setPositiveButton(R.string.str_ok, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									dialog.dismiss();
+									mRadioCustom.setChecked(false);
+									mRadioCtl.setChecked(true);
+								}
+							})
+							.setNegativeButton(R.string.str_btn_cancel, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									dialog.dismiss();
+								}
+							})
+							.create()
+							.show();
+				}
+			}
+		});
+
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 //		transaction.replace(R.id.tab_content, mControlTab);
 //		transaction.commit();
@@ -406,8 +451,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			transaction.add(R.id.tab_content, mEditTab);
 		}
 		transaction.add(R.id.tab_content, mSettingsTab);
-		transaction.add(R.id.tab_content, mCustomTab);
-
+		if(Configs.USER_MODE == Configs.USER_MODE_1) {
+			transaction.add(R.id.tab_content, mCustomTab1);
+		}
+		if(Configs.USER_MODE == Configs.USER_MODE_2) {
+			transaction.add(R.id.tab_content, mCustomTab2);
+		}
 		Debug.d(TAG, "===>transaction");
 		// transaction.add(R.id.tv_counter_msg, mCtrlTitle);
 		// transaction.add(R.id.tv_counter_msg, mEditTitle);
@@ -421,7 +470,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			transaction.hide(mEditTab);
 		}
 		transaction.hide(mSettingsTab);
-		transaction.hide(mCustomTab);
+		if(Configs.USER_MODE == Configs.USER_MODE_1) {
+			transaction.hide(mCustomTab1);
+		}
+		if(Configs.USER_MODE == Configs.USER_MODE_2) {
+			transaction.hide(mCustomTab2);
+		}
 		transaction.show(mControlTab);
 		Debug.d(TAG, "===>show");
 
@@ -520,23 +574,31 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 
 				if (arg1 == true) {
 					Debug.d(TAG, "--->show CustomTab");
-					mCustomTab.setObjPath(mControlTab.mObjPath);
-					mCustomTab.setCtrlHandler(mControlTab.mHandler);
-					mCustomTab.refreshView();
-					fts.show(mCustomTab);
+					if(Configs.USER_MODE == Configs.USER_MODE_1) {
+						mCustomTab1.setObjPath(mControlTab.mObjPath);
+						mCustomTab1.setCtrlHandler(mControlTab.mHandler);
+						mCustomTab1.refreshView();
+						fts.show(mCustomTab1);
+					}
+					if(Configs.USER_MODE == Configs.USER_MODE_2) {
+						mCustomTab2.setObjPath(mControlTab.mObjPath);
+						mCustomTab2.setCtrlHandler(mControlTab.mHandler);
+						mCustomTab2.refreshView();
+						fts.show(mCustomTab2);
+					}
 					Debug.d(TAG, "--->show CustomTab ok");
 					mCustomExtra.setVisibility(View.VISIBLE);
+					mTabGroup.setVisibility(View.INVISIBLE);
 					Debug.d(TAG, "--->show CustomExtra visible");
-					// mSettingTitle.setVisibility(View.VISIBLE);
-					// mVersion.setVisibility(View.VISIBLE);
-//					mHander.sendEmptyMessage(REFRESH_TIME_DISPLAY);
-
 				} else {
-					fts.hide(mCustomTab);
+					if(Configs.USER_MODE == Configs.USER_MODE_1) {
+						fts.hide(mCustomTab1);
+					}
+					if(Configs.USER_MODE == Configs.USER_MODE_2) {
+						fts.hide(mCustomTab2);
+					}
 					mCustomExtra.setVisibility(View.GONE);
-					//mSettingTitle.setVisibility(View.GONE);
-					//mVersion.setVisibility(View.GONE);
-//					mHander.removeMessages(REFRESH_TIME_DISPLAY);
+					mTabGroup.setVisibility(View.VISIBLE);
 				}
 				break;
 		}
@@ -660,7 +722,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		fts.remove(mSettingsTab);
 		fts.remove(mEditSmallTab);
 		fts.remove(mEditFullTab);
-		fts.remove(mCustomTab);
+		if(Configs.USER_MODE == Configs.USER_MODE_1) {
+			fts.remove(mCustomTab1);
+		}
+		if(Configs.USER_MODE == Configs.USER_MODE_2) {
+			fts.remove(mCustomTab2);
+		}
 		FpgaGpioOperation.close();
 	}
 

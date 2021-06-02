@@ -509,4 +509,7 @@
 	<string name="str_tlk_opening">解析TLK中...</string>
 	<string name="str_print_thread_create_err">任務創建失敗</string>
 	<string name="str_tlk_not_found">1.TLK缺失</string>
+	<string name="str_quit">退出</string>
+	<string name="str_quit_confirm">確定要退出嗎？</string>
+	<string name="tips_import">導入</string>
 </resources>

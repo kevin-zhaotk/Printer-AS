@@ -350,7 +350,7 @@
         >
 		<LinearLayout
 		    android:id="@+id/ll_preview"
-		    android:layout_width="wrap_content"
+		    android:layout_width="match_parent"
 		    android:layout_height="@dimen/control_preview_height"
 		    android:orientation="horizontal"
 		    android:background="#ffffff"
