@@ -75,9 +75,9 @@ public class MessageForPc {
 	/**
 	 * 保存打印信息，生成tlk和bin文件
 	 */
-	public void save() {
-		mTask.save(null);
-	}
+//	public void save() {
+//		mTask.save(null);
+//	}
 	
 	public void reCreate(Context context, Handler handler, String message) {
 		mTask.createTaskFolderIfNeed();

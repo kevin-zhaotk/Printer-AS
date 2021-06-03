@@ -9,6 +9,7 @@
         android:id="@+id/ctrl_btn_layout"
         android:layout_width="match_parent"
         android:layout_height="150dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal" >
         <RelativeLayout
             android:layout_width="0dp"

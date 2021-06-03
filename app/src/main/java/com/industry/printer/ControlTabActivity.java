@@ -53,10 +53,12 @@ import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 
+import com.industry.printer.Utils.FileUtil;
 import com.industry.printer.Utils.KZFileObserver;
 import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.Utils.PreferenceConstants;
 import com.industry.printer.Utils.PrinterDBHelper;
+import com.industry.printer.Utils.StringUtil;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.data.BinFromBitmap;
 import com.industry.printer.data.DataTask;
@@ -76,6 +78,7 @@ import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
 import com.industry.printer.object.BarcodeObject;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
+import com.industry.printer.object.TextObject;
 import com.industry.printer.object.TlkObject;
 import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
 import com.industry.printer.ui.CustomerDialog.DialogListener;
@@ -118,6 +121,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -213,7 +217,15 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	public TextView mTime;
 
 	private ImageButton mMsgNext;
-	private  ImageButton mMsgPrev;
+	private ImageButton mMsgPrev;
+
+	private TextView mImportBtn;
+	private EditText mCntET;
+	private TextView mOKBtn;
+	private LinearLayout mEditArea;
+	private LoadingDialog mProgressDialog;
+	private MessageTask mEditTask;
+	private TextObject mEditObject;
 
 // H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息移至ControlTab
 	public TextView mCtrlTitle;
@@ -314,6 +326,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	public static final int MESSAGE_OPEN_PREVIEW = 21;
 
+	private static final int MSG_IMPORT_DONE = 22;
+
 	/**
 	 * the bitmap for preview
 	 */
@@ -392,6 +406,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		//requestWindowFeature(Window.FEATURE_NO_TITLE);
+		if(Configs.USER_MODE == Configs.USER_MODE_2) {
+			return inflater.inflate(R.layout.control2_frame, container, false);
+		}
 		return inflater.inflate(R.layout.control_frame, container, false);
 	}
 	@Override
@@ -446,6 +463,56 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		mBtnOpenfile.setOnClickListener(this);
 		mBtnOpenfile.setOnTouchListener(this);
 		mTvOpen = (TextView) getView().findViewById(R.id.tv_binfile);
+
+		if(Configs.USER_MODE == Configs.USER_MODE_2) {
+			mImportBtn = (TextView) getView().findViewById(R.id.tv_import);
+			mImportBtn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					final ArrayList<String> usbs = ConfigPath.getMountedUsb();
+					if (usbs.size() <= 0) {
+						ToastUtil.show(mContext, R.string.toast_plug_usb);
+						return;
+					}
+					mProgressDialog = LoadingDialog.show(mContext, R.string.strCopying);
+
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								FileUtil.copyDirectiory(usbs.get(0) + Configs.SYSTEM_CONFIG_MSG_PATH, Configs.TLK_PATH_FLASH);
+							} catch(IOException e) {
+								ToastUtil.show(mContext, R.string.toast_plug_usb);
+							} finally {
+								mHandler.sendEmptyMessage(MSG_IMPORT_DONE);
+							}
+						}
+					}).start();
+
+				}
+			});
+
+			mEditArea = (LinearLayout) getView().findViewById(R.id.edit_area);
+			mCntET = (EditText) getView().findViewById(R.id.text_item);
+
+			mOKBtn = (TextView) getView().findViewById(R.id.btn_ok);
+			mOKBtn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mEditObject.setContent(mCntET.getText().toString());
+					mEditTask.save(new MessageTask.SaveProgressListener() {
+						@Override
+						public void onSaved() {
+							Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
+							Bundle bundle = new Bundle();
+							bundle.putString("file", mObjPath);
+							msg.setData(bundle);
+							mHandler.sendMessage(msg);
+						}
+					});
+				}
+			});
+		}
 
 		mMsgPrev = (ImageButton) getView().findViewById(R.id.ctrl_btn_up);
 		mMsgNext = (ImageButton) getView().findViewById(R.id.ctrl_btn_down);
@@ -1009,6 +1076,21 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						message.setData(bundle);
 						message.sendToTarget();
 					}
+
+					if(Configs.USER_MODE == Configs.USER_MODE_2) {
+						if (mObjPath.startsWith("G-")) {
+							mEditArea.setVisibility(View.GONE);
+						} else {
+							mEditTask = new MessageTask(mContext, mObjPath);
+							for(BaseObject obj : mEditTask.getObjects()) {
+								if(obj instanceof TextObject) {
+									mEditObject = (TextObject)obj;
+									mCntET.setText(mEditObject.getContent());
+									break;
+								}
+							}
+						}
+					}
 					break;
 
 				case MESSAGE_OPEN_TLKFILE:		//
@@ -1519,6 +1601,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						mHandler.sendEmptyMessageDelayed(MESSAGE_PRINT_START, 2000);
 						preference.edit().putBoolean("stat_before_crash", false).commit();
 					}
+					break;
+				case MSG_IMPORT_DONE:
+					mProgressDialog.dismiss();
 					break;
 				default:
 					break;

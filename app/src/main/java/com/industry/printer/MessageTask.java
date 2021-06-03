@@ -79,7 +79,12 @@ public class MessageTask {
 	
 	private SaveTask mSaveTask;
 	private Handler mCallback; 
-	
+
+	public interface SaveProgressListener {
+		public void onSaved();
+	};
+	private SaveProgressListener mSaveProgressListener;
+
 	public MessageTask(Context context) {
 		mName="";
 		mContext = context;
@@ -1085,6 +1090,10 @@ public class MessageTask {
 		}
 	}
 
+	public void save(SaveProgressListener l) {
+		mSaveProgressListener = l;
+		save(null, null);
+	}
 
 	public void save(Handler handler) {
 		save(handler, null);
@@ -1258,6 +1267,10 @@ public class MessageTask {
 			if (mCallback != null) {
 				mCallback.sendMessage(msg);
 				mSaveTask = null;
+			}
+
+			if(null != mSaveProgressListener) {
+				mSaveProgressListener.onSaved();
 			}
 		}
 	}

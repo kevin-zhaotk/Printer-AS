@@ -373,6 +373,7 @@
 		android:layout_toRightOf="@id/tab_group"
 		android:layout_alignParentTop="true"
 		>
+<!--
 		<TextView
 			android:id="@+id/quitBtn"
 			android:layout_width="wrap_content"
@@ -384,11 +385,12 @@
 			android:gravity="center"
 			android:text="@string/str_quit"
 			android:textSize="25sp" />
+-->
 		<LinearLayout
 			android:id="@+id/time_disp_areac"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_toLeftOf="@id/quitBtn"
+			android:layout_alignParentRight="true"
 			android:orientation="vertical">
 			<TextView
 				android:id="@+id/disp_datec"

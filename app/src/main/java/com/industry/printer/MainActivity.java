@@ -109,7 +109,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public EditTabSmallActivity mEditSmallTab;
 	public SettingsTabActivity	mSettingsTab;
 	public Custom1TabActivity   mCustomTab1;
-	public Custom2TabActivity   mCustomTab2;
+//	public Custom2TabActivity   mCustomTab2;
 	public RelativeLayout 		mCustomExtra;
 
 	public RelativeLayout mCtrlExtra;
@@ -126,7 +126,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	private TextView mVerTitle;
 	private ImageButton mCopy;
 
-	public TextView		mQuitBtn;
+//	public TextView		mQuitBtn;
 
 	private RelativeLayout mPgBack;
 	private RelativeLayout mPgFore;
@@ -203,7 +203,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mRadioCustom.setOnCheckedChangeListener(this);
 		mRadioCustom.setOnTouchListener(this);
 // H.M.Wang 2021-5-21 追加用户特色页面显示开关标识
-		if(Configs.USER_MODE != Configs.USER_MODE_NONE) {
+		if(Configs.USER_MODE == Configs.USER_MODE_1) {
+			mRadioCustom.setVisibility(View.VISIBLE);
 			mRadioCustom.postDelayed(new Runnable() {
 				@Override
 				public void run() {
@@ -388,10 +389,11 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		if(Configs.USER_MODE == Configs.USER_MODE_1) {
 			mCustomTab1 = new Custom1TabActivity();
 		}
+/*
 		if(Configs.USER_MODE == Configs.USER_MODE_2) {
 			mCustomTab2 = new Custom2TabActivity();
 		}
-
+*/
 		mControlTab.setCallback(mHander);
 		
 		mPgBack = (RelativeLayout) findViewById(R.id.btn_page_backward);
@@ -411,6 +413,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mDispTime = (TextView) findViewById(R.id.disp_time);
 // End of H.M.Wang 2020-8-11 将原来显示在画面头部的墨量和减锁信息更改为显示时间
 
+/*
 		mQuitBtn = (TextView) findViewById(R.id.quitBtn);
 		mQuitBtn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -438,7 +441,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				}
 			}
 		});
-
+*/
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 //		transaction.replace(R.id.tab_content, mControlTab);
 //		transaction.commit();
@@ -454,9 +457,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		if(Configs.USER_MODE == Configs.USER_MODE_1) {
 			transaction.add(R.id.tab_content, mCustomTab1);
 		}
-		if(Configs.USER_MODE == Configs.USER_MODE_2) {
+/*		if(Configs.USER_MODE == Configs.USER_MODE_2) {
 			transaction.add(R.id.tab_content, mCustomTab2);
-		}
+		}*/
 		Debug.d(TAG, "===>transaction");
 		// transaction.add(R.id.tv_counter_msg, mCtrlTitle);
 		// transaction.add(R.id.tv_counter_msg, mEditTitle);
@@ -473,9 +476,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		if(Configs.USER_MODE == Configs.USER_MODE_1) {
 			transaction.hide(mCustomTab1);
 		}
-		if(Configs.USER_MODE == Configs.USER_MODE_2) {
+/*		if(Configs.USER_MODE == Configs.USER_MODE_2) {
 			transaction.hide(mCustomTab2);
-		}
+		}*/
 		transaction.show(mControlTab);
 		Debug.d(TAG, "===>show");
 
@@ -580,25 +583,23 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 						mCustomTab1.refreshView();
 						fts.show(mCustomTab1);
 					}
-					if(Configs.USER_MODE == Configs.USER_MODE_2) {
+/*					if(Configs.USER_MODE == Configs.USER_MODE_2) {
 						mCustomTab2.setObjPath(mControlTab.mObjPath);
 						mCustomTab2.setCtrlHandler(mControlTab.mHandler);
 						mCustomTab2.refreshView();
 						fts.show(mCustomTab2);
-					}
+					}*/
 					Debug.d(TAG, "--->show CustomTab ok");
 					mCustomExtra.setVisibility(View.VISIBLE);
-					mTabGroup.setVisibility(View.INVISIBLE);
 					Debug.d(TAG, "--->show CustomExtra visible");
 				} else {
 					if(Configs.USER_MODE == Configs.USER_MODE_1) {
 						fts.hide(mCustomTab1);
 					}
-					if(Configs.USER_MODE == Configs.USER_MODE_2) {
+/*					if(Configs.USER_MODE == Configs.USER_MODE_2) {
 						fts.hide(mCustomTab2);
-					}
+					}*/
 					mCustomExtra.setVisibility(View.GONE);
-					mTabGroup.setVisibility(View.VISIBLE);
 				}
 				break;
 		}
@@ -725,9 +726,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		if(Configs.USER_MODE == Configs.USER_MODE_1) {
 			fts.remove(mCustomTab1);
 		}
-		if(Configs.USER_MODE == Configs.USER_MODE_2) {
+/*		if(Configs.USER_MODE == Configs.USER_MODE_2) {
 			fts.remove(mCustomTab2);
-		}
+		}*/
 		FpgaGpioOperation.close();
 	}
 
