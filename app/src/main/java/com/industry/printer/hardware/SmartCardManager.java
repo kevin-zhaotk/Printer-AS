@@ -28,8 +28,8 @@ public class SmartCardManager implements IInkDevice {
     private static boolean SUM_CHECK = false;
 
     private final static int PEN_VS_BAG_RATIO           = 3;
-    private final static int MAX_BAG_INK_VOLUME         = 3150;
-    private final static int MAX_PEN_INK_VOLUME         = MAX_BAG_INK_VOLUME * PEN_VS_BAG_RATIO;
+    private static int MAX_BAG_INK_VOLUME         = 3150;
+    private static int MAX_PEN_INK_VOLUME         = MAX_BAG_INK_VOLUME * PEN_VS_BAG_RATIO;
 
     private final static int CARD_TYPE_PEN1             = 11;
     private final static int CARD_TYPE_PEN2             = 12;
@@ -207,6 +207,12 @@ public class SmartCardManager implements IInkDevice {
                             if(SmartCard.SC_SUCCESS == SmartCard.initComponent(mCards[i].mCardType)) {
                                 mCards[i].mInitialized = true;
                                 mCards[i].mValid = true;
+                                MAX_BAG_INK_VOLUME = SmartCard.getMaxVolume(mCards[i].mCardType);
+                                if(mCards[i].mCardType == CARD_TYPE_PEN1 || mCards[i].mCardType == CARD_TYPE_PEN2 || mCards[i].mCardType == CARD_TYPE_BULKX) {
+                                    mCards[i].mMaxVolume = MAX_BAG_INK_VOLUME * PEN_VS_BAG_RATIO;
+                                } else {
+                                    mCards[i].mMaxVolume = MAX_BAG_INK_VOLUME;
+                                }
                                 checkOIB(i);
                                 getLocalInk(i);
                             } else {

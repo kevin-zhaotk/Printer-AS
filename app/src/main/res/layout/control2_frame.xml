@@ -39,7 +39,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="@color/ctrl_btn_print_selector"
-                android:text="@string/str_btn_print"
+                android:text="@string/str_btn_launch"
                 android:background="@drawable/custom2_btn_bg"
                 />
         </RelativeLayout>
@@ -77,7 +77,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="@color/ctrl_btn_print_selector"
-                android:text="@string/str_openfile"
+                android:text="@string/str_seldata"
                 android:background="@drawable/custom2_btn_bg"
                 />
         </RelativeLayout>
@@ -130,43 +130,32 @@
         android:layout_marginTop="10dp">
 
         <RelativeLayout
-            android:id="@+id/ink"
+            android:id="@+id/updownbtn"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             >
-            <TextView
-                android:id="@+id/tv_inkValue"
+
+            <ImageButton
+                android:id="@+id/ctrl_btn_up"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:text="@string/str_state_inklevel"
-                android:textSize="@dimen/ctrlButtonsTextsize"
-                android:textColor="#000000"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ctrl_up"
                 />
-            <TextView
-                android:id="@+id/ink_value"
+            <ImageButton
+                android:id="@+id/ctrl_btn_down"
                 android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_toRightOf="@id/tv_inkValue"
-                android:text="@string/str_invalid_ink"
-                android:textSize="@dimen/ctrlButtonsTextsize"
-                android:textColor="#000000"
-                />
-            <TextView
-                android:id="@+id/ink_value2"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_toRightOf="@id/ink_value"
-                android:text="@string/str_invalid_ink"
-                android:textSize="@dimen/ctrlButtonsTextsize"
-                android:textColor="#000000"
-                android:visibility="gone"
-                />
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/ctrl_btn_up"
+                android:src="@drawable/ctrl_down"
+                android:layout_marginLeft="10dp"/>
         </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/power"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_toRightOf="@id/ink"
+            android:layout_toRightOf="@id/updownbtn"
             android:layout_marginLeft="50dp"
             >
             <ImageView
@@ -198,25 +187,39 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/ink"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_toRightOf="@+id/power"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="50dp"
             >
-
-            <ImageButton
-                android:id="@+id/ctrl_btn_up"
+            <TextView
+                android:id="@+id/tv_inkValue"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ctrl_up"
+                android:layout_height="fill_parent"
+                android:text="@string/str_state_inklevel"
+                android:textSize="@dimen/ctrlButtonsTextsize"
+                android:textColor="#000000"
                 />
-            <ImageButton
-                android:id="@+id/ctrl_btn_down"
+            <TextView
+                android:id="@+id/ink_value"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/ctrl_btn_up"
-                android:src="@drawable/ctrl_down"
-                android:layout_marginLeft="10dp"/>
+                android:layout_height="fill_parent"
+                android:layout_toRightOf="@id/tv_inkValue"
+                android:text="@string/str_invalid_ink"
+                android:textSize="@dimen/ctrlButtonsTextsize"
+                android:textColor="#000000"
+                />
+            <TextView
+                android:id="@+id/ink_value2"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_toRightOf="@id/ink_value"
+                android:text="@string/str_invalid_ink"
+                android:textSize="@dimen/ctrlButtonsTextsize"
+                android:textColor="#000000"
+                android:visibility="gone"
+                />
         </RelativeLayout>
 
         <RelativeLayout

@@ -14,6 +14,7 @@
 	<string name="Settings">设置</string>
 	<string name="str_btn_start">开始</string>
 	<string name="str_btn_stop">停止</string>
+	<string name="str_btn_launch">启动</string>
 	<string name="str_btn_clean">清洗</string>
 <!-- H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
 	<string name="str_purge_confirm">点击OK开始清洗</string>
@@ -53,6 +54,7 @@
 	<string name="str_tlkfile">打开Tlk文件</string>
 	<string name="str_binfile">打开Bin文件</string>
 	<string name="str_openfile">选择文件</string>
+	<string name="str_seldata">选择数据</string>
 	<string name="str_mvforward">前移</string>
 	<string name="str_mvbackward">后移</string>
 	<string name="str_preview">预览</string>
@@ -533,7 +535,7 @@
 
 	<string name="str_quit">退出</string>
 	<string name="str_quit_confirm">确定要退出吗？</string>
-	<string name="tips_import">导入</string>
+	<string name="tips_import">导入数据</string>
 
 	<string name="printDpiNotMatchError">打印分辨率不匹配，请重新保存信息后，再次尝试打印</string>
 </resources>

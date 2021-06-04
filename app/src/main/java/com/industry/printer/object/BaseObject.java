@@ -1062,6 +1062,16 @@ public class BaseObject{
 		return mIsSelected;
 	}
 
+	public void setContent(String cnt, boolean adjust) {
+		setContent(cnt);
+		if(adjust) {
+			try {
+				mPaint.setTypeface(FontCache.get(mContext, mFont));
+				setWidth(mPaint.measureText(getContent()));
+			} catch (Exception e) {}
+		}
+	}
+
 	public void setContent(String content)
 	{
 		Debug.d(TAG, "setContent: [" + content + "]");

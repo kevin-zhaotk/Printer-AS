@@ -41,9 +41,14 @@ extern "C"
 #define INK_VOL_OF_BAG_PERCENTAGE               (MAX_BAG_INK_VOLUME / 100)
 #define INK_VOL_OF_PEN_PERCENTAGE               (MAX_PEN_INK_VOLUME / 100)
 
+static int MaxBagInkVolume                      = MAX_BAG_INK_VOLUME;
+static int MaxPenInkVolume                      = MAX_PEN_INK_VOLUME;
+static int InkVolOfBagPercentage                = INK_VOL_OF_BAG_PERCENTAGE;
+static int InkVolOfPenPercentage                = INK_VOL_OF_PEN_PERCENTAGE;
+
 //#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.362"
+#define VERSION_CODE                            "1.0.363"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -415,6 +420,35 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_checkConsistency(JNIEnv *env, jclass a
     return SC_SUCCESS;
 }
 
+JNIEXPORT int JNICALL Java_com_Smartcard_getMaxVolume(JNIEnv *env, jclass arg, jint card) {
+    uint8_t drop_volume = 29;
+
+    if(CARD_SELECT_PEN1 == card) {
+        inkReadTag5DropVolume(HP_SMART_CARD_DEVICE_PEN1, &drop_volume);
+    } else if(CARD_SELECT_PEN2 == card) {
+        inkReadTag5DropVolume(HP_SMART_CARD_DEVICE_PEN2, &drop_volume);
+    } else {
+        return MaxBagInkVolume;
+    }
+
+    // bulk 计算
+    // DV 29 对应3150
+    // DV x=20-35 ：   3150*(29/X)
+    // DV x < 20  or  X>35:    4700
+
+    if(drop_volume < 20 || drop_volume > 35) {
+        MaxBagInkVolume = 4700;
+    } else {
+        MaxBagInkVolume = 3150 * 29 / drop_volume;
+    }
+
+    MaxPenInkVolume                      = MaxBagInkVolume * PEN_VS_BAG_RATIO;
+    InkVolOfBagPercentage                = MaxBagInkVolume / 100;
+    InkVolOfPenPercentage                = MaxPenInkVolume / 100;
+
+    return MaxBagInkVolume;
+}
+
 JNIEXPORT jstring JNICALL Java_com_Smartcard_readConsistency(JNIEnv *env, jclass arg, jint card) {
     char strTemp[1024];
 
@@ -576,16 +610,16 @@ static void adjustLocalInkValue(jint card) {
     uint32_t x = 0;
     if(CARD_SELECT_PEN1 == card) {
         ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN1, &x);
-        vol_percentage = INK_VOL_OF_PEN_PERCENTAGE;
+        vol_percentage = InkVolOfPenPercentage;
     } else if(CARD_SELECT_PEN2 == card) {
         ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN2, &x);
-        vol_percentage = INK_VOL_OF_PEN_PERCENTAGE;
+        vol_percentage = InkVolOfPenPercentage;
     } else if(CARD_SELECT_BULK1 == card) {
         ret = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x);
-        vol_percentage = INK_VOL_OF_BAG_PERCENTAGE;
+        vol_percentage = InkVolOfBagPercentage;
     } else if(CARD_SELECT_BULKX == card) {
         ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x);
-        vol_percentage = INK_VOL_OF_BAG_PERCENTAGE;
+        vol_percentage = InkVolOfBagPercentage;
     }
     if (HP_SMART_CARD_OK != ret) {
         x = 0;
@@ -677,16 +711,16 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
 
     if(CARD_SELECT_PEN1 == card) {
         ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN1, &x);
-        vol_percentage *= INK_VOL_OF_PEN_PERCENTAGE;
+        vol_percentage *= InkVolOfPenPercentage;
     } else if(CARD_SELECT_PEN2 == card) {
         ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN2, &x);
-        vol_percentage *= INK_VOL_OF_PEN_PERCENTAGE;
+        vol_percentage *= InkVolOfPenPercentage;
     } else if(CARD_SELECT_BULK1 == card) {
         ret = supplyReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x);
-        vol_percentage *= INK_VOL_OF_BAG_PERCENTAGE;
+        vol_percentage *= InkVolOfBagPercentage;
     } else if(CARD_SELECT_BULKX == card) {
         ret = inkReadTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, &x);
-        vol_percentage *= INK_VOL_OF_BAG_PERCENTAGE;
+        vol_percentage *= InkVolOfBagPercentage;
     }
 
     if (HP_SMART_CARD_OK != ret) {
@@ -792,6 +826,7 @@ static JNINativeMethod gMethods[] = {
         {"writeCheckSum",	        "(II)I",					(void *)Java_com_Smartcard_writeCheckSum},
         {"checkSum",	            "(II)I",					(void *)Java_com_Smartcard_checkSum},
         {"checkConsistency",	    "(II)I",					(void *)Java_com_Smartcard_checkConsistency},
+        {"getMaxVolume",	        "(I)I",						(void *)Java_com_Smartcard_getMaxVolume},
         {"readConsistency",	        "(I)Ljava/lang/String;",	(void *)Java_com_Smartcard_readConsistency},
         {"checkOIB",		        "(I)I",						(void *)Java_com_Smartcard_checkOIB},
         {"getLocalInk",		        "(I)I",						(void *)Java_com_Smartcard_getLocalInk},

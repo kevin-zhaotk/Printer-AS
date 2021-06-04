@@ -44,6 +44,8 @@ public class SmartCard {
 
     static public native int checkConsistency(int card, int supply);
 
+    static public native int getMaxVolume(int card);
+
     static public native String readConsistency(int card);
 
     static public native int checkOIB(int card);
