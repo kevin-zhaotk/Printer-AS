@@ -1353,7 +1353,10 @@ public class BaseObject{
 //		} else {
 //			mWidth = width;
 //		}
-		mWidth = width;
+// H.M.Wang 2021-6-7 源代码只修改了宽度，没有修改尾部坐标，因此有问题
+//		mWidth = width;
+		setWidth(width);
+// End of H.M.Wang 2021-6-7 源代码只修改了宽度，没有修改尾部坐标，因此有问题
 		Debug.d(TAG, "meature mHeight = " + mHeight + "  mWidth = " + mWidth);
 	}
 	//////addbylk 		 

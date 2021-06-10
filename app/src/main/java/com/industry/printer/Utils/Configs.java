@@ -45,10 +45,10 @@ public class Configs {
 	public static final int USER_MODE_1 	= 1;		// 显示用户1特色页面
 	public static final int USER_MODE_2 	= 2;		// 显示用户2特色页面
 
-	public static final int USER_MODE = USER_MODE_2;
+	public static final int USER_MODE = USER_MODE_1;
 // End of H.M.Wang 2021-5-21 追加用户特色页面显示开关标识
 
-	/**
+	/**vol
 	 * 开关配置：大字机的特殊版本，buffer宽度x8
 	 */
 	public static final boolean BUFFER_8 = false;

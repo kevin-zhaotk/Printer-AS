@@ -499,7 +499,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			mOKBtn.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mEditObject.setContent(mCntET.getText().toString());
+					mEditObject.setContent(mCntET.getText().toString(), true);
 					mEditTask.save(new MessageTask.SaveProgressListener() {
 						@Override
 						public void onSaved() {

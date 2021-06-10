@@ -374,6 +374,7 @@
             android:layout_height="match_parent"
             android:layout_marginRight="40dp"
             android:layout_toLeftOf="@id/info_area"
+            android:visibility="gone"
             android:orientation="horizontal" >
             <EditText
                 android:id="@+id/text_item"
