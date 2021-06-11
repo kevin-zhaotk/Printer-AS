@@ -383,7 +383,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		private int PrinterFlag=0;
 		private int SendFileFlag=0;
 		private int CleanFlag=0;
-		private int StopFlag=0;
+//		private int StopFlag=0;
 		private Socket Gsocket;
 
 // H.M.Wang 2020-9-28 追加一个心跳协议
@@ -1441,7 +1441,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					/* 濡傛灉鐣跺墠鎵撳嵃淇℃伅涓湁瑷堟暩鍣紝闇�瑕佽閷勭暥鍓嶅�煎埌TLK鏂囦欢涓�*/
 					updateCntIfNeed();
 // H.M.Wang 2020-6-24 停止打印时清空网络打印标识
-					StopFlag=0;
+//					StopFlag=0;
 					PrinterFlag=0;
 // End of H.M.Wang 2020-6-24 停止打印时清空网络打印标识
 
@@ -2787,7 +2787,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            		//打印赵工写好了，再测试
 		                            		PrnComd="100";
 		                            	    PrinterFlag=1;
-		                            		StopFlag=1;
+//		                            		StopFlag=1;
 		                            		CleanFlag=0;
 
 // H.M.Wang 2020-6-23 设置mObjPath，以便打开成功后显示信息名称
@@ -2857,9 +2857,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
                                     } else if(PCCommand.CMD_STOP_PRINT.equalsIgnoreCase(cmd.command) ||
                                                 PCCommand.CMD_STOP_PRINT_S.equalsIgnoreCase(cmd.command)) {
 		                            	//500停止打印
-		                            	if(StopFlag==1)
+										if(null != mDTransThread && mDTransThread.isRunning())
+//		                            	if(StopFlag==1)
 		                            	{
-		                            		StopFlag=0;
+//		                            		StopFlag=0;
 		                            		PrinterFlag=0;
 											Message message = mHandler.obtainMessage(MESSAGE_PRINT_STOP);
 											Bundle bundle = new Bundle();

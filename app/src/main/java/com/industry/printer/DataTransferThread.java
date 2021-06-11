@@ -1614,23 +1614,18 @@ private void setCounterPrintedNext(DataTask task, int count) {
 					if(i != 0) {
 						sb.append(", ");
 					}
-// 2020-5-11
 // H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 //					if(config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5) {
 					if(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
 						SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
 //						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
-						sb.append(mPrintDots[i<6?0:i]*(PrinterNozzle.R6_PRINT_COPY_NUM - 1));
+						sb.append(mPrintDots[i < 6 ? 0 : i]);
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
-					} else {
-						sb.append(mPrintDots[i]);
-					}
-// 2020-5-11
 // H.M.Wang 2021-3-6 追加E6X48,E6X50头
-					if( SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
-						SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+					} else if( SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
+								SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
 //						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
-						sb.append(mPrintDots[i<6?0:i]*(PrinterNozzle.R6_PRINT_COPY_NUM - 1));
+							sb.append(mPrintDots[i<6?0:i]);
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 					} else {
 						sb.append(mPrintDots[i]);
