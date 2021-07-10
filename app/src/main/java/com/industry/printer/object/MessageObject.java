@@ -139,7 +139,7 @@ public class MessageObject extends BaseObject {
 // End of H.M.Wang 2021-4-6 暂时修改为true，以达到300dpi的目的。取消中途设置
 	}
 	
-	public int getmPrintDpi() {
+	public int getPrintDpi() {
 //		return mHighResolution;
         return mPrintDpi;
 	}

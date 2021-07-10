@@ -88,8 +88,6 @@ int toHexString(const uint8_t *src, char *dst, int len, char div) {
     if(!src) return -1;
     if(!dst) return -1;
 
-//    memset(dst, 0x00, sizeof(dst));
-
     char s[16];
     for(int i=0; i<len; i++) {
         memset(s, 0x00, 16);
@@ -100,6 +98,6 @@ int toHexString(const uint8_t *src, char *dst, int len, char div) {
         }
         strcat(dst, s);
     }
-//    strcat(dst, 0x00);
-    return 0;
+
+    return len;
 }

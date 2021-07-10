@@ -711,7 +711,9 @@ public class DataTransferThread {
 
 		if(data.startsWith("Resetcode7799")) {
 			mDtIndex = 0;
-		} else if(!data.equals(mLastRecvString)) {
+            mLastRecvString = "";
+//        } else if(!data.equals(mLastRecvString)) {
+		} else {
 			for(DataTask dataTask : mDataTask) {
 				ArrayList<BaseObject> objList = dataTask.getObjList();
 				for(BaseObject baseObject: objList) {
@@ -1275,7 +1277,14 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-8-26 追加64SN打印头
 				hType != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
-				bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
+// H.M.Wang 2021-7-9 300dpi的时候生成的打印图案会比原来宽一倍，参数设置为300dpi的时候，返回值会差一倍，最如下修正
+//				bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
+				if(Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_300) {
+					bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/300;
+				} else {
+					bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
+				}
+// H.M.Wang 2021-7-9 300dpi的时候生成的打印图案会比原来宽一倍，参数设置为300dpi的时候，返回值会差一倍，最如下修正
 			} else {
 				bold = 1;
 // H.M.Wang 2020-10.17 大字机墨水消耗计算， 加入墨点大小修正
