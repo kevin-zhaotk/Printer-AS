@@ -1214,7 +1214,7 @@ public class DataTransferThread {
 	 */
 	public int getInkThreshold(int head) {
 		//if (isLanPrint()) return 1;
-		int bold = 1;
+		float bold = 1.0f;
 		int index = isLanPrint() ? 0 : index();
 
 //		int dotCount = getDotCount(mDataTask.get(index), head);
@@ -1259,7 +1259,7 @@ public class DataTransferThread {
 		float rate = 1.0f;
 
 		if (config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY) <= 0) {
-			bold = 1;
+			bold = 1.0f;
 		} else {
 // H.M.Wang 2020-6-12 16,32,64点头减锁修改为不受分辨率影响
 			final int headIndex = config.getParam(SystemConfigFile.INDEX_HEAD_TYPE);
@@ -1282,16 +1282,16 @@ public class DataTransferThread {
 				if(Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_300) {
 					if(hType == PrinterNozzle.MESSAGE_TYPE_E6X50 || hType == PrinterNozzle.MESSAGE_TYPE_E6X48 || hType == PrinterNozzle.MESSAGE_TYPE_E6X1) {
 						// 由于已经通过对锁的调整进行了对应，因此，这里不做更改
-						bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
+						bold = 1.0f * config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
 					} else {
-						bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/300;
+						bold = 1.0f * config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/300;
 					}
 				} else {
-					bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
+					bold = 1.0f * config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
 				}
 // H.M.Wang 2021-7-9 300dpi的时候生成的打印图案会比原来宽一倍，参数设置为300dpi的时候，返回值会差一倍，最如下修正
 			} else {
-				bold = 1;
+				bold = 1.0f;
 // H.M.Wang 2020-10.17 大字机墨水消耗计算， 加入墨点大小修正
 //                rate = Math.max(0.5f, ((1.0f * config.getParam(SystemConfigFile.INDEX_DOT_SIZE)-450)*4+1000)/1200);
 // H.M.Wang 2020-11-24 修改计算公式
