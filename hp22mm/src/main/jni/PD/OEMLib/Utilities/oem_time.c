@@ -19,8 +19,7 @@ Made in U.S.A.
  * Caller need to allocate memory for OemTime_t.
  * OEM need to implement this function.
  */
-void oem_get_time(OemTime_t *t)
-{
+void oem_get_time(OemTime_t *t) {
     struct timeval tv;
     struct tm *tm;
     

@@ -30,73 +30,70 @@ ServiceResult_t service_execute(Frame_t             *frame,
                                  uint32_t            *rsp_size
                                  );
 
-								 
-								 
-ServiceResult_t _simple_command(int32_t instance, int32_t param, IdsService_t service, char *service_name)
-{
-    MAX_ASSERT(instance > 0);
+ServiceResult_t _simple_command(int32_t instance, int32_t param, IdsService_t service, char *service_name) {
+    LOGI("Enter %s", __FUNCTION__);
+
+//    MAX_ASSERT(instance > 0);
 
     Frame_t         frame;
-    FrameResult_t   fr;
-	
-    fr = frame_init(&frame, service);
-    if(fr != FRAME_OK)
-    {
-        LOGE("%s(): ERROR: Creating frame. Error code = %d\n", service_name, fr);
-        return SERVICE_ERROR;
-    }
-    
+    if(frame_init(&frame, service) != FRAME_OK) return SERVICE_ERROR;
     /* encode param */
-	if(param >= 0)
-	{
-		if(frame_encode8(&frame, param) != FRAME_OK)
-			return SERVICE_ERROR;
+	if(param >= 0) {
+		if(frame_encode8(&frame, param) != FRAME_OK) return SERVICE_ERROR;
 	}
         
     uint32_t rsp_size;
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("%d - %s(): Error code = %d\n", instance, service_name, sr);
-        return SERVICE_ERROR;
-    }
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return SERVICE_OK;
 }
 
-ServiceResult_t _payload_command(int32_t instance, int32_t service, int32_t param1, int32_t param2, uint8_t *in, int32_t in_size, int32_t *status, int32_t *status2, uint8_t *out, int32_t *out_size, int32_t out_buffer_size, char *service_name)
-{
-    MAX_ASSERT(instance > 0);
+ServiceResult_t _payload_command(int32_t instance, int32_t service, int32_t param1, int32_t param2, uint8_t *in, int32_t in_size, int32_t *status, int32_t *status2, uint8_t *out, int32_t *out_size, int32_t out_buffer_size, char *service_name) {
+    LOGI("Enter %s", __FUNCTION__);
 
-    Frame_t         frame;
-    FrameResult_t   fr;
-    uint8_t ui8;
-	
-    fr = frame_init(&frame, service);
-    if(fr != FRAME_OK)
-    {
-        LOGE("%d - %s(): ERROR: Creating frame. Error code = %d\n", instance, service_name, fr);
+//    if(instance <= 0 || instance > NUM_BLUR_INSTANCES) return SERVICE_ERROR;
+    if(NULL == in) {
+        LOGE("in NULL!");
         return SERVICE_ERROR;
     }
-    
+    if(NULL == status) {
+        LOGE("status NULL!");
+        return SERVICE_ERROR;
+    }
+    if(NULL == status2) {
+        LOGE("status2 NULL!");
+        return SERVICE_ERROR;
+    }
+    if(NULL == out) {
+        LOGE("out NULL!");
+        return SERVICE_ERROR;
+    }
+    if(NULL == out_size) {
+        LOGE("out_size NULL!");
+        return SERVICE_ERROR;
+    }
+
+//    MAX_ASSERT(instance > 0);
+
+    Frame_t         frame;
+    uint8_t ui8;
+	
+    if(frame_init(&frame, service) != FRAME_OK) return SERVICE_ERROR;
     /* encode parameters */
-    if (param1 >= 0)
-    {
-		if(frame_encode8(&frame, param1) != FRAME_OK)
-			return SERVICE_ERROR;
+    if (param1 >= 0) {
+		if(frame_encode8(&frame, param1) != FRAME_OK) return SERVICE_ERROR;
 	}
-    if (param2 >= 0)
-    {
-		if(frame_encode8(&frame, param2) != FRAME_OK)
-			return SERVICE_ERROR;
+    if (param2 >= 0) {
+		if(frame_encode8(&frame, param2) != FRAME_OK) return SERVICE_ERROR;
 	}
 	/* if input payload exists (must be at least 2 bytes), encode that also */
-	if (in_size >= 2)
-	{
-		if (frame_encode_bytes(&frame, in, in_size) != FRAME_OK)
-			return SERVICE_ERROR;
+	if (in_size >= 2) {
+		if (frame_encode_bytes(&frame, in, in_size) != FRAME_OK) return SERVICE_ERROR;
 	}
     _set_pairing_response_timeout();
 
@@ -106,102 +103,79 @@ ServiceResult_t _payload_command(int32_t instance, int32_t service, int32_t para
 
     _set_default_response_timeout();
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("%d - %s(): Error code = %d\n", instance, service_name, sr);
-        return SERVICE_ERROR;
-    }
-	if(out_buffer_size < rsp_size)
-	{
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+	if(out_buffer_size < rsp_size) {
         LOGE("%d - %s(): Response size returned/maximum = %d/%d\n", instance, service_name, rsp_size, out_buffer_size);
         return SERVICE_ERROR;		
 	}
 
     /* Decode status */
-    if(rsp_size < 1)
-	{
+    if(rsp_size < 1) {
         LOGE("%d - %s(): No response status returned\n", instance, service_name);
         return SERVICE_ERROR;		
 	}
-    fr = frame_decode8(&frame, &ui8);
-    if(fr != FRAME_OK) return SERVICE_ERROR;
+
+    if(frame_decode8(&frame, &ui8) != FRAME_OK) return SERVICE_ERROR;
 	*status = ui8;
 	rsp_size--;
 	
 	/* If needed, decode status2 */
-	if (status2 != NULL)
-	{
-		if(rsp_size < 1)	// (NOTE: was decremented above)
-		{
+	if (status2 != NULL) {
+		if(rsp_size < 1) {	// (NOTE: was decremented above)
 			LOGE("%d - %s(): No response status2 returned\n", instance, service_name);
 			return SERVICE_ERROR;		
 		}
-		fr = frame_decode8(&frame, &ui8);
-		if(fr != FRAME_OK) return SERVICE_ERROR;
+		if(frame_decode8(&frame, &ui8) != FRAME_OK) return SERVICE_ERROR;
 		*status2 = ui8;
 		rsp_size--;
 	}
 	
     /* Decode payload */ 
-    if(rsp_size > 0)
-    {
-		fr = frame_decode_bytes(&frame, out, rsp_size);
-		if (fr != FRAME_OK) return SERVICE_ERROR;
+    if(rsp_size > 0) {
+		if (frame_decode_bytes(&frame, out, rsp_size) != FRAME_OK) return SERVICE_ERROR;
 	}
 	*out_size = rsp_size;
+
+    LOGI("%s done", __FUNCTION__);
 
 	return SERVICE_OK;
 }
 
-ServiceResult_t ids_service_terminate_session(int32_t instance)
-{
+ServiceResult_t ids_service_terminate_session(int32_t instance) {
 	// currently IDS and Blur share the same value for IDS_TERMINATE_SESSION
 	return _simple_command(instance, -1, IDS_TERMINATE_SESSION, "sevice_terminate_session");
 }
 
-ServiceResult_t service_pairing_delete(int32_t instance)
-{
+ServiceResult_t service_pairing_delete(int32_t instance) {
 	return _simple_command(instance, -1, SERVICE_PAIRING_DELETE, "service_pairing_delete");
 }
 
-	
-
-ServiceResult_t service_pairing(int32_t instance, int32_t step, int32_t param1, int32_t param2, uint8_t *in, int32_t in_size, int32_t *status, uint8_t *out, int32_t *out_size, int32_t out_buffer_size)
-{
+ServiceResult_t service_pairing(int32_t instance, int32_t step, int32_t param1, int32_t param2, uint8_t *in, int32_t in_size, int32_t *status, uint8_t *out, int32_t *out_size, int32_t out_buffer_size) {
 	char service_name[50];
 	snprintf(service_name, 50, "ids_service_pairing step %d", step);
 	return _payload_command(instance, (SERVICE_PAIRING_STEP_1 + step - 1), param1, param2, in, in_size, status, NULL, out, out_size, out_buffer_size, service_name);
 }
 
-
-
-ServiceResult_t ids_service_ink_use(int32_t instance, int32_t pd_id, int32_t supply_idx, uint8_t *in, int32_t in_size, int32_t *status, int32_t *supply_status, uint8_t *out, int32_t *out_size, int32_t out_buffer_size)
-{
+ServiceResult_t ids_service_ink_use(int32_t instance, int32_t pd_id, int32_t supply_idx, uint8_t *in, int32_t in_size, int32_t *status, int32_t *supply_status, uint8_t *out, int32_t *out_size, int32_t out_buffer_size) {
 	return _payload_command(instance, IDS_SERVICE_INK_USED, pd_id, supply_idx, in, in_size, status, supply_status, out, out_size, out_buffer_size, "ids_service_ink_use");
 }
 
-
-
-ServiceResult_t ids_service_get_overrides(int32_t instance, int32_t blur_id, int32_t supply_idx, int32_t *status, uint8_t *overrides, int32_t *out_size, int32_t out_buffer_size)
-{
+ServiceResult_t ids_service_get_overrides(int32_t instance, int32_t blur_id, int32_t supply_idx, int32_t *status, uint8_t *overrides, int32_t *out_size, int32_t out_buffer_size) {
   	return _payload_command(instance, IDS_SERVICE_GET_PHA_OVERRIDES, blur_id, supply_idx, NULL, 0, status, NULL, overrides, out_size, out_buffer_size, "ids_service_overrides");
 }
 
+ServiceResult_t _ids_service_read_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t *value, IdsService_t service, char *service_name) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t _ids_service_read_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t *value, IdsService_t service, char *service_name)
-{
-    MAX_ASSERT(instance > 0);
-
-    Frame_t         frame;
-    FrameResult_t   fr;
-
-    fr = frame_init(&frame, service);
-    if(fr != FRAME_OK)
-    {
-        LOGE("%s(): ERROR: Creating frame. Error code = %d\n", service_name, fr);
+    if(NULL == value) {
+        LOGE("value NULL!");
         return SERVICE_ERROR;
     }
+//    MAX_ASSERT(instance > 0);
+
+    Frame_t         frame;
+    if(frame_init(&frame, service) != FRAME_OK) return SERVICE_ERROR;
 
     /* encode params */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK ||
@@ -211,44 +185,30 @@ ServiceResult_t _ids_service_read_field(int32_t instance, int32_t supply_idx, in
     uint32_t rsp_size;
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
-    if(sr != SERVICE_OK)
-    {
-        LOGE("%s(): Error code = %d\n", service_name, sr);
-        return SERVICE_ERROR;
-    }
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
 
     /* decode value */
     if (frame_decode32(&frame, value) != FRAME_OK) return SERVICE_ERROR;
-    
+
+    LOGI("%s done", __FUNCTION__);
+
     return SERVICE_OK;
 }
 
-ServiceResult_t ids_service_read_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t *value)
-{
+ServiceResult_t ids_service_read_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t *value) {
 	return _ids_service_read_field(instance, supply_idx, field_id, value, IDS_SERVICE_READ_SC_FIELD, "ids_service_read_field");
 }
 
-ServiceResult_t ids_service_read_oem_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t *value)
-{
+ServiceResult_t ids_service_read_oem_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t *value) {
 	return _ids_service_read_field(instance, supply_idx, field_id, value, IDS_SERVICE_READ_OEM_FIELD, "ids_service_read_oem_field");
 }
 
-
-
-ServiceResult_t _ids_service_write_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t value, IdsService_t service, char *service_name)
-{
-    MAX_ASSERT(instance > 0);
+ServiceResult_t _ids_service_write_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t value, IdsService_t service, char *service_name) {
+    LOGI("Enter %s", __FUNCTION__);
+//    MAX_ASSERT(instance > 0);
 
     Frame_t         frame;
-    FrameResult_t   fr;
-    
-    fr = frame_init(&frame, service);
-    if(fr != FRAME_OK)
-    {
-        LOGE("%s(): ERROR: Creating frame. Error code = %d\n", service_name, fr);
-        return SERVICE_ERROR;
-    }
-
+    if(frame_init(&frame, service) != FRAME_OK) return SERVICE_ERROR;
     /* encode params */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK ||
 		frame_encode8(&frame, field_id) != FRAME_OK ||
@@ -258,42 +218,33 @@ ServiceResult_t _ids_service_write_field(int32_t instance, int32_t supply_idx, i
     uint32_t rsp_size;
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
-    if(sr != SERVICE_OK)
-    {
-        LOGE("%s(): Error code = %d\n", service_name, sr);
-        return SERVICE_ERROR;
-    }
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return SERVICE_OK;
 }
 
-ServiceResult_t ids_service_write_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t value)
-{
+ServiceResult_t ids_service_write_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t value) {
 	return _ids_service_write_field(instance, supply_idx, field_id, value, IDS_SERVICE_WRITE_SC_FIELD, "ids_service_write_field");
 }
 
-ServiceResult_t ids_service_write_oem_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t value)
-{
+ServiceResult_t ids_service_write_oem_field(int32_t instance, int32_t supply_idx, int32_t field_id, uint32_t value) {
 	return _ids_service_write_field(instance, supply_idx, field_id, value, IDS_SERVICE_WRITE_OEM_FIELD, "ids_service_write_eom_field");
 }
 
+ServiceResult_t _ids_service_read_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t str_len, uint8_t *str, IdsService_t service, char *service_name) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t _ids_service_read_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t str_len, uint8_t *str, IdsService_t service, char *service_name)
-{
-    MAX_ASSERT(instance > 0);
-    MAX_ASSERT(NULL != str);
-
-    Frame_t         frame;
-    FrameResult_t   fr;
-    
-    fr = frame_init(&frame, service);
-    if(fr != FRAME_OK)
-    {
-        LOGE("%s(): ERROR: Creating frame. Error code = %d\n", service_name, fr);
+    if(NULL == str) {
+        LOGE("str NULL!");
         return SERVICE_ERROR;
     }
-    
+//    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(NULL != str);
+
+    Frame_t         frame;
+    if(frame_init(&frame, service) != FRAME_OK) return SERVICE_ERROR;
     /* encode params */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK ||
 		frame_encode8(&frame, field_id) != FRAME_OK ||
@@ -303,46 +254,40 @@ ServiceResult_t _ids_service_read_string(int32_t instance, int32_t supply_idx, i
     uint32_t rsp_size;
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
-    if(sr != SERVICE_OK)
-    {
-        LOGE("%s(): Error code = %d\n", service_name, sr);
+    if(sr != SERVICE_OK)return SERVICE_ERROR;
+
+    /* Decode string */
+	if (rsp_size > str_len) {
+        LOGE("rsp_size > str_len!");
         return SERVICE_ERROR;
     }
-	
-    /* Decode string */
-	if (rsp_size > str_len) return SERVICE_ERROR;
     if (frame_decode_bytes(&frame, str, rsp_size) != FRAME_OK) return SERVICE_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
 	return SERVICE_OK;
 }
 
-ServiceResult_t ids_service_read_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t str_len, uint8_t *str)
-{
+ServiceResult_t ids_service_read_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t str_len, uint8_t *str) {
 	return _ids_service_read_string(instance, supply_idx, field_id, str_len, str, IDS_SERVICE_READ_SC_STRING, "ids_service_read_string");
 }
 
-ServiceResult_t ids_service_read_oem_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t buffer_size, uint8_t *str)
-{
+ServiceResult_t ids_service_read_oem_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t buffer_size, uint8_t *str) {
 	return _ids_service_read_string(instance, supply_idx, field_id, buffer_size, str, IDS_SERVICE_READ_OEM_STRING, "ids_service_read_oem_string");
 }
 
+ServiceResult_t _ids_service_write_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t str_len, uint8_t *str, IdsService_t service, char *service_name) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t _ids_service_write_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t str_len, uint8_t *str, IdsService_t service, char *service_name)
-{
-    MAX_ASSERT(instance > 0);
-    MAX_ASSERT(NULL != str);
-
-    Frame_t         frame;
-    FrameResult_t   fr;
-    
-    fr = frame_init(&frame, service);
-    if(fr != FRAME_OK)
-    {
-        LOGE("%s(): ERROR: Creating frame. Error code = %d\n", service_name, fr);
+    if(NULL == str) {
+        LOGE("str NULL!");
         return SERVICE_ERROR;
     }
+//    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(NULL != str);
 
+    Frame_t         frame;
+    if(frame_init(&frame, service) != FRAME_OK) return SERVICE_ERROR;
     /* encode params */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK ||
 		frame_encode8(&frame, field_id) != FRAME_OK ||
@@ -353,41 +298,28 @@ ServiceResult_t _ids_service_write_string(int32_t instance, int32_t supply_idx, 
     uint32_t rsp_size;
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
-    if(sr != SERVICE_OK)
-    {
-        LOGE("%s(): Error code = %d\n", service_name, sr);
-        return SERVICE_ERROR;
-    }
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return SERVICE_OK;
 }
 
-ServiceResult_t ids_service_write_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t str_len, uint8_t *str)
-{
+ServiceResult_t ids_service_write_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t str_len, uint8_t *str) {
 	return _ids_service_write_string(instance, supply_idx, field_id, str_len, str, IDS_SERVICE_WRITE_SC_STRING, "ids_service_write_string");
 }
 
-ServiceResult_t ids_service_write_oem_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t str_len, uint8_t *str)
-{
+ServiceResult_t ids_service_write_oem_string(int32_t instance, int32_t supply_idx, int32_t field_id, int32_t str_len, uint8_t *str) {
 	return _ids_service_write_string(instance, supply_idx, field_id, str_len, str, IDS_SERVICE_WRITE_OEM_STRING, "ids_service_write_oem_string");
 }
 
+ServiceResult_t ids_service_lock_partition(int32_t instance, int32_t supply_idx, int32_t partition_id) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t ids_service_lock_partition(int32_t instance, int32_t supply_idx, int32_t partition_id)
-{
-    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(instance > 0);
 
     Frame_t         frame;
-    FrameResult_t   fr;
-	
-    fr = frame_init(&frame, IDS_SERVICE_LOCK_PARTITION);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_lock_partition(): ERROR: Creating frame. Error code = %d\n", fr);
-        return SERVICE_ERROR;
-    }
-    
+    if(frame_init(&frame, IDS_SERVICE_LOCK_PARTITION) != FRAME_OK) return SERVICE_ERROR;
     /* encode params */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK ||
 		frame_encode8(&frame, partition_id) != FRAME_OK) 
@@ -397,31 +329,19 @@ ServiceResult_t ids_service_lock_partition(int32_t instance, int32_t supply_idx,
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_lock_partition(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return SERVICE_OK;
 }
 
-
-
-ServiceResult_t ids_service_set_platform_info(int32_t instance, PlatformInfo_t *platform_info)
-{
-    MAX_ASSERT(instance > 0);
+ServiceResult_t ids_service_set_platform_info(int32_t instance, PlatformInfo_t *platform_info) {
+    LOGI("Enter %s", __FUNCTION__);
+//    MAX_ASSERT(instance > 0);
 
     Frame_t         frame;
-    FrameResult_t   fr;
-	
-    fr = frame_init(&frame, IDS_SERVICE_SET_PLATFORM_INFO);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_set_platform_info(): ERROR: Creating frame. Error code = %d\n", fr);
-        return SERVICE_ERROR;
-    }
-	
+    if(frame_init(&frame, IDS_SERVICE_SET_PLATFORM_INFO) != FRAME_OK) return SERVICE_ERROR;
 	/* encode params */
 	if (frame_encode_bytes(&frame, (uint8_t*)platform_info->model, 12) != FRAME_OK ||
 		frame_encode16(&frame, platform_info->mfg_year) != FRAME_OK ||
@@ -436,31 +356,19 @@ ServiceResult_t ids_service_set_platform_info(int32_t instance, PlatformInfo_t *
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_set_platform_info(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return SERVICE_OK;
 }
 
-
-
-ServiceResult_t ids_service_set_date(int32_t instance, int32_t year, int32_t month, int32_t day)
-{
-    MAX_ASSERT(instance > 0);
+ServiceResult_t ids_service_set_date(int32_t instance, int32_t year, int32_t month, int32_t day) {
+    LOGI("Enter %s", __FUNCTION__);
+//    MAX_ASSERT(instance > 0);
 
     Frame_t         frame;
-    FrameResult_t   fr;
-	
-    fr = frame_init(&frame, IDS_SERVICE_SET_DATE);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_set_date(): ERROR: Creating frame. Error code = %d\n", fr);
-        return SERVICE_ERROR;
-    }
-    
+    if(frame_init(&frame, IDS_SERVICE_SET_DATE) != FRAME_OK) return SERVICE_ERROR;
     /* encode params */
     if (frame_encode16(&frame, year) != FRAME_OK ||
 		frame_encode8(&frame, month) != FRAME_OK ||
@@ -471,31 +379,19 @@ ServiceResult_t ids_service_set_date(int32_t instance, int32_t year, int32_t mon
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_set_date(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return SERVICE_OK;
 }
 
-
-
-ServiceResult_t ids_service_set_stall_insert_count(int32_t instance, int32_t supply_idx, int32_t count)
-{
-    MAX_ASSERT(instance > 0);
+ServiceResult_t ids_service_set_stall_insert_count(int32_t instance, int32_t supply_idx, int32_t count) {
+    LOGI("Enter %s", __FUNCTION__);
+//    MAX_ASSERT(instance > 0);
 
     Frame_t         frame;
-    FrameResult_t   fr;
-	
-    fr = frame_init(&frame, IDS_SERVICE_SET_STALL_INSERT_COUNT);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_set_stall_insert_count(): ERROR: Creating frame. Error code = %d\n", fr);
-        return SERVICE_ERROR;
-    }
-    
+    if(frame_init(&frame, IDS_SERVICE_SET_STALL_INSERT_COUNT) != FRAME_OK) return SERVICE_ERROR;
     /* encode params */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK ||
 		frame_encode16(&frame, count) != FRAME_OK) 
@@ -505,53 +401,37 @@ ServiceResult_t ids_service_set_stall_insert_count(int32_t instance, int32_t sup
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_set_stall_insert_count(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return SERVICE_OK;
 }
 
-
-
-ServiceResult_t ids_service_set_out_of_ink(int32_t instance, int32_t supply_idx)
-{
+ServiceResult_t ids_service_set_out_of_ink(int32_t instance, int32_t supply_idx) {
 	return _simple_command(instance, supply_idx, IDS_SERVICE_SET_OUT_OF_INK, "ids_service_set_out_of_ink");
 }
 
-
-
-ServiceResult_t ids_service_set_faulty(int32_t instance, int32_t supply_idx)
-{
+ServiceResult_t ids_service_set_faulty(int32_t instance, int32_t supply_idx) {
 	return _simple_command(instance, supply_idx, IDS_SERVICE_SET_FAULTY, "ids_service_set_faulty");
 }
 
-
-
-ServiceResult_t ids_service_flush_smart_card(int32_t instance, int32_t supply_idx)
-{
+ServiceResult_t ids_service_flush_smart_card(int32_t instance, int32_t supply_idx) {
 	return _simple_command(instance, supply_idx, IDS_SERVICE_FLUSH_SMART_CARD, "ids_service_flush_smart_card");
 }
 
+ServiceResult_t ids_service_get_supply_status(int32_t instance, int32_t supply_idx, SupplyStatus_t *supply_status) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t ids_service_get_supply_status(int32_t instance, int32_t supply_idx, SupplyStatus_t *supply_status)
-{
-    MAX_ASSERT(instance > 0);
-    MAX_ASSERT(NULL != supply_status);
-
-    Frame_t         frame;
-    FrameResult_t   fr;
-	
-    fr = frame_init(&frame, IDS_SERVICE_GET_SUPPLY_STATUS);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_get_supply_status(): ERROR: Creating frame. Error code = %d\n", fr);
+    if(NULL == supply_status) {
+        LOGE("supply_status NULL!");
         return SERVICE_ERROR;
     }
-    
+//    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(NULL != supply_status);
+
+    Frame_t         frame;
+    if(frame_init(&frame, IDS_SERVICE_GET_SUPPLY_STATUS) != FRAME_OK) return SERVICE_ERROR;
     /* encode supply_idx */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK) return SERVICE_ERROR;
         
@@ -559,13 +439,9 @@ ServiceResult_t ids_service_get_supply_status(int32_t instance, int32_t supply_i
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_get_supply_status(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
-	if(sizeof(SupplyStatus_t) != rsp_size)
-	{
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+	if(sizeof(SupplyStatus_t) != rsp_size) {
         LOGE("ids_service_get_supply_status(): Response size returned/expected = %d/%d\n", rsp_size, sizeof(SupplyStatus_t));
         return SERVICE_ERROR;		
 	}
@@ -576,26 +452,23 @@ ServiceResult_t ids_service_get_supply_status(int32_t instance, int32_t supply_i
 		frame_decode16(&frame, &supply_status->consumed_volume) != FRAME_OK)
 		return SERVICE_ERROR;
 
+    LOGI("%s done", __FUNCTION__);
+
     return SERVICE_OK;
 }
 
+ServiceResult_t ids_service_get_supply_status_detail(int32_t instance, int32_t supply_idx, SupplyStatusDetail_t *supply_status_detail) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t ids_service_get_supply_status_detail(int32_t instance, int32_t supply_idx, SupplyStatusDetail_t *supply_status_detail)
-{
-    MAX_ASSERT(instance > 0);
-    MAX_ASSERT(NULL != supply_status_detail);
-
-    Frame_t         frame;
-    FrameResult_t   fr;
-    
-    fr = frame_init(&frame, IDS_SERVICE_GET_SUPPLY_DETAIL);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_get_supply_status_detail(): ERROR: Creating frame. Error code = %d\n", fr);
+    if(NULL == supply_status_detail) {
+        LOGE("supply_status_detail NULL!");
         return SERVICE_ERROR;
     }
-    
+//    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(NULL != supply_status_detail);
+
+    Frame_t         frame;
+    if(frame_init(&frame, IDS_SERVICE_GET_SUPPLY_DETAIL) != FRAME_OK) return SERVICE_ERROR;
     /* encode supply_idx */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK) return SERVICE_ERROR;
         
@@ -603,13 +476,9 @@ ServiceResult_t ids_service_get_supply_status_detail(int32_t instance, int32_t s
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_get_supply_status_detail(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
-	if(sizeof(SupplyStatusDetail_t) != rsp_size)
-	{
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+	if(sizeof(SupplyStatusDetail_t) != rsp_size) {
         LOGE("ids_service_get_supply_status_detail(): Response size returned/expected = %d/%d\n", rsp_size, sizeof(SupplyStatusDetail_t));
         return SERVICE_ERROR;		
 	}
@@ -623,26 +492,23 @@ ServiceResult_t ids_service_get_supply_status_detail(int32_t instance, int32_t s
 		frame_decode8(&frame, &supply_status_detail->last_failure_code) != FRAME_OK)
 		return SERVICE_ERROR;
 
+    LOGI("%s done", __FUNCTION__);
+
     return SERVICE_OK;
 }
 
+ServiceResult_t ids_service_get_supply_id(int32_t instance, int32_t supply_idx, SupplyID_t *supply_id) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t ids_service_get_supply_id(int32_t instance, int32_t supply_idx, SupplyID_t *supply_id)
-{
-    MAX_ASSERT(instance > 0);
-    MAX_ASSERT(NULL != supply_id);
-
-    Frame_t         frame;
-    FrameResult_t   fr;
-    
-    fr = frame_init(&frame, IDS_SERVICE_GET_SUPPLY_ID);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_get_supply_id(): ERROR: Creating frame. Error code = %d\n", fr);
+    if(NULL == supply_id) {
+        LOGE("supply_id NULL!");
         return SERVICE_ERROR;
     }
-    
+//    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(NULL != supply_id);
+
+    Frame_t         frame;
+    if(frame_init(&frame, IDS_SERVICE_GET_SUPPLY_ID) != FRAME_OK)  return SERVICE_ERROR;
     /* encode supply_idx */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK) return SERVICE_ERROR;
         
@@ -650,13 +516,9 @@ ServiceResult_t ids_service_get_supply_id(int32_t instance, int32_t supply_idx, 
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_get_supply_id(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
-	if(sizeof(SupplyID_t) != rsp_size)
-	{
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+	if(sizeof(SupplyID_t) != rsp_size) {
         LOGE("ids_service_get_supply_id(): Response size returned/expected = %d/%d\n", rsp_size, sizeof(SupplyID_t));
         return SERVICE_ERROR;		
 	}
@@ -673,26 +535,23 @@ ServiceResult_t ids_service_get_supply_id(int32_t instance, int32_t supply_idx, 
 		frame_decode8(&frame, &supply_id->mfg_pos) != FRAME_OK)
 		return SERVICE_ERROR;
 
+    LOGI("%s done", __FUNCTION__);
+
 	return SERVICE_OK;
 }
 
+ServiceResult_t ids_service_get_supply_info(int32_t instance, int32_t supply_idx, SupplyInfo_t *supply_info) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t ids_service_get_supply_info(int32_t instance, int32_t supply_idx, SupplyInfo_t *supply_info)
-{
-    MAX_ASSERT(instance > 0);
-    MAX_ASSERT(NULL != supply_info);
-
-    Frame_t         frame;
-    FrameResult_t   fr;
-    
-    fr = frame_init(&frame, IDS_SERVICE_GET_SUPPLY_INFO);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_get_supply_info(): ERROR: Creating frame. Error code = %d\n", fr);
+    if(NULL == supply_info) {
+        LOGE("supply_info NULL!");
         return SERVICE_ERROR;
     }
-    
+//    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(NULL != supply_info);
+
+    Frame_t         frame;
+    if(frame_init(&frame, IDS_SERVICE_GET_SUPPLY_INFO) != FRAME_OK) return SERVICE_ERROR;
     /* encode supply_idx */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK) return SERVICE_ERROR;
         
@@ -700,13 +559,9 @@ ServiceResult_t ids_service_get_supply_info(int32_t instance, int32_t supply_idx
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_get_supply_info(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
-	if(sizeof(SupplyInfo_t) != rsp_size)
-	{
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+	if(sizeof(SupplyInfo_t) != rsp_size) {
         LOGE("ids_service_get_supply_info(): Response size returned/expected = %d/%d\n", rsp_size, sizeof(SupplyInfo_t));
         return SERVICE_ERROR;		
 	}
@@ -734,26 +589,23 @@ ServiceResult_t ids_service_get_supply_info(int32_t instance, int32_t supply_idx
 		frame_decode8(&frame, &supply_info->ink_revision) != FRAME_OK)
 		return SERVICE_ERROR;
 
+    LOGI("%s done", __FUNCTION__);
+
 	return SERVICE_OK;
 }
 
+ServiceResult_t ids_service_get_mru_info(int32_t instance, int32_t supply_idx, SupplyUseInfo_t *mru_info) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t ids_service_get_mru_info(int32_t instance, int32_t supply_idx, SupplyUseInfo_t *mru_info)
-{
-    MAX_ASSERT(instance > 0);
-    MAX_ASSERT(NULL != mru_info);
-
-    Frame_t         frame;
-    FrameResult_t   fr;
-    
-    fr = frame_init(&frame, IDS_SERVICE_GET_MRU_INFO);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_get_mru_info(): ERROR: Creating frame. Error code = %d\n", fr);
+    if(NULL == mru_info) {
+        LOGE("mru_info NULL!");
         return SERVICE_ERROR;
     }
-    
+//    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(NULL != mru_info);
+
+    Frame_t         frame;
+    if(frame_init(&frame, IDS_SERVICE_GET_MRU_INFO) != FRAME_OK) return SERVICE_ERROR;
     /* encode supply_idx */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK) return SERVICE_ERROR;
         
@@ -761,13 +613,9 @@ ServiceResult_t ids_service_get_mru_info(int32_t instance, int32_t supply_idx, S
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_get_mru_info(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
-	if(sizeof(SupplyUseInfo_t) != rsp_size)
-	{
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+	if(sizeof(SupplyUseInfo_t) != rsp_size) {
         LOGE("ids_service_get_mru_info(): Response size returned/expected = %d/%d\n", rsp_size, sizeof(SupplyUseInfo_t));
         return SERVICE_ERROR;		
 	}
@@ -787,26 +635,23 @@ ServiceResult_t ids_service_get_mru_info(int32_t instance, int32_t supply_idx, S
 		frame_decode8(&frame, &mru_info->platform_mfg_rev_minor) != FRAME_OK)
 		return SERVICE_ERROR;
 
+    LOGI("%s done", __FUNCTION__);
+
     return SERVICE_OK;
 }
 
+ServiceResult_t ids_service_get_first_install_info(int32_t instance, int32_t supply_idx, SupplyUseInfo_t *first_install_info) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t ids_service_get_first_install_info(int32_t instance, int32_t supply_idx, SupplyUseInfo_t *first_install_info)
-{
-    MAX_ASSERT(instance > 0);
-    MAX_ASSERT(NULL != first_install_info);
-
-    Frame_t         frame;
-    FrameResult_t   fr;
-    
-    fr = frame_init(&frame, IDS_SERVICE_GET_FIRST_INSTALL_INFO);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_get_first_install_info(): ERROR: Creating frame. Error code = %d\n", fr);
+    if(NULL == first_install_info) {
+        LOGE("first_install_info NULL!");
         return SERVICE_ERROR;
     }
-    
+//    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(NULL != first_install_info);
+
+    Frame_t         frame;
+    if(frame_init(&frame, IDS_SERVICE_GET_FIRST_INSTALL_INFO) != FRAME_OK) return SERVICE_ERROR;
     /* encode supply_idx */
     if (frame_encode8(&frame, supply_idx) != FRAME_OK) return SERVICE_ERROR;
         
@@ -814,13 +659,9 @@ ServiceResult_t ids_service_get_first_install_info(int32_t instance, int32_t sup
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_get_first_install_info(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
-	if(sizeof(SupplyUseInfo_t) != rsp_size)
-	{
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
+	if(sizeof(SupplyUseInfo_t) != rsp_size)	{
         LOGE("ids_service_get_first_install_info(): Response size returned/expected = %d/%d\n", rsp_size, sizeof(SupplyUseInfo_t));
         return SERVICE_ERROR;		
 	}
@@ -840,35 +681,29 @@ ServiceResult_t ids_service_get_first_install_info(int32_t instance, int32_t sup
 		frame_decode8(&frame, &first_install_info->platform_mfg_rev_minor) != FRAME_OK)
 		return SERVICE_ERROR;
 
+    LOGI("%s done", __FUNCTION__);
+
     return SERVICE_OK;
 }
 
+ServiceResult_t ids_service_get_sys_info(int32_t instance, IdsSysInfo_t *sys_info) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-ServiceResult_t ids_service_get_sys_info(int32_t instance, IdsSysInfo_t *sys_info)
-{
-    MAX_ASSERT(instance > 0);
-    MAX_ASSERT(sys_info != NULL);
-
-    Frame_t         frame;
-    FrameResult_t   fr;
-
-    fr = frame_init(&frame, IDS_SERVICE_GET_SYS_INFO);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_get_sys_info(): ERROR: Creating frame. Error code = %d\n", fr);
+    if(NULL == sys_info) {
+        LOGE("sys_info NULL!");
         return SERVICE_ERROR;
     }
-    
+//    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(sys_info != NULL);
+
+    Frame_t         frame;
+    if(frame_init(&frame, IDS_SERVICE_GET_SYS_INFO) != FRAME_OK) return SERVICE_ERROR;
+
     uint32_t rsp_size;
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
 
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_get_sys_info(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
 
 	/* decode values */
 	if (frame_decode8(&frame, &sys_info->fw_minor_rev) != FRAME_OK ||
@@ -883,46 +718,39 @@ ServiceResult_t ids_service_get_sys_info(int32_t instance, IdsSysInfo_t *sys_inf
 		frame_decode8(&frame, &sys_info->bootload_major) != FRAME_OK ||
 		frame_decode16(&frame, &sys_info->board_id) != FRAME_OK)
 		return SERVICE_ERROR;
-	
+
+    LOGI("%s done", __FUNCTION__);
+
     return SERVICE_OK;
 }
 
-
-
-
 /* @@@ Test functions @@@ */
 
-ServiceResult_t ids_service_increment(int32_t instance, uint8_t in, uint8_t *out)
-{
-    MAX_ASSERT(instance > 0);
-    MAX_ASSERT(NULL != out);
+ServiceResult_t ids_service_increment(int32_t instance, uint8_t in, uint8_t *out) {
+    LOGI("Enter %s", __FUNCTION__);
 
-    Frame_t         frame;
-    FrameResult_t   fr;
-    
-    fr = frame_init(&frame, IDS_SERVICE_INCREMENT);
-    if(fr != FRAME_OK)
-    {
-        LOGE("ids_service_increment(): ERROR: Creating frame. Error code = %d\n", fr);
+    if(NULL == out) {
+        LOGE("out NULL!");
         return SERVICE_ERROR;
     }
-    
+//    MAX_ASSERT(instance > 0);
+//    MAX_ASSERT(NULL != out);
+
+    Frame_t         frame;
+    if(frame_init(&frame, IDS_SERVICE_INCREMENT) != FRAME_OK)  return SERVICE_ERROR;
     /* encode value */
-    fr = frame_encode8(&frame, in); 
-    MAX_ASSERT(fr == FRAME_OK);
-        
+    if (frame_encode8(&frame, in) != FRAME_OK) return SERVICE_ERROR;
+
     uint32_t rsp_size;
     ServiceResult_t sr = service_execute( &frame, instance,
                           NULL, 0, &rsp_size);
-    if(sr != SERVICE_OK)
-    {
-        LOGE("ids_service_increment(): Error code = %d\n", sr);
-        return SERVICE_ERROR;
-    }
+    if(sr != SERVICE_OK) return SERVICE_ERROR;
+
     /* Decode the Value */
-    fr = frame_decode_bytes(&frame, out, rsp_size);
-    if(fr != FRAME_OK) return SERVICE_ERROR;
-    
+    if(frame_decode_bytes(&frame, out, rsp_size) != FRAME_OK) return SERVICE_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
+
     return SERVICE_OK;
 }
    

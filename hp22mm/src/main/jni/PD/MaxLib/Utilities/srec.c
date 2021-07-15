@@ -10,7 +10,7 @@ Made in U.S.A.
 
 #include "srec.h"
 #include "max_common_types.h"
-#include "file.h"
+#include "debug_log.h"
 
 typedef enum
 {
@@ -62,12 +62,27 @@ SrecResult_t srec_parse_line(   char        *record,
                                 size_t      *data_size 
                             )
 {
-    MAX_ASSERT(NULL != record);
-    MAX_ASSERT(NULL != address);
-    MAX_ASSERT(NULL != buf);
-    MAX_ASSERT(NULL != data_size);
-    MAX_ASSERT(buf_size > 0);
-    
+    if(NULL == record) {
+        LOGE("record NULL");
+        return SREC_INVALID_RECORD;
+    }
+    if(NULL == address) {
+        LOGE("address NULL");
+        return SREC_INVALID_RECORD;
+    }
+    if(NULL == buf) {
+        LOGE("buf NULL");
+        return SREC_INVALID_RECORD;
+    }
+    if(NULL == data_size) {
+        LOGE("data_size NULL");
+        return SREC_INVALID_RECORD;
+    }
+    if(buf_size <= 0) {
+        LOGE("buf_size 0");
+        return SREC_INVALID_RECORD;
+    }
+
     /* If the first character is anything other than "S", 
      * it is considered invalid.
      */
@@ -77,8 +92,7 @@ SrecResult_t srec_parse_line(   char        *record,
     if(record[1] == '5') return SREC_OK_RECORD_HEADER;
     
     /* We only support S3 records now */
-    if(record[1] != '3')
-    {
+    if(record[1] != '3') {
         return SREC_INVALID_RECORD;
     }
     
@@ -99,7 +113,10 @@ SrecResult_t srec_parse_line(   char        *record,
     count -= 5;
     
     /* Make sure input buffer is large enough to hold data */
-    MAX_ASSERT(buf_size >= count); 
+    if(buf_size < count) {
+        LOGE("buf_size < count");
+        return SREC_INVALID_CRC;
+    }
     
     /* Copy the data to caller's buffer */
     uint32_t i = 0;

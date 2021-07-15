@@ -351,7 +351,24 @@ public class DataTask {
 			}
 		}
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+		if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
+			CharArrayBuffer caBuf = new CharArrayBuffer(0);
+			int orgCharsOfHead = mBinInfo.mCharsPerHFeed * mTask.getNozzle().mHeads;
+			int orgCols = mBuffer.length / orgCharsOfHead;
 
+			for(int i=0; i<orgCols; i++) {
+				for(int j=0; j<PrinterNozzle.E6_HEAD_NUM; j++) {
+					caBuf.append(mBuffer, i * orgCharsOfHead, orgCharsOfHead);
+				}
+			}
+
+			mBuffer = caBuf.toCharArray();
+
+			if(bSave) {
+				FileUtil.deleteFolder("/mnt/sdcard/printE1.bin");
+				BinCreater.saveBin("/mnt/sdcard/printE1.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM);
+			}
+		}
 // H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
 		calDots();
 // End of H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
@@ -537,8 +554,9 @@ public class DataTask {
 //		} else if (headType == PrinterNozzle.MESSAGE_TYPE_9MM) {
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_9MM ||
 			headType == PrinterNozzle.MESSAGE_TYPE_E6X48 ||
-			headType == PrinterNozzle.MESSAGE_TYPE_E6X50 ) {
+			headType == PrinterNozzle.MESSAGE_TYPE_E6X50 ||
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+			headType == PrinterNozzle.MESSAGE_TYPE_E6X1 ) {
 // H.M.Wang 2021-4-23 修改div和scaleW的计算公式，当前的计算可能不对
 //			div = 1.0f * 104/104;
 			scaleW = 152f / 104f * 2;

@@ -375,6 +375,8 @@ public class SmartCardManager implements IInkDevice {
     private void levelValueUpdated(final int cardIdx) {
         Debug.d(TAG, "---> enter levelValueUpdated(" + cardIdx + ")");
 
+//        int avgLevel = 13900000;
+//        int avgLevel = 13700000;
         int avgLevel = 13500000;
         if(mCards[cardIdx].mRecentLevels.size() >= PROC_LEVEL_NUMS) {
             long totalLevel = 0;
@@ -385,6 +387,8 @@ public class SmartCardManager implements IInkDevice {
         }
         Debug.d(TAG, "Average Level = " + avgLevel);
 
+//        if(avgLevel < 13900000) {
+//        if(avgLevel < 13700000) {
         if(avgLevel < 13500000) {
             if(!mCards[cardIdx].mInkAdding) {
                 if(mCards[cardIdx].mInkAddedTimes >= ADD_INK_TRY_LIMITS) {

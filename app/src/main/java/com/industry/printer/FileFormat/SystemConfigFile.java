@@ -1278,6 +1278,9 @@ public class SystemConfigFile{
 				nozzle = PrinterNozzle.MESSAGE_TYPE_E6X50;
 				break;
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_E6X1;
+				break;
 		}
 
 		return nozzle;
@@ -1394,6 +1397,9 @@ public class SystemConfigFile{
 				return 6;
 			}
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+			if( getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
+				return 6;
+			}
 			return 1;
 		}
 	}
@@ -1425,6 +1431,9 @@ public class SystemConfigFile{
 				return (head < 6 ? 0 : head);
 			}
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+			if( getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
+				return (head < 6 ? 0 : head);
+			}
 			return head;
 		}
 	}

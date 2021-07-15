@@ -1280,7 +1280,12 @@ public class DataTransferThread {
 // H.M.Wang 2021-7-9 300dpi的时候生成的打印图案会比原来宽一倍，参数设置为300dpi的时候，返回值会差一倍，最如下修正
 //				bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
 				if(Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_300) {
-					bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/300;
+					if(hType == PrinterNozzle.MESSAGE_TYPE_E6X50 || hType == PrinterNozzle.MESSAGE_TYPE_E6X48 || hType == PrinterNozzle.MESSAGE_TYPE_E6X1) {
+						// 由于已经通过对锁的调整进行了对应，因此，这里不做更改
+						bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
+					} else {
+						bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/300;
+					}
 				} else {
 					bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
 				}
@@ -1636,6 +1641,9 @@ private void setCounterPrintedNext(DataTask task, int count) {
 //						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
 							sb.append(mPrintDots[i<6?0:i]);
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
+					} else if( SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
+//						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
+						sb.append(mPrintDots[i<6?0:i]);
 					} else {
 						sb.append(mPrintDots[i]);
 					}

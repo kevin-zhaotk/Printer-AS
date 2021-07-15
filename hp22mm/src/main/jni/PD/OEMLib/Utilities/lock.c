@@ -13,15 +13,18 @@ Made in U.S.A.
 
 #include "lock.h"
 #include "print_head_driver_ifc.h"
+#include "debug_log.h"
 
 /* 
  * Initialize Mutex
  * Returns zero on success. 
  * Returns non-zero value on failure
  */
-void mutex_init(void *lock)
-{
-    MAX_ASSERT(NULL != lock);
+void mutex_init(void *lock) {
+    if(NULL == lock) {
+        LOGE("lock NULL!");
+        return;
+    }
     pthread_mutexattr_t mattr;
     pthread_mutexattr_init(&mattr);
     
@@ -35,42 +38,44 @@ void mutex_init(void *lock)
     pthread_mutexattr_setrobust_np(&mattr, PTHREAD_MUTEX_STALLED_NP);
     #endif
     
-    int mutex_result;
-    mutex_result = pthread_mutex_init(&((*((Lock_t *)lock)).lock_Id),&mattr);
-    
-    MAX_ASSERT(mutex_result == 0);
-    
+    if(pthread_mutex_init(&((*((Lock_t *)lock)).lock_Id),&mattr) != 0) {
+        LOGE("pthread_mutex_init failed!");
+    };
 }
 
+void mutex_lock(void *lock) {
+    if(NULL == lock) {
+        LOGE("lock NULL!");
+        return;
+    }
 
-void mutex_lock(void *lock)
-{
-    
-    MAX_ASSERT(NULL != lock);
-    int mutex_result;
-    mutex_result = pthread_mutex_lock(&((*((Lock_t *)lock)).lock_Id));
-    
-    MAX_ASSERT(mutex_result == 0);
-    
+    if(pthread_mutex_lock(&((*((Lock_t *)lock)).lock_Id)) != 0) {
+        LOGE("pthread_mutex_lock failed!");
+    }
 }
 
-void mutex_unlock(void *lock)
-{
-    MAX_ASSERT(NULL != lock);
-    int mutex_result;
-    mutex_result = pthread_mutex_unlock(&((*((Lock_t *)lock)).lock_Id));
-    
-    MAX_ASSERT(mutex_result == 0);
-    
+void mutex_unlock(void *lock) {
+    if(NULL == lock) {
+        LOGE("lock NULL!");
+        return;
+    }
+
+    if(pthread_mutex_unlock(&((*((Lock_t *)lock)).lock_Id)) != 0) {
+        LOGE("pthread_mutex_unlock failed!");
+    }
 }
 
-void mutex_destroy(void *lock)
-{
-    MAX_ASSERT(NULL != lock);
-    int mutex_result;    
+void mutex_destroy(void *lock) {
+    if(NULL == lock) {
+        LOGE("lock NULL!");
+        return;
+    }
+
+    int mutex_result;
     mutex_result = pthread_mutex_destroy(&((*((Lock_t *)lock)).lock_Id));
-    
-    MAX_ASSERT(mutex_result == 0);
-    
+
+    if(mutex_result != 0) {
+        LOGE("pthread_mutex_destroy failed!");
+    }
 }
 

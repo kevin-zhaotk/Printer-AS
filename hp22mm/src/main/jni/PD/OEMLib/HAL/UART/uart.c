@@ -88,8 +88,9 @@ static Lock_t       shared_lock;
  * This function should be called to initialize the UART library before
  * any other UART functions can be invoked.
  */
-UartResult_t uart_lib_init()
-{
+UartResult_t uart_lib_init() {
+    LOGI("Enter %s", __FUNCTION__);
+
     if(true == is_lib_initialized) return UART_OK;
 
     /*
@@ -104,40 +105,44 @@ UartResult_t uart_lib_init()
 
     is_lib_initialized = true;
 
+    LOGI("%s done", __FUNCTION__);
+
     return UART_OK;
 }
 
-UartResult_t uart_lib_shutdown()
-{
+UartResult_t uart_lib_shutdown() {
+    LOGI("Enter %s", __FUNCTION__);
+
     if(false == is_lib_initialized) return UART_OK;
 
     is_lib_initialized = true;
 
     mutex_destroy(&shared_lock);
+
+    LOGI("%s done", __FUNCTION__);
+
     return UART_OK;
 }
 
-
-UartResult_t uart_lock()
-{
+UartResult_t uart_lock() {
     // lock simple mutex
     mutex_lock(&shared_lock);
     return UART_OK;
 }
 
-UartResult_t uart_unlock()
-{
+UartResult_t uart_unlock() {
     // unlock simple mutex
     mutex_unlock(&shared_lock);
     return UART_OK;
 }
 
+UartResult_t uart_init(int32_t instance) {
+    LOGI("Enter %s", __FUNCTION__);
 
-
-UartResult_t uart_init(int32_t instance)
-{
-    if(instance <= 0) return UART_ERROR;
-    if(instance > NUM_BLUR_INSTANCES) return UART_ERROR;
+    if(instance <= 0 || instance > NUM_BLUR_INSTANCES) {
+        LOGE("Invalid Instance!");
+        return UART_ERROR;
+    }
 
     // Already initialized, just return.
     //
@@ -148,8 +153,7 @@ UartResult_t uart_init(int32_t instance)
     UartHandle_t *handle = &uart_handle;
 
     handle->fs = open(UART_DEVICE_NAME, O_RDWR | O_NOCTTY /*| O_NDELAY*/);
-    if (handle->fs == -1)
-    {
+    if (handle->fs == -1) {
         /* Failed to open UART */
         char msg[MSG_SIZE];
         snprintf(msg, MSG_SIZE, "uart_init() : Unable to open UART device : %s : ", UART_DEVICE_NAME);
@@ -184,6 +188,8 @@ UartResult_t uart_init(int32_t instance)
 */
     is_uart_initialized = true;
 
+    LOGI("%s done", __FUNCTION__);
+
     return UART_OK;
 }
 
@@ -191,15 +197,23 @@ UartResult_t uart_init(int32_t instance)
  * This function will close the underlying uart connection and
  * cleanup the data structures.
  */
-UartResult_t uart_shutdown(int32_t instance)
-{
-    if(false == is_uart_initialized) return UART_OK;
+UartResult_t uart_shutdown(int32_t instance) {
+    LOGI("Enter %s", __FUNCTION__);
+
+    if(instance <= 0 || instance > NUM_BLUR_INSTANCES) {
+        LOGE("Invalid Instance!");
+        return UART_ERROR;
+    }
+
+    if(uart_handle.fs == -1) {
+//        LOGE("UART not opened!");
+        is_uart_initialized = false;
+        return UART_OK;
+    }
+
+//    if(false == is_uart_initialized) return UART_OK;
 
     is_uart_initialized = false;
-
-    if(instance <= 0) return UART_ERROR;
-    if(instance > NUM_BLUR_INSTANCES) return UART_ERROR;
-    if(uart_handle.fs == -1) return UART_ERROR;
 
     //UartHandle_t *handle = &uart_handle[instance-1];
     UartHandle_t *handle = &uart_handle;
@@ -207,12 +221,13 @@ UartResult_t uart_shutdown(int32_t instance)
     close(handle->fs);
     handle->fs = -1;
 
+    LOGI("%s done", __FUNCTION__);
+
     return UART_OK;
 }
 
 /* Select the UART based on the instance */
-UartResult_t uart_select_mux(int32_t instance)
-{
+UartResult_t uart_select_mux(int32_t instance) {
 //    if(instance == 2)   digitalWrite (UART_MUX_SEL_PIN, HIGH); /* Select IDS */
 //    else                digitalWrite (UART_MUX_SEL_PIN, LOW);  /* Select PD  */
 
@@ -225,23 +240,38 @@ UartResult_t uart_select_mux(int32_t instance)
  * data - Pointer to buffer containing the data. Allocated by caller.
  * size - Size of the data to be transmited in bytes
  */
-UartResult_t uart_send(int32_t instance, uint8_t *data, size_t size)
-{
-    if(instance <= 0) return UART_ERROR;
-    if(instance > NUM_BLUR_INSTANCES) return UART_ERROR;
-    if(uart_handle.fs == -1) return UART_ERROR;
+UartResult_t uart_send(int32_t instance, uint8_t *data, size_t size) {
+    LOGI("Enter %s", __FUNCTION__);
 
-    if(NULL == data) return UART_ERROR;
-    if(size <= 0) return UART_ERROR;
+    if(instance <= 0 || instance > NUM_BLUR_INSTANCES) {
+        LOGE("Invalid Instance!");
+        return UART_ERROR;
+    }
+    if(uart_handle.fs == -1) {
+        LOGE("UART not opened!");
+        return UART_ERROR_NOT_INITIALIZED;
+    }
+    if(NULL == data) {
+        LOGE("data NULL!");
+        return UART_ERROR;
+    }
+    if(size <= 0) {
+        LOGE("data size 0!");
+        return UART_ERROR;
+    }
+    if(size > MAX_TX_SIZE) {
+        LOGE("data size too large!");
+        return UART_ERROR;
+    }
 
     UartHandle_t *handle = &uart_handle;
 
     size_t transmitted = 0;
 
-    if(handle->fs   == -1           ) return UART_ERROR_NOT_INITIALIZED;
-    if(data         == NULL         ) return UART_ERROR;
-    if(size         < 0             ) return UART_ERROR;
-    if(size         > MAX_TX_SIZE   ) return UART_ERROR;
+//    if(handle->fs   == -1           ) return UART_ERROR_NOT_INITIALIZED;
+//    if(data         == NULL         ) return UART_ERROR;
+//    if(size         < 0             ) return UART_ERROR;
+//    if(size         > MAX_TX_SIZE   ) return UART_ERROR;
 
     /* Control the UART MUX on PDG */
     uart_select_mux(instance);
@@ -249,50 +279,42 @@ UartResult_t uart_send(int32_t instance, uint8_t *data, size_t size)
     /* Flush the input buffer incase we have some unwanted data */
     tcflush(handle->fs, TCIFLUSH);
 
-    if( size < SPLIT_THRESHOLD )
-    {
+    if( size < SPLIT_THRESHOLD ) {
         /* send the data */
         transmitted = write(handle->fs, data, size);
-        if(transmitted != size)
-        {
-            LOGD("Bytes transmitted = %d\n", transmitted);
+        if(transmitted != size) {
+            LOGE("Bytes transmitted = %d\n", transmitted);
             return UART_ERROR;
         }
-
-    }else{
-
+    } else {
         //uint8_t * dcpy = data;
         size_t splitsize = (size_t)SPLIT_SIZE;
         int residual_size = (int) size;
 
         /* send the data */
 
-        while (residual_size >= SPLIT_SIZE)
-        {
-           LOGD("residual size = %d \n", residual_size);
+        while (residual_size >= SPLIT_SIZE) {
+            LOGD("residual size = %d \n", residual_size);
 
-           transmitted = write(handle->fs, data, SPLIT_SIZE);
-           if(transmitted != splitsize)
-           {
- //            UART_DEBUG_LOG(DEBUG_LEVEL_DEBUG, "Bytes transmitted = %d\n", transmitted);
-                LOGD("Bytes transmitted = %d\n", transmitted);
+            transmitted = write(handle->fs, data, SPLIT_SIZE);
+            if(transmitted != splitsize) {
+                //            UART_DEBUG_LOG(DEBUG_LEVEL_DEBUG, "Bytes transmitted = %d\n", transmitted);
+                LOGE("Bytes transmitted = %d\n", transmitted);
                 return UART_ERROR;
-           }
-           usleep(50*1000);//50ms delay
-          residual_size = residual_size - SPLIT_SIZE;
-          data = data + SPLIT_SIZE;
+            }
+            usleep(50*1000);//50ms delay
+            residual_size = residual_size - SPLIT_SIZE;
+            data = data + SPLIT_SIZE;
         }
 
-         if (residual_size > 0)
-        {
-        /* send the data */
-         //  dcpy = data + SPLIT_SIZE;
-           splitsize = (size_t)residual_size;//(resisize - splitsize) ;
-           transmitted = write(handle->fs, data, splitsize);
-            if(transmitted != splitsize)
-            {
-    //            UART_DEBUG_LOG(DEBUG_LEVEL_DEBUG, "Bytes transmitted = %d\n", transmitted);
-                LOGD("Bytes transmitted = %d\n", transmitted);
+        if (residual_size > 0) {
+            /* send the data */
+            //  dcpy = data + SPLIT_SIZE;
+            splitsize = (size_t)residual_size;//(resisize - splitsize) ;
+            transmitted = write(handle->fs, data, splitsize);
+            if(transmitted != splitsize) {
+                //            UART_DEBUG_LOG(DEBUG_LEVEL_DEBUG, "Bytes transmitted = %d\n", transmitted);
+                LOGE("Bytes transmitted = %d\n", transmitted);
                 return UART_ERROR;
             }
         }
@@ -306,6 +328,9 @@ UartResult_t uart_send(int32_t instance, uint8_t *data, size_t size)
     /* Send break */
     /* tcsendbreak(handle->fs, 0); */
     /****************************************************************/
+    LOGD("Bytes transmitted = %d\n", transmitted);
+
+    LOGI("%s done", __FUNCTION__);
 
     return UART_OK;
 }
@@ -326,14 +351,32 @@ UartResult_t uart_recv( int32_t         instance,
                         uint8_t         *buf,
                         size_t          buf_size,
                         size_t          *recvd_size,
-                        int32_t         timeout_ms)
-{
-    if(instance <= 0) return UART_ERROR;
-    if(instance > NUM_BLUR_INSTANCES) return UART_ERROR;
-    if(uart_handle.fs == -1) return UART_ERROR;
+                        int32_t         timeout_ms) {
+    LOGI("Enter %s", __FUNCTION__);
 
-    if(NULL == buf) return UART_ERROR;
-    if(NULL == recvd_size) return UART_ERROR;
+    if(instance <= 0 || instance > NUM_BLUR_INSTANCES) {
+        LOGE("Invalid Instance!");
+        return UART_ERROR;
+    }
+    if(uart_handle.fs == -1) {
+        LOGE("UART not opened!");
+        return UART_ERROR_NOT_INITIALIZED;
+    }
+    if(NULL == buf) {
+        LOGE("buf NULL!");
+        return UART_ERROR;
+    }
+    if(NULL == recvd_size) {
+        LOGE("recvd_size NULL!");
+        return UART_ERROR;
+    }
+
+//    if(instance <= 0) return UART_ERROR;
+//    if(instance > NUM_BLUR_INSTANCES) return UART_ERROR;
+//    if(uart_handle.fs == -1) return UART_ERROR;
+
+//    if(NULL == buf) return UART_ERROR;
+//    if(NULL == recvd_size) return UART_ERROR;
 
     UartHandle_t *handle = &uart_handle;
 
@@ -352,45 +395,40 @@ UartResult_t uart_recv( int32_t         instance,
      */
     tv.tv_sec   = 0;
     tv.tv_usec  = 0;
-    if(timeout_ms > 1000)
-    {
+    if(timeout_ms > 1000) {
         tv.tv_sec   = timeout_ms / 1000;
         timeout_ms -= timeout_ms / 1000;
     }
     tv.tv_usec = timeout_ms * 1000;
 
-
-    while(1)
-    {
+    while(1) {
         size_t recieved = 0;
 
         retval = select(handle->fs + 1, &rfds, NULL, NULL, &tv);
-        if(retval == -1)
-        {
+        if(retval == -1) {
             /* If the select call was interrupted due to a signal,
              * call select() again.
              */
             if(errno == EINTR)  continue;
             else return UART_ERROR;
         }
-        else if (retval)
-        {
+        else if (retval) {
             /* data is available to read */
             recieved = read(handle->fs, (void *)(buf + *recvd_size), (buf_size - *recvd_size));
-            if(recieved < 0)
-            {
+            if(recieved < 0) {
                 if(errno == EINTR) continue;
-
                 return UART_ERROR;
             }
 
             *recvd_size += recieved;
             LOGD("total no of bytes read = %d\n", *recvd_size);
 
-            if(*recvd_size >= buf_size) return UART_OK;
-        }
-        else /* = 0 */
-        {
+            if(*recvd_size >= buf_size) {
+                LOGI("%s done", __FUNCTION__);
+                return UART_OK;
+            }
+        } else { /* = 0 */
+            LOGE("UART_ERROR_TIMEOUT!\n");
             return UART_ERROR_TIMEOUT;
         }
     }
@@ -412,12 +450,22 @@ UartResult_t uart_recv( int32_t         instance,
  */
 UartResult_t uart_recv_callback(int32_t instance, uint8_t *data,
                                 size_t size, int32_t timeout,
-                                UartCallbackFunc *func)
-{
-    if(instance <= 0) return UART_ERROR;
-    if(instance > NUM_BLUR_INSTANCES) return UART_ERROR;
-    if(uart_handle.fs == -1) return UART_ERROR;
+                                UartCallbackFunc *func) {
+    LOGI("Enter %s", __FUNCTION__);
 
+    if(instance <= 0 || instance > NUM_BLUR_INSTANCES) {
+        LOGE("Invalid Instance!");
+        return UART_ERROR;
+    }
+    if(uart_handle.fs == -1) {
+        LOGE("UART not opened!");
+        return UART_ERROR_NOT_INITIALIZED;
+    }
+//    if(instance <= 0) return UART_ERROR;
+//    if(instance > NUM_BLUR_INSTANCES) return UART_ERROR;
+//    if(uart_handle.fs == -1) return UART_ERROR;
+
+    LOGE("UART_ERROR_NOT_IMPLEMENTED!");
     return UART_ERROR_NOT_IMPLEMENTED;
 }
 

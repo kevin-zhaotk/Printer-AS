@@ -293,6 +293,9 @@ public class FpgaGpioOperation {
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
                 data[15] = 16;
             }
+            if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
+                data[15] = 16;
+            }
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT ||
 
@@ -331,6 +334,9 @@ public class FpgaGpioOperation {
                 data[17] &= 0xFFF0;
             }
 // End of H.M.Wang 2021-5-22 打印的时候，E6不能允许选反表， 即S18[3:0]取0
+            if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
+                data[17] &= 0xFFF0;
+            }
         }
 
         if (type == SETTING_TYPE_PURGE1) {
@@ -407,6 +413,12 @@ public class FpgaGpioOperation {
             data[24] *= 6;
         }
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+        if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
+            data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_9MM;
+            data[16] &= 0xfc7f;        // Bit9-7
+            data[16] |= 0x0280;        // 6个头
+            data[24] *= 6;
+        }
 
         //是否雙列打印
         data[25] = (char) config.getParam(31 - 1);

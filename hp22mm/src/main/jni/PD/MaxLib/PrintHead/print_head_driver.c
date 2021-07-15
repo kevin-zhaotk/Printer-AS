@@ -57,7 +57,7 @@ PDResult_t pd_lib_init() {
     oem_lib_init();
     _is_lib_initialized = true;
 
-    LOGI("Exit %s", __FUNCTION__);
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -72,7 +72,7 @@ PDResult_t pd_lib_shutdown() {
     _is_lib_initialized = false;
     oem_lib_shutdown();
 
-    LOGI("Exit %s", __FUNCTION__);
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -96,7 +96,7 @@ PDResult_t pd_supply_status(int32_t instance, uint8_t ph_id, uint8_t slot_id, ui
 
     if(sr != SERVICE_OK) { return PD_ERROR; }
 
-    LOGI("Exit %s", __FUNCTION__);
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -113,7 +113,10 @@ PDResult_t pd_pairing(int32_t instance, int32_t step, int32_t param1, int32_t pa
 //        LOGE("Invalid Instance!");
 //        return PD_ERROR;
 //    }
-//    if(step < 1 || step > 3) return PD_ERROR;
+    if(step < 1 || step > 3) {
+        LOGE("Invalid step [%d]!", step);
+        return PD_ERROR;
+    }
 //	if(NULL == out) return PD_ERROR;
 //	if(NULL == out_size) return PD_ERROR;
 
@@ -123,7 +126,9 @@ PDResult_t pd_pairing(int32_t instance, int32_t step, int32_t param1, int32_t pa
 
     if(sr != SERVICE_OK) { return PD_ERROR; }
 
-    return PD_OK;  
+    LOGI("%s done", __FUNCTION__);
+
+    return PD_OK;
 }
 
 PDResult_t pd_pairing_delete(int32_t instance) {
@@ -143,7 +148,9 @@ PDResult_t pd_pairing_delete(int32_t instance) {
     oem_unlock(instance);
 
     if(sr != SERVICE_OK) { return PD_ERROR; }
-    
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -164,7 +171,9 @@ PDResult_t pd_terminate_session(int32_t instance) {
     oem_unlock(instance);
 
     if(sr != SERVICE_OK) { return PD_ERROR; }
-    
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -187,6 +196,8 @@ PDResult_t pd_set_secure_overrides(int32_t instance, int32_t ph_id, int32_t slot
     
     if(sr != SERVICE_OK) { return PD_ERROR; }
 
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;  
 }
 
@@ -201,8 +212,14 @@ PDResult_t pd_get_ph_status(int32_t instance, int32_t *status0, int32_t *status1
 //        LOGE("Invalid Instance!");
 //        return PD_ERROR;
 //    }
-    if(NULL == status0) return PD_ERROR;
-    if(NULL == status1) return PD_ERROR;
+    if(NULL == status0) {
+        LOGE("status0 NULL!");
+        return PD_ERROR;
+    }
+    if(NULL == status1) {
+        LOGE("status1 NULL!");
+        return PD_ERROR;
+    }
 
     /* No locking required in this function since pd_get_print_head_status()
      * already has locking in it.
@@ -218,8 +235,10 @@ PDResult_t pd_get_ph_status(int32_t instance, int32_t *status0, int32_t *status1
         return PD_ERROR;
     }
 	*status1 = (phs.print_head_state != PH_STATE_NOT_PRESENT && phs.print_head_state != PH_STATE_INVALID);
-    
-    return PD_OK;  
+
+    LOGI("%s done", __FUNCTION__);
+
+    return PD_OK;
 }
 
 /*
@@ -238,7 +257,10 @@ static PDResult_t _pd_init_head_info(int32_t instance,  Headinfo_t * info) {
 //        LOGE("Invalid Instance!");
 //        return PD_ERROR;
 //    }
-	if(info == NULL) return PD_ERROR;
+	if(info == NULL) {
+        LOGE("info NULL!");
+        return PD_ERROR;
+    }
 	
 	info->initialized = false;	
     
@@ -265,7 +287,9 @@ static PDResult_t _pd_init_head_info(int32_t instance,  Headinfo_t * info) {
     LOGD("MultiHeadControl info:  first srvc id = %d, rev = %d, tot srvcs = %d, tot evns = %d, first evnt id = %d\n",
                                         info->first_srvc_id, info->rev, info->total_srvcs, info->total_evnts, info->first_evnt_id);		
 
-	info->initialized = true;	
+	info->initialized = true;
+
+    LOGI("%s done", __FUNCTION__);
 
 	return PD_OK;
 }
@@ -310,7 +334,9 @@ PDResult_t pd_init(int32_t instance) {
 
     /* Lock ends here. Unlock mutex is done here */
     oem_unlock(instance);
-    
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -330,8 +356,10 @@ PDResult_t pd_shutdown(int32_t instance) {
 //    }
 
     _is_lib_initialized = false;
-    oem_shutdown(instance);    
-    
+    oem_shutdown(instance);
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -388,6 +416,10 @@ PDResult_t pd_micro_fw_reflash_no_reset(int32_t instance, const char *fw_file_na
     ReflashResult_t r = micro_fw_reflash(instance, fw_file_name, verify, false);
     oem_unlock(instance);
 
+    if(r != REFLASH_OK) { return PD_ERROR; }
+
+    LOGI("%s done", __FUNCTION__);
+
     return _reflash_result_to_pd_result(r);
 }
 
@@ -407,6 +439,10 @@ PDResult_t pd_micro_fw_reflash(int32_t instance, const char *fw_file_name, bool 
     oem_lock(instance);
     ReflashResult_t r = micro_fw_reflash(instance, fw_file_name, verify, true);
     oem_unlock(instance);
+
+    if(r != REFLASH_OK) { return PD_ERROR; }
+
+    LOGI("%s done", __FUNCTION__);
 
     return _reflash_result_to_pd_result(r);
 }
@@ -434,11 +470,9 @@ PDResult_t pd_power_on(int32_t instance, uint8_t ph_id) {
     sr = service_power_on(instance, &headcontrolinfo, ph_id);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        return PD_ERROR;
-    } else {
-        LOGI(" Power on success \n");
-    }
+    if(sr != SERVICE_OK) { return PD_ERROR; }
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -467,11 +501,9 @@ PDResult_t pd_power_off(int32_t instance, uint8_t ph_id) {
     sr = service_power_off(instance, &headcontrolinfo, ph_id);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        return PD_ERROR;
-    } else {
-        LOGI(" Power off success \n");
-    }
+    if(sr != SERVICE_OK) { return PD_ERROR; }
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -487,7 +519,10 @@ PDResult_t pd_get_system_status(int32_t instance, PDSystemStatus *pd_system_stat
 //        LOGE("Invalid Instance!");
 //        return PD_ERROR;
 //    }
-    if(NULL == pd_system_status) return PD_ERROR;
+    if(NULL == pd_system_status) {
+        LOGE("pd_system_status NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     
@@ -503,11 +538,8 @@ PDResult_t pd_get_system_status(int32_t instance, PDSystemStatus *pd_system_stat
     sr = service_get_system_info(instance, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_system_status(): instance = %d\n", instance);
-        return PD_ERROR;
-    }
-    
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     if(res.res_size != 0 && res.res_size >= 12) {
 		fw_rev 		= _pd_getResponseData16(&res,0);
 		fpga_rev 	= _pd_getResponseData16(&res,2);
@@ -540,7 +572,9 @@ PDResult_t pd_get_system_status(int32_t instance, PDSystemStatus *pd_system_stat
     LOGD(" pd_get_system_status success .  FW-rev-major:%d FW-rev-minor:%d FPGA-rev-major:%d FPGA-rev-minor:%d\n",
 											pd_system_status->fw_rev_major, pd_system_status->fw_rev_minor, pd_system_status->fpga_rev_major,pd_system_status->fpga_rev_minor);
     LOGD(" pd_get_system_status success .  BLR-bd-rev:%d DRV_bd0-rev:%d DRV_bd1_rev:%d System-status:%d\n",
-											pd_system_status->blur_board_rev, pd_system_status->driver_board0_rev, pd_system_status->driver_board1_rev,pd_system_status->pd_status); 
+											pd_system_status->blur_board_rev, pd_system_status->driver_board0_rev, pd_system_status->driver_board1_rev,pd_system_status->pd_status);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -557,7 +591,10 @@ PDResult_t pd_get_print_head_status(int32_t instance, uint8_t ph_id , PrintHeadS
 //        return PD_ERROR;
 //    }
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == print_head_status) return PD_ERROR;
+    if(NULL == print_head_status) {
+        LOGE("print_head_status NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     
@@ -568,16 +605,13 @@ PDResult_t pd_get_print_head_status(int32_t instance, uint8_t ph_id , PrintHeadS
     sr = service_head_status(instance, &headcontrolinfo, ph_id, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_print_head_status(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
     
     if(res.res_size != 0 && res.res_size == 8) {
         phstatus = _pd_getResponseData32(&res,0);
         pherrorstate = _pd_getResponseData32(&res,4);
     } else {
-        LOGE("ERROR: pd_get_print_head_status(): instance = %d, Pen ID = %d\n", instance, ph_id);
+        LOGE("%s: res_size error\n", __FUNCTION__);
         return PD_ERROR;
     }
 
@@ -592,6 +626,8 @@ PDResult_t pd_get_print_head_status(int32_t instance, uint8_t ph_id , PrintHeadS
     print_head_status->supplyexpired_warning    = ((phstatus >> 16) & 0x04) ? 1 : 0;
 
     LOGD("pd_get_print_head_status() : PH STATE: %d, PH ERROR: %d. E cal = %d\n", phstatus, pherrorstate, print_head_status->energy_calibrated);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -611,7 +647,10 @@ static PDResult_t _pd_init_fpgaflash_info(int32_t instance,Flashinfo_t * info) {
 //        LOGE("Invalid Instance!");
 //        return PD_ERROR;
 //    }
-	if(info == NULL) return PD_ERROR;
+	if(info == NULL) {
+        LOGE("info NULL!");
+        return PD_ERROR;
+    }
 	
 	Response_t res;
 	ServiceResult_t sr = service_check_extension( instance, EXTENSION_SPIMASTER_ID, &res);
@@ -631,6 +670,7 @@ static PDResult_t _pd_init_fpgaflash_info(int32_t instance,Flashinfo_t * info) {
 			info->first_evnt_id |= res.data[7] << 24;
 			
 	} else {
+        LOGE("%s: res_size error\n", __FUNCTION__);
         return PD_ERROR;
     }
 
@@ -647,6 +687,7 @@ static PDResult_t _pd_init_fpgaflash_info(int32_t instance,Flashinfo_t * info) {
 		/* decode the response data */
 		info->dev_id = res.data[0];
     } else {
+        LOGE("%s: res_size error\n", __FUNCTION__);
         return PD_ERROR;
     }
 
@@ -681,6 +722,7 @@ static PDResult_t _pd_init_fpgaflash_info(int32_t instance,Flashinfo_t * info) {
 			info->objects[objs].size |= res.data[6] << 16;
 			info->objects[objs].size |= res.data[7] << 24;
         } else {
+            LOGE("%s: res_size error\n", __FUNCTION__);
             return PD_ERROR;
         }
 
@@ -690,7 +732,9 @@ static PDResult_t _pd_init_fpgaflash_info(int32_t instance,Flashinfo_t * info) {
 		sr = service_object_handling( instance, SUBSERVICE_OBJECT_UNLOCK, info->objects[objs].id, &res);
 		if(sr != SERVICE_OK) return PD_ERROR;			
 	}
-		
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -709,8 +753,14 @@ static PDResult_t _pd_fpgaflash_getstatus(int32_t instance,Flashinfo_t *info, ui
 //        LOGE("Invalid Instance!");
 //        return PD_ERROR;
 //    }
-	if(info == NULL) return PD_ERROR;
-	if(status == NULL) return PD_ERROR;
+	if(info == NULL) {
+        LOGE("info NULL!");
+        return PD_ERROR;
+    }
+	if(status == NULL) {
+        LOGE("status NULL!");
+        return PD_ERROR;
+    }
 	
 	Response_t res;
 	ServiceResult_t sr =  service_flash_rdstatus(instance, info, &res);
@@ -724,8 +774,11 @@ static PDResult_t _pd_fpgaflash_getstatus(int32_t instance,Flashinfo_t *info, ui
 		/* decode the response data */
 		*status = res.data[0];
 	} else {
+        LOGE("%s: res_size error\n", __FUNCTION__);
         return PD_ERROR;
     }
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;	 
 }
@@ -734,7 +787,7 @@ static PDResult_t _pd_fpgaflash_getstatus(int32_t instance,Flashinfo_t *info, ui
  * 
  * 
  */
-static PDResult_t _pd_fpgaflash_erase(int32_t instance,Flashinfo_t * info) {
+static PDResult_t _pd_fpgaflash_erase(int32_t instance,Flashinfo_t *info) {
     LOGI("Enter %s", __FUNCTION__);
 
     if(_is_lib_initialized == false) {
@@ -753,8 +806,10 @@ static PDResult_t _pd_fpgaflash_erase(int32_t instance,Flashinfo_t * info) {
 
 	sr =  service_flash_erase(instance, info, &res);
     if(sr != SERVICE_OK) return PD_ERROR;
-	
-    return PD_OK;	 	
+
+    LOGI("%s done", __FUNCTION__);
+
+    return PD_OK;
 }
   /*
  * 
@@ -771,7 +826,7 @@ static PDResult_t _pd_fpgaflash_writeprotect(int32_t instance,Flashinfo_t * info
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
-	if(info == NULL) return PD_ERROR;
+//	if(info == NULL) return PD_ERROR;
 
 	Response_t res;
 	ServiceResult_t sr =  service_flash_wrenbl(instance, info, &res);
@@ -783,7 +838,9 @@ static PDResult_t _pd_fpgaflash_writeprotect(int32_t instance,Flashinfo_t * info
 	
 	sr =  service_flash_wrstatus( instance, info, &res);
     if(sr != SERVICE_OK) return PD_ERROR;
-	
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
   /*
@@ -801,7 +858,7 @@ static PDResult_t _pd_fpgaflash_remove_wp(int32_t instance,Flashinfo_t * info) {
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
-    if(info == NULL) return PD_ERROR;
+//    if(info == NULL) return PD_ERROR;
 
 	Response_t res;
 	ServiceResult_t sr =  service_flash_wrenbl(instance, info, &res);
@@ -813,7 +870,9 @@ static PDResult_t _pd_fpgaflash_remove_wp(int32_t instance,Flashinfo_t * info) {
 	
 	sr =  service_flash_wrstatus( instance, info, &res);
     if(sr != SERVICE_OK) return PD_ERROR;
-	
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 /*
@@ -832,28 +891,21 @@ static PDResult_t _pd_fpgaflash_program(int32_t instance,Flashinfo_t * info, uin
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
-	if(info == NULL) return PD_ERROR;
+//	if(info == NULL) return PD_ERROR;
 //	MAX_ASSERT(data != NULL);
 //	MAX_ASSERT(data_size > 0);
 	
 	Response_t res;
 	ServiceResult_t sr =  service_flash_wrenbl(instance, info, &res);
-    if(sr != SERVICE_OK) {
-        LOGE(" service_flash_wrenbl ERROR  \n");
-         return PD_ERROR;
-    }
-	 
+    if(sr != SERVICE_OK) return PD_ERROR;
+
 	sr =  service_write_data(instance, info->objects[FLASH_PGPGM].addr+1, data, data_size);
-    if(sr != SERVICE_OK) {
-        LOGE(" service_write_data ERROR  \n");
-         return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 	
 	sr =  service_flash_pgm(instance, info, &res, data_size);
-    if(sr != SERVICE_OK) {
-        LOGE(" service_flash_pgm ERROR  \n");
-         return PD_ERROR;	
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -873,7 +925,7 @@ static PDResult_t _pd_fpgaflash_read(int32_t instance,Flashinfo_t * info, uint8_
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
-	if(info == NULL) return PD_ERROR;
+//	if(info == NULL) return PD_ERROR;
 //	MAX_ASSERT(data != NULL);
 //	MAX_ASSERT(data_size > 3);
 	
@@ -885,10 +937,7 @@ static PDResult_t _pd_fpgaflash_read(int32_t instance,Flashinfo_t * info, uint8_
 	
 	/* initiate read */
 	sr =  service_flash_read(instance,info, &res, data_size);
-    if(sr != SERVICE_OK) {
-        LOGE(" SERVICE FLASH READ ERROR  \n");
-        return PD_ERROR;
-     }
+    if(sr != SERVICE_OK) return PD_ERROR;
     
     /* sr = service_read_data(instance, info->objects[FLASH_RDBUF].addr+1, data_size-3,&res); */
     sr = service_read_data(instance, info->objects[FLASH_RDBUF].addr, data_size-3,&res);
@@ -903,8 +952,11 @@ static PDResult_t _pd_fpgaflash_read(int32_t instance,Flashinfo_t * info, uint8_
 			*(data+no) = res.data[no];
 		}
 	} else {
+        LOGE("%s: res_size error\n", __FUNCTION__);
         return PD_ERROR;
     }
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -925,9 +977,9 @@ static PDResult_t _pd_fpgaflash_program_verify(int32_t instance,Flashinfo_t * in
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
-	if(info == NULL) return PD_ERROR;
-	if(data == NULL) return PD_ERROR;
-	if(data_size <= 0) return PD_ERROR;
+//	if(info == NULL) return PD_ERROR;
+//	if(data == NULL) return PD_ERROR;
+//	if(data_size <= 0) return PD_ERROR;
 	
 	PDResult_t pr = _pd_fpgaflash_program(instance, info, data, data_size);
     if(PD_OK != pr) return pr;
@@ -947,20 +999,23 @@ static PDResult_t _pd_fpgaflash_program_verify(int32_t instance,Flashinfo_t * in
 	rddata[1] = *(data+1);
 	rddata[2] = *(data+2);
 	/* read back */
-	pr = _pd_fpgaflash_read( instance,info, rddata, data_size);
+	pr = _pd_fpgaflash_read( instance, info, rddata, data_size);
 	if(PD_OK != pr) return pr;
 
 	/* verify */
     size_t no;
-	for(no=0;no < (data_size-3);no++) {
+	for(no=0; no<(data_size-3); no++) {
         if(*(data+no+3) != rddata[no]) {
-            LOGE("pd_fpgafw_reflash(): Verify failure @ dataoffset: %d\n", no);
+            LOGE("Verify failure @ dataoffset: %d\n", no);
             return PD_ERROR;
         }
 	}
 
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
+
  /*
  * 
  *  
@@ -976,12 +1031,15 @@ static PDResult_t _pd_fpgaflash_validate_addr(int32_t instance, uint32_t addr, s
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
-	if(data_size <= 0) return PD_ERROR;
+	if(data_size <= 0) {
+        LOGE("Invalid data_size!");
+        return PD_ERROR;
+    }
 	
 	uint8_t addr_distance = 0;
 	if( (addr & (FLASH_PAGE_SIZE-1) ) != 0X0 ) {
 		addr_distance = (addr % FLASH_PAGE_SIZE);
-		if(  ((uint32_t) data_size + addr_distance) <= FLASH_PAGE_SIZE ) return PD_OK;
+		if(((uint32_t) data_size + addr_distance) <= FLASH_PAGE_SIZE ) return PD_OK;
 	} else if(data_size <= FLASH_PAGE_SIZE) {
         return PD_OK;
     }
@@ -1004,6 +1062,10 @@ static PDResult_t _pd_write_fpgafw(int32_t instance, Flashinfo_t *info, const ch
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
+	if(fw_file_name == NULL) {
+        LOGE("fw_file_name NULL!");
+        return PD_ERROR;
+    }
 
     uint32_t pages = 0;
     uint32_t lines = 0;
@@ -1115,8 +1177,10 @@ static PDResult_t _pd_write_fpgafw(int32_t instance, Flashinfo_t *info, const ch
     
     /* Close the file */
     file_close(file_handle);
-    
-    return PD_OK;    
+
+    LOGI("%s done", __FUNCTION__);
+
+    return PD_OK;
 }
  
  
@@ -1137,8 +1201,10 @@ static PDResult_t _pd_fpga_setreset(int32_t instance, bool highorlow ) {
 //	}
 
     ServiceResult_t sr = service_fpga_set_chipreset(instance, highorlow);
-    if(sr != SERVICE_OK) return PD_ERROR; 
-    
+    if(sr != SERVICE_OK) return PD_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -1158,7 +1224,10 @@ PDResult_t pd_fpga_fw_reflash(int32_t instance, const char *fw_file_name, bool v
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
-    MAX_ASSERT(NULL != fw_file_name);
+    if(fw_file_name == NULL) {
+        LOGE("fw_file_name NULL!");
+        return PD_ERROR;
+    }
 
     LOGD("instance = %d, file name = %s\n", instance, fw_file_name);
 
@@ -1283,7 +1352,7 @@ PDResult_t pd_fpga_fw_reflash(int32_t instance, const char *fw_file_name, bool v
         return pr;
     }
 
-    LOGI("Release FPGA reset..\n");
+    LOGI("%s done", __FUNCTION__);
 
     oem_unlock(instance);
     
@@ -1303,7 +1372,10 @@ PDResult_t pd_calibrate_pulsewidth(int32_t instance, uint8_t ph_id, uint8_t slot
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
 //    MAX_ASSERT(slot < NUM_TRENCH_PER_PH );
-	if(NULL == calibrated_fpwidth) return PD_ERROR;
+	if(NULL == calibrated_fpwidth) {
+        LOGE("calibrated_fpwidth NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1312,12 +1384,8 @@ PDResult_t pd_calibrate_pulsewidth(int32_t instance, uint8_t ph_id, uint8_t slot
     sr = service_calibrate_pulsewidth(instance, &headcontrolinfo, ph_id, slot, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_calibrate_pulsewidth(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-     
-    
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     /* if there is response to be processed..4 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 4) {
         *calibrated_fpwidth = _pd_getResponseData32(&res,0);
@@ -1327,6 +1395,8 @@ PDResult_t pd_calibrate_pulsewidth(int32_t instance, uint8_t ph_id, uint8_t slot
     }
 
     LOGD("pd_calibrate_pulsewidth(): instance = %d, Pen ID = %d, FP Calibrated Firing Pulse Width = %d\n", instance, ph_id, *calibrated_fpwidth);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1345,7 +1415,10 @@ PDResult_t pd_get_dropsvolume(int32_t instance, uint8_t ph_id, uint8_t slot, flo
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
 //    MAX_ASSERT(slot < NUM_TRENCH_PER_PH );
-	if(NULL  == dropsvolume) return PD_ERROR;
+    if(NULL == dropsvolume) {
+        LOGE("dropsvolume NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1354,12 +1427,7 @@ PDResult_t pd_get_dropsvolume(int32_t instance, uint8_t ph_id, uint8_t slot, flo
     sr = service_get_used_ink_weight_unsecured(instance, &headcontrolinfo, ph_id, slot, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_dropsvolume(): instance = %d\n", instance);
-        return PD_ERROR;
-    } else {
-        LOGI(" pd_get_dropsvolume() success \n");
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
     /* if there is response to be processed..4 byte of response is expected */
     if(res.res_size != 0 && res.res_size == 4) {
@@ -1371,6 +1439,8 @@ PDResult_t pd_get_dropsvolume(int32_t instance, uint8_t ph_id, uint8_t slot, flo
     }
 
     LOGD("pd_get_dropsvolume(): instance = %d, PH Count = %f\n", instance, *dropsvolume);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1388,7 +1458,10 @@ PDResult_t pd_get_used_ink_weight(int32_t instance, uint8_t ph_id, uint8_t slot,
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
 //    MAX_ASSERT(slot < NUM_TRENCH_PER_PH );
-	if(NULL == ink_weight) return PD_ERROR;
+    if(NULL == ink_weight) {
+        LOGE("ink_weight NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1396,13 +1469,8 @@ PDResult_t pd_get_used_ink_weight(int32_t instance, uint8_t ph_id, uint8_t slot,
     oem_lock(instance);
     sr = service_get_used_ink_weight_unsecured(instance, &headcontrolinfo, ph_id, slot, &res);
     oem_unlock(instance);
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_dropsvolume(): instance = %d\n", instance);
-        return PD_ERROR;
-    } else {
-        LOGI(" pd_get_dropsvolume() success \n");
-    }
-       
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     /* if there is response to be processed..4 byte of response is expected */
     if(res.res_size != 0 && res.res_size == 4) {
         // Reponse is drop volume multiplied by 1000.
@@ -1413,6 +1481,8 @@ PDResult_t pd_get_used_ink_weight(int32_t instance, uint8_t ph_id, uint8_t slot,
     }
 
     LOGD("pd_get_dropsvolume(): instance = %d, PH Count = %f\n", instance, *ink_weight);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1428,8 +1498,14 @@ PDResult_t pd_ink_use(int32_t instance, uint8_t ph_id, uint8_t slot_id, int32_t 
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
-    if(NULL == out) return PD_ERROR;
-    if(NULL == out_size) return PD_ERROR;
+    if(NULL == out) {
+        LOGE("out NULL!");
+        return PD_ERROR;
+    }
+    if(NULL == out_size) {
+        LOGE("out_size NULL!");
+        return PD_ERROR;
+    }
 
     Response_t response;
 
@@ -1438,15 +1514,14 @@ PDResult_t pd_ink_use(int32_t instance, uint8_t ph_id, uint8_t slot_id, int32_t 
     ServiceResult_t sr = service_get_used_ink_weight(instance, ph_id, slot_id, &response);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR pd_ink_use(inst=%d pen=%d slot=%d) returned sr=%d\n", instance, (int)ph_id, (int)slot_id, (int)sr);
-		return PD_ERROR; 
-	}
-   
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     *status = response.data[0];
     memcpy(out, &response.data[1], (response.res_size-1));
     *out_size = response.res_size - 1;
-	
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -1462,7 +1537,10 @@ PDResult_t pd_get_temperature(int32_t instance, uint8_t ph_id, uint32_t *degree_
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == degree_c) return PD_ERROR;
+    if(NULL == degree_c) {
+        LOGE("degree_c NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1471,11 +1549,8 @@ PDResult_t pd_get_temperature(int32_t instance, uint8_t ph_id, uint32_t *degree_
     sr = service_get_actual_temp(instance, &headcontrolinfo, ph_id, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_temperature(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-       
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     /* if there is response to be processed..4 byte of response is expected */
     if(res.res_size != 0 && res.res_size == 4) {
         *degree_c= _pd_getResponseData32(&res,0);
@@ -1485,6 +1560,8 @@ PDResult_t pd_get_temperature(int32_t instance, uint8_t ph_id, uint32_t *degree_
     }
 
     LOGD("pd_get_temperature(): instance = %d, Pen ID = %d, ACTUAL_TEMP = %d\n", instance, ph_id, *degree_c);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1508,10 +1585,9 @@ PDResult_t pd_set_temperature_override(int32_t instance, uint8_t ph_id, uint8_t 
     sr = service_set_temperature_override(instance, &headcontrolinfo, ph_id, t);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_set_temperature_override(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1528,7 +1604,10 @@ PDResult_t pd_get_temperature_override(int32_t instance, uint8_t ph_id, uint8_t 
 //		return PD_ERROR;
 //	}
 //	if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == temp) return PD_ERROR;
+    if(NULL == temp) {
+        LOGE("temp NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1537,10 +1616,7 @@ PDResult_t pd_get_temperature_override(int32_t instance, uint8_t ph_id, uint8_t 
     sr = service_get_temperature_override(instance, &headcontrolinfo, ph_id, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_temperature_override(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
     /* if there is response to be processed..1 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 1) {
@@ -1551,6 +1627,8 @@ PDResult_t pd_get_temperature_override(int32_t instance, uint8_t ph_id, uint8_t 
     }
 
     LOGD("pd_get_temperature_override(): instance = %d, Pen ID = %d, Oveeride temperature = %d\n", instance, ph_id, *temp);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;   
 }
@@ -1574,10 +1652,9 @@ PDResult_t pd_set_voltage_override(int32_t instance, uint8_t ph_id, uint8_t volt
     sr = service_set_voltage_override(instance, &headcontrolinfo, ph_id, voltage);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_set_voltage_override(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1594,7 +1671,10 @@ PDResult_t pd_get_voltage_override(int32_t instance, uint8_t ph_id, uint8_t *vol
 //		return PD_ERROR;
 //	}
 //	if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == voltage) return PD_ERROR;
+    if(NULL == voltage) {
+        LOGE("voltage NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1603,10 +1683,7 @@ PDResult_t pd_get_voltage_override(int32_t instance, uint8_t ph_id, uint8_t *vol
     sr = service_get_voltage_override(instance, &headcontrolinfo, ph_id, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_voltage_override(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
     /* if there is response to be processed..1 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 1) {
@@ -1618,7 +1695,9 @@ PDResult_t pd_get_voltage_override(int32_t instance, uint8_t ph_id, uint8_t *vol
 
     LOGD("pd_get_voltage_override(): instance = %d, Pen ID = %d, Override voltage = %d\n", instance, ph_id, *voltage);
 
-    return PD_OK;   
+    LOGI("%s done", __FUNCTION__);
+
+    return PD_OK;
 }
 
 PDResult_t pd_set_over_energy_override(int32_t instance, uint8_t ph_id, uint8_t slot, uint8_t energy) {
@@ -1641,10 +1720,9 @@ PDResult_t pd_set_over_energy_override(int32_t instance, uint8_t ph_id, uint8_t 
     sr = service_set_over_energy_override(instance, &headcontrolinfo, ph_id, slot, energy);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_set_over_energy_override(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1660,7 +1738,10 @@ PDResult_t pd_get_over_energy_override(int32_t instance, uint8_t ph_id,  uint8_t
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
-    MAX_ASSERT(NULL != energy);
+    if(NULL == energy) {
+        LOGE("energy NULL!");
+        return PD_ERROR;
+    }
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
 //	MAX_ASSERT(slot < NUM_TRENCH_PER_PH );
 
@@ -1671,10 +1752,7 @@ PDResult_t pd_get_over_energy_override(int32_t instance, uint8_t ph_id,  uint8_t
     sr = service_get_over_energy_override(instance, &headcontrolinfo, ph_id, slot, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_over_energy_override(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
     /* if there is response to be processed..1 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 1) {
@@ -1685,6 +1763,8 @@ PDResult_t pd_get_over_energy_override(int32_t instance, uint8_t ph_id,  uint8_t
     }
 
     LOGD("pd_get_over_energy_override(): instance = %d, Pen ID = %d, slot = %d, override over energy = %d\n", instance, ph_id, slot, *energy);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1701,7 +1781,10 @@ PDResult_t pd_get_pen_serial_number(int32_t instance, uint8_t ph_id, char *seria
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == serial_number) return PD_ERROR;
+    if(NULL == serial_number) {
+        LOGE("serial_number NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1710,11 +1793,8 @@ PDResult_t pd_get_pen_serial_number(int32_t instance, uint8_t ph_id, char *seria
     sr = service_get_field(instance, &headcontrolinfo, ph_id, MULTIHEAD_SERIAL_NUMBER_PART1_IDX, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_pen_serial_number(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-    
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     uint32_t serial1;
     uint32_t serial2;
     char serial_num[20] = "Serial Number";
@@ -1731,11 +1811,8 @@ PDResult_t pd_get_pen_serial_number(int32_t instance, uint8_t ph_id, char *seria
     oem_lock(instance);
     sr = service_get_field(instance, &headcontrolinfo, ph_id, MULTIHEAD_SERIAL_NUMBER_PART2_IDX, &res);
     oem_unlock(instance);
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_pen_serial_number(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-    
+    if(sr != SERVICE_OK)return PD_ERROR;
+
     /* if there is response to be processed..4 bytes of response is expected */
     if(res.res_size != 0 && res.res_size >= 4) {
         serial2 = _pd_getResponseData32(&res,0);
@@ -1747,7 +1824,9 @@ PDResult_t pd_get_pen_serial_number(int32_t instance, uint8_t ph_id, char *seria
     }
 
     LOGD("pd_get_pen_serial_number(): instance = %d, Pen ID = %d, serial1 = %d, serial2 = %d\n", instance, ph_id, serial1, serial2);
-    
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -1762,17 +1841,22 @@ PDResult_t pd_get_fpga_log(int32_t instance, FpgaRecord_t *records, size_t recor
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
-    if(records == NULL) return PD_ERROR;
-    if(records_returned == NULL) return PD_ERROR;
+    if(records == NULL) {
+        LOGE("records NULL!");
+        return PD_ERROR;
+    }
+    if(records_returned == NULL) {
+        LOGE("records_returned NULL!");
+        return PD_ERROR;
+    }
 
     oem_lock(instance);
     ServiceResult_t sr = service_get_fpga_log(instance, records, records_size, records_returned);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_fpga_log(): instance = %d\n", instance);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK)return PD_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1789,8 +1873,14 @@ PDResult_t pd_sc_read_oem_field(int32_t instance, uint8_t ph_id, PDSmartCardOemF
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == data) return PD_ERROR;
-    if(NULL == sc_result) return PD_ERROR;
+    if(data == NULL) {
+        LOGE("data NULL!");
+        return PD_ERROR;
+    }
+    if(sc_result == NULL) {
+        LOGE("sc_result NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1799,11 +1889,8 @@ PDResult_t pd_sc_read_oem_field(int32_t instance, uint8_t ph_id, PDSmartCardOemF
     sr = service_get_field(instance, &headcontrolinfo, ph_id,(uint8_t) field_id, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_read_oem_field(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-    
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     /* if there is response to be processed..5 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 5) {
         *data = _pd_getResponseData32(&res,0);
@@ -1813,8 +1900,10 @@ PDResult_t pd_sc_read_oem_field(int32_t instance, uint8_t ph_id, PDSmartCardOemF
         return PD_ERROR;
     }
 
-    LOGD("pd_sc_read_oem_field(): instance = %d, Pen ID = %d\n", instance, ph_id);
-    
+//    LOGD("pd_sc_read_oem_field(): instance = %d, Pen ID = %d\n", instance, ph_id);
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -1830,8 +1919,14 @@ PDResult_t pd_sc_get_gas_gauge(int32_t instance, uint8_t ph_id, uint32_t *gas_ga
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == gas_gauge) return PD_ERROR;
-    if(NULL == sc_result) return PD_ERROR;
+    if(gas_gauge == NULL) {
+        LOGE("gas_gauge NULL!");
+        return PD_ERROR;
+    }
+    if(sc_result == NULL) {
+        LOGE("sc_result NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1840,11 +1935,8 @@ PDResult_t pd_sc_get_gas_gauge(int32_t instance, uint8_t ph_id, uint32_t *gas_ga
     sr = service_get_field(instance, &headcontrolinfo, ph_id, SC_GAS_GAUGE_IDX, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_get_gas_gauge(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-    
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     /* if there is response to be processed..5 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 5) {
         *gas_gauge = _pd_getResponseData32(&res,0);
@@ -1854,7 +1946,9 @@ PDResult_t pd_sc_get_gas_gauge(int32_t instance, uint8_t ph_id, uint32_t *gas_ga
         return PD_ERROR;
     }
 
-    LOGD("pd_sc_get_gas_gauge(): instance = %d, Pen ID = %d\n", instance, ph_id);
+//    LOGD("pd_sc_get_gas_gauge(): instance = %d, Pen ID = %d\n", instance, ph_id);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1871,8 +1965,14 @@ PDResult_t pd_sc_get_die_usage(int32_t instance, uint8_t ph_id, PDSmartCardDieUs
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == die_usage) return PD_ERROR;
-    if(NULL == sc_result) return PD_ERROR;
+    if(die_usage == NULL) {
+        LOGE("die_usage NULL!");
+        return PD_ERROR;
+    }
+    if(sc_result == NULL) {
+        LOGE("sc_result NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1881,11 +1981,8 @@ PDResult_t pd_sc_get_die_usage(int32_t instance, uint8_t ph_id, PDSmartCardDieUs
     sr = service_get_field(instance, &headcontrolinfo, ph_id, SC_DIE_USAGE_IDX, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_get_die_usage(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-    
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     /* if there is response to be processed..9 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 9) {
         die_usage->slot_a_high = _pd_getResponseData16(&res,0);
@@ -1898,7 +1995,9 @@ PDResult_t pd_sc_get_die_usage(int32_t instance, uint8_t ph_id, PDSmartCardDieUs
         return PD_ERROR;
     }
 
-    LOGD("pd_sc_get_die_usage(): instance = %d, Pen ID = %d\n", instance, ph_id);
+//    LOGD("pd_sc_get_die_usage(): instance = %d, Pen ID = %d\n", instance, ph_id);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1915,7 +2014,10 @@ PDResult_t pd_sc_lock_oem_partition(int32_t instance, uint8_t ph_id, uint8_t par
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == sc_result) return PD_ERROR;
+    if(sc_result == NULL) {
+        LOGE("sc_result NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1924,11 +2026,8 @@ PDResult_t pd_sc_lock_oem_partition(int32_t instance, uint8_t ph_id, uint8_t par
     sr = service_lock_oem_partition(instance, &headcontrolinfo, ph_id, partition_id, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_lock_oem_partition(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-    
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     /* if there is response to be processed..1 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 1) {
         *sc_result = _pd_getResponseData8(&res,0);
@@ -1937,7 +2036,9 @@ PDResult_t pd_sc_lock_oem_partition(int32_t instance, uint8_t ph_id, uint8_t par
         return PD_ERROR;
     }
 
-    LOGD("pd_sc_lock_oem_partition(): instance = %d, Pen ID = %d\n", instance, ph_id);
+//    LOGD("pd_sc_lock_oem_partition(): instance = %d, Pen ID = %d\n", instance, ph_id);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1954,7 +2055,10 @@ PDResult_t pd_sc_write_oem_field(int32_t instance, uint8_t ph_id, PDSmartCardOem
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == sc_result) return PD_ERROR;
+    if(sc_result == NULL) {
+        LOGE("sc_result NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
 
@@ -1962,12 +2066,11 @@ PDResult_t pd_sc_write_oem_field(int32_t instance, uint8_t ph_id, PDSmartCardOem
     sr = service_set_field(instance, &headcontrolinfo, ph_id, field_id, (uint8_t *)&data, sizeof(data));
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_write_oem_field(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
-    LOGD("pd_sc_write_oem_field(): instance = %d, Pen ID = %d\n", instance, ph_id);
+//    LOGD("pd_sc_write_oem_field(): instance = %d, Pen ID = %d\n", instance, ph_id);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -1984,8 +2087,14 @@ PDResult_t pd_sc_get_status(int32_t instance, uint8_t ph_id, PDSmartCardStatus *
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == sc_result) return PD_ERROR;
-    if(NULL == sc_status) return PD_ERROR;
+    if(sc_result == NULL) {
+        LOGE("sc_result NULL!");
+        return PD_ERROR;
+    }
+    if(sc_status == NULL) {
+        LOGE("sc_status NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -1994,11 +2103,8 @@ PDResult_t pd_sc_get_status(int32_t instance, uint8_t ph_id, PDSmartCardStatus *
     sr = service_get_field(instance, &headcontrolinfo, ph_id, SC_STATUS_IDX, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_get_status(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-    
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     /* if there is response to be processed..15 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 15) {
         sc_status->out_of_ink                       = _pd_getResponseData8(&res,0);
@@ -2022,8 +2128,10 @@ PDResult_t pd_sc_get_status(int32_t instance, uint8_t ph_id, PDSmartCardStatus *
         return PD_ERROR;
     }
 
-    LOGD("pd_sc_get_status(): instance = %d, Pen ID = %d\n", instance, ph_id);
-    
+//    LOGD("pd_sc_get_status(): instance = %d, Pen ID = %d\n", instance, ph_id);
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -2039,8 +2147,14 @@ PDResult_t pd_sc_get_info(int32_t instance, uint8_t ph_id, PDSmartCardInfo_t *sc
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == sc_result) return PD_ERROR;
-    if(NULL == sc_info) return PD_ERROR;
+    if(sc_info == NULL) {
+        LOGE("sc_info NULL!");
+        return PD_ERROR;
+    }
+    if(sc_result == NULL) {
+        LOGE("sc_result NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -2049,10 +2163,7 @@ PDResult_t pd_sc_get_info(int32_t instance, uint8_t ph_id, PDSmartCardInfo_t *sc
     sr = service_get_field(instance, &headcontrolinfo, ph_id, SC_INFO_IDX, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_get_info(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
     /* if there is response to be processed..111 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 115+1) { //+1 for scresult
@@ -2150,8 +2261,9 @@ PDResult_t pd_sc_get_info(int32_t instance, uint8_t ph_id, PDSmartCardInfo_t *sc
         return PD_ERROR;
     }
 
-    return PD_OK;
+    LOGI("%s done", __FUNCTION__);
 
+    return PD_OK;
 }
 
 PDResult_t pd_sc_set_trademark_string(int32_t instance, uint8_t ph_id, char trademark_string[], uint8_t *sc_result) {
@@ -2166,7 +2278,10 @@ PDResult_t pd_sc_set_trademark_string(int32_t instance, uint8_t ph_id, char trad
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == sc_result) return PD_ERROR;
+    if(sc_result == NULL) {
+        LOGE("sc_result NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
 
@@ -2174,14 +2289,13 @@ PDResult_t pd_sc_set_trademark_string(int32_t instance, uint8_t ph_id, char trad
     sr = service_set_field(instance, &headcontrolinfo, ph_id, 100, (uint8_t *)trademark_string, 5);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_set_trademark_string(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
-    LOGD("pd_sc_set_trademark_string(): instance = %d, Pen ID = %d\n", instance, ph_id);
+//    LOGD("pd_sc_set_trademark_string(): instance = %d, Pen ID = %d\n", instance, ph_id);
 
-    return PD_OK;    
+    LOGI("%s done", __FUNCTION__);
+
+    return PD_OK;
 }
 
 PDResult_t pd_sc_set_reorder_part_num_string(int32_t instance, uint8_t ph_id, char reorder_part_num_string[], uint8_t *sc_result) {
@@ -2196,7 +2310,10 @@ PDResult_t pd_sc_set_reorder_part_num_string(int32_t instance, uint8_t ph_id, ch
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == sc_result) return PD_ERROR;
+    if(sc_result == NULL) {
+        LOGE("sc_result NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
 
@@ -2204,14 +2321,13 @@ PDResult_t pd_sc_set_reorder_part_num_string(int32_t instance, uint8_t ph_id, ch
     sr = service_set_field(instance, &headcontrolinfo, ph_id, 101, (uint8_t *)reorder_part_num_string, 12);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_set_trademark_string(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
-    LOGD("pd_sc_set_trademark_string(): instance = %d, Pen ID = %d\n", instance, ph_id);
+//    LOGD("pd_sc_set_trademark_string(): instance = %d, Pen ID = %d\n", instance, ph_id);
 
-    return PD_OK;      
+    LOGI("%s done", __FUNCTION__);
+
+    return PD_OK;
 }
 
 PDResult_t pd_sc_read_oem_string_field(int32_t instance, uint8_t ph_id, PDScOemStrFieldId_t str_field_id, char *str, uint8_t buf_size) {
@@ -2226,6 +2342,10 @@ PDResult_t pd_sc_read_oem_string_field(int32_t instance, uint8_t ph_id, PDScOemS
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
+    if(str == NULL) {
+        LOGE("str NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -2239,10 +2359,7 @@ PDResult_t pd_sc_read_oem_string_field(int32_t instance, uint8_t ph_id, PDScOemS
     sr = service_get_field(instance, &headcontrolinfo, ph_id, (103+str_field_id), &res);
     oem_unlock(instance); /* Unlock */
     
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_read_oem_string_field(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
     /* Process the received data */
     if(res.res_size != 0 && (res.res_size - 1) < buf_size) { //-1 for scresult
@@ -2255,7 +2372,9 @@ PDResult_t pd_sc_read_oem_string_field(int32_t instance, uint8_t ph_id, PDScOemS
         LOGE("ERROR: pd_sc_read_oem_string_field(): Failed. instance = %d, Pen ID = %d\n", instance, ph_id);
         return PD_ERROR;
     }
-    
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -2271,21 +2390,22 @@ PDResult_t pd_sc_write_oem_string_field(int32_t instance, uint8_t ph_id, PDScOem
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
+    if(str == NULL) {
+        LOGE("str NULL!");
+        return PD_ERROR;
+    }
 
-    LOGI("pd_sc_write_oem_string_field(): instance = %d, Pen ID = %d, \n", instance, ph_id);
-    
     ServiceResult_t sr;
 
     oem_lock(instance); /* Lock */
     sr = service_set_field(instance, &headcontrolinfo, ph_id, (103+str_field_id), (uint8_t *)str, strlen(str));    
     oem_unlock(instance); /* Unlock */
     
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_sc_write_oem_string_field(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-        
-    return PD_OK;      
+    if(sr != SERVICE_OK) return PD_ERROR;
+
+    LOGI("%s done", __FUNCTION__);
+
+    return PD_OK;
 }
 
 PDResult_t pd_start_purging(int32_t instance, uint8_t ph_id, uint8_t slot) {
@@ -2300,7 +2420,7 @@ PDResult_t pd_start_purging(int32_t instance, uint8_t ph_id, uint8_t slot) {
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(slot >= (NUM_TRENCH_PER_PH + 1)) return PD_ERROR;
+//    if(slot >= (NUM_TRENCH_PER_PH + 1)) return PD_ERROR;
 
     ServiceResult_t sr;
 
@@ -2308,12 +2428,11 @@ PDResult_t pd_start_purging(int32_t instance, uint8_t ph_id, uint8_t slot) {
     sr = service_start_purging(instance, &headcontrolinfo, ph_id, slot);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_start_purging(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
-    LOGD("pd_start_purging(): instance = %d, Pen ID = %d\n", instance, ph_id);
+//    LOGD("pd_start_purging(): instance = %d, Pen ID = %d\n", instance, ph_id);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
@@ -2330,7 +2449,10 @@ PDResult_t pd_get_state_info(int32_t instance, uint8_t ph_id, uint8_t *data) {
 //		return PD_ERROR;
 //	}
 //    if(ph_id >= NUM_SUPPORTED_PH) return PD_ERROR;
-    if(NULL == data) return PD_ERROR;
+    if(NULL == data) {
+        LOGE("data NULL!");
+        return PD_ERROR;
+    }
 
     ServiceResult_t sr;
     Response_t res;
@@ -2339,11 +2461,8 @@ PDResult_t pd_get_state_info(int32_t instance, uint8_t ph_id, uint8_t *data) {
     sr = service_get_state_info(instance, &headcontrolinfo, ph_id, &res);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_get_state_info(): instance = %d, Pen ID = %d\n", instance, ph_id);
-        return PD_ERROR;
-    }
-    
+    if(sr != SERVICE_OK) return PD_ERROR;
+
     /* if there is response to be processed..20 bytes of response is expected */
     if(res.res_size != 0 && res.res_size == 20) {
         for(int i=0;i<20;i++) {
@@ -2351,8 +2470,10 @@ PDResult_t pd_get_state_info(int32_t instance, uint8_t ph_id, uint8_t *data) {
         }
     }
 
-    LOGD("pd_get_state_info(): instance = %d, Pen ID = %d\n", instance, ph_id);
-     
+//    LOGD("pd_get_state_info(): instance = %d, Pen ID = %d\n", instance, ph_id);
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -2372,13 +2493,12 @@ PDResult_t pd_set_date(int32_t instance, uint16_t year, uint8_t month, uint8_t d
     ServiceResult_t sr = service_set_date(instance, &headcontrolinfo, year, month, day);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_set_date(): instance = %d\n", instance);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
-    LOGD("pd_set_date(): instance = %d \n", instance);
-    
+//    LOGD("pd_set_date(): instance = %d \n", instance);
+
+    LOGI("%s done", __FUNCTION__);
+
     return PD_OK;
 }
 
@@ -2393,17 +2513,20 @@ PDResult_t pd_set_platform_info(int32_t instance, PlatformInfo_t *platform_info)
 //		LOGE("Invalid Instance!");
 //		return PD_ERROR;
 //	}
+    if(NULL == platform_info) {
+        LOGE("platform_info NULL!");
+        return PD_ERROR;
+    }
 
     oem_lock(instance);
     ServiceResult_t sr = service_set_platform_info(instance, &headcontrolinfo, platform_info);
     oem_unlock(instance);
 
-    if(sr != SERVICE_OK) {
-        LOGE("ERROR: pd_set_platform_info(): instance = %d\n", instance);
-        return PD_ERROR;
-    }
+    if(sr != SERVICE_OK) return PD_ERROR;
 
-    LOGD("pd_set_platform_info(): instance = %d \n", instance);
+//    LOGD("pd_set_platform_info(): instance = %d \n", instance);
+
+    LOGI("%s done", __FUNCTION__);
 
     return PD_OK;
 }
