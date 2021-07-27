@@ -100,10 +100,42 @@ public class Socket_Control_Activity extends Activity {
 	private MyAdapter adapter;
 	private LinearLayoutViews forListView;
 
+
+
+
+    private EditText mIpAddET;
+    private TextView mIpConStatus;
+    private TextView mIpConBtn;
+    private EditText mIpMsgET;
+    private TextView mIpRecvMsg;
+    private TextView mIpMsgSendBtn;
+
+    private TextView mBtConStatus;
+    private TextView mBtConBtn;
+    private EditText mBtMsgET;
+    private TextView mBtRecvMsg;
+    private TextView mBtMsgSendBtn;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.socket_control_activity);
+
+
+
+        mIpAddET= (EditText) findViewById(R.id.IP_addET);
+        mIpConStatus= (TextView) findViewById(R.id.IPConStatus);
+        mIpConBtn= (TextView) findViewById(R.id.IPConnect);
+        mIpMsgET= (EditText) findViewById(R.id.IPMsgET);
+        mIpRecvMsg= (TextView) findViewById(R.id.IPRecvMsg);
+        mIpMsgSendBtn= (TextView) findViewById(R.id.IPSendMsg);
+
+        mBtConStatus= (TextView) findViewById(R.id.BTConStatus);
+        mBtConBtn= (TextView) findViewById(R.id.BTConnect);
+        mBtMsgET= (EditText) findViewById(R.id.BTMsgET);
+        mBtRecvMsg= (TextView) findViewById(R.id.BTRecvMsg);
+        mBtMsgSendBtn= (TextView) findViewById(R.id.BTSendMsg);
+
 		But_Print= (TextView) findViewById(R.id.But_Print);
 		Scan_device = (TextView) findViewById(R.id.Scan_device);
 		But_pur= (TextView) findViewById(R.id.But_pur);

@@ -218,6 +218,10 @@ public class SystemConfigFile{
 
     public static final int INDEX_QRCODE_LAST = 54;
 
+// H.M.Wang 2021-7-23 追加触发一次后重复打印的次数的设置。定位C41
+	public static final int INDEX_PRINT_TIMES = 40;
+// End of H.M.Wang 2021-7-23 追加触发一次后重复打印的次数的设置。定位C41
+
 // H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 	private String[] mDTBuffer = new String[] {
 		"#####", "#####", "#####", "#####", "#####", "#####", "#####", "#####", "#####", "#####"

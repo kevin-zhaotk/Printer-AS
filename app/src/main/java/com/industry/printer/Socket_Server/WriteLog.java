@@ -16,6 +16,7 @@ import android.os.Environment;
  * 写日志类
  */
 
+@Deprecated
 public class WriteLog
 {
 private Context context;

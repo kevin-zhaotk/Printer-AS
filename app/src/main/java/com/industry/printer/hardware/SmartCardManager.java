@@ -561,7 +561,7 @@ public class SmartCardManager implements IInkDevice {
     }
 
     @Override
-    public void downLocal(int cardIdx) {
+    public void downLocal(final int cardIdx) {
         Debug.d(TAG, "---> enter downLocal(" + cardIdx + ")");
 
         if(cardIdx >= mPenNum) return;
@@ -570,17 +570,22 @@ public class SmartCardManager implements IInkDevice {
 
         if(!SMARTCARD_ACCESS) return;
 
-        synchronized (this) {
-            if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
-                SmartCard.downLocal(mCards[cardIdx].mCardType);
-                mCards[cardIdx].mInkLevel = mCards[cardIdx].mMaxVolume - SmartCard.getLocalInk(mCards[cardIdx].mCardType);
-                checkOIB(cardIdx);
+        mCachedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (this) {
+                    if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
+                        SmartCard.downLocal(mCards[cardIdx].mCardType);
+                        mCards[cardIdx].mInkLevel = mCards[cardIdx].mMaxVolume - SmartCard.getLocalInk(mCards[cardIdx].mCardType);
+                        checkOIB(cardIdx);
 
-                SmartCard.downLocal(mCards[mCurBagIdx].mCardType);
-                mCards[mCurBagIdx].mInkLevel = mCards[mCurBagIdx].mMaxVolume - SmartCard.getLocalInk(mCards[mCurBagIdx].mCardType);
-                checkOIB(mCurBagIdx);
+                        SmartCard.downLocal(mCards[mCurBagIdx].mCardType);
+                        mCards[mCurBagIdx].mInkLevel = mCards[mCurBagIdx].mMaxVolume - SmartCard.getLocalInk(mCards[mCurBagIdx].mCardType);
+                        checkOIB(mCurBagIdx);
+                    }
+                }
             }
-        }
+        });
     }
 
     @Override

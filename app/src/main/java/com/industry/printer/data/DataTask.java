@@ -369,6 +369,62 @@ public class DataTask {
 				BinCreater.saveBin("/mnt/sdcard/printE1.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM);
 			}
 		}
+// H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
+		Debug.d(TAG, "INDEX_PRINT_TIMES = " + sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES));
+		if(sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 21) {
+			int maxColNumPerUnit = 0;
+			if( sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7 ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_25_4 ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_38_1 ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_50_8 ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_TRIPLE ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_9MM ) {
+				if(Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_150) {
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 6;
+				} else {
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 12;
+				}
+			} else if (
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32DN ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32SN ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT ||
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN ) {
+				maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) / 4;
+			}
+
+			Debug.d(TAG, "maxColNumPerUnit = " + maxColNumPerUnit + "; mBinInfo.getBytesFeed() / 2 = " + mBinInfo.getBytesFeed() / 2);
+			if(maxColNumPerUnit != 0) {
+				CharArrayBuffer caBuf = new CharArrayBuffer(0);
+				int emptyChars = (maxColNumPerUnit - mBinInfo.mColumn) * mBinInfo.getBytesFeed() / 2;	// 不能用mBinInfo.mCharsPerColumn，因为这个变量是基于没有做过调整的mBytesPerColumn算的，如果mBytesPerColumn少一个字节，那么就会少一个字
+				emptyChars = (emptyChars < 0 ? 0 : emptyChars);
+				char[] empty = new char[emptyChars];
+				Arrays.fill(empty, (char)0x0000);
+
+				Debug.d(TAG, "emptyChars = " + emptyChars);
+				for(int i=0; i<sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES); i++) {
+					if(i != 0) {
+						caBuf.append(empty, 0, emptyChars);
+					}
+					if(i < sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) - 1) {
+						caBuf.append(mBuffer, 0, Math.min(mBuffer.length, maxColNumPerUnit * mBinInfo.getBytesFeed() / 2));
+					} else {
+						caBuf.append(mBuffer, 0, mBuffer.length);
+					}
+				}
+				mBuffer = caBuf.toCharArray();
+			}
+
+			if(bSave) {
+				FileUtil.deleteFolder("/mnt/sdcard/printRpt.bin");
+				BinCreater.saveBin("/mnt/sdcard/printRpt.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads);
+			}
+		}
+// End of H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
 // H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
 		calDots();
 // End of H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
@@ -1329,14 +1385,79 @@ public char[] bitShiftFor64SN() {
 	}
 	
 	public Bitmap getPreview() {
-		char[] preview = getPrintBuffer(true);
+		char[] preview = getPrintBuffer(false);
 		if (preview == null) {
 			return null;
 		}
 		// String path = "/mnt/usbhost1/prev.bin";
 		// BinCreater.saveBin(path, preview, getInfo().mBytesPerHFeed*8*getHeads());
 		Debug.d(TAG, "--->column=" + mBinInfo.mColumn + ", charperh=" + mBinInfo.mCharsPerHFeed);
-		return BinFromBitmap.Bin2Bitmap(preview, mBinInfo.mColumn, mBinInfo.mCharsFeed*16);
+
+// H.M.Wang 2021-7-26 追加实际打印内容预览图显示功能
+		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
+		int rows = mBinInfo.mCharsFeed * 16;
+		if (sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48) {
+//			return BinFromBitmap.Bin2Bitmap(preview,
+//					PrinterNozzle.R6_PRINT_COPY_NUM * Configs.GetDpiVersion() * PrinterNozzle.R6X48_MAX_COL_NUM_EACH_UNIT,
+//					mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R6_HEAD_NUM);
+			rows = mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R6_HEAD_NUM;
+		} else if (sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
+//			return BinFromBitmap.Bin2Bitmap(preview,
+//					PrinterNozzle.R6_PRINT_COPY_NUM * Configs.GetDpiVersion() * PrinterNozzle.R6X50_MAX_COL_NUM_EACH_UNIT,
+//					mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R6_HEAD_NUM);
+			rows = mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.R6_HEAD_NUM;
+		} else if (sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48) {
+//			return BinFromBitmap.Bin2Bitmap(preview,
+//					PrinterNozzle.E6_PRINT_COPY_NUM * Configs.GetDpiVersion() * PrinterNozzle.E6X48_MAX_COL_NUM_EACH_UNIT,
+//					mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM);
+			rows = mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM;
+		} else if (sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+//			return BinFromBitmap.Bin2Bitmap(preview,
+//					PrinterNozzle.E6_PRINT_COPY_NUM * Configs.GetDpiVersion() * PrinterNozzle.E6X50_MAX_COL_NUM_EACH_UNIT,
+//					mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM);
+			rows = mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM;
+		} else if (sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
+//			return BinFromBitmap.Bin2Bitmap(preview,
+//					mBuffer.length / mBinInfo.mCharsPerHFeed / mTask.getNozzle().mHeads,
+//					mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM);
+			rows = mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM;
+		} else if (sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 21) {
+/*			int maxColNumPerUnit = 0;
+			if (sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7 ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_25_4 ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_38_1 ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_50_8 ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_TRIPLE ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_9MM) {
+				if (Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_150) {
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 6;
+				} else {
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 12;
+				}
+			} else if (
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT ||
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32DN ||
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32SN ||
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT ||
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN) {
+				maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) / 4;
+			}
+*/
+//			return BinFromBitmap.Bin2Bitmap(preview,
+////					maxColNumPerUnit * (sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) - 1) + mBinInfo.mColumn,
+//					preview.length / (mBinInfo.mBytesPerHFeed * mTask.getNozzle().mHeads / 2),
+//					mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads);
+			rows = mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads;
+//		} else {
+//			return BinFromBitmap.Bin2Bitmap(preview, mBinInfo.mColumn, mBinInfo.mCharsFeed * 16);
+		}
+		Debug.d(TAG, "--->columns = " + preview.length * 16 / rows + ", rows = " + rows);
+		return BinFromBitmap.Bin2Bitmap(preview, preview.length * 16 / rows, rows);
+// End of H.M.Wang 2021-7-26 追加实际打印内容预览图显示功能
 	}
 
 	public Bitmap getBgPreview() {

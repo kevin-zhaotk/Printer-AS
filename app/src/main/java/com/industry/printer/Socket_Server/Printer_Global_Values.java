@@ -1,5 +1,6 @@
 package com.industry.printer.Socket_Server;
 
+@Deprecated
 public class Printer_Global_Values {
 	public int  Rows;
 	public String File_Name="";

@@ -15,6 +15,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -332,6 +333,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	 * the bitmap for preview
 	 */
 	private Bitmap mPreBitmap;
+// H.M.Wang 2021-7-26 追加实际打印内容预览图显示功能
+	private Bitmap mPrePrintBitmap;
+// End of H.M.Wang 2021-7-26 追加实际打印内容预览图显示功能
 	/**
 	 * 
 	 */
@@ -532,6 +536,31 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		switchState(STATE_STOPPED);
 		mScrollView = (HorizontalScrollView) getView().findViewById(R.id.preview_scroll);
 		mllPreview = (LinearLayout) getView().findViewById(R.id.ll_preview);
+// H.M.Wang 2021-7-26 追加实际打印内容预览图显示功能
+		mllPreview.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(null == mDTransThread || !mDTransThread.isRunning()) return;
+				DataTask dt = mDTransThread.getCurData();
+				if(null != mPreBitmap && !mPreBitmap.isRecycled()) {
+					mPreBitmap.recycle();
+					mPreBitmap = null;
+					mPrePrintBitmap = dt.getPreview();
+					dispPreview(mPrePrintBitmap);
+				} else if(null != mPrePrintBitmap && !mPrePrintBitmap.isRecycled()) {
+					mPrePrintBitmap.recycle();
+					mPrePrintBitmap = null;
+					if (mObjPath.startsWith("G-")) {   // group messages
+						List<String> paths = MessageTask.parseGroup(mObjPath);
+						mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(paths.get(mDTransThread.index())));
+					} else {
+						mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
+					}
+					dispPreview(mPreBitmap);
+				}
+			}
+		});
+// End of H.M.Wang 2021-7-26 追加实际打印内容预览图显示功能
 		// mMsgPreview = (TextView) getView().findViewById(R.id.message_preview);
 		// mMsgPreImg = (ImageView) getView().findViewById(R.id.message_prev_img);
 		//
@@ -2201,8 +2230,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
                 mGroupIndex.setVisibility(View.GONE);
 // H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp
-				Bitmap bmp = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
-				dispPreview(bmp);
+// H.M.Wang 2021-7-26 改用mPreBitmap，取消aotu变量bmp
+				mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
+				dispPreview(mPreBitmap);
+// End of H.M.Wang 2021-7-26 改用mPreBitmap，取消aotu变量bmp
 // End of H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp
 // End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 				break;
@@ -2617,7 +2648,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		              
 		                try {
 		                	server = new ServerSocket(PORT);
-		                } catch (IOException e1) {  
+							Socket so = new Socket();
+		                } catch (IOException e1) {
 		                    // TODO Auto-generated catch block  
 		                    System.out.println("S2: Error");  
 		                    e1.printStackTrace();
@@ -3537,8 +3569,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					mGroupIndex.setVisibility(View.VISIBLE);
 					if (mObjPath.startsWith("G-")) {   // group messages
 						List<String> paths = MessageTask.parseGroup(mObjPath);
-						Bitmap bmp = BitmapFactory.decodeFile(MessageTask.getPreview(paths.get(index)));
-						dispPreview(bmp);
+// H.M.Wang 2021-7-26 改用mPreBitmap，取消aotu变量bmp
+						mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(paths.get(index)));
+						dispPreview(mPreBitmap);
+// End of H.M.Wang 2021-7-26 改用mPreBitmap，取消aotu变量bmp
 					}
 				}
 			});

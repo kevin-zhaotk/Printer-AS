@@ -1321,6 +1321,11 @@ public class DataTransferThread {
 		}
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 
+// H.M.Wang 2021-7-26 追加重复打印时的打印点数计数值的计算
+		if( config.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && config.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 21 ) {
+			mPrintDots[head] *= config.getParam(SystemConfigFile.INDEX_PRINT_TIMES);
+		}
+// End of H.M.Wang 2021-7-26 追加重复打印时的打印点数计数值的计算
 
 		Debug.d(TAG, "--->dotCount[" + head + "]: " + mPrintDots[head] + "  bold=" + bold + "  dotrate=" + rate);
 

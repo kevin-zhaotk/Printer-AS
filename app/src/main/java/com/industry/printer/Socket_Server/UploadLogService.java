@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;  
 import android.database.sqlite.SQLiteDatabase;  
 
+@Deprecated
 public class UploadLogService {  
     private DBOpenHelper dbOpenHelper;  
       

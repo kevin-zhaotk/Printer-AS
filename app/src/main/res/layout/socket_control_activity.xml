@@ -4,6 +4,134 @@
     android:layout_height="fill_parent"
     android:background="@color/background"
     android:orientation="vertical" >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:background="#FF888888" >
+        <EditText
+            android:id="@+id/IP_addET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:hint="IP Address" />
+        <TextView
+            android:id="@+id/IPConStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/IP_addET"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/IPConnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/IPConStatus"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:background="@color/background"
+            android:text="Connect"
+            android:gravity="center" />
+        <EditText
+            android:id="@+id/IPMsgET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/IPRecvMsg"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:hint="Message to be sent" />
+        <TextView
+            android:id="@+id/IPRecvMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/IPSendMsg"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/IPSendMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:background="@color/background"
+            android:text="Send"
+            android:gravity="center" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:background="#FF888888" >
+        <TextView
+            android:id="@+id/BTConStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/BTConnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/BTConStatus"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:background="@color/background"
+            android:text="Connect to BT"
+            android:gravity="center" />
+        <EditText
+            android:id="@+id/BTMsgET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/BTRecvMsg"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:hint="Message to be sent" />
+        <TextView
+            android:id="@+id/BTRecvMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/BTSendMsg"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/BTSendMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:background="@color/background"
+            android:text="Send via BT"
+            android:gravity="center" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -12,6 +140,7 @@
         android:layout_marginRight="5dp"
         android:background="@color/background"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="horizontal" >
 
         <TextView
@@ -96,6 +225,7 @@
         android:layout_marginTop="5dp"
         android:background="@color/background"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="horizontal" >
 
         <View
@@ -112,6 +242,7 @@
         android:layout_marginRight="5dp"
         android:background="@color/background"
         android:gravity="center"
+        android:visibility="gone"
         android:orientation="horizontal" >
 
         <View
@@ -122,7 +253,9 @@
 
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent"
+        android:visibility="gone"
+        >
 
         <com.industry.printer.Socket_Server.LinearLayoutViews
             android:id="@+id/listview"

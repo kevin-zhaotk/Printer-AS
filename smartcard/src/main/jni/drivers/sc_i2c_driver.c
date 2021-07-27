@@ -138,6 +138,7 @@ int SC_I2C_DRIVER_write(int group_id, int device_address, uint8_t reg, uint8_t *
 
     if(check_write_i2c_block_data(fd) < 0) {
         LOGE(">>> SC_I2C_DRIVER_write: I2C_FUNC_SMBUS_WRITE_I2C_BLOCK right failed. %s", strerror(errno));
+        SC_I2C_DRIVER_close(fd);
         return -1;
     }
 
@@ -163,6 +164,7 @@ int SC_I2C_DRIVER_write(int group_id, int device_address, uint8_t reg, uint8_t *
 
     if(write_length < 0) {
         LOGE(">>> SC_I2C_DRIVER_write: Write data failed. %s", strerror(errno));
+        SC_I2C_DRIVER_close(fd);
         return -1;
     }
 
@@ -218,6 +220,7 @@ int SC_I2C_DRIVER_read(int group_id, int device_address, uint8_t reg, uint8_t *r
 
     if(check_read_i2c_block_data(fd) < 0) {
         LOGE(">>> SC_I2C_DRIVER_read: I2C_FUNC_SMBUS_READ_I2C_BLOCK right failed. %s", strerror(errno));
+        SC_I2C_DRIVER_close(fd);
         return -1;
     }
 
@@ -248,6 +251,7 @@ int SC_I2C_DRIVER_read(int group_id, int device_address, uint8_t reg, uint8_t *r
 
     if(recv_length < 0) {
         LOGE(">>> SC_I2C_DRIVER_read: Read data failed. %s", strerror(errno));
+        SC_I2C_DRIVER_close(fd);
         return -1;
     }
 

@@ -536,9 +536,12 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[38] = new ItemOneLine(39, R.string.str_textview_param39, R.array.strDataSourceArray,	0,	ItemType.TYPE_ARRAY);
 		// End of H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数
 		mSettingItems[39] = new ItemOneLine(40, R.string.str_textview_param40, R.array.switch_item_entries,	0,	ItemType.TYPE_SWITCH);
+// H.M.Wang 2021-7-23 将C41更改为重复次数(Times)的设置，并且取消TYPE_SWITCH，改为数值输入，允许值范围为0-20，其余值均强制修改为0
 		// H.M.Wang 2019-12-19 恢复原来参数41的内容
 //		mSettingItems[40] = new ItemOneLine(41, R.string.str_textview_param41, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
-		mSettingItems[40] = new ItemOneLine(41, R.string.str_textview_param41, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
+//		mSettingItems[40] = new ItemOneLine(41, R.string.str_textview_param41, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
+		mSettingItems[40] = new ItemOneLine(41, R.string.str_repeat_times, 0);
+// H.M.Wang 2021-7-23 将C41更改为重复次数(Times)的设置，并且取消TYPE_SWITCH，改为数值输入，允许值范围为0-20，其余值均强制修改为0
 		// End of H.M.Wang 2019-12-19 恢复原来参数41的内容
 		mSettingItems[41] = new ItemOneLine(42, R.string.str_textview_param42, 0);
 		mSettingItems[42] = new ItemOneLine(43, R.string.str_textview_param43, 0);
@@ -864,7 +867,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			}
 			mSettingItems[pos].mValue = arg0.toString();
 //			Debug.d(TAG, "--->param=" + mSettingItems[pos].getDisplayValue());
-			mSysconfig.setParam(pos, getValueFromEditText(arg0));
+// H.M.Wang 2021-7-23 修改参数设置，如果取值超出范围，则强制修正
+//			mSysconfig.setParam(pos, getValueFromEditText(arg0));
+			mSysconfig.setParam(pos, mSysconfig.checkParam(pos+1, getValueFromEditText(arg0)));
+// End of H.M.Wang 2021-7-23 修改参数设置，如果取值超出范围，则强制修正
 		}
 		@Override
 		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,

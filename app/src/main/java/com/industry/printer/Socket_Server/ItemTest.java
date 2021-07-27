@@ -4,6 +4,7 @@ package com.industry.printer.Socket_Server;
 
 import android.graphics.drawable.Drawable;
 
+@Deprecated
 public class ItemTest implements Comparable<ItemTest>
 {
 	/* 文件名 */

@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;  
 import java.io.PushbackInputStream;
 
-public class StreamTool {  
+@Deprecated
+public class StreamTool {
     
   public static void save(File file, byte[] data) throws Exception {  
       FileOutputStream outStream = new FileOutputStream(file);  

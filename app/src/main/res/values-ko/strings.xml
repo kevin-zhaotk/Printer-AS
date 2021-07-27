@@ -1,0 +1,541 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!-- CN 20170319 -->
+ 
+    <string name="app_version">판본:</string>
+    <string name="system_time">시스템 타임:</string>
+    <string name="app_name">프린트기</string>
+    <string name="action_settings">설치</string>
+    <string name="hello_world">Hello world!</string>
+	<string name="ControlTab">공제</string>
+	<string name="manualCtrlTab">편집공제</string>
+	<string name="Edit">편집</string>
+	<string name="Settings">설치</string>
+	<string name="str_btn_start">시작</string>
+	<string name="str_btn_stop">정지</string>
+	<string name="str_btn_launch">가동</string>
+	<string name="str_btn_clean">세척</string>
+<!-- H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
+	<string name="str_purge_confirm">OK터치후 세척 시작</string>
+	<string name="str_clean_confirm">5분간 세척이 진행되므로 계속할가요?</string>
+	<string name="str_under_purging">세척진행중잠시후 재시도하여주세요</string>
+<!-- End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
+	<string name="str_btn_open">OPEN</string>
+	<string name="str_remain_ink">나머지 잠김수치</string>
+	<string name="str_remain_ptimes">프린트차수: </string>
+	<string name="str_btn_new">새파일</string>
+	<string name="str_btn_save">보존</string>
+	<string name="str_btn_saveprint">보존및 프린트保存并打印</string>
+	<string name="str_btn_saveas">따로보존</string>
+	<string name="str_btn_cancel">취소</string>
+	<string name="str_btn_prerecord">위로번지기</string>
+	<string name="str_btn_nextrecord">아래로번지기</string>
+	<string name="str_btn_send">발송</string>
+	<string name="str_btn_set">설치</string>
+	<string name="str_btn_get">메세지</string>
+	<string name="str_btn_print">프린트</string>
+	<string name="str_btn_finish">끝</string>
+	<string name="str_btn_header1">프린트해드1</string>
+	<string name="str_btn_header2">프린트해드2</string>
+	<string name="str_btn_header3">프린트해드3</string>
+	<string name="str_btn_header4">프린트해드4</string>
+	<string name="strDate">날짜:</string>
+	<string name="strInklevel">나머지차수: </string>
+	<string name="strPhotocellState">광전: </string>
+	<string name="strEncoderState">앵코드: </string>
+	<string name="strPrintstate">프린트상태: </string>
+	<string name="strPrinting">프린트중...</string>
+	<string name="strPrintok">준비완료</string>
+	<string name="strOn">ON</string>
+	<string name="strOff">OFF</string>
+	<string name="strwaitting">프린트중 기다려주세요。。。。。。</string>
+	<string name="str_csvfile">OPEN Csv 문서</string>
+	<string name="str_tlkfile">OPEN Tlk 문서</string>
+	<string name="str_binfile">OPEN Bin문서</string>
+	<string name="str_openfile">문서선택</string>
+	<string name="str_seldata">데이터 선택</string>
+	<string name="str_mvforward">앞으로 이동</string>
+	<string name="str_mvbackward">뒤로 이동</string>
+	<string name="str_preview">미리보기</string>
+	<string name="str_del">삭제</string>
+	<string name="str_multi_select">다 선택</string>
+	<string name="str_btn_shift">롯뜨</string>
+	<string name="str_btn_second">초</string>
+	<string name="str_btn_upgrade">업그레이드</string>
+	<string name="str_btn_setDate">날짜설치</string>
+	<string name="str_btn_setTime">시간설치</string>
+	<string name="str_btn_image">도안</string>
+	<string name="str_goto">뛰여넘기</string>
+	<!-- object info table -->
+	<string name="strWidth">넓이</string>
+	<string name="strHigh">글자</string>
+	<string name="strHightype">위치</string>	
+	<string name="strReverse">반대로</string>
+	<string name="strXcor">가로위치</string>
+	<string name="strYcor">세로위치</string>
+	<string name="strCnt">내용</string>
+	<string name="strDefault">0</string>
+	<string name="txtDefault">text</string>
+	<string name="strDragable">윛 옴길지</string>
+	<string name="strShow">내용나타내기</string>
+	<string name="strFontsize">글자</string>
+	<string name="strFont">글자체</string>
+	<string name="strLinewidth">선넓이</string>
+	<string name="strBits">자리수</string>
+	<string name="strImage">도안로경</string>
+	<string name="strDirect">방향</string>
+	<string name="strShift1">롯뜨1</string>
+	<string name="strShift2">롯뜨2</string>
+	<string name="strShift3">롯뜨3</string>
+	<string name="strShift4">롯뜨4</string>
+	<string name="strShift5">롯뜨5</string>
+	<string name="strInfoname">메세지</string>
+	<string name="strHeadType">노즐</string>
+	<string name="strHeadResolution">화상도</string>
+	<string name="strUpgradeConfirm">갱신을 확인합니까?</string>
+	<string name="strUpgradeNoApk">USB에 업그레이드 파일 발견 못함！！！</string>
+	<string name="strSaving">보존중이므로 기다려주세요...</string>
+	<string name="strLoading">첨부중이므로 기다려주세요...</string>
+	<string name="strCopying">코피중...</string>
+	<string name="strInsertSerial">프린트기에 연결하세요</string>
+	<string name="strReinsertSerial">프린트오류，프린트기에 다시 연결하세요</string>
+	<string name="strCode">코드류형</string>
+	<string name="strBarsource">내용래원</string>
+	<string name="strLinetype">선 류형</string>
+	<string name="str_ok">확인</string>
+	<string name="strNativeBtn">취소</string>
+	<string name="strRtFmt">시간격식</string>
+	<string name="strOffset">이동방향 치우침</string>
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">边框</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
+	<string name="strGroup">그릅</string>
+
+	<!-- object list -->
+	<string name="objectListName">Show List</string>
+	<string name="objectInfoName">상대 메세지 나타내기</string>
+	<string name="object_Msg">메세지</string>
+	<string name="object_text">문서대상</string>
+	<string name="object_realtime">실시시간대상</string>
+	<string name="object_counter">계수기대상</string>
+	<string name="object_bar">박코드</string>
+	<string name="object_pic">도형대상</string>
+	<string name="object_julian">율리우스일 상대</string>
+	<string name="object_line">직선대상</string>
+	<string name="object_rect">구형대상</string>
+	<string name="object_ellipse">타원대상</string>
+	<string name="object_shift">롯뜨대상</string>
+	<string name="object_second">실시시간초</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">초문서</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+<!-- H.M.Wang 2020-2-27 追加HyperText控件说明信息 -->
+	<string name="object_hypertext_hint1"><u>@Y</u>:년 <u>@M</u>:월 <u>@D</u>:일</string>
+	<string name="object_hypertext_hint2"><u>@H</u>:시 <u>@N</u>:분 <u>@S</u>:초</string>
+	<string name="object_hypertext_hint3"><u>@T</u>:롯뜨 <u>@A</u>:주일수 <u>@W</u>:년주일수</string>
+	<string name="object_hypertext_hint4"><u>@2</u>,<u>@3C</u>,<u>@4CC</u>,<u>@5CCC</u>:계수기</string>
+<!-- H.M.Wang 2020-2-27 追加HyperText控件说明信息 -->
+	<string name="object_weekofyear">주일수대상周数对象</string>
+	<string name="object_weekday">주일</string>
+	<string name="object_charHour">글자시간</string>
+	<string name="object_msg_name">메세지 명칭</string>
+	<string name="object_qr">QR코드</string>
+	<string name="object_dynamic_qr">동태QR코드</string>
+<!-- H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+	<string name="object_dynamic_barcode">동태QR코드</string>
+<!-- End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+<!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
+	<string name="object_dynamictext">동태문서</string>
+	<string name="object_dtindex">서막</string>
+<!-- End of H.M.Wang 2020-6-10 追加DynamicText控件 -->
+
+	<!-- Settings frame -->
+	<string name="strParam0">00.보류</string>
+	<string name="strPrSpeedname">01.프린트주파수</string>
+	<string name="strDelay_key">delay_key</string>
+	<string name="strDelayname">02.연시</string>
+	<string name="strDelay_summary">Set Delay</string>
+	<string name="strParam3">03.보류</string>
+	<string name="strTrigger_key">trigger_key</string>
+	<string name="strTriggername">04.촉발</string>
+	<string name="strTrigger_summary">Set Trigger Mode</string>
+	<string name="strSyncname">05.타이밍기</string>
+	<string name="strBold">06.강하게</string>
+	<string name="strFixlen">07.길이설정 촉발</string>
+	<string name="strFixtime">08.시간설정촉발</string>
+	<string name="strHeadTemp">09.노즐온도</string>
+	<string name="strResvTemp">10.잉크통온도</string>
+	<string name="strfontwidth">11.글자넓이</string>
+	<string name="strDotname">12.먹점</string>
+	<string name="strDirection_key">direction_key</string>
+	<string name="strDirectionname">05.방향</string>
+	<string name="strDirection_summary">Choose Direction</string>
+	<string name="strEncoder_key">encoder_key</string>
+	<string name="strEncodername">03.코드</string>
+	<string name="strEncoder_summary">Set Encoder mode</string>
+	<string name="strHoriRes_key">horires_key</string>
+	<string name="strHoriResname">04.수평</string>
+	<string name="strHoriRes_summary">Setting Hori Res</string>
+	<string name="strVertRes_key">vertres_key</string>
+	<string name="strVertResname">05.수직</string>
+	<string name="strVertRes_summary">Setting Vert Res</string>
+	<string name="strTimeunit">ms</string>
+	<string name="strResunit">dpi</string>
+	<string name="strLenunit">0.1mmm</string>
+	<string name="strTempunit">C</string>
+	<string name="strPrSpeedUnit">HZ</string>
+	<string name="strResvname8">08.보류</string>
+	<string name="strResvname9">09.보류</string>
+	<string name="strResvname10">10.보류</string>
+	<string name="strResvname11">11.보류</string>
+	<string name="strResvname12">12.보류</string>
+	<string name="strResvname13">13.보류</string>
+	<string name="strResvname14">14.보류</string>
+	<string name="strResvname15">15.보류</string>
+	<string name="strResvname16">16.보류</string>
+	<string name="strResvname17">17.보류</string>
+	<string name="strResvname18">18.보류</string>
+	<string name="strResvname19">19.보류</string>
+	<string name="strResvname20">20.보류</string>
+	<string name="strResvname21">21.보류</string>
+	<string name="strResvname22">22.보류</string>
+	<string name="strResvname23">23.보류</string>
+	<string name="strResvname24">24.보류</string>
+	<string name="strResvname25">25.보류</string>
+	<string name="strResvname26">26.보류</string>
+	<string name="strResvname27">27.보류</string>
+	<string name="strResvname28">28.보류</string>
+	<string name="strResvname29">29.보류</string>
+	<string name="strResvname30">30.보류</string>
+	<string name="strResvname31">31.보류</string>
+	<string name="strResvname32">32.보류</string>
+	<string name="strResvname33">33.보류</string>
+	<string name="strResvname34">34.보류</string>
+	<string name="strResvname35">35.보류</string>
+	<string name="strResvname36">36.보류</string>
+	<string name="strResvname37">37.보류</string>
+	<string name="strResvname38">38.1띠다</string>
+	<string name="strResvname39">39.보류</string>
+	<string name="strResvname40">40.보류</string>
+	<string name="strResvname41">41.보류</string>
+	<string name="strResvname42">42.보류</string>
+	<string name="strResvname43">43.보류</string>
+	<string name="strResvname44">44.보류</string>
+	<string name="strResvname45">45.보류</string>
+	<string name="strResvname46">46.보류</string>
+	<string name="strResvname47">47.보류</string>
+	<string name="strResvname48">48.보류</string>
+	<string name="strResvname49">49.보류</string>
+	<string name="strResvname50">50.보류</string>
+	<string name="strResvname51">51.보류</string>
+	<string name="strResvname52">52.보류</string>
+	<string name="strResvname53">53.보류</string>
+	<string name="strResvname54">54.보류</string>
+	<string name="strResvname55">55.보류</string>
+	<string name="strResvname56">56.보류</string>
+	<string name="strResvname57">57.보류</string>
+	<string name="strResvname58">58.보류</string>
+	<string name="strResvname59">59.보류</string>
+	<string name="strResvname60">60.보류</string>
+	<string name="strResvname61">61.보류</string>
+	<string name="strResvname62">62.보류</string>
+	<string name="strResvname63">63.보류</string>
+	<string name="strResvname64">64.보류</string>
+
+	<!-- H.M.Wang 2020-4-24 修改计数器值修改方式为对话窗 -->
+	<string name="strCounterEditTitle">계수기수치 수정</string>
+	<string name="strCounterIndex">계수기%1$d:</string>
+	<string name="strCounterClear">제로</string>
+	<!-- End of H.M.Wang 2020-4-24 修改计数器值修改方式为对话窗 -->
+	<!-- H.M.Wang 2020-4-27 重复打印设置改为对话窗 -->
+	<string name="strPrintRepeatEditTitle">프린트 중복 수정</string>
+	<!-- End of H.M.Wang 2020-4-27 重复打印设置改为对话窗 -->
+	<!-- H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+	<string name="strEncoderPPREditTitle">앵코드 수정</string>
+	<!-- End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+	<!-- H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理 -->
+	<string name="strQRLastEditTitle">편집QRLast서막</string>
+	<!-- End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理 -->
+
+	<string name="strBtnSave">확인</string>
+	<string name="strRecvedRemote">원격수치 접수</string>
+	<string name="str_fileicon_des">문서도표</string>
+	<string name="str_file_save"> 확인 </string>
+	<string name="str_file_cancel">취소</string>
+	<string name="str_setting_upgrade">업그레이드</string>
+	<string name="str_month">월</string>
+	<string name="str_year">년</string>
+	<string name="str_date">일</string>
+	<string name="str_hour">시</string>
+	<string name="str_minute">분</string>
+	<string name="str_format">24시간제</string>
+	<string name="str_format_24">예</string>
+	<string name="str_format_12">아니요</string>
+	<string name="cor_unit">화상도</string>
+	<string name="font_unit">mm</string>
+	<string name="dot_unit">Dots</string>
+	<string name="str_trans">==></string>
+	<string name="str_column_index">번호</string>
+	<string name="str_column_pic1">도1</string>
+	<string name="str_column_pic2">도2</string>
+	<string name="str_column_pic3">도3</string>
+	<string name="str_column_pic4">도4</string>
+	<string name="str_column_text1">문서1</string>
+	<string name="str_column_text2">문서2</string>
+	<string name="str_column_text3">문서3</string>
+	<string name="str_column_text4">문서4</string>
+	<string name="str_column_text5">문서5</string>
+	<string name="str_column_text6">문서6</string>
+	<string name="str_column_text7">문서7</string>
+	<string name="str_column_text8">문서8</string>
+	<string name="str_column_text9">문서9</string>
+	<string name="str_column_text10">문서10</string>
+	<string name="str_column_text11">문서11</string>
+	<string name="str_column_text12">문서12</string>
+	<string name="str_column_text13">문서13</string>
+	<string name="str_column_text14">문서14</string>
+	<string name="str_column_text15">문서15</string>
+	<string name="str_column_text16">문서16</string>
+	<string name="str_notlkfile">정확한TLK문서를 선택하세요</string>
+	<string name="str_tlk_already_exist">본메세지는 이미 존재함</string>
+	<string name="str_createfile_failure">새파일 메세지 실패</string>
+	<string name="str_no_print_target">프린트목표를 하나 선택하세요</string>
+	<string name="str_radioLocal">본지방</string>
+	<string name="str_radioUsb">USB</string>
+	<string name="str_radioUsb1">USB1</string>
+	<string name="str_radioUsb2">USB2</string>	
+	<string name="str_radioSdcard">SDCard</string>
+	<string name="str_title_infodialog">상대메세지 편집</string>
+	<string name="str_fileopt_del">지우기</string>
+	<string name="str_fileopt_cancel">취소</string>
+	<string name="str_search">검색</string>
+	
+<!-- 树莓派3 打印界面相关 -->	
+<!-- H.M.Wang 2020-8-11 修改信息，缩短长度 -->
+<!--    <string name="str_msg_name">메세지명칭: </string>-->
+    <string name="str_msg_name">메세지: </string>
+<!-- End of H.M.Wang 2020-8-11 修改信息，缩短长度 -->
+	<!--
+	<string name="str_state_inklevel">잉크량:  %1$d%%</string>
+	-->
+	<string name="str_state_inklevel">잉크량:</string>
+	<string name="str_invalid_ink">--</string>
+	<string name="str_state_battery">전량:%1$d</string>
+	<string name="str_hint_preview">메세지 미리보기 </string>
+	<string name="str_print_count">계수: </string>
+	<string name="str_print_count_default">0</string>
+	<string name="str_print_printing">프린트임무 운행중...</string>
+	<string name="str_print_startok">프린트임무 이미 가동...</string>
+	<string name="str_print_stopok">프린트임무 이미 중지</string>
+	<string name="str_toast_emptycontent">프린트 상대내용 비여서는안됨!!!</string>
+	<string name="str_toast_no_message">프린트상대 하나를 선택하세요!!!</string>
+	<string name="str_toast_no_ink">잉크량 적음</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">잉크통 이상!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_no_bin">프린트에 저공할 bin문서 없음</string>
+	<string name="str_message_no_content">미리보기 이룰수 없음</string>
+	<string name="str_page_forward">앞으로번지기</string>
+	<string name="str_page_backward">뒤로번지기</string>
+	<string name="str_rfid_initfail_notify">카드초기화 실패！</string>
+	<string name="str_state_printing">프린트중</string>
+	<string name="str_state_stopped">이미중지</string>
+	
+<!-- 树莓派3 设置界面相关 -->
+	<string name="str_textview_param1">01.속도</string>
+	<string name="str_textview_param2">02.프린트방향</string>
+	<string name="str_textview_param3">03.프린트 밀도</string> 
+	<string name="str_textview_param4">04.프린트연시</string>
+	<string name="str_textview_param5">05.광전선택</string>
+	<string name="str_textview_param6">06.타이밍기</string>
+	<string name="str_textview_param7">07.중복 프린트</string>
+	<string name="str_textview_param8">08.노즐선택</string>
+	<string name="str_textview_param9">09.롤러직경</string>
+	<string name="str_textview_param10">10.앵코드 맥동</string>
+	<string name="str_textview_param11">11.1 해드 위치 치우치다</string>
+	<string name="str_textview_param12">12.2 해드 위치 치우치다</string>
+	<string name="str_textview_param13">13.1 해드영상</string>
+	<string name="str_textview_param14">14.2 해드영상</string>
+	<string name="str_textview_param15">15.1 해드 꺼꾸로 설치</string>
+	<string name="str_textview_param16">16.2 해드꺼꾸로 설치</string>
+	<string name="str_textview_param17">17.날짜지연</string>
+
+	// H.M.Wang 修改1行。为计数器清楚前置0
+<!--	<string name="str_textview_param18">18.계수기</string>-->
+	<string name="str_textview_param18">18.계수 제로</string>
+
+	<string name="str_textview_param19">19.3 해드 위치 치우치다</string>
+	<string name="str_textview_param20">20.4 해드 위치 치우치다</string>
+	<string name="str_textview_param21">21.3 해드영상</string>
+	<string name="str_textview_param22">22.4 해드영상</string>
+	<string name="str_textview_param23">23.3 해드 꺼꾸로 설치</string>
+	<string name="str_textview_param24">24.4 해드 꺼꾸로 설치</string>
+	<string name="str_textview_param25">25.자동전압</string>
+	<string name="str_textview_param26">26.프린트전압</string>
+	<string name="str_textview_param27">27.맥동 넓이 읽기</string>
+	<string name="str_textview_param28">28.맥동 넓이 설정</string>
+	<string name="str_textview_param29">29.맥동 교란방지</string>
+	<string name="str_textview_param30">30.광전 주파여과</string>
+	<string name="str_textview_param31">31.노즐류형</string>
+	<string name="str_textview_param32">32.계수 재설치</string>
+	<string name="str_textview_param33">33.먹점</string>
+	<string name="str_textview_param34">34.PWML</string>
+	<string name="str_textview_param35">35.가동시간</string>
+	<string name="str_textview_param36">36.회전</string>
+	<string name="str_textview_param37">37.PWMH</string>
+	<string name="str_textview_param38">38.1띠다</string>
+	<!-- H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数 -->
+	<!--	<string name="str_textview_param39">39.보류</string> -->
+	<string name="str_textview_param39">39.데이트 원</string>
+	<!-- End of H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数 -->
+	<string name="str_textview_param40">40.Beep</string>
+	<!-- H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
+	<!--	<string name="str_textview_param41">41.串口打印</string> -->
+	<string name="str_textview_param41">41.보류</string>
+	<!-- End of H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
+	<string name="str_textview_param42">42.기계오픈 프린트 시작</string>
+	<string name="str_textview_param43">43.노즐수량</string>
+	<string name="str_textview_param44">44.화면보호 밝기</string>
+	<string name="str_textview_param45">45.계수기0</string>
+	<string name="str_textview_param46">46.계수기1</string>
+	<string name="str_textview_param47">47.계수기2</string>
+	<string name="str_textview_param48">48.계수기3</string>
+	<string name="str_textview_param49">49.계수기4</string>
+	<string name="str_textview_param50">50.계수기5</string>
+	<string name="str_textview_param51">51.계수기6</string>
+	<string name="str_textview_param52">52.계수기7</string>
+	<string name="str_textview_param53">53.계수기8</string>
+	<string name="str_textview_param54">54.계수기9</string>
+	<string name="str_textview_param55">55.QR자막</string>
+	<string name="str_textview_param56">56.프린트 및 보존</string>
+	<string name="str_textview_param57">57.보류</string>
+	<string name="str_textview_param58">58.주소</string>
+	<string name="str_textview_param59">59.보류</string>
+	<string name="str_textview_param60">60.기록</string>
+	<string name="str_textview_param61">61.보류</string>
+	<string name="str_textview_param62">62.보류</string>
+	<string name="str_textview_param63">63.보류</string>
+	<string name="str_textview_param64">64.보류</string>
+	<string name="str_btn_settings_sync">확인</string>
+	<string name="str_time_unit_0_1v">0.1볼트</string>
+	<string name="str_length_unit_mm">미리</string>
+	<string name="str_length_unit_6_1mm">1/6미리</string>
+	<string name="str_time_unit_ms">毫秒미리 초</string>
+	<string name="str_time_unit_mm_s">미리/초</string>
+	<string name="str_time_unit_us">마이크로초</string>
+	<string name="str_time_unit_0_1us">0.1us</string>
+	<string name="str_time_unit_100us">100마이크로초</string>
+	<string name="str_setting_time">시간설치</string>
+	<string name="str_system_setting">시스템설치</string>
+	<string name="str_upgrade_progress">시스템 업그레이드중....</string>
+	<string name="str_time_format">%1$02d:%2$02d:%3$02d %4$02d:%5$02d:%6$02d</string>
+	<string name="str_toast_ink_unvalid">먹점크기 범위초과 묵인치설정치: 800</string>
+	<string name="str_toast_photoelectricity_delay">광전연시범위초월 묵인치설정치:100</string>
+	<string name="str_toast_photoelectricity_antishake">광전 떨림 방지 범위 초과 묵인치설정치:20</string>
+	<string name="str_toast_timingprint">프린트시간설정 범위 초과 묵인치설정치:1000</string>
+
+<!-- 树莓派3 编辑界面相关 -->
+	<string name="str_edit_btn_insert">입력</string>
+	<string name="str_edit_btn_temp1">테스트1</string>
+	<string name="str_edit_btn_temp2">테스트2</string>
+	<string name="str_edit_btn_temp3">테스트3</string>
+	<string name="str_edit_btn_temp4">가트제조</string>
+	<string name="str_edit_btn_temp5">테스트5</string>
+	<string name="str_edit_line1">제일행:</string>
+	<string name="str_edit_line2">제이행:</string>
+	<string name="str_edit_line3">제삼행:</string>
+	<string name="str_edit_line4">제사행:</string>
+	<string name="str_notice_save">문서명 입력하세요:</string>
+	<string name="str_notice_no_objects">보존할대상없습니다</string>
+	<string name="str_file_title">메세지: </string>
+	<string name="str_file_hint">코드보존</string>
+	<string name="str_page_prev">위로 번지기</string>
+	<string name="str_page_next">아래로 번지기</string>
+	<string name="str_filename_no">새로만들기</string>
+	<string name="str_btn_back">돌아가기</string>
+	<string name="str_btn_up">위로 이동</string>
+	<string name="str_btn_detail">속성</string>
+	<string name="cursor">광표</string>
+<!-- 树莓派3  -->
+	<string name="str_dialog_msgnote">메세지행수 선택하세요: </string>
+	<string name="str_no_upgrade">이미 업그레이된 새로운판본입니다</string>
+	<string name="str_cnt_min">시작 수치</string>
+	<string name="str_cnt_max">결속 수치</string>
+	<string name="str_cnt_steplen">보 길이</string>
+	<string name="str_cnt_index">코드</string>
+	<string name="str_loading">첨부중...</string>
+	<string name="str_toast_no_qrfile">QR.txt혹QR.csv찾지못함</string>
+	<string name="str_barcode_end">이미QR.txt프린트 끝남</string>
+	<string name="str_recover_print">recover last print</string>
+	<string name="str_net_devname">설비명칭</string>
+	<string name="str_net_ipaddr">IP주소</string>
+	<string name="str_net_stat">온란상태</string>
+	<string name="str_net_number">번호</string>
+	<string name="str_net_counts">계수</string>
+	<string name="str_net_int">잉크</string>
+	<string name="str_net_commands">명령</string>
+	<string name="str_net_back">돌아가기</string>
+	<string name="str_net_one">1</string>
+	<string name="str_net_hundred">100</string>
+	<string name="str_net_thousand">1000</string>
+	<string name="str_net_connect">연결</string>
+	<string name="str_net_tips">제시</string>
+	<string name="str_net_textview">문서</string>
+	<string name="str_tip_nothing">~ 도편찾지못함!!!</string>
+	<string name="str_no_permission">권한 부족</string>
+	<string name="str_flush_tips">원시스템설치 메세지를 덮으므로 확인하십니까?</string>
+	<string name="str_message_tips">메세지%s이미존재함 덮으시곗습니까?</string>
+	<string name="str_prepared">TLK해석완성!!!</string>
+	<string name="str_prepare_fail">TLK parse failed!!!</string>
+	<string name="password_title">비밀번호 입력</string>
+	
+	<!-- Toast -->
+	<string name="toast_save_success">본존성공</string>
+	<string name="toast_plug_usb">USB 입력하세요</string>
+	<string name="toast_passwd_error">비밀번호 오류!!!</string>
+	<string name="toast_content_empty">내용이 비여서는 안됨</string>
+	<string name="toast_rfid_changed">잠김 수치 변화발생</string>
+	<string name="tips_import_message">메세지 입력중...</string>
+	<string name="tips_import_resource">자원문서 입력중...</string>
+	<string name="tips_import_sysconf">시스템입력중...</string>
+	<string name="tips_import_font">글자체입력중...</string>
+	<string name="tips_export_message">메세지 이끌어 내는중...</string>
+	<string name="tips_export_sysconf">시스템 이끌어 내는중...</string>
+	<string name="tips_export_resource">자원문서 이끌어내는중...</string>
+	<string name="message_confirm_printnext">프린트메세지 교환하실건가요?</string>
+    <string name="str_time_unit_mm">ms</string>
+    <string name="str_ip_add">IP주소</string>
+	<string name="str_device_number">설비:</string>
+	<string name="str_dialog_surecancel">경고:</string>
+	<string name="str_device_but_sure">확인</string>
+	<string name="str_ip_ed">IP설치후재 시도</string>
+	<string name="str_port">연결입구</string>
+	<string name="str_information">집행확인?</string>
+	<string name="str_net_device_ink">잠김수치</string>
+	<string name="str_net_error">인테넷 오류</string>
+	<string name="str_setting_clean">장기 세척</string>
+	<string name="all_print">전부 프린트</string>
+	<string name="all_purge">전부세척</string>
+	<string name="all_stop">전부정지</string>
+	<string name="str_F1">F1</string>
+	<string name="str_F2">스캔 설비</string>
+	<string name="str_net_query">문의</string>
+	<string name="str_net_device">설비:</string>
+	<string name="str_net_device_times">차수:</string>
+	<string name="str_net_ipdefault">192.168.1.101</string>
+	<string name="str_build_tlk_start">TLK구성시작...</string>
+	<string name="str_build_tlk_ok">TLK구성 성공</string>
+	<string name="str_build_tlk_fail">TLK구성실패</string>
+	<string name="str_tlk_opening">TLK해석중...</string>
+	<string name="str_print_thread_create_err">임무설정실패</string>
+	<string name="str_tlk_not_found">1.TLK최실</string>
+
+	<string name="str_quit">퇴출</string>
+	<string name="str_quit_confirm">퇴출 확인하십니까？</string>
+	<string name="tips_import">수치입력</string>
+
+	<string name="printDpiNotMatchError">프린트 분배률 맞지않으므로메세지 보존후 프린트 재시도하세요</string>
+</resources>

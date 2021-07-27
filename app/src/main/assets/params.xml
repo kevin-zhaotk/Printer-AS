@@ -211,6 +211,14 @@
 		<default>0</default>
 	</param>
 
+<!-- 2021-7-23 追加重复次数(Times)的有效值范围 -->
+	<param>
+		<id>41</id>
+		<min>0</min>
+		<max>20</max>
+		<default>0</default>
+	</param>
+<!-- End of 2021-7-23 追加重复次数(Times)的有效值范围 -->
 
 	<param>
 		<id>44</id>
