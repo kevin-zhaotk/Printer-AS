@@ -372,12 +372,17 @@ public class SmartCardManager implements IInkDevice {
         ExtGpio.rfidSwitch(ExtGpio.RFID_CARD1);
     }
 
+//    private final int ADD_INK_THRESHOLD = 14000000;
+//    private final int ADD_INK_THRESHOLD = 13900000;
+//    private final int ADD_INK_THRESHOLD = 13800000;
+//    private final int ADD_INK_THRESHOLD = 13700000;
+//    private final int ADD_INK_THRESHOLD = 13600000;
+    private final int ADD_INK_THRESHOLD = 13500000;
+
     private void levelValueUpdated(final int cardIdx) {
         Debug.d(TAG, "---> enter levelValueUpdated(" + cardIdx + ")");
 
-//        int avgLevel = 13900000;
-//        int avgLevel = 13700000;
-        int avgLevel = 13500000;
+        int avgLevel = ADD_INK_THRESHOLD;
         if(mCards[cardIdx].mRecentLevels.size() >= PROC_LEVEL_NUMS) {
             long totalLevel = 0;
             for(int i=0; i<PROC_LEVEL_NUMS; i++) {
@@ -387,9 +392,7 @@ public class SmartCardManager implements IInkDevice {
         }
         Debug.d(TAG, "Average Level = " + avgLevel);
 
-//        if(avgLevel < 13900000) {
-//        if(avgLevel < 13700000) {
-        if(avgLevel < 13500000) {
+        if(avgLevel < ADD_INK_THRESHOLD) {
             if(!mCards[cardIdx].mInkAdding) {
                 if(mCards[cardIdx].mInkAddedTimes >= ADD_INK_TRY_LIMITS) {
                     mCards[cardIdx].mAddInkFailed = true;
