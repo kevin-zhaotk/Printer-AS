@@ -215,7 +215,7 @@
 	<param>
 		<id>41</id>
 		<min>0</min>
-		<max>20</max>
+		<max>30</max>
 		<default>0</default>
 	</param>
 <!-- End of 2021-7-23 追加重复次数(Times)的有效值范围 -->

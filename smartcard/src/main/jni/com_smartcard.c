@@ -48,7 +48,7 @@ static int InkVolOfPenPercentage                = INK_VOL_OF_PEN_PERCENTAGE;
 
 //#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.364"
+#define VERSION_CODE                            "1.0.366"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,

@@ -157,7 +157,19 @@ static int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
         return SC_GPIO_DRIVER_FAIL;
     }
 
-    uint8_t ret = ioctl(fd, cmd, arg1);
+    uint8_t ret = SC_GPIO_DRIVER_SUCCESS;
+    int try = 0;
+    while (try < 100) {             // Retry upto 100 times
+        ret = ioctl(fd, cmd, arg1);
+
+        if(errno != ECOMM) {
+            break;
+        } else {
+//            LOGE(">>> SC_I2C_DRIVER_write: Write data failed. %s", strerror(errno));
+        }
+        try++;
+        usleep(10);
+    }
 
     if(ret != SC_GPIO_DRIVER_SUCCESS) {
         LOGE(">>> SC_GPIO_DRIVER_ioctl: %s(Return value: 0x%02X)", strerror(errno), ret);

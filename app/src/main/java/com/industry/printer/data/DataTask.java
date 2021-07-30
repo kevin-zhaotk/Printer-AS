@@ -145,7 +145,7 @@ public class DataTask {
 	}
 // End of H.M.Wang 2020-6-16 追加是否保存print.bin标记，以控制保存行为
 
-	public char[] getPrintBuffer(boolean isPreview, boolean bSave) {
+	private char[] getPrintBuffer(boolean isPreview, boolean bSave) {
 		Debug.d(TAG, "--->getPrintBuffer");
 		if (mBgBuffer == null) {
 			return null;
@@ -166,11 +166,13 @@ public class DataTask {
 		} catch (IOException e) {
 			Debug.d(TAG, "--->e : " + e.getMessage());
 		}
+// H.M.Wang 2021-7-28 放开该部分功能，在获取预览图的时候，直接返回生成的还未进行加工的图
 // H.M.Wang 2020-6-30 这段代码可能会在isPreview=true时，导致后面的处理不能进行，应该注释掉
-//		if (isPreview) {
-//			return mPrintBuffer;
-//		}
+		if (isPreview) {
+			return mPrintBuffer;
+		}
 // End of H.M.Wang 2020-6-30 这段代码可能会在isPreview=true时，导致后面的处理不能进行
+// End of H.M.Wang 2021-7-28 放开该部分功能，在获取预览图的时候，直接返回生成的还未进行加工的图
 
 // H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_32DN) {
@@ -371,7 +373,7 @@ public class DataTask {
 		}
 // H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
 		Debug.d(TAG, "INDEX_PRINT_TIMES = " + sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES));
-		if(sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 21) {
+		if(sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 31) {
 			int maxColNumPerUnit = 0;
 			if( sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7 ||
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_25_4 ||
@@ -394,7 +396,11 @@ public class DataTask {
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32SN ||
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT ||
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN ) {
-				maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) / 4;
+				if(sysconf.getParam(SystemConfigFile.INDEX_SLANT) >= 100) {
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 8;
+				} else {
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) / 4;
+				}
 			}
 
 			Debug.d(TAG, "maxColNumPerUnit = " + maxColNumPerUnit + "; mBinInfo.getBytesFeed() / 2 = " + mBinInfo.getBytesFeed() / 2);
@@ -1385,14 +1391,15 @@ public char[] bitShiftFor64SN() {
 	}
 	
 	public Bitmap getPreview() {
-		char[] preview = getPrintBuffer(false);
+		char[] preview = getPrintBuffer(true, false);
 		if (preview == null) {
 			return null;
 		}
 		// String path = "/mnt/usbhost1/prev.bin";
 		// BinCreater.saveBin(path, preview, getInfo().mBytesPerHFeed*8*getHeads());
 		Debug.d(TAG, "--->column=" + mBinInfo.mColumn + ", charperh=" + mBinInfo.mCharsPerHFeed);
-
+		return BinFromBitmap.Bin2Bitmap(preview, mBinInfo.mColumn, mBinInfo.mCharsFeed*16);
+/*
 // H.M.Wang 2021-7-26 追加实际打印内容预览图显示功能
 		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
 		int rows = mBinInfo.mCharsFeed * 16;
@@ -1422,31 +1429,6 @@ public char[] bitShiftFor64SN() {
 //					mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM);
 			rows = mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM;
 		} else if (sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 21) {
-/*			int maxColNumPerUnit = 0;
-			if (sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7 ||
-					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_25_4 ||
-					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_38_1 ||
-					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_50_8 ||
-					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH ||
-					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL ||
-					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_TRIPLE ||
-					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR ||
-					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_9MM) {
-				if (Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_150) {
-					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 6;
-				} else {
-					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 12;
-				}
-			} else if (
-					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
-							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT ||
-							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32DN ||
-							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32SN ||
-							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT ||
-							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN) {
-				maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) / 4;
-			}
-*/
 //			return BinFromBitmap.Bin2Bitmap(preview,
 ////					maxColNumPerUnit * (sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) - 1) + mBinInfo.mColumn,
 //					preview.length / (mBinInfo.mBytesPerHFeed * mTask.getNozzle().mHeads / 2),
@@ -1456,7 +1438,7 @@ public char[] bitShiftFor64SN() {
 //			return BinFromBitmap.Bin2Bitmap(preview, mBinInfo.mColumn, mBinInfo.mCharsFeed * 16);
 		}
 		Debug.d(TAG, "--->columns = " + preview.length * 16 / rows + ", rows = " + rows);
-		return BinFromBitmap.Bin2Bitmap(preview, preview.length * 16 / rows, rows);
+		return BinFromBitmap.Bin2Bitmap(preview, preview.length * 16 / rows, rows);*/
 // End of H.M.Wang 2021-7-26 追加实际打印内容预览图显示功能
 	}
 

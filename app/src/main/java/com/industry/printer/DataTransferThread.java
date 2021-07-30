@@ -1899,10 +1899,7 @@ private void setCounterPrintedNext(DataTask task, int count) {
 						if (isLanPrint()) {
 							mPrintBuffer = getLanBuffer(index());
 						} else {
-// H.M.Wang 2020-6-24 修改重新生成打印缓冲区的时候计数器自动增值和读条码文件下一条的问题
-//							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
-							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
-// End of H.M.Wang 2020-6-24 修改重新生成打印缓冲区的时候计数器自动增值和读条码文件下一条的问题
+							mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
 						}
 // End of H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素
 						Debug.d(TAG, "===>mPrintBuffer size=" + mPrintBuffer.length);
@@ -1938,7 +1935,7 @@ private void setCounterPrintedNext(DataTask task, int count) {
 //					} else if(mFirstForLanFast) {
 					} else if(mFirstForLanFast && mDataUpdatedForFastLan) {
 // End of 2020-7-3 追加判断是否有网络快速打印数据更新
-						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
+						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
 						Debug.d(TAG, "First print buffer deliver to FPGA. size = " + mPrintBuffer.length);
 // H.M.Wang 2021-4-20 取消判断，因为此时底层正在申请数据，所以返回肯定是1，这个下发可能会被跳过
 // H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
@@ -1962,7 +1959,7 @@ private void setCounterPrintedNext(DataTask task, int count) {
 // End of H.M.Wang 2020-7-9 解决开始打印后，仅打印首次内容一次的问题
 // H.M.Wang 2020-7-9 追加计数器重置标识
 					} else if(mCounterReset) {
-						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true, false);
+						mPrintBuffer = mDataTask.get(index()).getPrintBuffer(false);
 						Debug.d(TAG, "Counter reset. rebuild print buffer and deliver to FPGA. size = " + mPrintBuffer.length);
 						try {sleep(30);}catch(Exception e){};
 // H.M.Wang 2020-11-13 检查一下底层驱动是否在要新数据，如果底层要的是新数据，这个更新数据可能就会冒名顶替，带来打印错误
