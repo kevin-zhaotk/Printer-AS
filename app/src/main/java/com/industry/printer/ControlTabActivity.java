@@ -911,7 +911,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 // End of H.M.Wang 2020-11-17 这个设置导致
 
 			//mInkLevel.clearAnimation();
-			mInkLevel.setBackgroundColor(0x436EEE);
+			mInkLevel.setBackgroundColor(mContext.getResources().getColor(R.color.background));
 			mInkLevel.setText(level);
 		} else if (ink > 0.0f){
 			mInkLevel.setBackgroundColor(Color.YELLOW);
@@ -1512,6 +1512,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					RTCDevice device = RTCDevice.getInstance(mContext);
 					device.writeCounter(mContext, mCounter);
 */
+					if(!Configs.READING) {
+						mInkManager.downLocal(0);
+					}
 					RTCDevice device = RTCDevice.getInstance(mContext);
 					device.writeCounter(mContext, mCounter);
 					refreshCount();

@@ -36,19 +36,20 @@ extern "C"
 #define SC_CHECKSUM_FAILED                      400
 
 #define PEN_VS_BAG_RATIO                        3
-#define MAX_BAG_INK_VOLUME                      3150
-#define MAX_PEN_INK_VOLUME                      MAX_BAG_INK_VOLUME * PEN_VS_BAG_RATIO
-#define INK_VOL_OF_BAG_PERCENTAGE               (MAX_BAG_INK_VOLUME / 100)
+#define MAX_BAG_INK_VOLUME_MAXIMUM              4700
+#define MAX_BAG_INK_VOLUME_MINIMUM              3150
+#define MAX_PEN_INK_VOLUME                      MAX_BAG_INK_VOLUME_MINIMUM * PEN_VS_BAG_RATIO
+#define INK_VOL_OF_BAG_PERCENTAGE               (MAX_BAG_INK_VOLUME_MINIMUM / 100)
 #define INK_VOL_OF_PEN_PERCENTAGE               (MAX_PEN_INK_VOLUME / 100)
 
-static int MaxBagInkVolume                      = MAX_BAG_INK_VOLUME;
+static int MaxBagInkVolume                      = MAX_BAG_INK_VOLUME_MINIMUM;
 static int MaxPenInkVolume                      = MAX_PEN_INK_VOLUME;
 static int InkVolOfBagPercentage                = INK_VOL_OF_BAG_PERCENTAGE;
 static int InkVolOfPenPercentage                = INK_VOL_OF_PEN_PERCENTAGE;
 
 //#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.366"
+#define VERSION_CODE                            "1.0.371"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -437,9 +438,9 @@ JNIEXPORT int JNICALL Java_com_Smartcard_getMaxVolume(JNIEnv *env, jclass arg, j
     // DV x < 20  or  X>35:    4700
 
     if(drop_volume < 20 || drop_volume > 35) {
-        MaxBagInkVolume = 4700;
+        MaxBagInkVolume = MAX_BAG_INK_VOLUME_MAXIMUM;
     } else {
-        MaxBagInkVolume = 3150 * 29 / drop_volume;
+        MaxBagInkVolume = MAX_BAG_INK_VOLUME_MINIMUM * 29 / drop_volume;
     }
 
     MaxPenInkVolume                      = MaxBagInkVolume * PEN_VS_BAG_RATIO;
@@ -570,11 +571,13 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_checkOIB(JNIEnv *env, jclass arg, jint
     return out_of_ink;
 }
 
+// H.M.Wang 2021-8-9 修改根据ILG调整OEM数值的算法，由原来的从高位开始检测改为从低位开始检测，如果低位为1则增加一个百分比，检查紧邻高位，一次类推，遇到为0则退出。访问错误时不进行根据ILG对OEM值的修改
 static void adjustLocalInkValue(jint card) {
     HP_SMART_CARD_result_t ret = HP_SMART_CARD_ERROR;
-    uint32_t ilg = 100;
+    uint32_t ilg = 0;
+    uint8_t quit = 0;
 
-    for(int i=3; i>=0; i--) {
+    for(int i=0; i<4; i++) {
         uint32_t tmp_value = 0x00000000;
         if(CARD_SELECT_PEN1 == card) {
             ret = inkILGReadFunc[i](HP_SMART_CARD_DEVICE_PEN1, &tmp_value);
@@ -587,23 +590,20 @@ static void adjustLocalInkValue(jint card) {
         }
 
         if(HP_SMART_CARD_OK != ret) {
-            tmp_value = 0x00000000;
+            break;
         }
 
-        if(!tmp_value) {
-            ilg -= 25;
-            continue;
-        }
-
-        uint32_t mask = 0x01000000;
+        uint32_t mask = 0x00000001;
         for(int i=0; i<25; i++) {
             if(mask & tmp_value) {
+                ilg++;
+                mask <<= 1;
+            } else {
+                quit = 1;
                 break;
             }
-            ilg--;
-            mask >>= 1;
         }
-        break;
+        if(quit) break;
     }
 
     int vol_percentage = 1;
@@ -625,7 +625,7 @@ static void adjustLocalInkValue(jint card) {
         x = 0;
     }
 
-    x = ilg * vol_percentage + x % vol_percentage;
+    x = (quit == 1 ? ilg * vol_percentage + x % vol_percentage : x);
 
     if(CARD_SELECT_PEN1 == card) {
         inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_PEN1, x);
@@ -637,6 +637,7 @@ static void adjustLocalInkValue(jint card) {
         inkWriteTag12OEMDefRWField1(HP_SMART_CARD_DEVICE_BULK1, x);
     }
 }
+// End of H.M.Wang 2021-8-9 修改根据ILG调整OEM数值的算法，由原来的从高位开始检测改为从低位开始检测，如果低位为1则增加一个百分比，检查紧邻高位，一次类推，遇到为0则退出。访问错误时不进行根据ILG对OEM值的修改
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_getLocalInk(JNIEnv *env, jclass arg, jint card) {
 // 该判断另外逻辑处理，本函数如实返回读数
@@ -755,7 +756,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
     }
 
     LOGD(">>> downLocal(#%d) -> %d", card, x);
-
+/*
     if(p1 != p2) {
         writeILG(card, p1);
 
@@ -772,7 +773,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
             }
         }
     }
-
+*/
     return SC_SUCCESS;
 }
 

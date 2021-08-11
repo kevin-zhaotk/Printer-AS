@@ -2697,9 +2697,16 @@ static HP_SMART_CARD_result_t smart_card_trans_device_init(HP_SMART_CARD_id_t de
         /* if the parity calculated doesn't
            match with the one stored in smart_card, report smart_card failure.
          */
-        result = HP_SMART_CARD_DATA_NOT_VALID;
+// H.M.Wang 2021-8-9 取消奇偶校验错误发挥结果
+//        result = HP_SMART_CARD_DATA_NOT_VALID;
+//        smart_card_shadow[device][smart_card_parity_offset[device] + current_parity_ptr[device]] = cparity;
+        smart_card_shadow[device][parity_off] = cparity;
+        smart_card_shadow[device][parity_off+1] = cparity;
+        current_parity_ptr[device]  = 0;
+        smart_card_parity[device] = cparity;
         HP_DEBUG_printf(DBG_SMART_CARD_ID, HP_DBG_LEVEL_ERROR, 0,
-                        "smart_card_trans_device_init: bad parity device %d\n", device);
+                        "smart_card_trans_device_init: bad parity device %d\nCalculated parity=%x\nStored parity=%x, %x", device, cparity, smart_card_shadow[device][parity_off], smart_card_shadow[device][parity_off + 1]);
+// End of H.M.Wang 2021-8-9 取消奇偶校验错误发挥结果
 #if 0
         //current_parity_ptr[device] = 0;
         //smart_card_parity[device] = cparity;
@@ -2743,12 +2750,17 @@ static HP_SMART_CARD_result_t smart_card_trans_write(HP_SMART_CARD_id_t device,
     cparity     = smart_card_parity[device];
     old_parity  = cparity;
 
+    HP_DEBUG_printf(DBG_SMART_CARD_ID,
+                    HP_DBG_LEVEL_AUTH_INFO, 3,
+                    "Parity(smart_card_shadow): 0x%02x\nParity(smart_card_parity): 0x%02x\n",
+                    smart_card_shadow[device][smart_card_parity_offset[device] + current_parity_ptr[device]],
+                    cparity);
 
     // Do a quick sanity check, make sure the current parity is valid
-    if (smart_card_shadow[device][smart_card_parity_offset[device] + current_parity_ptr[device]] != cparity)
-    {
-        return HP_SMART_CARD_DATA_NOT_VALID;
-    }
+//    if (smart_card_shadow[device][smart_card_parity_offset[device] + current_parity_ptr[device]] != cparity)
+//    {
+//        return HP_SMART_CARD_DATA_NOT_VALID;
+//    }
 
 
     // Compute new parity

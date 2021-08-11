@@ -14,12 +14,15 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,6 +105,16 @@ public class Socket_Control_Activity extends Activity {
 
 
 
+// H.M.Wang 2021-8-4 追加WIFI和BT的操作
+	public static final int RESULT_SUCCESS = 1;
+	public static final int RESULT_FAILED = -1;
+
+	public interface SocketListenner {
+		public void onConnected(int res, String err);
+		public void onSent(int count, String err);
+		public void onReceived(String recv, String err);
+		public void onClosed(int res, String err);
+	}
 
     private EditText mIpAddET;
     private TextView mIpConStatus;
@@ -116,6 +129,179 @@ public class Socket_Control_Activity extends Activity {
     private TextView mBtRecvMsg;
     private TextView mBtMsgSendBtn;
 
+	private class IPConnnectionManager {
+		private ExecutorService mCachedThreadPool = null;
+		private Socket mSocket;
+		private SocketListenner mSocketListenner = null;
+
+		public IPConnnectionManager(SocketListenner l) {
+			mCachedThreadPool = Executors.newCachedThreadPool();
+			mSocket = null;
+			mSocketListenner = l;
+		}
+
+		public boolean isConnected() {
+			return (null != mSocket && mSocket.isConnected());
+		}
+
+		public void connect(final String ip, final int port) {
+			mCachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					String err = "";
+					try {
+						if(null != mSocket && mSocket.isConnected()) {
+							mSocket.close();
+						}
+						mSocket = new Socket();
+						mSocket.connect(new InetSocketAddress(ip, port), 500);
+						if(null != mSocketListenner) mSocketListenner.onConnected(RESULT_SUCCESS, null);
+						return;
+					} catch (UnknownHostException e) {
+						err = e.getMessage();
+					} catch (SocketTimeoutException e) {
+						err = e.getMessage();
+					}catch (IOException e){
+						err = e.getMessage();
+					}
+					if(null != mSocketListenner) mSocketListenner.onConnected(RESULT_FAILED, err);
+				}
+			});
+		}
+
+		public void send(final String msg) {
+			mCachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					String err = "";
+					try {
+						if (null != mSocket && mSocket.isConnected()) {
+							OutputStream os = mSocket.getOutputStream();
+							OutputStreamWriter osw = new OutputStreamWriter(os);
+							BufferedWriter bw = new BufferedWriter(osw);
+							bw.write(msg);
+							bw.flush();
+							bw.close();
+							osw.close();
+							os.close();
+							if(null != mSocketListenner) mSocketListenner.onSent(msg.length(), null);
+							return;
+						} else {
+							err = "Not connected!";
+						}
+					} catch (IOException e) {
+						err = e.getMessage();
+					}
+					if(null != mSocketListenner) mSocketListenner.onSent(0, err);
+				}
+			});
+		}
+
+		public void recv() {
+			mCachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					String err = "";
+					try {
+						if (null != mSocket && mSocket.isConnected()) {
+							InputStream is = mSocket.getInputStream();
+							InputStreamReader isr = new InputStreamReader(is);
+							BufferedReader br = new BufferedReader(isr);
+							String RecevInfor = br.readLine();
+							br.close();
+							isr.close();
+							is.close();
+							if(null != mSocketListenner) mSocketListenner.onReceived(RecevInfor, null);
+							return;
+						} else {
+							err = "Not connected!";
+						}
+					} catch (IOException e) {
+						err = e.getMessage();
+					}
+					if(null != mSocketListenner) mSocketListenner.onReceived(null, err);
+				}
+			});
+		}
+
+		public void close() {
+			mCachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					String err = "";
+					try {
+						if(null != mSocket && mSocket.isConnected()) {
+							mSocket.close();
+						}
+						mSocket = null;
+						if(null != mSocketListenner) mSocketListenner.onClosed(RESULT_SUCCESS, null);
+						return;
+					} catch (SocketTimeoutException e) {
+						err = e.getMessage();
+					}catch (IOException e){
+						err = e.getMessage();
+					}
+					if(null != mSocketListenner) mSocketListenner.onClosed(RESULT_FAILED, err);
+				}
+			});
+		}
+	}
+
+	private IPConnnectionManager mIPConMgr = null;
+
+	public static final int MSG_IP_CONNECT_RESULT 	= 100;
+	public static final int MSG_IP_SEND_RESULT 		= 101;
+	public static final int MSG_IP_RECV_RESULT 		= 102;
+	public static final int MSG_IP_CLOSE_RESULT 	= 103;
+
+	private Handler mConHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case MSG_IP_CONNECT_RESULT:
+					if(msg.arg1 == RESULT_SUCCESS) {
+						mIpConStatus.setText("Connected");
+						mIpConStatus.setTextColor(Color.GREEN);
+						mIpConBtn.setText("Close");
+					} else {
+						mIpConStatus.setText((String)msg.obj);
+						mIpConStatus.setTextColor(Color.RED);
+					}
+					break;
+				case MSG_IP_SEND_RESULT:
+					if(msg.arg1 > 0) {
+						mIpRecvMsg.setText("Sent(" + msg.arg1 +")");
+						mIpRecvMsg.setTextColor(Color.GREEN);
+					} else {
+						mIpRecvMsg.setText((String)msg.obj);
+						mIpRecvMsg.setTextColor(Color.RED);
+					}
+					break;
+				case MSG_IP_RECV_RESULT:
+					if(msg.arg1 == RESULT_SUCCESS) {
+						mIpRecvMsg.setTextColor(Color.WHITE);
+					} else {
+						mIpRecvMsg.setTextColor(Color.RED);
+					}
+					mIpRecvMsg.setText((String)msg.obj);
+					break;
+				case MSG_IP_CLOSE_RESULT:
+					if(msg.arg1 == RESULT_SUCCESS) {
+						mIpConStatus.setText("Not Connected!");
+					} else {
+						mIpConStatus.setText("Closure Failed");
+					}
+					mIpConStatus.setTextColor(Color.RED);
+					mIpConBtn.setText("Connect");
+					break;
+				default:
+					break;
+			}
+		}
+	};
+
+// End of H.M.Wang 2021-8-4 追加WIFI和BT的操作
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -123,18 +309,67 @@ public class Socket_Control_Activity extends Activity {
 
 
 
-        mIpAddET= (EditText) findViewById(R.id.IP_addET);
-        mIpConStatus= (TextView) findViewById(R.id.IPConStatus);
-        mIpConBtn= (TextView) findViewById(R.id.IPConnect);
-        mIpMsgET= (EditText) findViewById(R.id.IPMsgET);
-        mIpRecvMsg= (TextView) findViewById(R.id.IPRecvMsg);
-        mIpMsgSendBtn= (TextView) findViewById(R.id.IPSendMsg);
+// H.M.Wang 2021-8-4 追加WIFI和BT的操作
+		mIPConMgr = new IPConnnectionManager(new SocketListenner() {
+			@Override
+			public void onConnected(int res, String err) {
+				Message.obtain(mConHandler, MSG_IP_CONNECT_RESULT, res, 0, err).sendToTarget();
+			}
 
-        mBtConStatus= (TextView) findViewById(R.id.BTConStatus);
+			@Override
+			public void onSent(int count, String err) {
+				Message.obtain(mConHandler, MSG_IP_SEND_RESULT, count, 0, err).sendToTarget();
+			}
+
+			@Override
+			public void onReceived(String recv, String err) {
+				if(null == recv) {
+					Message.obtain(mConHandler, MSG_IP_RECV_RESULT, RESULT_FAILED, 0, err).sendToTarget();
+				} else {
+					Message.obtain(mConHandler, MSG_IP_RECV_RESULT, RESULT_SUCCESS, 0, recv).sendToTarget();
+				}
+			}
+
+			@Override
+			public void onClosed(int res, String err) {
+				Message.obtain(mConHandler, MSG_IP_CLOSE_RESULT, res, 0, err).sendToTarget();
+			}
+		});
+
+		mIpAddET= (EditText) findViewById(R.id.IP_addET);
+		mIpConStatus= (TextView) findViewById(R.id.IPConStatus);
+		mIpConBtn= (TextView) findViewById(R.id.IPConnect);
+		mIpConBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(!mIPConMgr.isConnected()) {
+					mIpConStatus.setText("Connecting...");
+					mIPConMgr.connect(mIpAddET.getText().toString(), 3550);
+				} else {
+					mIpConStatus.setText("Closing...");
+					mIPConMgr.close();
+				}
+			}
+		});
+		mIpMsgET= (EditText) findViewById(R.id.IPMsgET);
+		mIpRecvMsg= (TextView) findViewById(R.id.IPRecvMsg);
+		mIpMsgSendBtn= (TextView) findViewById(R.id.IPSendMsg);
+		mIpMsgSendBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(mIpMsgET.getText().length() > 0) {
+					mIPConMgr.send(mIpMsgET.getText().toString());
+					mIPConMgr.recv();
+				}
+			}
+		});
+
+		mBtConStatus= (TextView) findViewById(R.id.BTConStatus);
         mBtConBtn= (TextView) findViewById(R.id.BTConnect);
         mBtMsgET= (EditText) findViewById(R.id.BTMsgET);
         mBtRecvMsg= (TextView) findViewById(R.id.BTRecvMsg);
         mBtMsgSendBtn= (TextView) findViewById(R.id.BTSendMsg);
+// End of H.M.Wang 2021-8-4 追加WIFI和BT的操作
 
 		But_Print= (TextView) findViewById(R.id.But_Print);
 		Scan_device = (TextView) findViewById(R.id.Scan_device);

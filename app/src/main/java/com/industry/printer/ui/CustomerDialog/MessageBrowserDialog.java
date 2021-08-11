@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 
 import com.industry.printer.R;
 import com.industry.printer.Utils.ConfigPath;
+import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.Utils.StringUtil;
@@ -427,6 +428,13 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 						return true;
 					}
 				});
+
+// H.M.Wang 2021-8-11 追加信息浏览数量锁的标识
+				if(Configs.USER_MSG_COUNT != Configs.USER_MSG_COUNT_NOLIMIT && mFrom == OpenFrom.OPEN_PRINT) {
+					mTotalContents = Arrays.copyOf(mTotalContents, Math.min(mTotalContents.length, Configs.USER_MSG_COUNT));
+				}
+// End of H.M.Wang 2021-8-11 追加信息浏览数量锁的标识
+
 				if (mTotalContents == null) {
 					return;
 				}

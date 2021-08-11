@@ -578,11 +578,24 @@ public class SmartCardManager implements IInkDevice {
             public void run() {
                 synchronized (this) {
                     if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
-                        SmartCard.downLocal(mCards[cardIdx].mCardType);
+// H.M.Wang 2021-8-7 追加当写SC卡出现错误的时候报错的处理
+//                        SmartCard.downLocal(mCards[cardIdx].mCardType);
+                        int ret = SmartCard.SC_SUCCESS;
+                        ret = SmartCard.downLocal(mCards[cardIdx].mCardType);
+                        if(SmartCard.SC_SUCCESS != ret) {
+                            mHandler.obtainMessage(MSG_SHOW_CONSISTENCY, "Smartcard access error!").sendToTarget();
+                        }
+// End of H.M.Wang 2021-8-7 追加当写SC卡出现错误的时候报错的处理
                         mCards[cardIdx].mInkLevel = mCards[cardIdx].mMaxVolume - SmartCard.getLocalInk(mCards[cardIdx].mCardType);
                         checkOIB(cardIdx);
 
-                        SmartCard.downLocal(mCards[mCurBagIdx].mCardType);
+// H.M.Wang 2021-8-7 追加当写SC卡出现错误的时候报错的处理
+//                        SmartCard.downLocal(mCards[mCurBagIdx].mCardType);
+                        ret = SmartCard.downLocal(mCards[mCurBagIdx].mCardType);
+                        if(SmartCard.SC_SUCCESS != ret) {
+                            mHandler.obtainMessage(MSG_SHOW_CONSISTENCY, "Smartcard access error!").sendToTarget();
+                        }
+// End of H.M.Wang 2021-8-7 追加当写SC卡出现错误的时候报错的处理
                         mCards[mCurBagIdx].mInkLevel = mCards[mCurBagIdx].mMaxVolume - SmartCard.getLocalInk(mCards[mCurBagIdx].mCardType);
                         checkOIB(mCurBagIdx);
                     }

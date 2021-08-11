@@ -48,6 +48,13 @@ public class Configs {
 	public static final int USER_MODE = USER_MODE_NONE;
 // End of H.M.Wang 2021-5-21 追加用户特色页面显示开关标识
 
+// H.M.Wang 2021-8-11 追加信息浏览数量锁的标识
+	public static final int USER_MSG_COUNT_NOLIMIT 	= 0;	// 不限制信息条数
+	public static final int USER_MSG_COUNT_200 	= 200;		// 限制200条信息
+
+	public static final int USER_MSG_COUNT = USER_MSG_COUNT_NOLIMIT;
+// End of H.M.Wang 2021-8-11 追加信息浏览数量锁的标识
+
 	/**vol
 	 * 开关配置：大字机的特殊版本，buffer宽度x8
 	 */
