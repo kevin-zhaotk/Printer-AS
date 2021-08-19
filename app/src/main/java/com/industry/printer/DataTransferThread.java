@@ -220,8 +220,12 @@ public class DataTransferThread {
 // H.M.Wang 2020-8-26 追加64SN打印头
                 head == PrinterNozzle.MESSAGE_TYPE_64SN ||
 // End of H.M.Wang 2020-8-26 追加64SN打印头
-				head == PrinterNozzle.MESSAGE_TYPE_64_DOT);
+//				head == PrinterNozzle.MESSAGE_TYPE_64_DOT);
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2021-8-16 追加96DN头
+				head == PrinterNozzle.MESSAGE_TYPE_64_DOT ||
+				head == PrinterNozzle.MESSAGE_TYPE_96DN);
+// End of H.M.Wang 2021-8-16 追加96DN头
 
 // H.M.Wang 2021-4-13 取消3-5修改内容，恢复原来的停止和打开操作
 // H.M.Wang 2021-3-5 取消purge之前停止打印，purge之后恢复打印的做法。因为停止打印可能会产生计数器跳数
@@ -326,8 +330,12 @@ public class DataTransferThread {
 // H.M.Wang 2020-8-26 追加64SN打印头
             head != PrinterNozzle.MESSAGE_TYPE_64SN &&
 // End of H.M.Wang 2020-8-26 追加64SN打印头
-			head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+//			head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2021-8-16 追加96DN头
+			head != PrinterNozzle.MESSAGE_TYPE_64_DOT &&
+			head != PrinterNozzle.MESSAGE_TYPE_96DN) {
+// End of H.M.Wang 2021-8-16 追加96DN头
 			return;
 		}
 
@@ -1181,12 +1189,14 @@ public class DataTransferThread {
 		for (int i = 0; i < mScheduler.count(); i++) {
 			// H.M.Wang 2019-10-10 添加初值是否为0的判断，如果为0，则判定为还没有初始化，首先进行初始化
 			if(mcountdown[i] == 0) mcountdown[i] = getInkThreshold(i);
+// 为快速减锁测试			if(mcountdown[i] == 0) mcountdown[i] = 10;
 
 			Debug.d(TAG, "mCountDown[" + i + "] = " + mcountdown[i]);
 			mcountdown[i]--;
 			if (mcountdown[i] <= 0) {
 				// 赋初值
 				mcountdown[i] = getInkThreshold(i);
+// 为快速减锁测试				mcountdown[i] = 10;
 				mInkListener.onInkLevelDown(i);
 			}
 		}
@@ -1275,8 +1285,12 @@ public class DataTransferThread {
 // H.M.Wang 2020-8-26 追加64SN打印头
                 hType != PrinterNozzle.MESSAGE_TYPE_64SN &&
 // End of H.M.Wang 2020-8-26 追加64SN打印头
-				hType != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+//				hType != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2021-8-16 追加96DN头
+				hType != PrinterNozzle.MESSAGE_TYPE_64_DOT &&
+				hType != PrinterNozzle.MESSAGE_TYPE_96DN) {
+// End of H.M.Wang 2021-8-16 追加96DN头
 // H.M.Wang 2021-7-9 300dpi的时候生成的打印图案会比原来宽一倍，参数设置为300dpi的时候，返回值会差一倍，最如下修正
 //				bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
 				if(Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_300) {

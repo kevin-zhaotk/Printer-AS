@@ -629,7 +629,7 @@ public class RFIDDevice implements RfidCallback{
 		public static final int TYPE_UTRALIGHT = 2;
 	}
 	
-	
+	@Deprecated
 	public int cardInit() {
 		//寻卡
 		if (!lookForCards(false)) {
@@ -663,7 +663,8 @@ public class RFIDDevice implements RfidCallback{
 		}
 		return RFID_ERRNO_NOERROR;
 	}
-	
+
+	@Deprecated
 	public int cardInitBlind() {
 		//寻卡
 		if (!lookForCards(true)) {
@@ -706,10 +707,12 @@ public class RFIDDevice implements RfidCallback{
 	 * read serial No. using default key
 	 * @return 4bytes serial No.
 	 */
+	@Deprecated
 	public void getSerialNo() {
 		byte[] block = readBlock((byte)0, (byte) 0);
 	}
-	
+
+	@Deprecated
 	public boolean checkUID(byte[] uid) {
 		boolean noChange = true;
 		if (mSN == null || mSN.length <= 0) {
@@ -733,6 +736,7 @@ public class RFIDDevice implements RfidCallback{
 	 * 通过相应算法得到A、B密钥
 	 * @return 选卡成功返回true，失败返回false
 	 */
+	@Deprecated
 	public synchronized int init() {
 		int errno = 0;
 		if (( errno = cardInit()) != RFID_ERRNO_NOERROR) {
@@ -764,6 +768,7 @@ public class RFIDDevice implements RfidCallback{
 	 * 读取墨水总量
 	 * @return
 	 */
+	@Deprecated
 	private int getInkMax() {
 		if (isNewModel) {
 			byte[] ink = readBlock(SECTOR_INK_MAX, BLOCK_INK_MAX, mRFIDKeyA);
@@ -789,6 +794,7 @@ public class RFIDDevice implements RfidCallback{
 	 * 寿命值读取，寿命值保存在sector 4， 和 sector5  的 block 2.
 	 * 寿命值采用双区备份，因此需要对读取的数据进行校验
 	 */
+	@Deprecated
 	private int getInkLevel(boolean isBackup) {
 		byte sector = 0;
 		byte block = 0;
@@ -836,9 +842,11 @@ public class RFIDDevice implements RfidCallback{
 	public int getMax() {
 		return mInkMax;
 	}
+
 	/**
 	 * 寿命值写入
 	 */
+	@Deprecated
 	private void setInkLevel(int level, boolean isBack) {
 		byte sector = 0;
 		byte block = 0;
@@ -896,6 +904,7 @@ public class RFIDDevice implements RfidCallback{
 	/**
 	 * 特征码读取
 	 */
+	@Deprecated
 	public void readFeatureCode() {
 		int errno = 0;
 		Debug.e(TAG, "--->RFID getFeatureCode");
@@ -958,10 +967,13 @@ public class RFIDDevice implements RfidCallback{
 		Debug.d(TAG, "--->mReady: " + mReady);
 		return mReady;
 	}
-	
+
+	@Deprecated
 	public void setBaudrate(int rate) {
 		
 	}
+
+	@Deprecated
 	public void makeCard() {
 		//修改秘钥
 		/*
@@ -1048,7 +1060,7 @@ public class RFIDDevice implements RfidCallback{
 			mState = STATE_RFID_VALUE_WRITING;
 		}
 		EncryptionMethod encryte = EncryptionMethod.getInstance();
-		Debug.d(TAG, "--->cur= " + mCurInkLevel);
+		Debug.d(TAG, "--->InkLevel to write = " + mCurInkLevel);
 		byte[] content = encryte.encryptInkLevel(mCurInkLevel);
 		if (content == null) {
 			return ;
@@ -1067,7 +1079,8 @@ public class RFIDDevice implements RfidCallback{
 	public boolean isValid() {
 		return mValid;
 	}
-	
+
+	@Deprecated
 	private boolean isLevelValid(int value) {
 		if (value < INK_LEVEL_MIN || value > INK_LEVEL_MAX) {
 			return false;

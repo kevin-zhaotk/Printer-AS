@@ -365,7 +365,11 @@ public class BaseObject{
 			type == PrinterNozzle.MESSAGE_TYPE_32DN ||
 			type == PrinterNozzle.MESSAGE_TYPE_32SN ||
 			type == PrinterNozzle.MESSAGE_TYPE_64SN ||
-			type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2021-8-16 追加96DN头
+//			type == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			type == PrinterNozzle.MESSAGE_TYPE_64_DOT ||
+			type == PrinterNozzle.MESSAGE_TYPE_96DN) {
+// End of H.M.Wang 2021-8-16 追加96DN头
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 			setWidth(1.0f * width);
 		} else {
@@ -450,7 +454,11 @@ public class BaseObject{
 // H.M.Wang 2020-8-26 追加64SN打印头
             head == PrinterNozzle.MESSAGE_TYPE_64SN ||
 // End of H.M.Wang 2020-8-26 追加64SN打印头
-			head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2021-8-16 追加96DN头
+//			head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			head == PrinterNozzle.MESSAGE_TYPE_64_DOT ||
+			head == PrinterNozzle.MESSAGE_TYPE_96DN ) {
+// End of H.M.Wang 2021-8-16 追加96DN头
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 
 			return bitmap;
@@ -541,7 +549,11 @@ public class BaseObject{
 // H.M.Wang 2020-8-26 追加64SN打印头
             head == PrinterNozzle.MESSAGE_TYPE_64SN ||
 // End of H.M.Wang 2020-8-26 追加64SN打印头
-			head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2021-8-16 追加96DN头
+//			head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+			head == PrinterNozzle.MESSAGE_TYPE_64_DOT ||
+			head == PrinterNozzle.MESSAGE_TYPE_96DN) {
+// End of H.M.Wang 2021-8-16 追加96DN头
 // End of H.M.Wang 2020-7-23 追加32DN打印头
 
 			singleW = width;
@@ -936,8 +948,39 @@ public class BaseObject{
 			} else {
 				mHeight = 152f * 64 / 64;
 			}
-		}
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
+// H.M.Wang 2021-8-16 追加96DN头
+		} else if (type == PrinterNozzle.MESSAGE_TYPE_96DN) {
+			Debug.d(TAG, "--->display H = " + dspH + "   mHeight: " + mHeight);
+			if (MessageObject.mDot_96_Size[0].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 5 / 96;
+			} else if (MessageObject.mDot_96_Size[1].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 8 / 96;
+			} else if (MessageObject.mDot_96_Size[2].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 10 / 96;
+			} else if (MessageObject.mDot_96_Size[3].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 12 / 96;
+			} else if (MessageObject.mDot_96_Size[4].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 14 / 96;
+			} else if (MessageObject.mDot_96_Size[5].equalsIgnoreCase(dspH) ||
+					MessageObject.mDot_96_Size[6].equalsIgnoreCase(dspH) ||
+					MessageObject.mDot_96_Size[7].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 16 / 96;
+			} else if (MessageObject.mDot_96_Size[8].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 19 / 96;
+			} else if (MessageObject.mDot_96_Size[9].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 21 / 96;
+			} else if (MessageObject.mDot_96_Size[10].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 24 / 96;
+			} else if (MessageObject.mDot_96_Size[11].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 32 / 96;
+			} else if (MessageObject.mDot_96_Size[12].equalsIgnoreCase(dspH)) {
+				mHeight = 152f * 64 / 96;
+			} else {
+				mHeight = 152f * 96 / 96;
+			}
+// End of H.M.Wang 2021-8-16 追加96DN头
+		}
 	}
 	
 	public void resizeByHeight() {
@@ -969,7 +1012,13 @@ public class BaseObject{
 //		return mTask.getMsgObject().getDisplayFs(mHeight);
 		String dispString =  mTask.getMsgObject().getDisplayFs(mHeight);
 // H.M.Wang 2020-4-15 追加"5x5"字体
-		if(dispString.startsWith(MessageObject.mDotSizes[5]) || dispString.startsWith(MessageObject.mDot_32_Size[5]) || dispString.startsWith(MessageObject.mDot_64_Size[5])) {
+// H.M.Wang 2021-8-16 追加96DN头
+//		if(dispString.startsWith(MessageObject.mDotSizes[5]) || dispString.startsWith(MessageObject.mDot_32_Size[5]) || dispString.startsWith(MessageObject.mDot_64_Size[5])) {
+		if(dispString.startsWith(MessageObject.mDotSizes[5]) ||
+			dispString.startsWith(MessageObject.mDot_32_Size[5]) ||
+			dispString.startsWith(MessageObject.mDot_64_Size[5]) ||
+			dispString.startsWith(MessageObject.mDot_96_Size[5])) {
+// End of H.M.Wang 2021-8-16 追加96DN头
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
 			String[] dispStrings = dispString.split(",");
 			if(null != dispStrings) {
@@ -1483,6 +1532,34 @@ public class BaseObject{
 				font = mFont;
 			}
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
+// H.M.Wang 2021-8-16 追加96DN头
+		} else if (type == PrinterNozzle.MESSAGE_TYPE_96DN) {
+			if (mHeight <= 152f * 5 / 96 + 1) {
+				font = "5x5";
+			} else if (mHeight <= 152f * 8 / 96 + 1) {
+				font = "4";
+			} else if(mHeight <= 152f * 10 / 96 + 1){
+				font = "10";
+			} else if(mHeight <= 152f * 12 / 96 + 1){
+				font = "12";
+			} else if(mHeight <= 152f * 14 / 96 + 1){
+				font = "14";
+			} else if(mHeight <= 152f * 16 / 96 + 1){
+				if(mFont.equals("7L")) {
+					font = "7L";
+				} else if (mFont.equals("7R")) {
+					font = "7R";
+				} else {
+					font = "7";
+				}
+			} else if(mHeight <= 152f * 19 / 96 + 1){
+				font = "19";
+			} else if(mHeight <= 152f * 21 / 96 + 1){
+				font = "21";
+			} else {
+				font = mFont;
+			}
+// End of H.M.Wang 2021-8-16 追加96DN头
 		} else {
 			font = mFont;
 		}

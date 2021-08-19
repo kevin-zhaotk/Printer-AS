@@ -204,6 +204,12 @@ public class DataTask {
 //			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
 		}
 
+// H.M.Wang 2021-8-16 追加96DN头
+		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_96DN) {
+			mPrintBuffer = evenBitShiftFor96Dot();
+		}
+// End of H.M.Wang 2021-8-16 追加96DN头
+
 // H.M.Wang 2020-9-6 取消64SN的打印缓冲区转换
 //// H.M.Wang 2020-8-26 追加64SN打印头
 //		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_64SN) {
@@ -222,6 +228,70 @@ public class DataTask {
 //			evenBitShift();
 //		} // else{
 			/*完成平移/列变换得到真正的打印buffer*/
+
+		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
+
+// H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
+		Debug.d(TAG, "INDEX_PRINT_TIMES = " + sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES));
+		if(sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 31) {
+			int maxColNumPerUnit = 0;
+			if( sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7 ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_25_4 ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_38_1 ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_50_8 ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_TRIPLE ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR ||
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_9MM ) {
+				if(Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_150) {
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 6;
+				} else {
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 12;
+				}
+			} else if (
+					sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT ||
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32DN ||
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32SN ||
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT ||
+// H.M.Wang 2021-8-16 追加96DN头
+//				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN ) {
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN ||
+							sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_96DN ) {
+// End of H.M.Wang 2021-8-16 追加96DN头
+				if(sysconf.getParam(SystemConfigFile.INDEX_SLANT) >= 100) {
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 8;
+				} else {
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) / 4;
+				}
+			}
+
+			Debug.d(TAG, "maxColNumPerUnit = " + maxColNumPerUnit + "; mBinInfo.getBytesFeed() / 2 = " + mBinInfo.getBytesFeed() / 2);
+			if(maxColNumPerUnit != 0) {
+				CharArrayBuffer caBuf = new CharArrayBuffer(0);
+				int emptyChars = (maxColNumPerUnit - mBinInfo.mColumn) * mBinInfo.getBytesFeed() / 2;	// 不能用mBinInfo.mCharsPerColumn，因为这个变量是基于没有做过调整的mBytesPerColumn算的，如果mBytesPerColumn少一个字节，那么就会少一个字
+				emptyChars = (emptyChars < 0 ? 0 : emptyChars);
+				char[] empty = new char[emptyChars];
+				Arrays.fill(empty, (char)0x0000);
+
+				Debug.d(TAG, "emptyChars = " + emptyChars);
+				for(int i=0; i<sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES); i++) {
+					if(i != 0) {
+						caBuf.append(empty, 0, emptyChars);
+					}
+					if(i < sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) - 1) {
+						caBuf.append(mPrintBuffer, 0, Math.min(mPrintBuffer.length, maxColNumPerUnit * mBinInfo.getBytesFeed() / 2));
+					} else {
+						caBuf.append(mPrintBuffer, 0, mPrintBuffer.length);
+					}
+				}
+				mPrintBuffer = caBuf.toCharArray();
+			}
+		}
+// End of H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
+
+
 		rebuildBuffer();
 		// }
 		//BinCreater.Bin2Bitmap(mPrintBuffer);
@@ -246,7 +316,7 @@ public class DataTask {
 
 // H.M.Wang 2020-4-18 追加12.7R5头
 // H.M.Wang 2020-5-9 12.7R5d打印头类型不参与信息编辑，因此不通过信息的打印头类型判断其是否为12.7R5的信息，而是通过参数来规定现有信息的打印行为
-        SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
+//        SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
 //		Debug.d(TAG, "Params = " + sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE));
 //		Debug.d(TAG, "Nozzle Index = " + PrinterNozzle.MessageType.NOZZLE_INDEX_12_7_R5);
 // H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
@@ -371,66 +441,14 @@ public class DataTask {
 				BinCreater.saveBin("/mnt/sdcard/printE1.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E6_HEAD_NUM);
 			}
 		}
-// H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
-		Debug.d(TAG, "INDEX_PRINT_TIMES = " + sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES));
+
 		if(sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 31) {
-			int maxColNumPerUnit = 0;
-			if( sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7 ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_25_4 ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_38_1 ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_50_8 ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_TRIPLE ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_9MM ) {
-				if(Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_150) {
-					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 6;
-				} else {
-					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 12;
-				}
-			} else if (
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32DN ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32SN ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT ||
-				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN ) {
-				if(sysconf.getParam(SystemConfigFile.INDEX_SLANT) >= 100) {
-					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 8;
-				} else {
-					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) / 4;
-				}
-			}
-
-			Debug.d(TAG, "maxColNumPerUnit = " + maxColNumPerUnit + "; mBinInfo.getBytesFeed() / 2 = " + mBinInfo.getBytesFeed() / 2);
-			if(maxColNumPerUnit != 0) {
-				CharArrayBuffer caBuf = new CharArrayBuffer(0);
-				int emptyChars = (maxColNumPerUnit - mBinInfo.mColumn) * mBinInfo.getBytesFeed() / 2;	// 不能用mBinInfo.mCharsPerColumn，因为这个变量是基于没有做过调整的mBytesPerColumn算的，如果mBytesPerColumn少一个字节，那么就会少一个字
-				emptyChars = (emptyChars < 0 ? 0 : emptyChars);
-				char[] empty = new char[emptyChars];
-				Arrays.fill(empty, (char)0x0000);
-
-				Debug.d(TAG, "emptyChars = " + emptyChars);
-				for(int i=0; i<sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES); i++) {
-					if(i != 0) {
-						caBuf.append(empty, 0, emptyChars);
-					}
-					if(i < sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) - 1) {
-						caBuf.append(mBuffer, 0, Math.min(mBuffer.length, maxColNumPerUnit * mBinInfo.getBytesFeed() / 2));
-					} else {
-						caBuf.append(mBuffer, 0, mBuffer.length);
-					}
-				}
-				mBuffer = caBuf.toCharArray();
-			}
-
 			if(bSave) {
 				FileUtil.deleteFolder("/mnt/sdcard/printRpt.bin");
 				BinCreater.saveBin("/mnt/sdcard/printRpt.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads);
 			}
 		}
-// End of H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
+
 // H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
 		calDots();
 // End of H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
@@ -456,7 +474,11 @@ public class DataTask {
                 head != PrinterNozzle.MESSAGE_TYPE_32DN &&
                 head != PrinterNozzle.MESSAGE_TYPE_32SN &&
                 head != PrinterNozzle.MESSAGE_TYPE_64SN &&
-                head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2021-8-16 追加96DN头
+//                head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+				head != PrinterNozzle.MESSAGE_TYPE_64_DOT &&
+				head != PrinterNozzle.MESSAGE_TYPE_96DN) {
+// End of H.M.Wang 2021-8-16 追加96DN头
                 dots[j] *= 2;
 			} else {
 				dots[j] *= 200;
@@ -625,6 +647,12 @@ public class DataTask {
 			div = scaleW;
 // H.M.Wang 2021-4-23 修改div和scaleW的计算公式，当前的计算可能不对
 			scaleH = 152f / 104f;
+// H.M.Wang 2021-8-16 追加96DN头
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_96DN) {
+			div = 152f/96f;
+			scaleW = 152f/96;
+			scaleH = 152f/96;
+// End of H.M.Wang 2021-8-16 追加96DN头
 		}
 
 //		scaleW = 1.0f * headType.getFactorScale() / headType.getScaleW();
@@ -644,7 +672,11 @@ public class DataTask {
 				(headType != PrinterNozzle.MESSAGE_TYPE_32DN) &&
 				(headType != PrinterNozzle.MESSAGE_TYPE_32SN) &&
 				(headType != PrinterNozzle.MESSAGE_TYPE_64SN) &&
-				(headType != PrinterNozzle.MESSAGE_TYPE_64_DOT)) {
+// H.M.Wang 2021-8-16 追加96DN头
+//				(headType != PrinterNozzle.MESSAGE_TYPE_64_DOT)) {
+				(headType != PrinterNozzle.MESSAGE_TYPE_64_DOT) &&
+				(headType != PrinterNozzle.MESSAGE_TYPE_96DN)) {
+// End of H.M.Wang 2021-8-16 追加96DN头
 				Debug.d(TAG, "--->High Resolution");
 				scaleW = scaleW / 2;
 				div = div / 2;
@@ -1176,8 +1208,12 @@ public class DataTask {
 // H.M.Wang 2020-8-26 追加64SN打印头
 			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64SN ||
 // End of H.M.Wang 2020-8-26 追加64SN打印头
-			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+//			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2021-8-16 追加96DN头
+			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT ||
+			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_96DN) {
+// End of H.M.Wang 2021-8-16 追加96DN头
 			heads = 4;		// 16点，32点和64点，在这里假设按4个头来算，主要是为了就和当前的实现逻辑
 			offsetDiv = 6;	// 打字机位移量除6
 		}
@@ -1264,6 +1300,22 @@ public class DataTask {
 			
 		}
 	}
+
+// H.M.Wang 2021-8-16 追加96DN头
+	public char[] evenBitShiftFor96Dot() {
+		int COLUMNS_TO_SHIFT= 4;
+		int CHARS_PER_COLOMN = 6;
+		char[] buffer = new char[mPrintBuffer.length + COLUMNS_TO_SHIFT * CHARS_PER_COLOMN];	// 每行增加4个字节，共增加48个字节(24个char)
+
+		for (int i = 0; i < mBinInfo.mColumn; i++) {
+			for (int j = 0; j < CHARS_PER_COLOMN; j++) {
+				buffer[i * CHARS_PER_COLOMN + j] |= (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0xaaaa);
+				buffer[(i + COLUMNS_TO_SHIFT) * CHARS_PER_COLOMN + j] |= (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0x5555);
+			}
+		}
+		return buffer;
+	}
+// End of H.M.Wang 2021-8-16 追加96DN头
 
 	/* H.M.Wang
 		64DOT喷头双列的时候，每个Byte的1，3，5，7Bit向后位移4个字节

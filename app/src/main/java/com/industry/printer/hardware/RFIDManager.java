@@ -484,6 +484,8 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 	 * @param index
 	 * @return
 	 */
+
+	@Override
 	public int getFeature(int device, int index) {
 		RFIDDevice dev = getDevice(device);
 		if (dev == null) return 0;

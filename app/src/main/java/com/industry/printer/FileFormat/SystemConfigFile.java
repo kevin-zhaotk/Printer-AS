@@ -1285,6 +1285,11 @@ public class SystemConfigFile{
 			case PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1:
 				nozzle = PrinterNozzle.MESSAGE_TYPE_E6X1;
 				break;
+// H.M.Wang 2021-8-16 追加96DN头
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_96DN:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_96DN;
+				break;
+// End of H.M.Wang 2021-8-16 追加96DN头
 		}
 
 		return nozzle;

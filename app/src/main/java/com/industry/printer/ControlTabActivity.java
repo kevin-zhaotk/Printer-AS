@@ -1512,9 +1512,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					RTCDevice device = RTCDevice.getInstance(mContext);
 					device.writeCounter(mContext, mCounter);
 */
-					if(!Configs.READING) {
-						mInkManager.downLocal(0);
-					}
 					RTCDevice device = RTCDevice.getInstance(mContext);
 					device.writeCounter(mContext, mCounter);
 					refreshCount();

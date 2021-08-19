@@ -26,12 +26,13 @@ HP_SMART_CARD_result_t readByte(HP_SMART_CARD_device_id_t cardId, uint8_t fieldI
 HP_SMART_CARD_result_t writeByte(HP_SMART_CARD_device_id_t cardId, uint8_t fieldId, uint8_t data) {
     HP_SMART_CARD_result_t result = HP_SMART_CARD_ERROR;
 
-    for(int i=0; i<100 && result != HP_SMART_CARD_OK; i++) {
+// H.M.Wang 2021-8-12 这里尝试100次，可能发生错误的时候，重复100次还是错，因此只是耽误时间，所以取消，改为3次，取消睡眠
+    for(int i=0; i<1 && result != HP_SMART_CARD_OK; i++) {
         result = LIB_HP_SMART_CARD_write_field(cardId, fieldId, sizeof(data), &data);
         if (HP_SMART_CARD_OK == result) {
             LOGD(">>> Write %s = 0x%02x", FIELD_NAME[cardId](fieldId), data);
 
-            usleep(1000);                 // 10 ms delay
+//            usleep(1000);                 // 10 ms delay
             result = LIB_HP_SMART_CARD_flush();
             if (HP_SMART_CARD_OK != result) {
                 LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));
@@ -40,6 +41,7 @@ HP_SMART_CARD_result_t writeByte(HP_SMART_CARD_device_id_t cardId, uint8_t field
             LOGE(">>> Failed to write %s", FIELD_NAME[cardId](fieldId));
         }
     }
+// End of H.M.Wang 2021-8-12 这里尝试100次，可能发生错误的时候，重复100次还是错，因此只是耽误时间，所以取消，改为3次，取消睡眠
 
     return result;
 }
@@ -59,12 +61,13 @@ HP_SMART_CARD_result_t read2Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fiel
 HP_SMART_CARD_result_t write2Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fieldId, uint16_t data) {
     HP_SMART_CARD_result_t result = HP_SMART_CARD_ERROR;
 
-    for(int i=0; i<100 && result != HP_SMART_CARD_OK; i++) {
+// H.M.Wang 2021-8-12 这里尝试100次，可能发生错误的时候，重复100次还是错，因此只是耽误时间，所以取消，改为3次，取消睡眠
+    for(int i=0; i<1 && result != HP_SMART_CARD_OK; i++) {
         result = LIB_HP_SMART_CARD_write_field(cardId, fieldId, sizeof(data), &data);
         if (HP_SMART_CARD_OK == result) {
             LOGD(">>> Write %s = 0x%04x", FIELD_NAME[cardId](fieldId), data);
 
-            usleep(1000);                 // 10 ms delay
+//            usleep(1000);                 // 10 ms delay
             result = LIB_HP_SMART_CARD_flush();
             if (HP_SMART_CARD_OK != result) {
                 LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));
@@ -73,6 +76,7 @@ HP_SMART_CARD_result_t write2Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fie
             LOGE(">>> Failed to write %s", FIELD_NAME[cardId](fieldId));
         }
     }
+// End of H.M.Wang 2021-8-12 这里尝试100次，可能发生错误的时候，重复100次还是错，因此只是耽误时间，所以取消，改为3次，取消睡眠
 
     return result;
 }
@@ -92,12 +96,13 @@ HP_SMART_CARD_result_t read4Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fiel
 HP_SMART_CARD_result_t write4Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fieldId, uint32_t data) {
     HP_SMART_CARD_result_t result = HP_SMART_CARD_ERROR;
 
-    for(int i=0; i<100 && result != HP_SMART_CARD_OK; i++) {
+// H.M.Wang 2021-8-12 这里尝试100次，可能发生错误的时候，重复100次还是错，因此只是耽误时间，所以取消，改为3次，取消睡眠
+    for(int i=0; i<1 && result != HP_SMART_CARD_OK; i++) {
         result = LIB_HP_SMART_CARD_write_field(cardId, fieldId, sizeof(data), &data);
         if (HP_SMART_CARD_OK == result) {
             LOGD(">>> Write %s = 0x%08x", FIELD_NAME[cardId](fieldId), data);
 
-            usleep(1000);                 // 1 ms delay
+//            usleep(1000);                 // 1 ms delay
             result = LIB_HP_SMART_CARD_flush();
             if (HP_SMART_CARD_OK != result) {
                 LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));
@@ -106,6 +111,7 @@ HP_SMART_CARD_result_t write4Bytes(HP_SMART_CARD_device_id_t cardId, uint8_t fie
             LOGE(">>> Failed to write %s", FIELD_NAME[cardId](fieldId));
         }
     }
+// End of H.M.Wang 2021-8-12 这里尝试100次，可能发生错误的时候，重复100次还是错，因此只是耽误时间，所以取消，改为3次，取消睡眠
 
     return result;
 }
@@ -135,14 +141,15 @@ HP_SMART_CARD_result_t writeString(HP_SMART_CARD_device_id_t cardId, uint8_t fie
 
     HP_SMART_CARD_result_t result = HP_SMART_CARD_ERROR;
 
-    for(int i=0; i<100 && result != HP_SMART_CARD_OK; i++) {
+// H.M.Wang 2021-8-12 这里尝试100次，可能发生错误的时候，重复100次还是错，因此只是耽误时间，所以取消，改为3次，取消睡眠
+    for(int i=0; i<1 && result != HP_SMART_CARD_OK; i++) {
         result = LIB_HP_SMART_CARD_write_string(cardId, fieldId, size, data);
         if (HP_SMART_CARD_OK == result) {
             char buf[1024] = {0x00};
             toHexString(data, buf, size, ',');
             LOGD(">>> Write %s = [%s]", FIELD_NAME[cardId](fieldId), buf);
 
-            usleep(1000);                 // 1 ms delay
+//            usleep(1000);                 // 1 ms delay
             result = LIB_HP_SMART_CARD_flush();
             if (HP_SMART_CARD_OK != result) {
                 LOGE(">>> Failed to flush %s", FIELD_NAME[cardId](fieldId));
@@ -151,6 +158,7 @@ HP_SMART_CARD_result_t writeString(HP_SMART_CARD_device_id_t cardId, uint8_t fie
             LOGE(">>> Failed to write %s", FIELD_NAME[cardId](fieldId));
         }
     }
+// End of H.M.Wang 2021-8-12 这里尝试100次，可能发生错误的时候，重复100次还是错，因此只是耽误时间，所以取消，改为3次，取消睡眠
 
     return result;
 }

@@ -72,6 +72,9 @@
         <item>E6X50</item>
         <!--  End of H.M.Wang 2021-3-6 追加E6X48,E6X50头 -->
         <item>E6X1</item>
+        <!-- H.M.Wang 2021-8-16 追加96DN头 -->
+        <item>96DN</item>
+        <!-- End of H.M.Wang 2021-8-16 追加96DN头 -->
     </string-array>
 
     <string-array name="strFontArray">

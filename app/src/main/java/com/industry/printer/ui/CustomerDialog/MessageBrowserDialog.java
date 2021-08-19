@@ -440,6 +440,14 @@ public class MessageBrowserDialog extends CustomerDialogBase implements android.
 				}
 
 				mTotalIndex = sort(mTotalContents);
+// H.M.Wang 2021-8-11 追加信息浏览数量锁的标识
+//				if(Configs.USER_MSG_COUNT != Configs.USER_MSG_COUNT_NOLIMIT && mFrom == OpenFrom.OPEN_PRINT) {
+//					while(mTotalIndex.size() > Configs.USER_MSG_COUNT) {
+//						mTotalIndex.remove(Configs.USER_MSG_COUNT);
+//					}
+//				}
+// End of H.M.Wang 2021-8-11 追加信息浏览数量锁的标识
+
 				mHandler.sendEmptyMessage(MSG_LOADED);
 			}
 		}).start();

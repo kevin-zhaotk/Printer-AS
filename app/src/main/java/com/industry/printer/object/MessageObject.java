@@ -49,6 +49,12 @@ public class MessageObject extends BaseObject {
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体
 
+// H.M.Wang 2021-8-16 追加96DN头
+	public static final String[] mDot_96_Size = {
+		"5x5", "7x6", "10x8", "12x9", "14x10", "16x12", "16@L", "16@R", "19x13", "21x14", "24", "32", "64", "96"
+	};
+// End of H.M.Wang 2021-8-16 追加96DN头
+
 	public MessageObject(Context context,  float x) {
 		super(context, BaseObject.OBJECT_TYPE_MsgName, x);
 		//mIndex = index;

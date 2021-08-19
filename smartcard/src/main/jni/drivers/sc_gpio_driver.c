@@ -158,18 +158,21 @@ static int SC_GPIO_DRIVER_ioctl(int fd, int cmd, long arg1) {
     }
 
     uint8_t ret = SC_GPIO_DRIVER_SUCCESS;
-    int try = 0;
-    while (try < 100) {             // Retry upto 100 times
+
+// H.M.Wang 2021-8-12 gpio的这个ioctl似乎总是返回错误，有时候是ECOMM，有时候不是。因此取消多次尝试
+//    int try = 0;
+//    while (try < 100) {             // Retry upto 100 times
         ret = ioctl(fd, cmd, arg1);
 
-        if(errno != ECOMM) {
-            break;
-        } else {
-//            LOGE(">>> SC_I2C_DRIVER_write: Write data failed. %s", strerror(errno));
-        }
-        try++;
-        usleep(10);
-    }
+//        if(errno != ECOMM) {
+//            break;
+//        } else {
+////            LOGE(">>> SC_I2C_DRIVER_write: Write data failed. %s", strerror(errno));
+//        }
+//        try++;
+//        usleep(10);
+//    }
+// End of H.M.Wang 2021-8-12 gpio的这个ioctl似乎总是返回错误，有时候是ECOMM，有时候不是。因此取消多次尝试
 
     if(ret != SC_GPIO_DRIVER_SUCCESS) {
         LOGE(">>> SC_GPIO_DRIVER_ioctl: %s(Return value: 0x%02X)", strerror(errno), ret);

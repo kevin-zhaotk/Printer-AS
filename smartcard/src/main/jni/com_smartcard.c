@@ -10,6 +10,7 @@
 #include <malloc.h>
 #include <drivers/internal_ifc/sc_gpio_driver.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #include "hp_host_smart_card.h"
 #include "drivers/internal_ifc/hp_smart_card_gpio_ifc.h"
@@ -47,9 +48,11 @@ static int MaxPenInkVolume                      = MAX_PEN_INK_VOLUME;
 static int InkVolOfBagPercentage                = INK_VOL_OF_BAG_PERCENTAGE;
 static int InkVolOfPenPercentage                = INK_VOL_OF_PEN_PERCENTAGE;
 
+static pthread_mutex_t mutex;
+
 //#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.371"
+#define VERSION_CODE                            "1.0.372"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -126,6 +129,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_shutdown(JNIEnv *env, jclass arg) {
 
     LIB_HP_SMART_CARD_shutdown();
 
+    pthread_mutex_destroy(&mutex);
+
     return SC_SUCCESS;
 }
 
@@ -150,6 +155,12 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_exist(JNIEnv *env, jclass arg) {
 JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
     LOGI("Initializing smart card library....%s\n", VERSION_CODE);
 
+    if (pthread_mutex_init(&mutex, NULL) != 0){
+        return -1;
+    }
+
+    pthread_mutex_lock(&mutex);
+
     HP_SMART_CARD_gpio_init();
     HP_SMART_CARD_i2c_init();
 
@@ -157,8 +168,11 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
 
     if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_HOST)) {
         LOGE(">>> LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_HOST): NOT PRESENT.  ");
+        pthread_mutex_unlock(&mutex);
         return SC_INIT_HOST_CARD_NOT_PRESENT;
     }
+
+    pthread_mutex_unlock(&mutex);
 
     return SC_SUCCESS;
 }
@@ -166,15 +180,19 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
 JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jint card ) {
     LOGI("Initializing smart card component...%d\n", card);
 
+    pthread_mutex_lock(&mutex);
+
     if(CARD_SELECT_PEN1 == card) {
         // Initialize Smart Card 0, this should be a print cartridge
         if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_PEN1)) {
             LOGE(">>> LIB_HP_SMART_CARD_device_present(%d): NOT PRESENT.  ", HP_SMART_CARD_DEVICE_PEN1);
+            pthread_mutex_unlock(&mutex);
             return SC_INIT_PRNT_CTRG_NOT_PRESENT;
         }
 
         if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_DEVICE_PEN1)) {
             LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): Initialization Failed.  ", HP_SMART_CARD_DEVICE_PEN1);
+            pthread_mutex_unlock(&mutex);
             return SC_INIT_PRNT_CTRG_INIT_FAILED;
         }
         adjustLocalInkValue(HP_SMART_CARD_DEVICE_PEN1);
@@ -182,22 +200,26 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jin
         // Initialize Smart Card 0, this should be a print cartridge
         if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_PEN2)) {
             LOGE(">>> LIB_HP_SMART_CARD_device_present(%d): NOT PRESENT.  ", HP_SMART_CARD_DEVICE_PEN2);
+            pthread_mutex_unlock(&mutex);
             return SC_INIT_PRNT_CTRG_NOT_PRESENT;
         }
 
         if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_DEVICE_PEN2)) {
             LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): Initialization Failed.  ", HP_SMART_CARD_DEVICE_PEN2);
+            pthread_mutex_unlock(&mutex);
             return SC_INIT_PRNT_CTRG_INIT_FAILED;
         }
         adjustLocalInkValue(HP_SMART_CARD_DEVICE_PEN2);
     } else if(CARD_SELECT_BULK1 == card || CARD_SELECT_BULKX == card) {
         if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_BULK1)) {
             LOGE(">>> LIB_HP_SMART_CARD_device_present(%d): NOT PRESENT.  ", HP_SMART_CARD_DEVICE_BULK1);
+            pthread_mutex_unlock(&mutex);
             return SC_INIT_BULK_CTRG_NOT_PRESENT;
         }
 
         if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_DEVICE_BULK1)) {
             LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): Initialization Failed.  ", HP_SMART_CARD_DEVICE_BULK1);
+            pthread_mutex_unlock(&mutex);
             return SC_INIT_BULK_CTRG_INIT_FAILED;
         }
         adjustLocalInkValue(HP_SMART_CARD_DEVICE_BULK1);
@@ -207,12 +229,14 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jin
         uint16_t config;
 
         if(LEVEL_I2C_OK != readConfig(&config)) {
+            pthread_mutex_unlock(&mutex);
             return SC_LEVEL_CENSOR_ACCESS_FAILED;
         }
         LOGD(">>> Read config: 0x%04X", config);
 
         config &= CONFIG_ACTIVE_MODE_ENABLE;                // Set to Active mode
         if(LEVEL_I2C_OK != writeConfig(&config)) {
+            pthread_mutex_unlock(&mutex);
             return SC_LEVEL_CENSOR_ACCESS_FAILED;
         }
         LOGD(">>> Write config: 0x%04X", config);
@@ -222,16 +246,20 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jin
         uint16_t config;
 
         if(LEVEL_I2C_OK != readConfig(&config)) {
+            pthread_mutex_unlock(&mutex);
             return SC_LEVEL_CENSOR_ACCESS_FAILED;
         }
         LOGD(">>> Read config: 0x%04X", config);
 
         config &= CONFIG_ACTIVE_MODE_ENABLE;                // Set to Active mode
         if(LEVEL_I2C_OK != writeConfig(&config)) {
+            pthread_mutex_unlock(&mutex);
             return SC_LEVEL_CENSOR_ACCESS_FAILED;
         }
         LOGD(">>> Write config: 0x%04X", config);
     }
+
+    pthread_mutex_unlock(&mutex);
 
     return SC_SUCCESS;
 }
@@ -316,17 +344,23 @@ static uint32_t calculateCheckSum(jint clientUniqueCode) {
  */
 JNIEXPORT jint JNICALL Java_com_Smartcard_writeCheckSum(JNIEnv *env, jclass arg, jint card, jint clientUniqueCode) {
     uint32_t check_sum = calculateCheckSum(clientUniqueCode);
+    HP_SMART_CARD_result_t result = SC_CHECKSUM_FAILED;
+
+    pthread_mutex_lock(&mutex);
 
     if(CARD_SELECT_PEN1 == card) {
-        return inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_PEN1, check_sum);
+        result = inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_PEN1, check_sum);
     } else if(CARD_SELECT_PEN2 == card) {
-        return inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_PEN2, check_sum);
+        result = inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_PEN2, check_sum);
     } else if(CARD_SELECT_BULK1 == card) {
-        return supplyWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_BULK1, check_sum);
+        result = supplyWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_BULK1, check_sum);
     } else if(CARD_SELECT_BULKX == card) {
-        return inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_BULK1, check_sum);
+        result = inkWriteTag12OEMDefRWField2(HP_SMART_CARD_DEVICE_BULK1, check_sum);
     }
-    return SC_CHECKSUM_FAILED;
+
+    pthread_mutex_unlock(&mutex);
+
+    return result;
 }
 
 /**
@@ -708,6 +742,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
     uint32_t x = 0;
     HP_SMART_CARD_result_t ret = HP_SMART_CARD_ERROR;
 
+    pthread_mutex_lock(&mutex);
+
     int vol_percentage = 1;
 
     if(CARD_SELECT_PEN1 == card) {
@@ -726,8 +762,10 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
 
     if (HP_SMART_CARD_OK != ret) {
         if(CARD_SELECT_PEN1 == card || CARD_SELECT_PEN2 == card) {
+            pthread_mutex_unlock(&mutex);
             return SC_PRINT_CTRG_ACCESS_FAILED;
         } else if(CARD_SELECT_BULK1 == card || CARD_SELECT_BULKX == card) {
+            pthread_mutex_unlock(&mutex);
             return SC_BULK_CTRG_ACCESS_FAILED;
         }
     }
@@ -749,8 +787,10 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
 
     if (HP_SMART_CARD_OK != ret) {
         if(CARD_SELECT_PEN1 == card || CARD_SELECT_PEN2 == card) {
+            pthread_mutex_unlock(&mutex);
             return SC_PRINT_CTRG_ACCESS_FAILED;
         } else if(CARD_SELECT_BULK1 == card || CARD_SELECT_BULKX == card) {
+            pthread_mutex_unlock(&mutex);
             return SC_BULK_CTRG_ACCESS_FAILED;
         }
     }
@@ -774,11 +814,15 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
         }
     }
 */
+    pthread_mutex_unlock(&mutex);
+
     return SC_SUCCESS;
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_writeOIB(JNIEnv *env, jclass arg, jint card) {
     HP_SMART_CARD_result_t ret = HP_SMART_CARD_ERROR;
+
+    pthread_mutex_lock(&mutex);
 
     LOGD(">>> Write OIB(#%d)", card);
 
@@ -792,17 +836,22 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_writeOIB(JNIEnv *env, jclass arg, jint
         ret = inkWriteTag9ILGOutOfInkBit(HP_SMART_CARD_DEVICE_BULK1, 1);
     }
 
+    pthread_mutex_unlock(&mutex);
+
     return ret;
 }
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jint card) {
     LOGD(">>> Read Level(#%d)", card);
 
+    pthread_mutex_lock(&mutex);
+
     if(SELECT_LEVEL1 == card) {
         SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1);
     } else if(SELECT_LEVEL2 == card) {
         SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN2);
     } else {
+        pthread_mutex_unlock(&mutex);
         return 0;
     }
 
@@ -813,6 +862,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jin
     }
 
     LOGD(">>> Level data read: 0x%08X", chData);
+
+    pthread_mutex_unlock(&mutex);
 
     return chData;
 }
