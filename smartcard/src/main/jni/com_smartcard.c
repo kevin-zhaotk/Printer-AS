@@ -52,7 +52,7 @@ static pthread_mutex_t mutex;
 
 //#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.372"
+#define VERSION_CODE                            "1.0.373"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -796,7 +796,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
     }
 
     LOGD(">>> downLocal(#%d) -> %d", card, x);
-/*
+
     if(p1 != p2) {
         writeILG(card, p1);
 
@@ -813,7 +813,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_downLocal(JNIEnv *env, jclass arg, jin
             }
         }
     }
-*/
+
     pthread_mutex_unlock(&mutex);
 
     return SC_SUCCESS;

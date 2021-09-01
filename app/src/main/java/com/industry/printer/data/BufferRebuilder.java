@@ -21,7 +21,10 @@ public class BufferRebuilder {
         try {
             mColNum = src.length / colCharNum;
 //            mBytesPerColumn = colCharNum * 2;
-            mByteBuffer = new byte[mColNum * colCharNum * 2];
+// H.M.Wang 2021-9-1 防止不能整除而产生目标空间不够大而出现OutOfBounds的异常
+//            mByteBuffer = new byte[mColNum * colCharNum * 2];
+            mByteBuffer = new byte[src.length * 2];
+// End of H.M.Wang 2021-9-1 防止不能整除而产生目标空间不够大而出现OutOfBounds的异常
 
             mBlockNum = blockNum;
 //            mBytesPerBlock = mBytesPerColumn / mBlockNum;

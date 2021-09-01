@@ -374,10 +374,10 @@ public class SmartCardManager implements IInkDevice {
 
 //    private final int ADD_INK_THRESHOLD = 14000000;
 //    private final int ADD_INK_THRESHOLD = 13900000;
-//    private final int ADD_INK_THRESHOLD = 13800000;
+    private final int ADD_INK_THRESHOLD = 13800000;
 //    private final int ADD_INK_THRESHOLD = 13700000;
 //    private final int ADD_INK_THRESHOLD = 13600000;
-    private final int ADD_INK_THRESHOLD = 13500000;
+//    private final int ADD_INK_THRESHOLD = 13500000;
 
     private void levelValueUpdated(final int cardIdx) {
         Debug.d(TAG, "---> enter levelValueUpdated(" + cardIdx + ")");
