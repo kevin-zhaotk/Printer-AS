@@ -298,7 +298,7 @@ public class RFIDManager implements RfidCallback, IInkDevice {
         } else if (max < ink) {
             return 100;
         }
-//        Debug.d(TAG, "[2020-3-16 Check] Ink: " + ink + "Max: " + max);
+
         return (ink*100/max);
     }
 

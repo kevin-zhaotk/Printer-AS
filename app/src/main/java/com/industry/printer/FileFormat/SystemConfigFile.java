@@ -1290,6 +1290,14 @@ public class SystemConfigFile{
 				nozzle = PrinterNozzle.MESSAGE_TYPE_96DN;
 				break;
 // End of H.M.Wang 2021-8-16 追加96DN头
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_E5X48:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_E5X48;
+				break;
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_E5X50:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_E5X50;
+				break;
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 		}
 
 		return nozzle;
@@ -1397,18 +1405,24 @@ public class SystemConfigFile{
 			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
 				getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
-				return 6;
+				return PrinterNozzle.R6_HEAD_NUM;
 			}
 
 // H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			if( getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
 				getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
-				return 6;
+				return PrinterNozzle.E6_HEAD_NUM;
 			}
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			if( getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
-				return 6;
+				return PrinterNozzle.E6_HEAD_NUM;
 			}
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+			if( getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X48 ||
+					getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X50) {
+				return PrinterNozzle.E5_HEAD_NUM;
+			}
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 			return 1;
 		}
 	}
@@ -1431,18 +1445,24 @@ public class SystemConfigFile{
 			if(getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
 				getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
-				return (head < 6 ? 0 : head);
+				return (head < PrinterNozzle.R6_HEAD_NUM ? 0 : head);
 			}
 			// 2020-5-11
 // H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			if( getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
 				getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
-				return (head < 6 ? 0 : head);
+				return (head < PrinterNozzle.E6_HEAD_NUM ? 0 : head);
 			}
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			if( getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
-				return (head < 6 ? 0 : head);
+				return (head < PrinterNozzle.E6_HEAD_NUM ? 0 : head);
 			}
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+			if( getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X48 ||
+					getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X50) {
+				return (head < PrinterNozzle.E5_HEAD_NUM ? 0 : head);
+			}
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 			return head;
 		}
 	}

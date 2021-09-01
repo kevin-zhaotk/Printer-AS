@@ -197,7 +197,10 @@ public class RFIDDevice implements RfidCallback{
 
 	// 当前墨水量
 	private int mCurInkLevel = 0;
-	private int mLastLevel = 0;
+// H.M.Wang 2021-8-23 加入验证减数后是否一致的检验，意义应该不大
+    private int mTepInkLevel = 0;
+// End of H.M.Wang 2021-8-23 加入验证减数后是否一致的检验，意义应该不大
+    private int mLastInkLevel = 0;
 	public 	int mInkMax = 0;
 	public boolean mReady = false;
 	public boolean mValid = false;
@@ -231,7 +234,8 @@ public class RFIDDevice implements RfidCallback{
 	public RFIDDevice() {
 		mState = STATE_RFID_UNINITED;
 		mCurInkLevel = 0;
-		mLastLevel = mCurInkLevel;
+        mTepInkLevel = 0;
+        mLastInkLevel = 0;
 		openDevice();
 	}
 
@@ -834,6 +838,7 @@ public class RFIDDevice implements RfidCallback{
 		return mCurInkLevel;
 	}
 
+	@Deprecated
 	public void setLocalInk(int level) {
 		 Debug.d(TAG, "===>curInk=" + mCurInkLevel);
 		mCurInkLevel = level;
@@ -890,6 +895,29 @@ public class RFIDDevice implements RfidCallback{
 			mCurInkLevel = 0;
 		}
 		Debug.e(TAG, "--->ink=" + mCurInkLevel);
+
+// H.M.Wang 2021-8-23 加入验证减数后是否一致的检验，意义应该不大
+        if (mTepInkLevel > 0) {
+            mTepInkLevel = mTepInkLevel -1;
+// H.M.Wang 2020-4-9 修改当值为212+255*n的时候，再减1
+            if((mTepInkLevel+43)/255*255-43 == mTepInkLevel) {
+                mTepInkLevel--;
+            }
+// End of H.M.Wang 2020-4-9 修改当值为212+255*n的时候，再减1
+
+        } else if (mTepInkLevel <= 0) {
+            mTepInkLevel = 0;
+        }
+        Debug.e(TAG, "--->temp ink=" + mTepInkLevel);
+
+        if(mTepInkLevel != mCurInkLevel) {
+			mTepInkLevel = mLastInkLevel;
+			mCurInkLevel = mLastInkLevel;
+			down();
+        } else {
+            mLastInkLevel = mCurInkLevel;
+        }
+// End of H.M.Wang 2021-8-23 加入验证减数后是否一致的检验，意义应该不大
 	}
 
 	public byte[] mFeature = new byte[24];
@@ -1176,8 +1204,8 @@ public class RFIDDevice implements RfidCallback{
 		setKeyA(key);
 		setReady(true);
 	}
-	
-	private int parseRead(RFIDData data) {
+
+	private int parseMax(RFIDData data) {
 		byte[] ink = data.getData();
 		if (ink == null || ink.length <= 0 || ink[0] != 0) {
 			return 0;
@@ -1185,7 +1213,18 @@ public class RFIDDevice implements RfidCallback{
 		EncryptionMethod encrypt = EncryptionMethod.getInstance();
 		return encrypt.decryptInkMAX(ink);
 	}
-	
+
+// H.M.Wang 2021-8-24 追加专门获取InkLevel的函数
+	private int parseLevel(RFIDData data) {
+		byte[] ink = data.getData();
+		if (ink == null || ink.length <= 0 || ink[0] != 0) {
+			return 0;
+		}
+		EncryptionMethod encrypt = EncryptionMethod.getInstance();
+		return encrypt.decryptInkLevel(ink);
+	}
+// End of H.M.Wang 2021-8-24 追加专门获取InkLevel的函数
+
 	private int mWriteFailTimes = 0;
 	private void parseWrite(RFIDData data) {
 		byte[] rfid = data.getData();
@@ -1250,9 +1289,12 @@ public class RFIDDevice implements RfidCallback{
 					mState = STATE_RFID_UUID_READY;
 					break;
 				}
-				int value = parseRead(data);
+
+// H.M.Wang 2021-8-24 出现了再开机后InkLevel为100%的问题，发现原来的parseRead当中调用的是decrypteInkMax函数解密，并且使用了5个字节。由于30708版本以后，Ink值的后12字节填充了数值，因此可能导致Ink>Max的现象
+// 因此通过修改parseRead为parseMax用来获取最大值，追加parseLevel，其中调用decryptInkLevel函数解密（仅用4个字节），这样就可以解决问题，同时将parseXXX函数调用分散到各个分支里面
+//				int value = parseRead(data);
 				if (mState == STATE_RFID_MAX_READING) {
-					mInkMax = value;
+					mInkMax = parseMax(data);
 					mState = STATE_RFID_MAX_READY;
 				} else if (mState == STATE_RFID_FEATURE_READING) {
 					mFeature = data.getData();
@@ -1262,14 +1304,19 @@ public class RFIDDevice implements RfidCallback{
 					mValid = checkFeatureCode();
 					mState = STATE_RFID_FEATURE_READY;
 				} else if (mState == STATE_RFID_VALUE_READING) {
-					mCurInkLevel = value;
+					mCurInkLevel = parseLevel(data);
+					mTepInkLevel = mCurInkLevel;
 					mState = STATE_RFID_VALUE_READY;
 				} else if (mState == STATE_RFID_BACKUP_READING) {
 					if (mCurInkLevel <= 0) {
-						mCurInkLevel = value;
+						mCurInkLevel = parseLevel(data);
+					}
+					if (mTepInkLevel <= 0) {
+						mTepInkLevel = parseLevel(data);
 					}
 					mState = STATE_RFID_BACKUP_READY;
 				}
+// End of H.M.Wang 2021-8-24 出现了再开机后InkLevel为100%的问题，发现原来的parseRead当中调用的是decrypteInkMax函数解密，并且使用了5个字节。由于30708版本以后，Ink值的后12字节填充了数值，因此可能导致Ink>Max的现象
 				break;
 			case RFID_CMD_MIFARE_KEY_VERIFICATION:
 				rfid = data.getData();

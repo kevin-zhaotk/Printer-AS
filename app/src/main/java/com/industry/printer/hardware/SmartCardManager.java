@@ -586,7 +586,9 @@ public class SmartCardManager implements IInkDevice {
                             mHandler.obtainMessage(MSG_SHOW_CONSISTENCY, "Smartcard access error!").sendToTarget();
                         }
 // End of H.M.Wang 2021-8-7 追加当写SC卡出现错误的时候报错的处理
-                        mCards[cardIdx].mInkLevel = mCards[cardIdx].mMaxVolume - SmartCard.getLocalInk(mCards[cardIdx].mCardType);
+// H.M.Wang 2021-8-23 取消重新读取卡中的值来修正本地值的操作
+//                        mCards[cardIdx].mInkLevel = mCards[cardIdx].mMaxVolume - SmartCard.getLocalInk(mCards[cardIdx].mCardType);
+// End of H.M.Wang 2021-8-23 取消重新读取卡中的值来修正本地值的操作
                         checkOIB(cardIdx);
 
 // H.M.Wang 2021-8-7 追加当写SC卡出现错误的时候报错的处理
@@ -596,7 +598,9 @@ public class SmartCardManager implements IInkDevice {
                             mHandler.obtainMessage(MSG_SHOW_CONSISTENCY, "Smartcard access error!").sendToTarget();
                         }
 // End of H.M.Wang 2021-8-7 追加当写SC卡出现错误的时候报错的处理
-                        mCards[mCurBagIdx].mInkLevel = mCards[mCurBagIdx].mMaxVolume - SmartCard.getLocalInk(mCards[mCurBagIdx].mCardType);
+// H.M.Wang 2021-8-23 取消重新读取卡中的值来修正本地值的操作
+//                        mCards[mCurBagIdx].mInkLevel = mCards[mCurBagIdx].mMaxVolume - SmartCard.getLocalInk(mCards[mCurBagIdx].mCardType);
+// End of H.M.Wang 2021-8-23 取消重新读取卡中的值来修正本地值的操作
                         checkOIB(mCurBagIdx);
                     }
                 }

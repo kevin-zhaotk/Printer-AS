@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,6 +44,9 @@ import com.industry.printer.Socket_Server.Db.Server_Socket_Database;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -54,6 +59,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.ParcelUuid;
 import android.renderscript.Allocation;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -105,6 +111,94 @@ public class Socket_Control_Activity extends Activity {
 
 
 
+
+
+	/**
+	 * 检查权限
+	 */
+/*
+	private static final int REQUEST_CODE_PERMISSION_BLUETOOTH = 107867;
+
+	private void checkPermissions() {
+		String[] permissions = {Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN};
+		List<String> permissionDeniedList = new ArrayList<String>();
+
+		for (String permission : permissions) {
+			int permissionCheck = ContextCompat.checkSelfPermission(this, permission);
+			if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+				onPermissionGranted(permission);
+			} else {
+				permissionDeniedList.add(permission);
+			}
+		}
+
+		if (!permissionDeniedList.isEmpty()) {
+			String[] deniedPermissions = permissionDeniedList.toArray(new String[permissionDeniedList.size()]);
+			ActivityCompat.requestPermissions(this, deniedPermissions, REQUEST_CODE_PERMISSION_BLUETOOTH);
+		}
+	}
+*/
+	/**
+	 * 权限回调
+	 * @param requestCode
+	 * @param permissions
+	 * @param grantResults
+	 */
+/*
+	@Override
+	public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+		switch (requestCode) {
+			case REQUEST_CODE_PERMISSION_BLUETOOTH:
+				if (grantResults.length > 0) {
+					for (int i = 0; i < grantResults.length; i++) {
+						if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+							onPermissionGranted(permissions[i]);
+						}
+					}
+				}
+				break;
+		}
+	}
+*/
+
+	/**
+	 * 开启GPS
+	 */
+/*
+	private void onPermissionGranted(String permission) {
+		switch (permission) {
+			case Manifest.permission.ACCESS_FINE_LOCATION:
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !checkGPSIsOpen()) {
+					new AlertDialog.Builder(this)
+							.setTitle("提示")
+							.setMessage("当前手机扫描蓝牙需要打开定位功能。")
+							.setNegativeButton("取消",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											finish();
+										}
+									})
+							.setPositiveButton("前往设置",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+											startActivityForResult(intent, REQUEST_CODE_OPEN_GPS);
+										}
+									})
+							.setCancelable(false)
+							.show();
+				} else {
+					//GPS已经开启了
+				}
+				break;
+		}
+	}
+*/
+/*
 // H.M.Wang 2021-8-4 追加WIFI和BT的操作
 	public static final int RESULT_SUCCESS = 1;
 	public static final int RESULT_FAILED = -1;
@@ -301,14 +395,13 @@ public class Socket_Control_Activity extends Activity {
 	};
 
 // End of H.M.Wang 2021-8-4 追加WIFI和BT的操作
-
+*/
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.socket_control_activity);
 
-
-
+/*
 // H.M.Wang 2021-8-4 追加WIFI和BT的操作
 		mIPConMgr = new IPConnnectionManager(new SocketListenner() {
 			@Override
@@ -370,7 +463,7 @@ public class Socket_Control_Activity extends Activity {
         mBtRecvMsg= (TextView) findViewById(R.id.BTRecvMsg);
         mBtMsgSendBtn= (TextView) findViewById(R.id.BTSendMsg);
 // End of H.M.Wang 2021-8-4 追加WIFI和BT的操作
-
+*/
 		But_Print= (TextView) findViewById(R.id.But_Print);
 		Scan_device = (TextView) findViewById(R.id.Scan_device);
 		But_pur= (TextView) findViewById(R.id.But_pur);
@@ -493,11 +586,28 @@ public class Socket_Control_Activity extends Activity {
 			}
 
 		});
+
 		Scan_device.setOnClickListener(new OnClickListener() {
 
 			@Override
 
 			public void onClick(View arg0) {
+				BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+
+				StringBuilder sb = new StringBuilder();
+				if(null != btAdapter) {
+					Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+					if(pairedDevices.size() > 0){
+						for(BluetoothDevice device:pairedDevices){
+							sb.append(device.getName() + ":" + device.getAddress() + "\n");
+							for(ParcelUuid parcelUuid : device.getUuids()) {
+								sb.append(" - " + parcelUuid.getUuid() + "\n");
+							}
+						}
+						Toast.makeText(Socket_Control_Activity.this, sb.toString(), Toast.LENGTH_LONG).show();
+					}
+				}
+
 				/*ShowDialog.show();
 				 
 				Db.deleteAll("device_info");
@@ -506,8 +616,7 @@ public class Socket_Control_Activity extends Activity {
 				
 				 //mThreadScanDevice.start();
 			  new Thread(mThreadScanDevice).start();*/
-				Dialog_SureCancel();
-
+////				Dialog_SureCancel();
 			}
 
 		});

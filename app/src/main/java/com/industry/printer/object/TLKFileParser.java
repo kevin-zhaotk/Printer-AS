@@ -513,6 +513,10 @@ public class TLKFileParser  extends TlkFile{
 			case MESSAGE_TYPE_E6X50:
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
 			case MESSAGE_TYPE_E6X1:
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+			case MESSAGE_TYPE_E5X48:
+			case MESSAGE_TYPE_E5X50:
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 				dots = 112f;
 // H.M.Wang 2021-4-4 这个值必须是1，因为保存的时候是1
 //				mProportion = dots/Configs.gDots;

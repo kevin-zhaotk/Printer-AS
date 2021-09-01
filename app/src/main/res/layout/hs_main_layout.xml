@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="#FFFF8800"
+            android:visibility="visible"
+            android:orientation="vertical" >
+            <RelativeLayout
+                android:id="@+id/ConStatusArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@color/white" >
+                <TextView
+                    android:id="@+id/ConStatusCaption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:text="已连接 %1$d 台设备" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ConStatusCaption"
+                    android:layout_alignParentLeft="true"
+                    android:layout_margin="5dp"
+                    android:orientation="vertical" >
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:text="- 设备1 (WIFI) [192.168.1.101]" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:text="- 设备2 (WIFI) [192.168.1.102]" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:text="- 设备3 (BT) [19:19:19:19:19:18]" />
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/CmdManageConBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:textSize="14sp"
+                    android:textColor="@color/blue"
+                    android:text="管理连接" />
+                <TextView
+                    android:id="@+id/CmdExpandFold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:textSize="14sp"
+                    android:textColor="@color/blue"
+                    android:text="收起" />
+            </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/CommandsArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical" >
+                <TextView
+                    android:id="@+id/CmdSendString"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:padding="10dp"
+                    android:textSize="24sp"
+                    android:textColor="@color/white"
+                    android:background="@color/blue"
+                    android:gravity="center"
+                    android:text="发送字符串" />
+                <TextView
+                    android:id="@+id/CmdSendFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:padding="10dp"
+                    android:textSize="24sp"
+                    android:textColor="@color/white"
+                    android:background="@color/blue"
+                    android:gravity="center"
+                    android:text="发送文件" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

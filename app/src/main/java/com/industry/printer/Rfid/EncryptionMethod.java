@@ -115,6 +115,22 @@ public class EncryptionMethod {
 			ink[1] = (byte) ((level>>8) & 0x0ff);
 			ink[2] = (byte) ((level>>(8*2)) & 0x0ff);
 			ink[3] = (byte) ((level>>(8*3)) & 0x0ff);
+// H.M.Wang 2021-8-23 设置ink16字节的其他部分为一定墨量值的组合或者倍数组合
+// 注意，当向RFID写墨水值的时候该值的加密调用的是本encryptInkLevel函数，但是当读取墨水值的时候使用的是decryptInkMAX函数，而非decryptInkLevel函数，这一点要注意
+			int level1 = level * 2;
+			ink[4] = (byte) (level & 0x0ff);
+			ink[5] = (byte) ((level>>8) & 0x0ff);
+			ink[6] = (byte) (level1 & 0x0ff);
+			ink[7] = (byte) ((level1>>8) & 0x0ff);
+			ink[8] = (byte) (level1 & 0x0ff);
+			ink[9] = (byte) ((level1>>8) & 0x0ff);
+			ink[10] = (byte) (level & 0x0ff);
+			ink[11] = (byte) ((level>>8) & 0x0ff);
+			ink[12] = (byte) (level & 0x0ff);
+			ink[13] = (byte) ((level>>8) & 0x0ff);
+			ink[14] = (byte) (level1 & 0x0ff);
+			ink[15] = (byte) ((level1>>8) & 0x0ff);
+// End of H.M.Wang 2021-8-23 设置ink16字节的其他部分为一定墨量值的组合或者倍数组合
 		} else {
 			ink[3] = (byte) (level & 0x0ff); 
 			ink[3] = (byte) (~ink[3] & 0x0ff);

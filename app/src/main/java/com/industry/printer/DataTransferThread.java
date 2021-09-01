@@ -1294,7 +1294,14 @@ public class DataTransferThread {
 // H.M.Wang 2021-7-9 300dpi的时候生成的打印图案会比原来宽一倍，参数设置为300dpi的时候，返回值会差一倍，最如下修正
 //				bold = config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
 				if(Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_300) {
-					if(hType == PrinterNozzle.MESSAGE_TYPE_E6X50 || hType == PrinterNozzle.MESSAGE_TYPE_E6X48 || hType == PrinterNozzle.MESSAGE_TYPE_E6X1) {
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+//					if(hType == PrinterNozzle.MESSAGE_TYPE_E6X50 || hType == PrinterNozzle.MESSAGE_TYPE_E6X48 || hType == PrinterNozzle.MESSAGE_TYPE_E6X1) {
+					if(hType == PrinterNozzle.MESSAGE_TYPE_E6X50 ||
+						hType == PrinterNozzle.MESSAGE_TYPE_E6X48 ||
+						hType == PrinterNozzle.MESSAGE_TYPE_E5X48 ||
+						hType == PrinterNozzle.MESSAGE_TYPE_E5X50 ||
+						hType == PrinterNozzle.MESSAGE_TYPE_E6X1) {
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 						// 由于已经通过对锁的调整进行了对应，因此，这里不做更改
 						bold = 1.0f * config.getParam(SystemConfigFile.INDEX_PRINT_DENSITY)/150;
 					} else {
@@ -1331,9 +1338,15 @@ public class DataTransferThread {
 // H.M.Wang 2021-3-6 追加E6X48,E6X50头
 		if( config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
 			config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
-			mPrintDots[head] *= (PrinterNozzle.E6_PRINT_COPY_NUM - 1);
+			mPrintDots[head] *= PrinterNozzle.E6_PRINT_COPY_NUM;
 		}
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+		if( config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X48 ||
+			config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X50) {
+			mPrintDots[head] *= PrinterNozzle.E5_PRINT_COPY_NUM;
+		}
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 
 // H.M.Wang 2021-7-26 追加重复打印时的打印点数计数值的计算
 		if( config.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && config.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 21 ) {
@@ -1652,17 +1665,22 @@ private void setCounterPrintedNext(DataTask task, int count) {
 					if(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
 						SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50) {
 //						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
-						sb.append(mPrintDots[i < 6 ? 0 : i]);
+						sb.append(mPrintDots[i < PrinterNozzle.R6_HEAD_NUM ? 0 : i]);
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 // H.M.Wang 2021-3-6 追加E6X48,E6X50头
 					} else if( SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
 								SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
 //						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
-							sb.append(mPrintDots[i<6?0:i]);
+							sb.append(mPrintDots[i < PrinterNozzle.E6_HEAD_NUM ? 0 : i]);
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 					} else if( SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
 //						sb.append(t.getDots(i<6?0:i)*(PrinterNozzle.R5x6_PRINT_COPY_NUM - 1));
-						sb.append(mPrintDots[i<6?0:i]);
+						sb.append(mPrintDots[i < PrinterNozzle.E6_HEAD_NUM ? 0 : i]);
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+					} else if( SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X48 ||
+							SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X50) {
+						sb.append(mPrintDots[i < PrinterNozzle.E5_HEAD_NUM ? 0 : i]);
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 					} else {
 						sb.append(mPrintDots[i]);
 					}

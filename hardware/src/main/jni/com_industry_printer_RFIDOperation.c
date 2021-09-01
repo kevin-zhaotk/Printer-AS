@@ -231,16 +231,16 @@ JNIEXPORT jbyteArray JNICALL Java_com_industry_printer_RFID_read
 		} else if (nfds == 0) {
 			continue;
 		}
-		// H.M.Wang 2021-8-16 修改有些数值读取错误的问题
+// H.M.Wang 2021-8-16 修改有些数值读取错误的问题
 //		ret = read(fd, tempBuff, len);
 		ret = read(fd, tempBuff + nread, len - nread);
-		// End of H.M.Wang 2021-8-16 修改有些数值读取错误的问题
+// End of H.M.Wang 2021-8-16 修改有些数值读取错误的问题
 		if(ret < 0) {
 			return NULL;
 		}
 		nread += ret;
 
-		// H.M.Wang 2021-8-16 修改有些数值读取错误的问题
+// H.M.Wang 2021-8-16 修改有些数值读取错误的问题
 //		if(nread > 2 && tempBuff[nread-1] == 0x03 && tempBuff[nread-2] != 0x10) {
 //			break;
 //		}
@@ -248,11 +248,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_industry_printer_RFID_read
 			if(tempBuff[nread-2] != 0x10) {				// 结尾符号前面不是0x10，证明没有转义，确实是结尾符
 				break;
 			}
-			if(tempBuff[nread-2] == 0x10 && tempBuff[nread-3] == 0x10) {	// 结尾符号前面是0x10，不知道是不是0x03转义，如果在前面是0x10，则断定是0x03前面得0x10的转义，而非0x03的转义
+			if(tempBuff[nread-2] == 0x10 && tempBuff[nread-3] == 0x10) {	// 结尾符号前面是0x10，不知道是不是0x03转义，如果在前面是0x10，则断定是0x03前面的0x10的转义，而非0x03的转义
 				break;
 			}
 		}
-		// End of H.M.Wang 2021-8-16 修改有些数值读取错误的问题
+// End of H.M.Wang 2021-8-16 修改有些数值读取错误的问题
 	/*
 	while((nread = read(fd, tempBuff, len))<=0 && repeat<10)
 	{

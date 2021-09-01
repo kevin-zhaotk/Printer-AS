@@ -75,6 +75,10 @@
         <!-- H.M.Wang 2021-8-16 追加96DN头 -->
         <item>96DN</item>
         <!-- End of H.M.Wang 2021-8-16 追加96DN头 -->
+        <!-- H.M.Wang 2021-8-25 追加E5X48和E5X50头类型 -->
+        <item>E5X48</item>
+        <item>E5X50</item>
+        <!-- End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型 -->
     </string-array>
 
     <string-array name="strFontArray">

@@ -289,6 +289,10 @@ public class FpgaGpioOperation {
             data[15] = (char) (config.getPNozzle().mHeads);
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X50 ||
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X48 ||
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X50 ||
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
                 data[15] = 16;
@@ -345,6 +349,12 @@ public class FpgaGpioOperation {
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
                 data[17] &= 0xFFF0;
             }
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+            if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X48 ||
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X50) {
+                data[17] &= 0xFFF0;
+            }
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
         }
 
         if (type == SETTING_TYPE_PURGE1) {
@@ -427,6 +437,15 @@ public class FpgaGpioOperation {
             data[16] |= 0x0280;        // 6个头
             data[24] *= 6;
         }
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+        if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X48 ||
+            config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X50) {
+            data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_9MM;
+            data[16] &= 0xfc7f;        // Bit9-7
+            data[16] |= 0x0280;        // 按6个头设置，下发6个头的数据，但是FPGA会会略掉最后一个头的数据
+            data[24] *= 6;
+        }
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 
         //是否雙列打印
         data[25] = (char) config.getParam(31 - 1);

@@ -374,6 +374,52 @@ public class DataTask {
 		}
 // End of H.M.Wang 2020-4-18 追加12.7R5头
 
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+		if( sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X48 ||
+			sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X50) {
+
+			CharArrayBuffer caBuf = new CharArrayBuffer(0);
+			int orgCharsOfHead = mBinInfo.mCharsPerHFeed * mTask.getNozzle().mHeads;
+			int orgCols = mBuffer.length / orgCharsOfHead;
+			char[] empty = new char[orgCharsOfHead];
+			Arrays.fill(empty, (char)0x0000);
+
+			int maxColNumPerUnit = 0;
+			if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X48) {
+				maxColNumPerUnit = PrinterNozzle.E5X48_MAX_COL_NUM_EACH_UNIT;
+			} else if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E5X50) {
+				maxColNumPerUnit = PrinterNozzle.E5X50_MAX_COL_NUM_EACH_UNIT;
+			}
+
+// H.M.Wang 2021-4-23 增加根据DPI对列数进行调整
+			maxColNumPerUnit *= Configs.GetDpiVersion();
+// End of H.M.Wang 2021-4-23 增加根据DPI对列数进行调整
+
+			for(int i=0; i<PrinterNozzle.E5_PRINT_COPY_NUM; i++) {
+				for(int k=0; k<maxColNumPerUnit; k++) {
+// H.M.Wang 2021-8-27 E5头在减锁的时候按着5个头计算，但是生成打印缓冲区的时候按6个头生成
+					for(int j=0; j<PrinterNozzle.E5_HEAD_NUM+1; j++) {  // 生成打印缓冲区的时候，按着6个头的空间生成
+// End of H.M.Wang 2021-8-27 E5头在减锁的时候按着5个头计算，但是生成打印缓冲区的时候按6个头生成
+						if(k >= orgCols) {	// 原始块中宽度不足部分
+							if(i < PrinterNozzle.E5_PRINT_COPY_NUM - 1) {    // 原始块中宽度不足部分
+								caBuf.append(empty, 0, orgCharsOfHead);
+							}
+						} else {
+							caBuf.append(mBuffer, k * orgCharsOfHead, orgCharsOfHead);
+						}
+					}
+				}
+			}
+
+			mBuffer = caBuf.toCharArray();
+
+			if(bSave) {
+				FileUtil.deleteFolder("/mnt/sdcard/printE5.bin");
+				BinCreater.saveBin("/mnt/sdcard/printE5.bin", mBuffer, mBinInfo.mBytesPerHFeed * 8 * mTask.getNozzle().mHeads * PrinterNozzle.E5_HEAD_NUM);
+			}
+		}
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+
 // H.M.Wang 2021-3-6 追加E6X48,E6X50头
 		if( sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
 			sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
@@ -642,6 +688,10 @@ public class DataTask {
 			headType == PrinterNozzle.MESSAGE_TYPE_E6X48 ||
 			headType == PrinterNozzle.MESSAGE_TYPE_E6X50 ||
 // End of H.M.Wang 2021-3-6 追加E6X48,E6X50头
+// H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+			headType == PrinterNozzle.MESSAGE_TYPE_E5X48 ||
+			headType == PrinterNozzle.MESSAGE_TYPE_E5X50 ||
+// End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 			headType == PrinterNozzle.MESSAGE_TYPE_E6X1 ) {
 // H.M.Wang 2021-4-23 修改div和scaleW的计算公式，当前的计算可能不对
 //			div = 1.0f * 104/104;
@@ -1303,21 +1353,34 @@ public class DataTask {
 		}
 	}
 
+// H.M.Wang 2021-8-31 修改打印缓冲区生成逻辑：
+//   （1） 每相邻列中的第0，2，3，4，5双字节追加空列；第1双字节不变
+//   （2） 每列的位右移从位移4个点（列）修改为8个点
+//   （3） 总宽度设为512（原宽度）+8（位右移宽度）
 // H.M.Wang 2021-8-16 追加96DN头
 	public char[] evenBitShiftFor96Dot() {
-		int COLUMNS_TO_SHIFT= 4;
+		int MAX_COLUMNS = 512;
+		int COLUMNS_TO_SHIFT= 8;
+//		int COLUMNS_TO_SHIFT= 4;
 		int CHARS_PER_COLOMN = 6;
-		char[] buffer = new char[mPrintBuffer.length + COLUMNS_TO_SHIFT * CHARS_PER_COLOMN];	// 每行增加4个字节，共增加48个字节(24个char)
+//		char[] buffer = new char[mPrintBuffer.length + COLUMNS_TO_SHIFT * CHARS_PER_COLOMN];	// 每行增加4个字节，共增加48个字节(24个char)
+		char[] buffer = new char[(MAX_COLUMNS + COLUMNS_TO_SHIFT) * CHARS_PER_COLOMN];	// 最大打印缓冲区（520列）
 
 		for (int i = 0; i < mBinInfo.mColumn; i++) {
 			for (int j = 0; j < CHARS_PER_COLOMN; j++) {
-				buffer[i * CHARS_PER_COLOMN + j] |= (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0xaaaa);
-				buffer[(i + COLUMNS_TO_SHIFT) * CHARS_PER_COLOMN + j] |= (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0x5555);
+				int tarCol = (j == 1 ? i : i*2);
+// H.M.Wang 2021-8-27 96Dot的情况下将1,3,5,7位的数据后移4列，0,2,4,6位保留原位。与64Dot的相反
+				if(tarCol < MAX_COLUMNS) {
+					buffer[tarCol * CHARS_PER_COLOMN + j] |= (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0x5555);
+					buffer[(tarCol + COLUMNS_TO_SHIFT) * CHARS_PER_COLOMN + j] |= (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0xaaaa);
+				}
+// End of H.M.Wang 2021-8-27 96Dot的情况下将0,2,4,6位的数据后移4列，1,3,5,7位保留原位。与64Dot的不同
 			}
 		}
 		return buffer;
 	}
 // End of H.M.Wang 2021-8-16 追加96DN头
+// End of H.M.Wang 2021-8-31 修改打印缓冲区生成逻辑
 
 	/* H.M.Wang
 		64DOT喷头双列的时候，每个Byte的1，3，5，7Bit向后位移4个字节

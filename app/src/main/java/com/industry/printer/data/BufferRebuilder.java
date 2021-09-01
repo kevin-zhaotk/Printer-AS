@@ -17,6 +17,7 @@ public class BufferRebuilder {
 //    private int mBytesPerBlock = 0;         // 每个块的字节数；mBlockNum * mBytesPerBlock === mBytesPerColumn
 
     public BufferRebuilder(char[] src, int colCharNum, int blockNum) {
+        Debug.d(TAG, "src.length = " + src.length + "; colCharNum = " + colCharNum + "; blockNum = " + blockNum);
         try {
             mColNum = src.length / colCharNum;
 //            mBytesPerColumn = colCharNum * 2;
