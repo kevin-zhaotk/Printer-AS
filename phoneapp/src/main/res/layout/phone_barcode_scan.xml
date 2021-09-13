@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <com.printer.phoneapp.UIs.HTNCCameraTextureView
+        android:id="@+id/idTextureView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <RelativeLayout
+        android:id="@+id/idTitleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:background="@android:color/transparent" >
+        <ImageView
+            android:id="@+id/idCloseBtn"
+            android:layout_height="18dp"
+            android:layout_width="18dp"
+            android:layout_marginRight="8dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:background="@color/white"
+            android:src="@drawable/close"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:text="扫描条码"
+            android:textColor="#ffffff" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/idScaningBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="50dp"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        android:src="@drawable/qr_code_scan_bar" />
+</RelativeLayout>

@@ -880,7 +880,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	private void refreshInk() {
 		float ink = mInkManager.getLocalInkPercentage(mRfid);
-		Debug.d(TAG, "--->refresh ink: " + mRfid + " = " + ink);
+		Debug.d(TAG,  BuildConfig.VERSION_CODE + "--->refresh ink: " + mRfid + " = " + ink);
 		String level = "";
 		if(mInkManager instanceof RFIDManager) {
 			level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");

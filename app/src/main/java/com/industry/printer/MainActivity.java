@@ -23,6 +23,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -504,6 +505,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 
 	@Override
 	public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+		Debug.d(TAG, "Screen: [" + getResources().getDisplayMetrics().widthPixels + ", " + getResources().getDisplayMetrics().heightPixels + "]");
+		Debug.d(TAG, "DPI: [" + getResources().getDisplayMetrics().densityDpi + "]");
 		if(arg1 == true) {
 			ExtGpio.playClick();
 		}

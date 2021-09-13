@@ -1,0 +1,544 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!-- CN 20170319 -->
+ 
+    <string name="app_version">版本:</string>
+    <string name="system_time">系统时间:</string>
+    <string name="app_name">打印机</string>
+    <string name="action_settings">设置</string>
+    <string name="hello_world">Hello world!</string>
+	<string name="ControlTab">控制</string>
+	<string name="manualCtrlTab">编辑控制</string>
+	<string name="Edit">编辑</string>
+	<string name="Settings">设置</string>
+	<string name="str_btn_start">开始</string>
+	<string name="str_btn_stop">停止</string>
+	<string name="str_btn_launch">启动</string>
+	<string name="str_btn_clean">清洗</string>
+<!-- H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
+	<string name="str_purge_confirm">点击OK开始清洗</string>
+	<string name="str_clean_confirm">长清洗将持续大约5分钟，继续吗？</string>
+	<string name="str_under_purging">正在清洗，请稍后再试</string>
+<!-- End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
+	<string name="str_btn_open">打开</string>
+	<string name="str_remain_ink">剩余锁值</string>
+	<string name="str_remain_ptimes">打印次数: </string>
+	<string name="str_btn_new">新建</string>
+	<string name="str_btn_save">保存</string>
+	<string name="str_btn_saveprint">保存并打印</string>
+	<string name="str_btn_saveas">另存为</string>
+	<string name="str_btn_cancel">取消</string>
+	<string name="str_btn_prerecord">上翻</string>
+	<string name="str_btn_nextrecord">下翻</string>
+	<string name="str_btn_send">发送</string>
+	<string name="str_btn_set">设置</string>
+	<string name="str_btn_get">信息</string>
+	<string name="str_btn_print">打印</string>
+	<string name="str_btn_finish">结束</string>
+	<string name="str_btn_header1">打印头1</string>
+	<string name="str_btn_header2">打印头2</string>
+	<string name="str_btn_header3">打印头3</string>
+	<string name="str_btn_header4">打印头4</string>
+	<string name="strDate">日期:</string>
+	<string name="strInklevel">剩余次数: </string>
+	<string name="strPhotocellState">光电: </string>
+	<string name="strEncoderState">编码器: </string>
+	<string name="strPrintstate">打印状态: </string>
+	<string name="strPrinting">打印中...</string>
+	<string name="strPrintok">准备就绪</string>
+	<string name="strOn">开</string>
+	<string name="strOff">关</string>
+	<string name="strwaitting">正在打印，请稍等。。。。。。</string>
+	<string name="str_csvfile">打开Csv文件</string>
+	<string name="str_tlkfile">打开Tlk文件</string>
+	<string name="str_binfile">打开Bin文件</string>
+	<string name="str_openfile">选择文件</string>
+	<string name="str_seldata">选择数据</string>
+	<string name="str_mvforward">前移</string>
+	<string name="str_mvbackward">后移</string>
+	<string name="str_preview">预览</string>
+	<string name="str_del">删除</string>
+	<string name="str_multi_select">多选</string>
+	<string name="str_btn_shift">班次</string>
+	<string name="str_btn_second">秒</string>
+	<string name="str_btn_upgrade">升级</string>
+	<string name="str_btn_setDate">日期设置</string>
+	<string name="str_btn_setTime">时间设置</string>
+	<string name="str_btn_image">图形</string>
+	<string name="str_goto">跳转</string>
+	<!-- object info table -->
+	<string name="strWidth">宽</string>
+	<string name="strHigh">字号</string>
+	<string name="strHightype">位置</string>	
+	<string name="strReverse">反相</string>
+	<string name="strXcor">横向位置</string>
+	<string name="strYcor">纵向位置</string>
+	<string name="strCnt">内容</string>
+	<string name="strDefault">0</string>
+	<string name="txtDefault">text</string>
+	<string name="strDragable">是否拖动</string>
+	<string name="strShow">显示内容</string>
+	<string name="strFontsize">字号</string>
+	<string name="strFont">字体</string>
+	<string name="strLinewidth">线宽</string>
+	<string name="strBits">位数</string>
+	<string name="strImage">图片路径</string>
+	<string name="strDirect">方向</string>
+	<string name="strShift1">班次1</string>
+	<string name="strShift2">班次2</string>
+	<string name="strShift3">班次3</string>
+	<string name="strShift4">班次4</string>
+	<string name="strShift5">班次5</string>
+	<string name="strInfoname">信息</string>
+	<string name="strHeadType">喷头</string>
+	<string name="strHeadResolution">高清</string>
+	<string name="strUpgradeConfirm">确认要更新？</string>
+	<string name="strUpgradeNoApk">U盘上没发现升级包！！！</string>
+	<string name="strSaving">正在保存请耐心等待...</string>
+	<string name="strLoading">正在加载请耐心等待...</string>
+	<string name="strCopying">正在拷贝...</string>
+	<string name="strInsertSerial">请插入打印设备</string>
+	<string name="strReinsertSerial">打印出错，请重新插拔打印设备</string>
+	<string name="strCode">编码类型</string>
+	<string name="strBarsource">内容来源</string>
+	<string name="strLinetype">线型</string>
+	<string name="str_ok">确认</string>
+	<string name="strNativeBtn">取消</string>
+	<string name="strRtFmt">时间格式</string>
+	<string name="strOffset">偏移</string>
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">边框</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
+	<string name="strGroup">群组</string>
+
+	<!-- object list -->
+	<string name="objectListName">Show List</string>
+	<string name="objectInfoName">显示对象信息</string>
+	<string name="object_Msg">信息</string>
+	<string name="object_text">文本对象</string>
+	<string name="object_realtime">实时时间对象</string>
+	<string name="object_counter">计数器对象</string>
+	<string name="object_bar">条形码</string>
+	<string name="object_pic">图形对象</string>
+	<string name="object_julian">儒略日对象</string>
+	<string name="object_line">直线对象</string>
+	<string name="object_rect">矩形对象</string>
+	<string name="object_ellipse">椭圆对象</string>
+	<string name="object_shift">班次对象</string>
+	<string name="object_second">实时时间秒</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">超文本</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+<!-- H.M.Wang 2020-2-27 追加HyperText控件说明信息 -->
+	<string name="object_hypertext_hint1"><u>@Y</u>:年 <u>@M</u>:月 <u>@D</u>:日</string>
+	<string name="object_hypertext_hint2"><u>@H</u>:时 <u>@N</u>:分 <u>@S</u>:秒</string>
+	<string name="object_hypertext_hint3"><u>@T</u>:班次 <u>@A</u>:周数 <u>@W</u>:年周数</string>
+	<string name="object_hypertext_hint4"><u>@2</u>,<u>@3C</u>,<u>@4CC</u>,<u>@5CCC</u>:计数器</string>
+<!-- H.M.Wang 2020-2-27 追加HyperText控件说明信息 -->
+	<string name="object_weekofyear">周数对象</string>
+	<string name="object_weekday">星期</string>
+	<string name="object_charHour">字符小时</string>
+	<string name="object_msg_name">信息名称</string>
+	<string name="object_qr">二维码</string>
+	<string name="object_dynamic_qr">动态二维码</string>
+<!-- H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+	<string name="object_dynamic_barcode">动态条码</string>
+<!-- End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+<!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
+	<string name="object_dynamictext">动态文本</string>
+	<string name="object_dtindex">索引</string>
+<!-- End of H.M.Wang 2020-6-10 追加DynamicText控件 -->
+
+	<!-- Settings frame -->
+	<string name="strParam0">00.保留</string>
+	<string name="strPrSpeedname">01.打印频率</string>
+	<string name="strDelay_key">delay_key</string>
+	<string name="strDelayname">02.延时</string>
+	<string name="strDelay_summary">Set Delay</string>
+	<string name="strParam3">03.保留</string>
+	<string name="strTrigger_key">trigger_key</string>
+	<string name="strTriggername">04.触发</string>
+	<string name="strTrigger_summary">Set Trigger Mode</string>
+	<string name="strSyncname">05.同步器</string>
+	<string name="strBold">06.加重</string>
+	<string name="strFixlen">07.定长触发</string>
+	<string name="strFixtime">08.定时触发</string>
+	<string name="strHeadTemp">09.打印头温度</string>
+	<string name="strResvTemp">10.墨盒温度</string>
+	<string name="strfontwidth">11.字宽</string>
+	<string name="strDotname">12.墨点</string>
+	<string name="strDirection_key">direction_key</string>
+	<string name="strDirectionname">05.方向</string>
+	<string name="strDirection_summary">Choose Direction</string>
+	<string name="strEncoder_key">encoder_key</string>
+	<string name="strEncodername">03.编码</string>
+	<string name="strEncoder_summary">Set Encoder mode</string>
+	<string name="strHoriRes_key">horires_key</string>
+	<string name="strHoriResname">04.水平</string>
+	<string name="strHoriRes_summary">Setting Hori Res</string>
+	<string name="strVertRes_key">vertres_key</string>
+	<string name="strVertResname">05.垂直</string>
+	<string name="strVertRes_summary">Setting Vert Res</string>
+	<string name="strTimeunit">ms</string>
+	<string name="strResunit">dpi</string>
+	<string name="strLenunit">0.1mmm</string>
+	<string name="strTempunit">C</string>
+	<string name="strPrSpeedUnit">HZ</string>
+	<string name="strResvname8">08.保留</string>
+	<string name="strResvname9">09.保留</string>
+	<string name="strResvname10">10.保留</string>
+	<string name="strResvname11">11.保留</string>
+	<string name="strResvname12">12.保留</string>
+	<string name="strResvname13">13.保留</string>
+	<string name="strResvname14">14.保留</string>
+	<string name="strResvname15">15.保留</string>
+	<string name="strResvname16">16.保留</string>
+	<string name="strResvname17">17.保留</string>
+	<string name="strResvname18">18.保留</string>
+	<string name="strResvname19">19.保留</string>
+	<string name="strResvname20">20.保留</string>
+	<string name="strResvname21">21.保留</string>
+	<string name="strResvname22">22.保留</string>
+	<string name="strResvname23">23.保留</string>
+	<string name="strResvname24">24.保留</string>
+	<string name="strResvname25">25.保留</string>
+	<string name="strResvname26">26.保留</string>
+	<string name="strResvname27">27.保留</string>
+	<string name="strResvname28">28.保留</string>
+	<string name="strResvname29">29.保留</string>
+	<string name="strResvname30">30.保留</string>
+	<string name="strResvname31">31.保留</string>
+	<string name="strResvname32">32.保留</string>
+	<string name="strResvname33">33.保留</string>
+	<string name="strResvname34">34.保留</string>
+	<string name="strResvname35">35.保留</string>
+	<string name="strResvname36">36.保留</string>
+	<string name="strResvname37">37.保留</string>
+	<string name="strResvname38">38.1带多</string>
+	<string name="strResvname39">39.保留</string>
+	<string name="strResvname40">40.保留</string>
+	<string name="strResvname41">41.保留</string>
+	<string name="strResvname42">42.保留</string>
+	<string name="strResvname43">43.保留</string>
+	<string name="strResvname44">44.保留</string>
+	<string name="strResvname45">45.保留</string>
+	<string name="strResvname46">46.保留</string>
+	<string name="strResvname47">47.保留</string>
+	<string name="strResvname48">48.保留</string>
+	<string name="strResvname49">49.保留</string>
+	<string name="strResvname50">50.保留</string>
+	<string name="strResvname51">51.保留</string>
+	<string name="strResvname52">52.保留</string>
+	<string name="strResvname53">53.保留</string>
+	<string name="strResvname54">54.保留</string>
+	<string name="strResvname55">55.保留</string>
+	<string name="strResvname56">56.保留</string>
+	<string name="strResvname57">57.保留</string>
+	<string name="strResvname58">58.保留</string>
+	<string name="strResvname59">59.保留</string>
+	<string name="strResvname60">60.保留</string>
+	<string name="strResvname61">61.保留</string>
+	<string name="strResvname62">62.保留</string>
+	<string name="strResvname63">63.保留</string>
+	<string name="strResvname64">64.保留</string>
+
+	<!-- H.M.Wang 2020-4-24 修改计数器值修改方式为对话窗 -->
+	<string name="strCounterEditTitle">修改计数器值</string>
+	<string name="strCounterIndex">计数器%1$d:</string>
+	<string name="strCounterClear">清零</string>
+	<!-- End of H.M.Wang 2020-4-24 修改计数器值修改方式为对话窗 -->
+	<!-- H.M.Wang 2020-4-27 重复打印设置改为对话窗 -->
+	<string name="strPrintRepeatEditTitle">修改重复打印</string>
+	<!-- End of H.M.Wang 2020-4-27 重复打印设置改为对话窗 -->
+	<!-- H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+	<string name="strEncoderPPREditTitle">修改编码器脉冲</string>
+	<!-- End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+	<!-- H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理 -->
+	<string name="strQRLastEditTitle">编辑QRLast索引</string>
+	<!-- End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理 -->
+
+	<string name="strBtnSave">确认</string>
+	<string name="strRecvedRemote">接收到远程数据</string>
+	<string name="str_fileicon_des">文件图标</string>
+	<string name="str_file_save"> 确认 </string>
+	<string name="str_file_cancel">取消</string>
+	<string name="str_setting_upgrade">升级</string>
+	<string name="str_month">月</string>
+	<string name="str_year">年</string>
+	<string name="str_date">日</string>
+	<string name="str_hour">时</string>
+	<string name="str_minute">分</string>
+	<string name="str_format">24小时制</string>
+	<string name="str_format_24">是</string>
+	<string name="str_format_12">否</string>
+	<string name="cor_unit">像素</string>
+	<string name="font_unit">mm</string>
+	<string name="dot_unit">Dots</string>
+	<string name="str_trans">==></string>
+	<string name="str_column_index">序号</string>
+	<string name="str_column_pic1">图1</string>
+	<string name="str_column_pic2">图2</string>
+	<string name="str_column_pic3">图3</string>
+	<string name="str_column_pic4">图4</string>
+	<string name="str_column_text1">文本1</string>
+	<string name="str_column_text2">文本2</string>
+	<string name="str_column_text3">文本3</string>
+	<string name="str_column_text4">文本4</string>
+	<string name="str_column_text5">文本5</string>
+	<string name="str_column_text6">文本6</string>
+	<string name="str_column_text7">文本7</string>
+	<string name="str_column_text8">文本8</string>
+	<string name="str_column_text9">文本9</string>
+	<string name="str_column_text10">文本10</string>
+	<string name="str_column_text11">文本11</string>
+	<string name="str_column_text12">文本12</string>
+	<string name="str_column_text13">文本13</string>
+	<string name="str_column_text14">文本14</string>
+	<string name="str_column_text15">文本15</string>
+	<string name="str_column_text16">文本16</string>
+	<string name="str_notlkfile">请先选择一个正确的TLK文件</string>
+	<string name="str_tlk_already_exist">该条信息已经存在</string>
+	<string name="str_createfile_failure">创建信息失败</string>
+	<string name="str_no_print_target">请选择一个打印目标</string>
+	<string name="str_radioLocal">本地</string>
+	<string name="str_radioUsb">USB</string>
+	<string name="str_radioUsb1">USB1</string>
+	<string name="str_radioUsb2">USB2</string>	
+	<string name="str_radioSdcard">SDCard</string>
+	<string name="str_title_infodialog">对象信息编辑</string>
+	<string name="str_fileopt_del">删除</string>
+	<string name="str_fileopt_cancel">取消</string>
+	<string name="str_search">搜索</string>
+	
+<!-- 树莓派3 打印界面相关 -->	
+<!-- H.M.Wang 2020-8-11 修改信息，缩短长度 -->
+<!--    <string name="str_msg_name">信息名称: </string>-->
+    <string name="str_msg_name">信息: </string>
+<!-- End of H.M.Wang 2020-8-11 修改信息，缩短长度 -->
+	<!--
+	<string name="str_state_inklevel">墨水量:  %1$d%%</string>
+	-->
+	<string name="str_state_inklevel">墨水量:</string>
+	<string name="str_invalid_ink">--</string>
+	<string name="str_state_battery">电量:%1$d</string>
+	<string name="str_hint_preview">信息预览</string>
+	<string name="str_print_count">计数: </string>
+	<string name="str_print_count_default">0</string>
+	<string name="str_print_printing">打印任务运行中...</string>
+	<string name="str_print_startok">打印任务已启动...</string>
+	<string name="str_print_stopok">打印任务已停止</string>
+	<string name="str_toast_emptycontent">打印对象内容不能为空!!!</string>
+	<string name="str_toast_no_message">请先选择一个打印对象!!!</string>
+	<string name="str_toast_no_ink">墨水量低</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">墨盒异常!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_no_bin">没有可供打印的bin文件</string>
+	<string name="str_message_no_content">无法生成预览</string>
+	<string name="str_page_forward">前翻</string>
+	<string name="str_page_backward">后翻</string>
+	<string name="str_rfid_initfail_notify">卡初始化失败！</string>
+	<string name="str_state_printing">打印中</string>
+	<string name="str_state_stopped">已停止</string>
+	
+<!-- 树莓派3 设置界面相关 -->
+	<string name="str_textview_param1">01.速度</string>
+	<string name="str_textview_param2">02.打印方向</string>
+	<string name="str_textview_param3">03.打印密度</string> 
+	<string name="str_textview_param4">04.打印延时</string>
+	<string name="str_textview_param5">05.光电选择</string>
+	<string name="str_textview_param6">06.同步器</string>
+	<string name="str_textview_param7">07.重复打印</string>
+	<string name="str_textview_param8">08.喷嘴选择</string>
+	<string name="str_textview_param9">09.滚轮直径</string>
+	<string name="str_textview_param10">10.编码器脉冲</string>
+	<string name="str_textview_param11">11.1 头偏移</string>
+	<string name="str_textview_param12">12.2 头偏移</string>
+	<string name="str_textview_param13">13.1 头镜像</string>
+	<string name="str_textview_param14">14.2 头镜像</string>
+	<string name="str_textview_param15">15.1 头倒置</string>
+	<string name="str_textview_param16">16.2 头倒置</string>
+	<string name="str_textview_param17">17.日期延迟</string>
+
+	// H.M.Wang 修改1行。为计数器清楚前置0
+<!--	<string name="str_textview_param18">18.计数器</string>-->
+	<string name="str_textview_param18">18.计数消零</string>
+
+	<string name="str_textview_param19">19.3 头偏移</string>
+	<string name="str_textview_param20">20.4 头偏移</string>
+	<string name="str_textview_param21">21.3 头镜像</string>
+	<string name="str_textview_param22">22.4 头镜像</string>
+	<string name="str_textview_param23">23.3 头倒置</string>
+	<string name="str_textview_param24">24.4 头倒置</string>
+	<string name="str_textview_param25">25.自动电压</string>
+	<string name="str_textview_param26">26.打印电压</string>
+	<string name="str_textview_param27">27.脉宽读取</string>
+	<string name="str_textview_param28">28.脉宽设定</string>
+	<string name="str_textview_param29">29.防干脉冲</string>
+	<string name="str_textview_param30">30.光电滤波</string>
+	<string name="str_textview_param31">31.喷头类型</string>
+	<string name="str_textview_param32">32.计数重置</string>
+	<string name="str_textview_param33">33.墨点</string>
+	<string name="str_textview_param34">34.PWML</string>
+	<string name="str_textview_param35">35.启动时间</string>
+	<string name="str_textview_param36">36.旋转</string>
+	<string name="str_textview_param37">37.PWMH</string>
+	<string name="str_textview_param38">38.1带多</string>
+	<!-- H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数 -->
+	<!--	<string name="str_textview_param39">39.保留</string> -->
+	<string name="str_textview_param39">39.数据源</string>
+	<!-- End of H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数 -->
+	<string name="str_textview_param40">40.Beep</string>
+	<!-- H.M.Wang 2021-7-23 参数41改为对重复次数(Times)的设置 -->
+	<!-- H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
+	<!--	<string name="str_textview_param41">41.Com Print</string> -->
+	<!--	<string name="str_textview_param41">41.Reserved</string> -->
+	<string name="str_repeat_times">41.重复次数</string>
+	<!-- End of H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
+	<!-- End of H.M.Wang 2021-7-23 参数41改为对重复次数(Times)的设置 -->
+	<string name="str_textview_param42">42.开机打印</string>
+	<string name="str_textview_param43">43.喷头数</string>
+	<string name="str_textview_param44">44.屏保亮度</string>
+	<string name="str_textview_param45">45.计数器0</string>
+	<string name="str_textview_param46">46.计数器1</string>
+	<string name="str_textview_param47">47.计数器2</string>
+	<string name="str_textview_param48">48.计数器3</string>
+	<string name="str_textview_param49">49.计数器4</string>
+	<string name="str_textview_param50">50.计数器5</string>
+	<string name="str_textview_param51">51.计数器6</string>
+	<string name="str_textview_param52">52.计数器7</string>
+	<string name="str_textview_param53">53.计数器8</string>
+	<string name="str_textview_param54">54.计数器9</string>
+	<string name="str_textview_param55">55.QR索引</string>
+	<string name="str_textview_param56">56.打印缓存</string>
+	<string name="str_textview_param57">57.保留</string>
+	<string name="str_textview_param58">58.地址</string>
+	<string name="str_textview_param59">59.保留</string>
+	<string name="str_textview_param60">60.记录</string>
+	<string name="str_textview_param61">61.保留</string>
+	<string name="str_textview_param62">62.保留</string>
+	<string name="str_textview_param63">63.保留</string>
+	<string name="str_textview_param64">64.保留</string>
+	<string name="str_btn_settings_sync">确认</string>
+	<string name="str_time_unit_0_1v">0.1伏</string>
+	<string name="str_length_unit_mm">毫米</string>
+	<string name="str_length_unit_6_1mm">1/6毫米</string>
+	<string name="str_time_unit_ms">毫秒</string>
+	<string name="str_time_unit_mm_s">毫米/秒</string>
+	<string name="str_time_unit_us">微秒</string>
+	<string name="str_time_unit_0_1us">0.1us</string>
+	<string name="str_time_unit_100us">100微秒</string>
+	<string name="str_setting_time">时间设置</string>
+	<string name="str_system_setting">系统设置</string>
+	<string name="str_upgrade_progress">系统升级中....</string>
+	<string name="str_time_format">%1$02d:%2$02d:%3$02d %4$02d:%5$02d:%6$02d</string>
+	<string name="str_toast_ink_unvalid">墨点大小超出范围,设为默认值: 800</string>
+	<string name="str_toast_photoelectricity_delay">光电延时超出范围，设为默认值:100</string>
+	<string name="str_toast_photoelectricity_antishake">光电防抖超出范围，设为默认值:20</string>
+	<string name="str_toast_timingprint">定时打印超出范围，设为默认值:1000</string>
+
+<!-- 树莓派3 编辑界面相关 -->
+	<string name="str_edit_btn_insert">插入</string>
+	<string name="str_edit_btn_temp1">测试1</string>
+	<string name="str_edit_btn_temp2">测试2</string>
+	<string name="str_edit_btn_temp3">测试3</string>
+	<string name="str_edit_btn_temp4">制卡</string>
+	<string name="str_edit_btn_temp5">测试5</string>
+	<string name="str_edit_line1">第一行:</string>
+	<string name="str_edit_line2">第二行:</string>
+	<string name="str_edit_line3">第三行:</string>
+	<string name="str_edit_line4">第四行:</string>
+	<string name="str_notice_save">请输入文件名:</string>
+	<string name="str_notice_no_objects">没有可保存的对象</string>
+	<string name="str_file_title">信息: </string>
+	<string name="str_file_hint">保存编号</string>
+	<string name="str_page_prev">上翻</string>
+	<string name="str_page_next">下翻</string>
+	<string name="str_filename_no">新建</string>
+	<string name="str_btn_back">返回</string>
+	<string name="str_btn_up">上移</string>
+	<string name="str_btn_detail">属性</string>
+	<string name="cursor">光标</string>
+<!-- 树莓派3  -->
+	<string name="str_dialog_msgnote">请选择信息行数: </string>
+	<string name="str_no_upgrade">已经是最新版本</string>
+	<string name="str_cnt_min">起始值</string>
+	<string name="str_cnt_max">结束值</string>
+	<string name="str_cnt_steplen">步长</string>
+	<string name="str_cnt_index">编号</string>
+	<string name="str_loading">正在加载...</string>
+	<string name="str_toast_no_qrfile">沒有找到 QR.txt或QR.csv</string>
+	<string name="str_barcode_end">QR.txt已经打印结束</string>
+	<string name="str_recover_print">recover last print</string>
+	<string name="str_net_devname">设备名称</string>
+	<string name="str_net_ipaddr">IP地址</string>
+	<string name="str_net_stat">在线状态</string>
+	<string name="str_net_number">号码</string>
+	<string name="str_net_counts">计数</string>
+	<string name="str_net_int">墨水</string>
+	<string name="str_net_commands">命令</string>
+	<string name="str_net_back">返回</string>
+	<string name="str_net_one">1</string>
+	<string name="str_net_hundred">100</string>
+	<string name="str_net_thousand">1000</string>
+	<string name="str_net_connect">连接</string>
+	<string name="str_net_tips">提示</string>
+	<string name="str_net_textview">文本</string>
+	<string name="str_tip_nothing">~ 没有找到图片!!!</string>
+	<string name="str_no_permission">权限不足</string>
+	<string name="str_flush_tips">将会覆盖原有系统设置信息，确定?</string>
+	<string name="str_message_tips">信息%s已经存在，是否覆盖?</string>
+	<string name="str_prepared">TLK解析完成!!!</string>
+	<string name="str_prepare_fail">TLK parse failed!!!</string>
+	<string name="password_title">请输入密码</string>
+	
+	<!-- Toast -->
+	<string name="toast_save_success">保存成功</string>
+	<string name="toast_plug_usb">请插入U盘</string>
+	<string name="toast_passwd_error">密码错误!!!</string>
+	<string name="toast_content_empty">内容不能为空</string>
+	<string name="toast_rfid_changed">锁值发生变化</string>
+	<string name="tips_import_message">正在导入信息...</string>
+	<string name="tips_import_resource">正在导入资源文件...</string>
+	<string name="tips_import_sysconf">正在导入系统配置...</string>
+	<string name="tips_import_font">正在导入字库...</string>
+	<string name="tips_export_message">正在导出信息...</string>
+	<string name="tips_export_sysconf">正在导出系统配置...</string>
+	<string name="tips_export_resource">正在导出资源文件...</string>
+	<string name="message_confirm_printnext">确定切换打印信息?</string>
+    <string name="str_time_unit_mm">ms</string>
+    <string name="str_ip_add">IP地址</string>
+	<string name="str_device_number">设备:</string>
+	<string name="str_dialog_surecancel">警告:</string>
+	<string name="str_device_but_sure">确认</string>
+	<string name="str_ip_ed">请设置IP后重试</string>
+	<string name="str_port">端口</string>
+	<string name="str_information">确认执行?</string>
+	<string name="str_net_device_ink">锁值</string>
+	<string name="str_net_error">网络配置错误</string>
+	<string name="str_setting_clean">长清洗</string>
+	<string name="all_print">打印全部</string>
+	<string name="all_purge">清洗全部</string>
+	<string name="all_stop">全部停止</string>
+	<string name="str_F1">F1</string>
+	<string name="str_F2">扫描设备</string>
+	<string name="str_net_query">查询</string>
+	<string name="str_net_device">设备:</string>
+	<string name="str_net_device_times">次数:</string>
+	<string name="str_net_ipdefault">192.168.1.101</string>
+	<string name="str_build_tlk_start">开始构建TLK...</string>
+	<string name="str_build_tlk_ok">TLK构建成功</string>
+	<string name="str_build_tlk_fail">TLK构建失败</string>
+	<string name="str_tlk_opening">解析TLK中...</string>
+	<string name="str_print_thread_create_err">任务创建失败</string>
+	<string name="str_tlk_not_found">1.TLK缺失</string>
+
+	<string name="str_quit">退出</string>
+	<string name="str_quit_confirm">确定要退出吗？</string>
+	<string name="tips_import">导入数据</string>
+
+	<string name="printDpiNotMatchError">打印分辨率不匹配，请重新保存信息后，再次尝试打印</string>
+</resources>

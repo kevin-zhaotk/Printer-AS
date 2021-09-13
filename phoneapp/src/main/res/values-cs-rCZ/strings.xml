@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <string name="app_version">Ver:</string>
+    <string name="system_time">Čas:</string>
+    <string name="app_name">Tiskárna</string>
+    <string name="action_settings">Nastavit</string>
+    <string name="hello_world">Dobrý den!</string>
+	<string name="ControlTab">Ovládání</string>
+	<string name="manualCtrlTab">Man ovládání</string>
+	<string name="Edit">Edit</string>
+	<string name="Settings">Nastavení</string>
+	<string name="str_btn_start">Start</string>
+	<string name="str_btn_stop">Stop</string>
+	<string name="str_btn_clean">Vyčistit</string>
+	<string name="str_btn_open">Otevřít</string>
+	<string name="str_btn_new">Nový</string>
+	<string name="str_btn_save">Uložit</string>
+	<string name="str_btn_saveas">Uložit jako</string>
+	<string name="str_btn_prerecord">Nahoru</string>
+	<string name="str_btn_nextrecord">Dolů</string>
+	<string name="str_btn_send">Odeslat</string>
+	<string name="str_btn_set">Nastavit</string>
+	<string name="str_btn_get">Text</string>
+	<string name="str_btn_print">Tisk</string>
+	<string name="str_btn_finish">Dokončit</string>
+	<string name="str_btn_header1">Pero1</string>
+	<string name="str_btn_header2">Pero2</string>
+	<string name="str_btn_header3">Pero3</string>
+	<string name="str_btn_header4">Pero4</string>
+	<string name="strDate">Datum:</string>
+	<string name="strInklevel">Zbývá </string>
+	<string name="strPhotocellState">Fotobuňka</string>
+	<string name="strEncoderState">Enkodér</string>
+	<string name="strPrintstate">Tisk：</string>
+	<string name="strPrinting">Tisk</string>
+	<string name="strPrintok">Připraven</string>
+	<string name="strOn">Zap</string>
+	<string name="strOff">Vyp</string>
+	<string name="strwaitting">probíhá tisk......</string>
+	<string name="str_csvfile">Csv</string>
+	<string name="str_tlkfile">Tlk</string>
+	<string name="str_binfile">Otevřít</string>
+	<string name="str_openfile">Otevřít...</string>
+	<string name="str_mvforward">Vpřed</string>
+	<string name="str_mvbackward">Zpět</string>
+	<string name="str_preview">Náhled</string>
+	
+	<string name="str_del">Smazat</string>
+	<string name="str_multi_select">Group</string>
+	<string name="str_btn_shift">Směna</string>
+	<string name="str_btn_second">Sekunda</string>
+	
+	<string name="str_btn_upgrade">Upgrade</string>
+	<string name="str_btn_setDate">Nastavit datum</string>
+	<string name="str_btn_setTime">Nastavit čas</string>
+	<string name="str_btn_image">Logo</string>
+	
+	<string name="str_goto">přejít na</string>
+	<!-- object info table -->
+	<string name="strWidth">Šířka</string>
+	<string name="strHigh">Výška</string>
+	<string name="strXcor">X-kor</string>
+	<string name="strYcor">Y-kor</string>
+	<string name="strCnt">Obsah</string>
+	<string name="strDefault">0</string>
+	<string name="txtDefault">text</string>
+	<string name="strDragable">Lze přetáhnout</string>
+	<string name="strShow">Zobrazit</string>
+	<string name="strFont">Písmo</string>
+	<string name="strLinewidth">Šířka řádku</string>
+	<string name="strBits">Číslice</string>
+	<string name="strImage">Obraz</string>
+	<string name="strDirect">Směr</string>
+	<string name="strShift1">Směna1</string>
+	<string name="strShift2">Směna2</string>
+	<string name="strShift3">Směna3</string>
+	<string name="strShift4">Směna4</string>
+	<string name="strShift5">Směna5</string>
+	<string name="strInfoname">Objekt</string>
+	<string name="strHeadType">Typ pera</string>
+	<string name="strHeadResolution">HD</string>
+	<string name="strUpgradeConfirm">Upgradovat?</string>
+	<string name="strUpgradeNoApk">Soubor upgradu chybí!!!</string>
+	<string name="strSaving">ukládám, prosím, čekejte...</string>
+	<string name="strLoading">nahrávám, prosím, čekejte...</string>
+	<string name="strInsertSerial">Prosím, připojte zařízení...</string>
+	<string name="strReinsertSerial">Chyba, prosím, připojte zařízení znovu</string>
+
+	
+
+	<string name="strCode">Code Type</string>
+	
+
+	<string name="strLinetype">Typ čáry</string>
+	<string name="str_ok">OK</string>
+	<string name="strNativeBtn">Zrušit</string>
+	<string name="strRtFmt">Formát</string>
+	<string name="strOffset">Offset</string>
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">Frame</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
+	<!-- object list -->
+	<string name="objectListName">Zobrazit seznam</string>
+	<string name="objectInfoName">Zobrazit TEXT</string>
+	<string name="object_Msg">TEXT</string>
+	<string name="object_text">Text</string>
+	<string name="object_realtime">Datum</string>
+	<string name="object_counter">Počitadlo</string>
+	<string name="object_bar">Čárový kód</string>
+	<string name="object_pic">Grafika</string>
+	<string name="object_julian">Juliánský</string>
+	<string name="object_line">Řádek</string>
+	<string name="object_rect">Pravoúh</string>
+	<string name="object_ellipse">Elipsa</string>
+	<string name="object_shift">Směna</string>
+	<string name="object_second">Sekunda</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">Hypertext</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_msg_name">Předmět</string>
+	<!-- Settings frame -->
+	<string name="strParam0">00.Vyhrazeno</string>
+	<string name="strPrSpeedname">01.Rychlost</string>
+	<string name="strDelay_key">klávesa_zpoždění</string>
+	<string name="strDelayname">02.Zpoždění</string>
+	<string name="strDelay_summary">Nastavit zpoždění</string>
+	<string name="strParam3">03.Vyhrazeno</string>
+	<string name="strTrigger_key">klávesa_spuštění</string>
+	<string name="strTriggername">04.Spoušť</string>
+	<string name="strTrigger_summary">Režim spuštění</string>
+	<string name="strDirection_key">klávesa_směru</string>
+	<string name="strSyncname">05.Enkodér</string>
+	<string name="strDirectionname">05.Synch</string>
+	<string name="strBold">06.Tučně</string>
+	<string name="strFixlen">07.Délka</string>
+	<string name="strFixtime">08.Oprava času</string>
+	<string name="strHeadTemp">09.Teplota hlavy</string>
+	<string name="strResvTemp">10.Teplota zásobníku</string>
+	<string name="strfontwidth">11.Šířka fontu</string>
+	<string name="strDotname">12.Velikost bodu</string>
+	<string name="strDirection_summary">Vyberte směr</string>
+	<string name="strEncoder_key">enkodér</string>
+	<string name="strEncodername">03.Enkodér</string>
+	<string name="strEncoder_summary">Nastavit režim enkodéru</string>
+	<string name="strHoriRes_key">klávesa_hor.rozl.</string>
+	<string name="strHoriResname">04.Hori</string>
+	<string name="strHoriRes_summary">Nastavení hor. rozl.</string>
+	<string name="strVertRes_key">klávesa_vert. rozl.</string>
+	<string name="strVertResname">05.Vert</string>
+	<string name="strVertRes_summary">Nastavení vert. rozl.</string>
+	<string name="strTimeunit">ms</string>
+	<string name="strResunit">dpi</string>
+	<string name="strLenunit">0,1mmm</string>
+	<string name="strTempunit">C</string>
+	<string name="strPrSpeedUnit">HZ</string>
+	<string name="strResvname8">08.Vyhrazeno</string>
+	<string name="strResvname9">09.Vyhrazeno</string>
+	<string name="strResvname10">10.Vyhrazeno</string>
+	<string name="strResvname11">11.Vyhrazeno</string>
+	<string name="strResvname12">12.Vyhrazeno</string>
+	<string name="strResvname13">13.Vyhrazeno</string>
+	<string name="strResvname14">14.Vyhrazeno</string>
+	<string name="strResvname15">15.Vyhrazeno</string>
+	<string name="strResvname16">16.Vyhrazeno</string>
+	<string name="strResvname17">17.Vyhrazeno</string>
+	<string name="strResvname18">18.Vyhrazeno</string>
+	<string name="strResvname19">19.Vyhrazeno</string>
+	<string name="strResvname20">20.Vyhrazeno</string>
+	<string name="strResvname21">21.Vyhrazeno</string>
+	<string name="strResvname22">22.Vyhrazeno</string>
+	<string name="strResvname23">23.Vyhrazeno</string>
+	<string name="strResvname24">24.Vyhrazeno</string>
+	<string name="strResvname25">25.Vyhrazeno</string>
+	<string name="strResvname26">26.Vyhrazeno</string>
+	<string name="strResvname27">27.Vyhrazeno</string>
+	<string name="strResvname28">28.Vyhrazeno</string>
+	<string name="strResvname29">29.Vyhrazeno</string>
+	<string name="strResvname30">30.Vyhrazeno</string>
+	<string name="strResvname31">31.Vyhrazeno</string>
+	<string name="strResvname32">32.Vyhrazeno</string>
+	<string name="strResvname33">33.Vyhrazeno</string>
+	<string name="strResvname34">34.Vyhrazeno</string>
+	<string name="strResvname35">35.Vyhrazeno</string>
+	<string name="strResvname36">36.Vyhrazeno</string>
+	<string name="strResvname37">37.Vyhrazeno</string>
+	<string name="strResvname38">38.Jeden pro všechny</string>
+	<string name="strResvname39">39.Vyhrazeno</string>
+	<string name="strResvname40">40.Vyhrazeno</string>
+	<string name="strResvname41">41.Vyhrazeno</string>
+	<string name="strResvname42">42.Vyhrazeno</string>
+	<string name="strResvname43">43.Vyhrazeno</string>
+	<string name="strResvname44">44.Vyhrazeno</string>
+	<string name="strResvname45">45.Vyhrazeno</string>
+	<string name="strResvname46">46.Vyhrazeno</string>
+	<string name="strResvname47">47.Vyhrazeno</string>
+	<string name="strResvname48">48.Vyhrazeno</string>
+	<string name="strResvname49">49.Vyhrazeno</string>
+	<string name="strResvname50">50.Vyhrazeno</string>
+	<string name="strResvname51">51.Vyhrazeno</string>
+	<string name="strResvname52">52.Vyhrazeno</string>
+	<string name="strResvname53">53.Vyhrazeno</string>
+	<string name="strResvname54">54.Vyhrazeno</string>
+	<string name="strResvname55">55.Vyhrazeno</string>
+	<string name="strResvname56">56.Vyhrazeno</string>
+	<string name="strResvname57">57.Vyhrazeno</string>
+	<string name="strResvname58">58.Vyhrazeno</string>
+	<string name="strResvname59">59.Vyhrazeno</string>
+	<string name="strResvname60">60.Vyhrazeno</string>
+	<string name="strResvname61">61.Vyhrazeno</string>
+	<string name="strResvname62">62.Vyhrazeno</string>
+	<string name="strResvname63">63.Vyhrazeno</string>
+	<string name="strResvname64">64.Vyhrazeno</string>
+
+	<string name="strBtnSave">Ok</string>
+
+	
+	<string name="str_fileicon_des">ikona souboru</string>
+	<string name="str_file_save"> Ok </string>
+	<string name="str_file_cancel">Zrušit</string>
+	<string name="str_setting_upgrade">Vylepšit</string>
+	
+	<string name="str_month">Měsíc</string>
+	<string name="str_year">Rok</string>
+	<string name="str_date">Datum</string>
+	<string name="str_hour">Hodina</string>
+	<string name="str_minute">Minuta</string>
+	<string name="str_format">24-hod.formát</string>
+	<string name="str_format_24">Ano</string>
+	<string name="str_format_12">Ne</string>
+	<string name="cor_unit">dp</string>
+	<string name="font_unit">mm</string>
+	<string name="dot_unit">Dots</string>
+
+	<string name="str_trans">doprava</string>
+	
+	<string name="str_column_index">index</string>
+	<string name="str_column_pic1">obr1</string>
+	<string name="str_column_pic2">obr2</string>
+	<string name="str_column_pic3">obr3</string>
+	<string name="str_column_pic4">obr4</string>
+	<string name="str_column_text1">text1</string>
+	<string name="str_column_text2">text2</string>
+	<string name="str_column_text3">text3</string>
+	<string name="str_column_text4">text4</string>
+	<string name="str_column_text5">text5</string>
+	<string name="str_column_text6">text6</string>
+	<string name="str_column_text7">text7</string>
+	<string name="str_column_text8">text8</string>
+	<string name="str_column_text9">text9</string>
+	<string name="str_column_text10">text10</string>
+	<string name="str_column_text11">text11</string>
+	<string name="str_column_text12">text12</string>
+	<string name="str_column_text13">text13</string>
+	<string name="str_column_text14">text14</string>
+	<string name="str_column_text15">text15</string>
+	<string name="str_column_text16">text16</string>
+	<string name="str_notlkfile">Prosím, vyberte TLK soubor</string>
+	<string name="str_tlk_already_exist">Tlk soubor již existuje!!!</string>
+	<string name="str_createfile_failure">Chyba při vytváření</string>
+	<string name="str_no_print_target">Prosím, vyberte cíl</string>
+	
+	<string name="str_radioLocal">Místní</string>
+	<string name="str_radioUsb">USB</string>
+	<string name="str_radioUsb1">USB1</string>
+	<string name="str_radioUsb2">USB2</string>
+	<string name="str_radioSdcard">SDkarta</string>
+	
+	<string name="str_title_infodialog">Info o objektu</string>
+	
+	<string name="str_search">Vyhledat</string>
+
+<!-- 树莓派3 打印界面相关 -->	
+	<string name="str_msg_name">ZPR:</string>
+	<!-- 
+	<string name="str_state_inklevel">INK:  %1$d%%</string>
+	-->
+	<string name="str_state_inklevel">INK:</string>
+	<string name="str_invalid_ink">--</string>
+	<string name="str_state_battery">Napájení:%1$d</string>
+	<string name="str_hint_preview">náhled zprávy</string>
+	<string name="str_print_count">Záznamy: </string>
+	<string name="str_print_count_default">0</string>
+	<string name="str_print_printing">Tisková úloha již probíhá...</string>
+	<string name="str_print_startok">spuštění tiskové úlohy proběhlo úspěšně...</string>
+	<string name="str_print_stopok">zastavení tiskové úlohy proběhlo úspěšně...</string>
+	<string name="str_toast_no_bin">Bin soubor nenalezen !!!</string>
+	<string name="str_toast_emptycontent">Zvolená zpráva je prázdná!!!</string>
+	<string name="str_toast_no_message">Nejprve, prosím, vyberte soubor se zprávou!!!</string>
+	<string name="str_toast_no_ink">Nízká hladina inkoustu!!!</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">Ink Error!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_rfid_initfail_notify">Chyba iniclaizace RFID！</string>
+	<string name="str_page_forward"> 《 </string>
+	<string name="str_page_backward"> 》 </string>
+	<string name="str_message_no_content">náhled nelze vytvořit</string>
+	<string name="str_state_printing">Tisk</string>
+	<string name="str_state_stopped">Připraveno</string>
+	
+<!-- 树莓派3 设置界面相关 -->
+	
+	<string name="str_textview_param1">01. Rychlost</string>
+	<string name="str_textview_param2">02. Směr</string>
+	<string name="str_textview_param3">03. Rozlišení</string> 
+	<string name="str_textview_param4">04. Zpoždění</string>
+	<string name="str_textview_param5">05. Fotobuňka</string>
+	<string name="str_textview_param6">06. Enkodér</string>
+	<string name="str_textview_param7">07. Opakovat tisk</string>
+	<string name="str_textview_param8">08. Výýběr trysky</string>
+	<string name="str_textview_param9">09. Průměr kola</string>
+	<string name="str_textview_param10">10. Enkodér PPR</string>
+	<string name="str_textview_param11">11.Pero1 offset</string>
+	<string name="str_textview_param12">12.Pero2 offset</string>
+	<string name="str_textview_param13">13.Pero1 Zrcadlově</string>
+	<string name="str_textview_param14">14.Pero2 Zrcadlově</string>
+	<string name="str_textview_param15">15.Pero1 Invertovat</string>
+	<string name="str_textview_param16">16.Pero2 Invertovat</string>
+	<string name="str_textview_param17">17.Datum zpoždění</string>
+	<string name="str_textview_param18">18.Počitadlo</string>
+	<string name="str_textview_param19">19.Pero3 offset</string>
+	<string name="str_textview_param20">20.Pero4 offset</string>
+	<string name="str_textview_param21">21.Pero3 Zrcadlově</string>
+	<string name="str_textview_param22">22.Pero4 Zrcadlově</string>
+	<string name="str_textview_param23">23.Pero3 Invertovat</string>
+	<string name="str_textview_param24">24.Pen4 Invertovat</string>
+	<string name="str_textview_param25">25.Auto Napětí</string>
+	<string name="str_textview_param26">26.Napětí Nastavit</string>
+	<string name="str_textview_param27">27.Auto Impulz</string>
+	<string name="str_textview_param28">28.Impulz Nastavit</string>
+	<string name="str_textview_param29">29.Udržovat vlhké</string>
+	<string name="str_textview_param30">30.Fot Filtr</string>
+	<string name="str_textview_param31">31.Vyhrazeno</string>
+	<string name="str_textview_param32">32.Vyhrazeno</string>
+	<string name="str_textview_param33">33.Vyhrazeno</string>
+	<string name="str_textview_param34">34.Vyhrazeno</string>
+	<string name="str_textview_param35">35.Vyhrazeno</string>
+	<string name="str_textview_param36">36.Vyhrazeno</string>
+	<string name="str_textview_param37">37.Vyhrazeno</string>
+	<string name="str_textview_param38">38.Jeden pro všechny</string>
+	<!-- H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数 -->
+	<!-- <string name="str_textview_param39">39.Vyhrazeno</string> -->
+	<string name="str_textview_param39">39.Data Source</string>
+	<!-- End of H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数 -->
+	<string name="str_textview_param40">40.Beep</string>
+	<!-- H.M.Wang 2021-7-23 参数41改为对重复次数(Times)的设置 -->
+	<!-- H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
+	<!--	<string name="str_textview_param41">41.Com Print</string> -->
+	<!--	<string name="str_textview_param41">41.Reserved</string> -->
+	<string name="str_repeat_times">41.Times</string>
+	<!-- End of H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
+	<!-- End of H.M.Wang 2021-7-23 参数41改为对重复次数(Times)的设置 -->
+	<string name="str_textview_param42">42.Vyhrazeno</string>
+	<string name="str_textview_param43">43.Pens</string>
+	<string name="str_textview_param44">"44.Brightness "</string>
+	<string name="str_textview_param45">45.Počitadlo0</string>
+	<string name="str_textview_param46">46.Počitadlo1</string>
+	<string name="str_textview_param47">47.Počitadlo2</string>
+	<string name="str_textview_param48">48.Počitadlo3</string>
+	<string name="str_textview_param49">49.Počitadlo4</string>
+	<string name="str_textview_param50">50.Počitadlo5</string>
+	<string name="str_textview_param51">51.Počitadlo6</string>
+	<string name="str_textview_param52">52.Počitadlo7</string>
+	<string name="str_textview_param53">53.Počitadlo8</string>
+	<string name="str_textview_param54">54.Počitadlo9</string>
+	<string name="str_textview_param55">55.Vyhrazeno</string>
+	<string name="str_textview_param56">56.FIFO</string>
+	<string name="str_textview_param57">57.Vyhrazeno</string>
+	<string name="str_textview_param58">58.IP</string>
+	<string name="str_textview_param59">59.Vyhrazeno</string>
+	<string name="str_textview_param60">60.Log</string>
+	<string name="str_textview_param61">61.Vyhrazeno</string>
+	<string name="str_textview_param62">62.Vyhrazeno</string>
+	<string name="str_textview_param63">63.Vyhrazeno</string>
+	<string name="str_textview_param64">64.Vyhrazeno</string>
+	<string name="str_btn_settings_sync">Ok</string>
+
+	
+
+	
+
+	
+	<string name="str_time_unit_0_1v">0,1V</string>
+	<string name="str_length_unit_mm">mm</string>
+	<string name="str_time_unit_mm">ms</string>
+	<string name="str_time_unit_ms">ms</string>
+	<string name="str_time_unit_mm_s">mm/s</string>
+	<string name="str_time_unit_0_1us">0,1us</string>
+	<string name="str_time_unit_us">us</string>
+	<string name="str_time_unit_100us">100us</string>
+	<string name="str_setting_time">Clock</string>
+	<string name="str_system_setting">Nastavení</string>
+	<string name="str_upgrade_progress">upgrade systému....</string>
+	<string name="str_time_format">%1$04d-%2$02d-%3$02d %4$02d:%5$02d:%6$02d</string>
+	<string name="str_toast_ink_unvalid">ˇuroveň velikosti bodu inkoustu nastavena na výchozí hodnotu：800</string>
+	<string name="str_toast_photoelectricity_delay">Horní hodnota zpoždění fotobuňky nastavena na výchozí hodnotu:100</string>
+	<string name="str_toast_photoelectricity_antishake">Hodnota ochrany fotobuňky proti otřesu nastavena na výchozí hodnotu:20</string>
+	<string name="str_toast_timingprint">Načasování výtisku nastaveno na výchozí hodnotu:1000</string>
+	
+<!-- 树莓派3 编辑界面相关 -->
+	<string name="str_edit_btn_insert">Vložit</string>
+	<string name="str_edit_btn_temp1">Tepl1</string>
+	<string name="str_edit_btn_temp2">Tepl2</string>
+	<string name="str_edit_btn_temp3">Tepl3</string>
+	<string name="str_edit_btn_temp4">Tepl4</string>
+	<string name="str_edit_btn_temp5">Tepl5</string>
+	
+	<string name="str_edit_line1">1. řádek:</string>
+	<string name="str_edit_line2">2. řádek:</string>
+	<string name="str_edit_line3">3. řádek:</string>
+	<string name="str_edit_line4">4. řádek:</string>
+	
+	<string name="str_notice_save">prosím, zadejte název zprávy:</string>
+	<string name="str_notice_no_objects">Chybí úkládaný objekt!</string>
+	<string name="str_file_title">Zpráva：</string>
+	<string name="str_file_hint">název souboru</string>
+	<string name="str_page_prev">PageUp</string>
+	<string name="str_page_next">PageDown</string>
+	<string name="str_filename_no">Nový</string>
+	<string name="str_btn_back">Zpět</string>
+	<string name="str_btn_up">Nahoru</string>
+	<string name="str_btn_detail">Nastavit</string>
+	<string name="cursor">Kurzor</string>
+<!-- 树莓派3  -->
+	<string name="str_dialog_msgnote">请选择信息行数：</string>
+	
+	<string name="str_no_upgrade">Již máte nejnovější verzi</string>
+	
+	<string name="str_cnt_min">Start</string>
+	<string name="str_cnt_max">Konec</string>
+	<string name="str_cnt_index">CID</string>
+	<string name="str_cnt_steplen">Step-Len</string>
+	<string name="str_btn_saveprint">Uložit-Tiskněte</string>
+	<string name="str_remain_ink">Inkoust</string>
+	<string name="str_remain_ptimes">Celkový</string>
+	<string name="str_btn_cancel">Zrušení</string>
+	<string name="str_ip_add">IP</string>
+	<string name="str_device_number">Přístroj:</string>
+	<string name="str_dialog_surecancel">Varování:</string>
+	<string name="str_device_but_sure">Tak určitě</string>
+	<string name="str_ip_ed">" Nastavte IP a zkuste to znovu"</string>
+	<string name="str_port">Přístav</string>
+	<string name="str_information">Chcete spustit?</string>
+	<string name="str_net_device_ink">Inkoust</string>
+	<string name="strHightype">Stride</string>
+	<string name="strReverse">Zvrátit</string>
+	<string name="strFontsize">Velikost písma</string>
+	<string name="strCopying">Kopírování, prosím, počkejte</string>
+	<string name="str_net_error">Chyba síťové komunikace</string>
+	<string name="object_qr">QRkód</string>
+	<string name="object_dynamic_qr">DynamickýQR</string>
+<!-- H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+	<string name="object_dynamic_barcode">DynamickýČárový kód</string>
+<!-- End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+	<string name="str_setting_clean">čistý</string>
+	<string name="str_fileopt_del">vymazat</string>
+	<string name="str_fileopt_cancel">zrušení</string>
+	<string name="str_loading">načítání...</string>
+	<string name="str_toast_no_qrfile">Ne QR.txt Nebo QR.csv</string>
+	<string name="str_barcode_end">" konec souboru"</string>
+	<string name="str_recover_print">obnovit poslední tisk</string>
+	<string name="str_net_devname">přístroj</string>
+	<string name="str_net_ipaddr">IP</string>
+	<string name="str_net_stat">Stát</string>
+	<string name="all_print">vytisknout vše</string>
+	<string name="str_F1">F1</string>
+	<string name="str_F2">Skenovací zařízení</string>
+	<string name="str_net_back">Návrat</string>
+	<string name="str_net_query">dotaz</string>
+	<string name="str_net_device">přístroj:</string>
+	<string name="all_purge">očistit vše</string>
+	<string name="all_stop">zastavení vše</string>
+	<string name="str_net_device_times">časy:</string>
+	<string name="str_net_one">1</string>
+	<string name="str_net_hundred">100</string>
+	<string name="str_net_thousand">1000</string>
+	<string name="str_net_connect">Připojení</string>
+	<string name="str_net_tips">Prompt</string>
+	<string name="str_net_textview">TextView</string>
+	<string name="str_net_ipdefault">192.168.1.101</string>
+	<string name="str_tip_nothing">~Nebyl nalezen žádný obrázek</string>
+	<string name="str_no_permission">" Žádné povolení"</string>
+	<string name="str_message_tips">Informace%s již existuje, přepsáno?</string>
+	<string name="str_flush_tips">Přepsat původní informace o nastavení systému?</string>
+	<string name="str_build_tlk_start">Začněte budovat TLK...</string>
+	<string name="str_prepared">TLK Parsování dokončeno</string>
+	<string name="str_prepare_fail">TLK Chyba parsování</string>
+	<string name="str_tlk_opening">TLK Při analýze...</string>
+	<string name="str_build_tlk_ok">TLK Úspěšná výstavba</string>
+	<string name="str_build_tlk_fail">TLK Selhání konstrukce</string>
+	<string name="str_print_thread_create_err">Vytvoření úlohy se nezdařilo</string>
+	<string name="str_tlk_not_found">1.TLK Nenalezeno</string>
+	<string name="password_title">Zadejte své heslo</string>
+	<string name="toast_save_success">" Úspěšně uloženo"</string>
+	<string name="toast_plug_usb">" Vložte USB flash disk"</string>
+	<string name="toast_passwd_error">Heslo je špatné!</string>
+	<string name="toast_content_empty">Obsah nesmí být prázdný</string>
+	<string name="tips_import_message">Importování informací</string>
+	<string name="tips_import_resource">Soubor zdroje je importován...</string>
+	<string name="tips_import_sysconf">Import konfigurace systému ...</string>
+	<string name="tips_import_font">Import písem ...</string>
+	<string name="tips_export_message">Export informací ...</string>
+	<string name="tips_export_sysconf">Exportovat konfiguraci systému ...</string>
+	<string name="tips_export_resource">Export souboru zdrojů ...</string>
+	<string name="message_confirm_printnext">Jste si jisti, že chcete změnit informace o tisku?</string>
+	<string name="str_net_number">Číslo</string>
+	<string name="str_net_counts">Počítat</string>
+	<string name="str_net_int">Inkoust</string>
+	<string name="str_net_commands">Příkaz</string>
+	<string name="toast_rfid_changed">Změna hodnoty inkoustu</string>
+    <string name="strBarsource">zdroj</string>
+	<string name="object_weekofyear">týden</string>
+	<string name="object_weekday">týden</string>
+</resources>

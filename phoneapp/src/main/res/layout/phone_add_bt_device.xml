@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="@color/white" >
+
+    <ImageView
+        android:id="@+id/Close"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/close" />
+
+    <ScrollView
+        android:id="@+id/idFoundDevicesSV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/Close"
+        android:layout_above="@+id/idCmdArea"
+        android:padding="10dp" >
+        <LinearLayout
+            android:id="@+id/idDevicesList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/idCmdArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+        <TextView
+            android:id="@+id/idDiscovery"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:text="Search"
+            android:textColor="@color/white"
+            android:background="@drawable/phone_cmds_bg" />
+        <TextView
+            android:id="@+id/idAdd"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:text="Add"
+            android:textColor="@color/white"
+            android:background="@drawable/phone_cmds_bg" />
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/idDiscovering"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.Holo.ProgressBar.Large"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+</RelativeLayout>

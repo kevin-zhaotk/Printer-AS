@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!-- En 20170322 -->
+
+    <string name="app_version">Версия:</string>
+    <string name="system_time">Время:</string>
+    <string name="app_name">Принтер</string>
+    <string name="action_settings">Набор</string>
+    <string name="hello_world">Привет!!!</string>
+	<string name="ControlTab">Контроль</string>
+	<string name="manualCtrlTab">Управление</string>
+	<string name="Edit">Редактирование</string>
+	<string name="Settings">Параметры</string>
+	<string name="str_btn_start">СТАРТ</string>
+	<string name="str_btn_stop">СТОП</string>
+	<string name="str_btn_clean">Чистка</string>
+<!-- H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
+	<string name="str_purge_confirm">Подтвердить очистку</string>
+	<string name="str_clean_confirm">Очистка займет 5 минут, продолжить</string>
+	<string name="str_under_purging">Прочистка, попробуйте позже</string>
+<!-- End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
+	<string name="str_btn_open">Открыть</string>
+	<string name="str_remain_ink">Чернила</string>
+	<string name="str_remain_ptimes">Печать: </string>
+	<string name="str_btn_new">Новый</string>
+	<string name="str_btn_save">Сохр</string>
+	<string name="str_btn_saveprint">Сохр+Печ</string>
+	<string name="str_btn_cancel">Отмена</string>
+	<string name="str_ip_add">IP адресс</string>
+	<string name="str_device_number">Уст-во:</string>
+	<string name="str_dialog_surecancel">Предупреждение:</string>
+	<string name="str_device_but_sure">Уверен</string>
+	<string name="str_ip_ed">Пожалуйста, установите IP-адрес и повторите попытку</string>
+	<string name="str_print_documents"></string>
+	<string name="str_port">Порт</string>
+	<string name="str_information">Вы хотите удалить?</string>
+	<string name="str_btn_saveas">Сохр как</string>
+	<string name="str_btn_prerecord">Вверх</string>
+	<string name="str_btn_nextrecord">Вниз</string>
+	<string name="str_btn_send">Отправ</string>
+	<string name="str_btn_set">Набор</string>
+	<string name="str_btn_get">Текст</string>
+	<string name="str_btn_print">Печать</string>
+	<string name="str_btn_finish">Стоп</string>
+	<string name="str_btn_header1">Печать1</string>
+	<string name="str_btn_header2">Печать2</string>
+	<string name="str_btn_header3">Печать3</string>
+	<string name="str_btn_header4">Печать4</string>
+	<string name="strDate">Дата:</string>
+	<string name="strInklevel">Оставаться: </string>
+	<string name="strPhotocellState">Датчик</string>
+	<string name="strEncoderState">Энкодер</string>
+	<string name="strPrintstate">Печатать：</string>
+	<string name="strPrinting">Печатать</string>
+	<string name="strPrintok">Готов</string>
+	<string name="strOn">ВКЛ</string>
+	<string name="strOff">ВЫКЛ</string>
+	<string name="strwaitting">Печать......</string>
+	<string name="str_csvfile">CSV</string>
+	<string name="str_tlkfile">TLK</string>
+	<string name="str_binfile">Открыть</string>
+	<string name="str_openfile">Откр...</string>
+	<string name="str_mvforward">Вперед</string>
+	<string name="str_mvbackward">Назад</string>
+	<string name="str_preview">Просмотр</string>
+	
+	<string name="str_del">Удалить</string>
+	<string name="str_multi_select">Группа</string>
+	<string name="str_btn_shift">Смена</string>
+	<string name="str_btn_second">Второй</string>
+
+	<string name="str_btn_upgrade">Обновить</string>
+	<string name="str_btn_setDate">Уст. дата</string>
+	<string name="str_btn_setTime">Уст. время</string>
+	<string name="str_btn_image">ЛОГО</string>
+	<string name="str_net_device_ink">Чернила</string>
+	<string name="str_goto">Путь</string>
+	<!-- object info table -->
+	<string name="strWidth">Ширина</string>
+	<string name="strHigh">Размер</string>
+	<string name="strHightype">Шаг</string>
+	<string name="strReverse">Инверс</string>
+	<string name="strXcor">Гориз.</string>
+	<string name="strYcor">Вертик.</string>
+	<string name="strCnt">Содерж.</string>
+	<string name="strDefault">0</string>
+	<string name="txtDefault">текст</string>
+	<string name="strDragable">Перетаскиваемый</string>
+	<string name="strShow">Просмотр</string>
+	<string name="strFontsize">Разм. шрифта</string>
+	<string name="strFont">Шрифт</string>
+	<string name="strLinewidth">Шир. линии</string>
+	<string name="strBits">Цифр.</string>
+	<string name="strImage">Изобр.</string>
+	<string name="strDirect">Направление</string>
+	<string name="strShift1">Сдвиг1</string>
+	<string name="strShift2">Сдвиг2</string>
+	<string name="strShift3">Сдвиг3</string>
+	<string name="strShift4">Сдвиг4</string>
+	<string name="strShift5">Сдвиг5</string>
+	<string name="strInfoname">Объект</string>
+	<string name="strHeadType">Вид Печати</string>
+	<string name="strHeadResolution">HD</string>
+	<string name="strUpgradeConfirm">Обновить?</string>
+	<string name="strUpgradeNoApk">Не обновлять!!!</string>
+	<string name="strSaving">Сохранение, пожалуйста, подождите...</string>
+	<string name="strLoading">Загрузка, пожалуйста, подождите...</string>
+	<string name="strCopying">Копирование, пожалуйста, подождите...</string>
+	<string name="strInsertSerial">Пожалуйста, подключите устройство...</string>
+	<string name="strReinsertSerial">Ошибка, пожалуйста, снова подключите устройство</string>
+	<string name="str_net_error">Ошибка сетевой связи</string>
+<!--
+	<string-array name="strFontFile">
+	    <item>WelldrawH000</item>
+	</string-array>
+-->
+	<string name="strCode">Тип Кода</string>
+	<string name="strBarsource">Данные</string>
+	<string name="strLinetype">Тип </string>
+	<string name="str_ok">OK</string>
+	<string name="strNativeBtn">Отмена</string>
+	<string name="strRtFmt">Формат</string>
+	<string name="strOffset">Смещение</string>
+
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+	<string name="strFrame">Рамка</string>
+<!-- H.M.Wang 2020-2-25 追加追加ITF_14边框有无的设置 -->
+
+	<!-- object list -->
+	<string name="objectListName">Показать Список</string>
+	<string name="objectInfoName">Показать ТЕКСТ</string>
+	<string name="object_Msg">ТЕКСТ</string>
+	<string name="object_text">Текст</string>
+	<string name="object_realtime">Дата</string>
+	<string name="object_counter">Счетчик</string>
+	<string name="object_bar">Штрих-код</string>
+	<string name="object_pic">Графический объект</string>
+	<string name="object_julian">Юлианский</string>
+	<string name="object_line">Направление</string>
+	<string name="object_rect">Прямоугольник</string>
+	<string name="object_ellipse">Эллипс</string>
+	<string name="object_shift">Сдвиг</string>
+	<string name="object_second">Второй</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+	<string name="object_hypertext">Гипертекст</string>
+<!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
+<!-- H.M.Wang 2020-2-27 追加HyperText控件说明信息 -->
+	<string name="object_hypertext_hint1"><u>@Y</u>:Год <u>@M</u>:Месяц <u>@D</u>:День</string>
+	<string name="object_hypertext_hint2"><u>@H</u>:Час <u>@N</u>:Минута <u>@S</u>:Секунда</string>
+	<string name="object_hypertext_hint3"><u>@T</u>:Смена <u>@A</u>:День <u>@W</u>:Неделя</string>
+	<string name="object_hypertext_hint4"><u>@2</u>,<u>@3C</u>,<u>@4CC</u>,<u>@5CCC</u>:Счетчики</string>
+<!-- H.M.Wang 2020-2-27 追加HyperText控件说明信息 -->
+	<string name="object_weekofyear">Неделя</string>
+	<string name="object_weekday">День недели</string>
+	<string name="object_charHour">Час</string>
+	<string name="object_msg_name">Объект</string>
+	<string name="object_qr">QR код</string>
+	<string name="object_dynamic_qr">Динамический QR код</string>
+<!-- H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+	<string name="object_dynamic_barcode">Динамический Штрих-код</string>
+<!-- End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码，追加动态条码文字 -->
+<!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
+	<string name="object_dynamictext">Динамический текст</string>
+	<string name="object_dtindex">Индекс</string>
+<!-- End of H.M.Wang 2020-6-10 追加DynamicText控件 -->
+
+	<!-- Settings frame -->
+	<string name="strParam0">00.Резерв</string>
+	<string name="strPrSpeedname">01.Скорость</string>
+	<string name="strDelay_key">Задержка</string>
+	<string name="strDelayname">02.Задержка</string>
+	<string name="strDelay_summary">Установить задержку</string>
+	<string name="strParam3">03.Резерв</string>
+	<string name="strTrigger_key">Спусковой ключ</string>
+	<string name="strTriggername">04.Триггер</string>
+	<string name="strTrigger_summary">Тип Триггера</string>
+	<string name="strDirection_key">Направление</string>
+	<string name="strSyncname">05.Энкодер</string>
+	<string name="strDirectionname">05.Синхр</string>
+	<string name="strBold">06.Жирн.</string>
+	<string name="strFixlen">07.Длина</string>
+	<string name="strFixtime">08.Изменить время</string>
+	<string name="strHeadTemp">09.Температура головы</string>
+	<string name="strResvTemp">10.Температура коробки</string>
+	<string name="strfontwidth">11.Ширина шрифта</string>
+	<string name="strDotname">12.Размер точки</string>
+	<string name="strDirection_summary">Выберите направление</string>
+	<string name="strEncoder_key">Энкодер</string>
+	<string name="strEncodername">03.Энкодер</string>
+	<string name="strEncoder_summary">Установить режим с энкодером</string>
+	<string name="strHoriRes_key">Горизонтально</string>
+	<string name="strHoriResname">04.Горизонтально</string>
+	<string name="strHoriRes_summary">Установить горизонтальное разрешение</string>
+	<string name="strVertRes_key">Вертикально</string>
+	<string name="strVertResname">05.Вертикально</string>
+	<string name="strVertRes_summary">Установить вертикальное разрешение</string>
+	<string name="strTimeunit">ms</string>
+	<string name="strResunit">dpi</string>
+	<string name="strLenunit">0.1mmm</string>
+	<string name="strTempunit">C</string>
+	<string name="strPrSpeedUnit">HZ</string>
+	<string name="strResvname8">08.Резерв</string>
+	<string name="strResvname9">09.Резерв</string>
+	<string name="strResvname10">10.Резерв</string>
+	<string name="strResvname11">11.Резерв</string>
+	<string name="strResvname12">12.Резерв</string>
+	<string name="strResvname13">13.Резерв</string>
+	<string name="strResvname14">14.Резерв</string>
+	<string name="strResvname15">15.Резерв</string>
+	<string name="strResvname16">16.Резерв</string>
+	<string name="strResvname17">17.Резерв</string>
+	<string name="strResvname18">18.Резерв</string>
+	<string name="strResvname19">19.Резерв</string>
+	<string name="strResvname20">20.Резерв</string>
+	<string name="strResvname21">21.Резерв</string>
+	<string name="strResvname22">22.Резерв</string>
+	<string name="strResvname23">23.Резерв</string>
+	<string name="strResvname24">24.Резерв</string>
+	<string name="strResvname25">25.Резерв</string>
+	<string name="strResvname26">26.Резерв</string>
+	<string name="strResvname27">27.Резерв</string>
+	<string name="strResvname28">28.Резерв</string>
+	<string name="strResvname29">29.Резерв</string>
+	<string name="strResvname30">30.Резерв</string>
+	<string name="strResvname31">31.Резерв</string>
+	<string name="strResvname32">32.Резерв</string>
+	<string name="strResvname33">33.Резерв</string>
+	<string name="strResvname34">34.Резерв</string>
+	<string name="strResvname35">35.Резерв</string>
+	<string name="strResvname36">36.Резерв</string>
+	<string name="strResvname37">37.Резерв</string>
+	<string name="strResvname38">38.Одно для всех</string>
+	<string name="strResvname39">39.Резерв</string>
+	<string name="strResvname40">40.Резерв</string>
+	<string name="strResvname41">41.Резерв</string>
+	<string name="strResvname42">42.Резерв</string>
+	<string name="strResvname43">43.Печать</string>
+	<string name="strResvname44">44.Резерв</string>
+	<string name="strResvname45">45.Резерв</string>
+	<string name="strResvname46">46.Резерв</string>
+	<string name="strResvname47">47.Резерв</string>
+	<string name="strResvname48">48.Резерв</string>
+	<string name="strResvname49">49.Резерв</string>
+	<string name="strResvname50">50.Резерв</string>
+	<string name="strResvname51">51.Резерв</string>
+	<string name="strResvname52">52.Резерв</string>
+	<string name="strResvname53">53.Резерв</string>
+	<string name="strResvname54">54.Резерв</string>
+	<string name="strResvname55">55.Резерв</string>
+	<string name="strResvname56">56.Резерв</string>
+	<string name="strResvname57">57.Резерв</string>
+	<string name="strResvname58">58.Резерв</string>
+	<string name="strResvname59">59.Резерв</string>
+	<string name="strResvname60">60.Резерв</string>
+	<string name="strResvname61">61.Резерв</string>
+	<string name="strResvname62">62.Резерв</string>
+	<string name="strResvname63">63.Резерв</string>
+	<string name="strResvname64">64.Резерв</string>
+
+<!-- H.M.Wang 2020-4-24 修改计数器值修改方式为对话窗 -->
+	<string name="strCounterEditTitle">Изменить Значение Счетчика</string>
+	<string name="strCounterIndex">Счетчик %1$d:</string>
+	<string name="strCounterClear">Очистить</string>
+<!-- End of H.M.Wang 2020-4-24 修改计数器值修改方式为对话窗 -->
+<!-- H.M.Wang 2020-4-27 重复打印设置改为对话窗 -->
+	<string name="strPrintRepeatEditTitle">Повт. печати</string>
+<!-- End of H.M.Wang 2020-4-27 重复打印设置改为对话窗 -->
+	<!-- H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+	<string name="strEncoderPPREditTitle">Имп\об</string>
+	<!-- End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗 -->
+<!-- H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理 -->
+	<string name="strQRLastEditTitle">Изменение индекса QRLast</string>
+<!-- End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理 -->
+
+	<string name="strBtnSave">Ok</string>
+
+	<string name="strRecvedRemote">Получено с дистанционного управления</string>
+
+	<string name="str_fileicon_des">значок файла</string>
+	<string name="str_file_save"> Ok </string>
+	<string name="str_file_cancel">Отмена</string>
+	<string name="str_setting_upgrade">Обновить</string>
+	<string name="str_setting_clean">Очистить</string>
+	
+	<string name="str_month">Месяц</string>
+	<string name="str_year">Год</string>
+	<string name="str_date">День</string>
+	<string name="str_hour">Час</string>
+	<string name="str_minute">Минута</string>
+	<string name="str_format">24-Формат</string>
+	<string name="str_format_24">Да</string>
+	<string name="str_format_12">Нет</string>
+	<string name="cor_unit">Пиксель</string>
+	<string name="font_unit">mm</string>
+	<string name="dot_unit">Количество точек</string>
+
+	<string name="str_trans">Направо</string>
+	
+	<string name="str_column_index">индекс</string>
+	<string name="str_column_pic1">Рис1</string>
+	<string name="str_column_pic2">Рис2</string>
+	<string name="str_column_pic3">Рис3</string>
+	<string name="str_column_pic4">Рис4</string>
+	<string name="str_column_text1">Текст1</string>
+	<string name="str_column_text2">Текст2</string>
+	<string name="str_column_text3">Текст3</string>
+	<string name="str_column_text4">Текст4</string>
+	<string name="str_column_text5">Текст5</string>
+	<string name="str_column_text6">Текст6</string>
+	<string name="str_column_text7">Текст7</string>
+	<string name="str_column_text8">Текст8</string>
+	<string name="str_column_text9">Текст9</string>
+	<string name="str_column_text10">Текст10</string>
+	<string name="str_column_text11">Текст11</string>
+	<string name="str_column_text12">Текст12</string>
+	<string name="str_column_text13">Текст13</string>
+	<string name="str_column_text14">Текст14</string>
+	<string name="str_column_text15">Текст15</string>
+	<string name="str_column_text16">Текст16</string>
+	<string name="str_notlkfile">Пожалуйста, выберите файл TLK</string>
+	<string name="str_tlk_already_exist">Файл Tlk уже существует!!!</string>
+	<string name="str_createfile_failure">Ошибка</string>
+	<string name="str_no_print_target">Пожалуйста, выберите цель</string>
+	
+	<string name="str_radioLocal">Local</string>
+	<string name="str_radioUsb">USB</string>
+	<string name="str_radioUsb1">USB1</string>
+	<string name="str_radioUsb2">USB2</string>
+	<string name="str_radioSdcard">SDCard</string>
+	
+	<string name="str_title_infodialog">Информация об объекте</string>
+	<string name="str_fileopt_del">Удалить</string>
+	<string name="str_fileopt_cancel">Отмена</string>	
+	<string name="str_search">Поиск</string>
+
+<!-- 树莓派3 打印界面相关 -->	
+	<string name="str_msg_name">Сообщение:</string>
+	<!-- 
+	<string name="str_state_inklevel">Чернила:  %1$d%%</string>
+	-->
+	<string name="str_state_inklevel">Чернила:</string>
+	<string name="str_invalid_ink">--</string>
+	<string name="str_state_battery">Питание:%1$d</string>
+	<string name="str_hint_preview">предварительный просмотр сообщения</string>
+	<string name="str_print_count">Запись: </string>
+	<string name="str_print_count_default">0</string>
+	<string name="str_print_printing">Задача печати уже запущена, новая задача не создается</string>
+	<string name="str_print_startok">Запуск задачи печати успешно...</string>
+	<string name="str_print_stopok">Остановите печать...</string>
+	<string name="str_toast_no_bin">Файл не найден !!!</string>
+	<string name="str_toast_emptycontent">Выбранное вами сообщение пусто!!!</string>
+	<string name="str_toast_no_message">Пожалуйста, сначала выберите сообщение!!!</string>
+	<string name="str_toast_no_ink">Чернил мало!!!</string>
+<!-- H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_toast_ink_error">Ошибка чернил!!!</string>
+<!-- End of H.M.Wang 2020-2-25 增加墨盒错误提示 -->
+	<string name="str_rfid_initfail_notify">Ошибка инициализации RFID！</string>
+	<string name="str_page_forward"> 《 </string>
+	<string name="str_page_backward"> 》 </string>
+	<string name="str_message_no_content">Не удается создать предварительный просмотр</string>
+	<string name="str_state_printing">Идет печать</string>
+	<string name="str_state_stopped">Готово</string>
+	
+<!-- 树莓派3 设置界面相关 -->
+	
+	<string name="str_textview_param1">01. Скорость</string>
+	<string name="str_textview_param2">02. Направление</string>
+	<string name="str_textview_param3">03. Разрешение</string> 
+	<string name="str_textview_param4">04. Задержка</string>
+	<string name="str_textview_param5">05. Датчик</string>
+	<string name="str_textview_param6">06. Энкодер</string>
+	<string name="str_textview_param7">07. Повторы</string>
+	<string name="str_textview_param8">08. Выбор сопла</string>
+	<string name="str_textview_param9">09. Диам. колеса</string>
+	<string name="str_textview_param10">10. имп\об</string>
+	<string name="str_textview_param11">11.Смещение печати1</string>
+	<string name="str_textview_param12">12.Смещение печати2</string>
+	<string name="str_textview_param13">13.Зеркальная печать1</string>
+	<string name="str_textview_param14">14.Зеркальная печать2</string>
+	<string name="str_textview_param15">15.Перевернутая печать1</string>
+	<string name="str_textview_param16">16.Перевернутая печать2</string>
+	<string name="str_textview_param17">17.Смещ. даты</string>
+
+<!--	<string name="str_textview_param18">18.Резерв</string>-->
+	<string name="str_textview_param18">18.Очистить Ноль</string>
+
+	<string name="str_textview_param19">19.Смещение печати3</string>
+	<string name="str_textview_param20">20.Смещение печати4</string>
+	<string name="str_textview_param21">21.Зеркальная печать3</string>
+	<string name="str_textview_param22">22.Зеркальная печать4</string>
+	<string name="str_textview_param23">23.Перевернутая печать3</string>
+	<string name="str_textview_param24">24.Перевернутая печать4</string>
+	<string name="str_textview_param25">25.Автоматическое напряжение</string>
+	<string name="str_textview_param26">26.Установить напряжение</string>
+	<string name="str_textview_param27">27.Автоматический импульс</string>
+	<string name="str_textview_param28">28.Установить импульс</string>
+	<string name="str_textview_param29">29.Держите Влажным</string>
+	<string name="str_textview_param30">30.Фильтр дреб.</string>
+	<string name="str_textview_param31">31.Тип</string>
+	<string name="str_textview_param32">32.Сброс</string>
+	<string name="str_textview_param33">33.Разм. точки</string>
+	<string name="str_textview_param34">34.PWML</string>
+	<string name="str_textview_param35">35.STR</string>
+	<string name="str_textview_param36">36.Уклон</string>
+	<string name="str_textview_param37">37.PWMH</string>
+	<string name="str_textview_param38">38.Одно для всех</string>
+<!-- H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数 -->
+<!--	<string name="str_textview_param39">39.Резерв</string> -->
+	<string name="str_textview_param39">39.Вн. данные</string>
+<!-- End of H.M.Wang 2019-12-19 追加对参数39的修改，使得其成为数据源选择的参数 -->
+	<string name="str_textview_param40">40.Звук</string>
+	<!-- H.M.Wang 2021-7-23 参数41改为对重复次数(Times)的设置 -->
+	<!-- H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
+	<!--	<string name="str_textview_param41">41.Com Print</string> -->
+	<!--	<string name="str_textview_param41">41.Reserved</string> -->
+	<string name="str_repeat_times">41.Times</string>
+	<!-- End of H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
+	<!-- End of H.M.Wang 2021-7-23 参数41改为对重复次数(Times)的设置 -->
+	<string name="str_textview_param42">42.На печати</string>
+	<string name="str_textview_param43">43.Печать</string>
+	<string name="str_textview_param44">"44.Яркость "</string>
+	<string name="str_textview_param45">45.Счетчик0</string>
+	<string name="str_textview_param46">46.Счетчик1</string>
+	<string name="str_textview_param47">47.Счетчик2</string>
+	<string name="str_textview_param48">48.Счетчик3</string>
+	<string name="str_textview_param49">49.Счетчик4</string>
+	<string name="str_textview_param50">50.Счетчик5</string>
+	<string name="str_textview_param51">51.Счетчик6</string>
+	<string name="str_textview_param52">52.Счетчик7</string>
+	<string name="str_textview_param53">53.Счетчик8</string>
+	<string name="str_textview_param54">54.Счетчик9</string>
+	<string name="str_textview_param55">55.QR индекс</string>
+	<string name="str_textview_param56">56.FIFO</string>
+	<string name="str_textview_param57">57.Резерв</string>
+	<string name="str_textview_param58">58.Резерв</string>
+	<string name="str_textview_param59">59.Резерв</string>
+	<string name="str_textview_param60">60.Log</string>
+	<string name="str_textview_param61">61.Резерв</string>
+	<string name="str_textview_param62">62.Резерв</string>
+	<string name="str_textview_param63">63.Резерв</string>
+	<string name="str_textview_param64">64.Резерв</string>
+	<string name="str_btn_settings_sync">Ok</string>
+
+	
+
+	
+	<string name="str_time_unit_0_1v">0.1V</string>
+	<string name="str_length_unit_mm">mm</string>
+	<string name="str_length_unit_6_1mm">1/6mm</string>
+	<string name="str_time_unit_mm">ms</string>
+	<string name="str_time_unit_ms">ms</string>
+	<string name="str_time_unit_mm_s">mm/s</string>
+	<string name="str_time_unit_0_1us">0.1us</string>
+	<string name="str_time_unit_us">us</string>
+	<string name="str_time_unit_100us">100us</string>
+	<string name="str_setting_time">Часы</string>
+	<string name="str_system_setting">Настройки</string>
+	<string name="str_upgrade_progress">Обновление системы....</string>
+	<string name="str_time_format">%1$04d-%2$02d-%3$02d %4$02d:%5$02d:%6$02d</string>
+	<string name="str_toast_ink_unvalid">Уровень выхода точки чернил,установленный по умолчанию：800</string>
+	<string name="str_toast_photoelectricity_delay">Фотоэлектричество высокий уровень задержки выхода установлен по умолчанию:100</string>
+	<string name="str_toast_photoelectricity_antishake">Фотоэлектрический уровень защиты от вытряхивания установлен по умолчанию:20</string>
+	<string name="str_toast_timingprint">Уровень синхронизации печати, установленный по умолчанию:1000</string>
+	
+<!-- 树莓派3 编辑界面相关 -->
+	<string name="str_edit_btn_insert">Вставить</string>
+	<string name="str_edit_btn_temp1">Температура1</string>
+	<string name="str_edit_btn_temp2">Температура2</string>
+	<string name="str_edit_btn_temp3">Температура3</string>
+	<string name="str_edit_btn_temp4">Температура4</string>
+	<string name="str_edit_btn_temp5">Температура5</string>
+	
+	<string name="str_edit_line1">1-я линия:</string>
+	<string name="str_edit_line2">2-я линия:</string>
+	<string name="str_edit_line3">3-я линия:</string>
+	<string name="str_edit_line4">4-я линия:</string>
+	
+	<string name="str_notice_save">пожалуйста, введите имя сообщения:</string>
+	<string name="str_notice_no_objects">Нет объекта для сохранения!</string>
+	<string name="str_file_title">Сообщение：</string>
+	<string name="str_file_hint">имя файла</string>
+	<string name="str_page_prev">Страница Вверх</string>
+	<string name="str_page_next">Страница Вниз</string>
+	<string name="str_filename_no">Новый</string>
+	<string name="str_btn_back">Назад</string>
+	<string name="str_btn_up">Верх</string>
+	<string name="str_btn_detail">Набор</string>
+	<string name="cursor">Указатель</string>
+<!-- 树莓派3  -->
+	<string name="str_dialog_msgnote">请选择信息行数：</string>
+
+	
+	<string name="str_no_upgrade">Уже установлена последняя версия</string>
+	
+	<string name="str_cnt_min">Начать</string>
+	<string name="str_cnt_max">Закончить</string>
+	<string name="str_cnt_index">CID</string>
+	<string name="str_cnt_steplen">Длина шага</string>
+	<string name="str_loading">Загрузка...</string>
+	
+	<string name="str_toast_no_qrfile">Отсутствует QR.txt или QR.csv</string>
+	<string name="str_barcode_end">Закончился файл штрих-кода</string>
+	<string name="str_recover_print">восстановить последнюю печать</string>
+	
+	<string name="str_net_devname">Устройство</string>
+	<string name="str_net_ipaddr">IP адресс</string>
+	<string name="str_net_stat">Статический адресс</string>
+	<string name="all_print">Все на печать</string>
+	<string name="all_purge">Все очистить</string>
+	<string name="all_stop">Все остановить</string>
+	<string name="str_F1">F1</string>
+	<string name="str_F2">Сканирующее Устройство</string>
+	<string name="str_net_back">Назад</string>
+	<string name="str_net_query">Запрос</string>
+	<string name="str_net_device">Устройство:</string>
+	
+	<string name="str_net_device_times">Время устройства:</string>
+	<string name="str_net_one">1</string>
+	<string name="str_net_hundred">100</string>
+	<string name="str_net_thousand">1000</string>
+	<string name="str_net_connect">Подключить</string>
+	<string name="str_net_tips">Подсказка</string>
+	<string name="str_net_textview">Просмотр Текста</string>
+	<string name="str_net_ipdefault">192.168.1.101</string>
+	
+	
+	<string name="str_tip_nothing">~ Нет никакого рисунка !!!</string>
+	<string name="str_no_permission">Отказано в разрешении на доступ к файлам</string>
+	
+	<string name="str_message_tips">Сообщение %s уже существует, заменить?</string>
+	
+	<string name="str_flush_tips">Изменить настройки, подтвердить?</string>
+	
+	<string name="str_build_tlk_start">начинайте создавать TLK... </string>
+	<string name="str_prepared">TLK подготовлен!!!</string>
+	<string name="str_prepare_fail">TLK разбор не удался!!!</string>
+	<string name="str_build_tlk_ok">создано TLK успешно</string>
+	<string name="str_build_tlk_fail">ошибка создания TLK</string>
+	
+	<string name="str_tlk_opening">tlk разбор...</string>
+	<string name="str_print_thread_create_err">не удалось создать поток печати...</string>
+	<string name="str_tlk_not_found">1.TLK не найдено</string>
+	
+	<string name="password_title">Пожалуйста, Введите Пароль</string>
+	
+	<!-- Toast -->
+	<string name="toast_save_success">Сохранить</string>
+	<string name="toast_plug_usb">Пожалуйста, подключите USB - устройство</string>
+	<string name="toast_passwd_error">ошибка пароля!!!</string>
+	<string name="toast_content_empty">Содержимое не должно быть пустым</string>
+	<string name="toast_rfid_changed">Rfid заменен</string>
+
+	<string name="tips_import_message">Импорт сообщений</string>
+	<string name="tips_import_resource">Импорт ресурсов</string>
+	<string name="tips_import_sysconf">Импорт системных конфигураций</string>
+	<string name="tips_import_font">Импорт библиотеки шрифтов</string>
+	
+	<string name="tips_export_message">Экспорт сообщений</string>
+	<string name="tips_export_sysconf">Экспорт системных конфигураций</string>
+	<string name="tips_export_resource">Экспорт ресурсов</string>
+	
+
+	<string name="message_confirm_printnext">Уверен, что изменить сообщение?</string>
+	<string name="str_net_number">Номер</string>
+	<string name="str_net_counts">Счет</string>
+	<string name="str_net_int">Чернила</string>
+	<string name="str_net_commands">Команда</string>
+
+	<string name="invalid_message">Неверное Сообщение</string>
+	<string name="invalid_code">Неверный Код</string>
+	<string name="invalid_protocol">Недопустимый протокол</string>
+	<string name="decoding">Декодирование...</string>
+
+</resources>

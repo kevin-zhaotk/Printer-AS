@@ -1,0 +1,32 @@
+{
+  "buildFiles": [
+    "C:\\Users\\hmwan\\Documents\\Projects\\Printer-AS-Git\\phoneapp\\src\\main\\jni\\Android.mk"
+  ],
+  "cleanCommands": [
+    "D:\\Android\\Sdk\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\hmwan\\Documents\\Projects\\Printer-AS-Git\\phoneapp\\src\\main\\jni\\Android.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003dC:/Users/hmwan/Documents/Projects/Printer-AS-Git/phoneapp/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dC:\\Users\\hmwan\\Documents\\Projects\\Printer-AS-Git\\phoneapp\\build\\intermediates\\ndkBuild\\release\\lib clean"
+  ],
+  "libraries": {
+    "HTNativeBitmapUtils-release-armeabi-v7a": {
+      "buildCommand": "D:\\Android\\Sdk\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dC:\\Users\\hmwan\\Documents\\Projects\\Printer-AS-Git\\phoneapp\\src\\main\\jni\\Android.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDK_DEBUG\u003d0 APP_PLATFORM\u003dandroid-21 NDK_OUT\u003dC:/Users/hmwan/Documents/Projects/Printer-AS-Git/phoneapp/build/intermediates/ndkBuild/release/obj NDK_LIBS_OUT\u003dC:\\Users\\hmwan\\Documents\\Projects\\Printer-AS-Git\\phoneapp\\build\\intermediates\\ndkBuild\\release\\lib C:/Users/hmwan/Documents/Projects/Printer-AS-Git/phoneapp/build/intermediates/ndkBuild/release/obj/local/armeabi-v7a/libHTNativeBitmapUtils.so",
+      "toolchain": "toolchain-armeabi-v7a",
+      "abi": "armeabi-v7a",
+      "artifactName": "HTNativeBitmapUtils",
+      "files": [
+        {
+          "src": "C:\\Users\\hmwan\\Documents\\Projects\\Printer-AS-Git\\phoneapp\\src\\main\\jni\\com_printer_phoneapp_Utils_HTBitmapUtils.cpp",
+          "flags": "\"-gcc-toolchain\" \"D:/Android/sdk/ndk-bundle/build//../toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64\" \"-fpic\" \"-ffunction-sections\" \"-funwind-tables\" \"-fstack-protector-strong\" \"-Wno-invalid-command-line-argument\" \"-Wno-unused-command-line-argument\" \"-no-canonical-prefixes\" \"-fno-integrated-as\" \"-g\" \"-target\" \"armv7-none-linux-androideabi21\" \"-march\u003darmv7-a\" \"-mfloat-abi\u003dsoftfp\" \"-mfpu\u003dvfpv3-d16\" \"-fno-exceptions\" \"-fno-rtti\" \"-mthumb\" \"-Os\" \"-DNDEBUG\" \"-IC:/Users/hmwan/Documents/Projects/Printer-AS-Git/phoneapp/src/main/jni\" \"-ID:/Android/sdk/ndk-bundle/build//../sources/cxx-stl/system/include\" \"-IC:/Users/hmwan/Documents/Projects/Printer-AS-Git/phoneapp/src/main/jni\" \"-DANDROID\" \"-D__ANDROID_API__\u003d21\" \"-Wa,--noexecstack\" \"-Wformat\" \"-Werror\u003dformat-security\" \"--sysroot\" \"D:/Android/sdk/ndk-bundle/build//../sysroot\" \"-isystem\" \"D:/Android/sdk/ndk-bundle/build//../sysroot/usr/include/arm-linux-androideabi\""
+        }
+      ],
+      "output": "C:\\Users\\hmwan\\Documents\\Projects\\Printer-AS-Git\\phoneapp\\build\\intermediates\\ndkBuild\\release\\obj\\local\\armeabi-v7a\\libHTNativeBitmapUtils.so"
+    }
+  },
+  "toolchains": {
+    "toolchain-armeabi-v7a": {
+      "cppCompilerExecutable": "D:\\Android\\sdk\\ndk-bundle\\build\\..\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}
