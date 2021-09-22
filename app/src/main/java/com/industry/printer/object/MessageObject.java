@@ -359,8 +359,14 @@ public class MessageObject extends BaseObject {
             for (int i = 0; i < size.length; i++) {
                 size[i] = mDot_64_Size[i];
             }
-
-		// H.M.Wang 追加下列8行
+// H.M.Wang 2021-9-20 (H.M.Wang 2021-8-16 追加96DN头) 追加遗漏内容
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_96DN) {
+			size = new String[mDot_96_Size.length];
+			for (int i = 0; i < size.length; i++) {
+				size[i] = mDot_96_Size[i];
+			}
+// End of H.M.Wang 2021-9-20 (H.M.Wang 2021-8-16 追加96DN头) 追加遗漏内容
+			// H.M.Wang 追加下列8行
 		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_1_INCH_TRIPLE) {
 			for (int i = 0; i < size.length; i++) {
 				size[i] = String.valueOf(mBaseList[i] * 6);
@@ -679,6 +685,35 @@ public class MessageObject extends BaseObject {
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
             }
 // End of H.M.Wang 2020-8-8 在每个判断高度得if语句里面，准确计算的数值后面都+1，目的是为了解决在保存时，由于四舍五入会导致数值偏差，再次读入时会发生错误。如：
+// H.M.Wang 2021-9-16 追加 （H.M.Wang 2021-8-16 追加96DN头） 时的遗漏
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_96DN) {
+			if (size <= 152f * 5 / 96 + 1) {
+				return mDot_96_Size[0];
+			} else if (size <= 152f * 8 / 96 + 1) {
+				return mDot_96_Size[1];
+			} else if (size <= 152f * 10 / 96 + 1) {
+				return mDot_96_Size[2];
+			} else if (size <= 152f * 12 / 96 + 1) {
+				return mDot_96_Size[3];
+			} else if (size <= 152f * 14 / 96 + 1) {
+				return mDot_96_Size[4];
+			} else if (size <= 152f * 16 / 96 + 1) {
+				return mDot_96_Size[5] + "," + mDot_96_Size[6] + "," + mDot_96_Size[7];
+			} else if (size <= 152f * 19 / 96 + 1) {
+				return mDot_96_Size[8];
+			} else if (size <= 152f * 21 / 96 + 1) {
+//			} else if (size <= 152f * 21.1f / 64 + 1) {
+				return mDot_96_Size[9];
+			} else if (size <= 152f * 24 / 96 + 1) {
+				return mDot_96_Size[10];
+			} else if (size <= 152f * 32 / 96 + 1) {
+				return mDot_96_Size[11];
+			} else if (size <= 152f * 64 / 96 + 1) {
+				return mDot_96_Size[12];
+			} else {
+				return mDot_96_Size[13];
+			}
+// End of H.M.Wang 2021-9-16 追加 （H.M.Wang 2021-8-16 追加96DN头） 时的遗漏
         } else {
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
 // H.M.Wang 2019-9-29 去除ScaleH，否则会由于其采用了308/304而使得计算结果被放大
@@ -714,3 +749,60 @@ public class MessageObject extends BaseObject {
 //  End of H.M.Wang 2019-6-24 西班牙语时，通过String.format("%.1f", h)转换会把6.0转为6,0。强制转回来
 	}
 }
+
+/*
+喷头		字体		字号		高度(画面、内部，152基数)
+16DOT
+		5x5		5x5			152f * 5 / 16
+		4		7x6			152f * 8 / 16
+		10		10x8		152f * 10 / 16
+		12		12x9		152f * 12 / 16
+		14		14x10		152f * 14 / 16
+		7		16x12		152f * 16 / 16
+		7L		16@L		152f * 16 / 16
+		7R		16@R		152f * 16 / 16
+
+32DOT
+		5x5		5x5			152f * 5 / 32
+		4		7x6			152f * 8 / 32
+		10		10x8		152f * 10 / 32
+		12		12x9		152f * 12 / 32
+		14		14x10		152f * 14 / 32
+		7		16x12		152f * 16 / 32
+		7L		16@L		152f * 16 / 32
+		7R		16@R		152f * 16 / 32
+		19		19x13		152f * 19 / 32
+		21		21x14		152f * 21 / 32
+				32			152f * 32 / 32
+
+64DOT
+		5x5		5x5			152f * 5 / 64
+		4		7x6			152f * 8 / 64
+		10		10x8		152f * 10 / 64
+		12		12x9		152f * 12 / 64
+		14		14x10		152f * 14 / 64
+		7		16x12		152f * 16 / 64
+		7L		16@L		152f * 16 / 64
+		7R		16@R		152f * 16 / 64
+		19		19x13		152f * 19 / 64
+		21		21x14		152f * 21 / 64
+				24			152f * 24 / 64
+				32			152f * 32 / 64
+				64			152f * 64 / 64
+
+96DOT
+		5x5		5x5			152f * 5 / 96
+		4		7x6			152f * 8 / 96
+		10		10x8		152f * 10 / 96
+		12		12x9		152f * 12 / 96
+		14		14x10		152f * 14 / 96
+		7		16x12		152f * 16 / 96
+		7L		16@L		152f * 16 / 96
+		7R		16@R		152f * 16 / 96
+		19		19x13		152f * 19 / 96
+		21		21x14		152f * 21 / 96
+				24			152f * 24 / 96
+				32			152f * 32 / 96
+				64			152f * 64 / 96
+				96			152f * 96 / 96
+ */

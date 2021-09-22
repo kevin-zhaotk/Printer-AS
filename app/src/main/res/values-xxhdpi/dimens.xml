@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="top_btn_height">48dp</dimen>
+    <dimen name="top_btn_width">96dp</dimen>
+    <dimen name="top_btn_height_half">24dp</dimen>
+    <dimen name="top_btn_textsize">21sp</dimen>
+    <dimen name="textsize_40sp">24sp</dimen>
+    <dimen name="textsize_25sp">15sp</dimen>
+    <dimen name="textsize_18sp">11sp</dimen>
+    <dimen name="space_50dp">30dp</dimen>
+    <dimen name="space_20dp">12dp</dimen>
+    <dimen name="space_15dp">9dp</dimen>
+    <dimen name="space_10dp">6dp</dimen>
+    <dimen name="space_5dp">3dp</dimen>
+    <dimen name="height_150dp">90dp</dimen>
+    <dimen name="height_60dp">36dp</dimen>
+    <dimen name="height_58dp">35dp</dimen>
+    <dimen name="height_40dp">24dp</dimen>
+    <dimen name="width_60dp">36dp</dimen>
+    <dimen name="width_40dp">24dp</dimen>
+</resources>

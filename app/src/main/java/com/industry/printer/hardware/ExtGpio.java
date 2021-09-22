@@ -87,7 +87,13 @@ public class ExtGpio {
 		int fd = open();
 		FpgaGpioOperation.ioctl(fd, GPIO_PLAY_ERR, 0);
 	}
-	
+// H.M.Wang 2021-9-16 追加PI11状态读取功能
+	public static int readPI11State() {
+		int fd = open();
+		return FpgaGpioOperation.read(fd);
+	}
+// End of H.M.Wang 2021-9-16 追加PI11状态读取功能
+
 	public static int open() {
 		if (mFd <= 0) {
 			mFd = FpgaGpioOperation.open(EXT_GPIO_FILE);

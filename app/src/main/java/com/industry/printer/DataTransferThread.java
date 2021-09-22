@@ -550,11 +550,16 @@ public class DataTransferThread {
 
 	public void setScanDataToDt(final String data) {
 		Debug.d(TAG, "String from Remote = [" + data + "]");
-		if(data.length() != 33) {                               // 扫描到的字符串长度为32+1
-			return;
-		} else if(data.charAt(1) != data.charAt(32)) {          // 最后一位与第二位的值需要一致
+// H.M.Wang 2021-9-14 这个应该是最初的实现中在这里判断合法性，但是没有取消，结果双重判断导致失败
+//		if(data.length() != 33) {                               // 扫描到的字符串长度为32+1
+//			return;
+//		} else if(data.charAt(1) != data.charAt(32)) {          // 最后一位与第二位的值需要一致
+//			return;
+//		}
+		if(data.length() != 32) {                               // 扫描到的字符串长度为32+1。但是已经去掉了最后一个数字
 			return;
 		}
+// End H.M.Wang 2021-9-14 这个应该是最初的实现中在这里判断合法性，但是没有取消，结果双重判断导致失败
 
 		mHandler.post(new Runnable() {
 			@Override
@@ -627,7 +632,7 @@ public class DataTransferThread {
 			}
 		});
 
-        if(data.length() != 33) {                               // 扫描到的字符串长度为32+1
+        if(data.length() != 19) {                               // 数据长度19
 			ToastUtil.show(mContext, R.string.invalid_protocol);
 			return;
 		}
@@ -816,6 +821,83 @@ public class DataTransferThread {
 	}
 // End of H.M.Wang 2021-3-6 追加串口协议8
 
+// H.M.Wang 2021-9-17 追加扫描协议1-FIFO
+    private final int SCAN_FIFO_MAX_COUNT = 10;
+    private ArrayList<String> mScan1FifoMsgList = null;
+	private boolean mDataSetAlready = false;
+	private boolean mIsAtBeginning = false;
+
+    private String getFifoMsgList() {
+        StringBuilder sb = new StringBuilder();
+
+        for(String str : mScan1FifoMsgList) {
+            sb.append(str + "\n");
+        }
+        return sb.toString();
+    }
+
+	private synchronized void setFifoDataToDtAtBeginning() {
+		mIsAtBeginning = true;
+		setFifoDataToDt();
+	}
+
+	private synchronized void setAndClearFifoDataToDt() {
+        mDataSetAlready = false;
+        if(!mIsAtBeginning && null != mScan1FifoMsgList && mScan1FifoMsgList.size() > 0)
+            mScan1FifoMsgList.remove(0);
+		mIsAtBeginning = false;
+        setFifoDataToDt();
+    }
+
+    private synchronized void setFifoDataToDt() {
+        if(mDataSetAlready) return;
+
+        if(null == mScan1FifoMsgList) {
+            mScan1FifoMsgList = new ArrayList<String>();
+            return;
+        }
+
+        if(mScan1FifoMsgList.size() > 0) {
+            setScanDataToDt(mScan1FifoMsgList.get(0));
+            mDataSetAlready = true;
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                if(null != mRemoteRecvedPromptDlg) {
+                    mRemoteRecvedPromptDlg.show();
+                    mRemoteRecvedPromptDlg.setMessage(getFifoMsgList());
+                }
+                }
+            });
+        }
+    }
+
+    private synchronized void setScan1DataToFifo(String code) {
+        Debug.d(TAG, "String from Scanner = [" + code + "]");
+
+        if(null == mScan1FifoMsgList) {
+            mScan1FifoMsgList = new ArrayList<String>();
+        }
+
+        if(mScan1FifoMsgList.contains(code)) return;
+
+        if(mScan1FifoMsgList.size() < SCAN_FIFO_MAX_COUNT) {
+            mScan1FifoMsgList.add(code);
+            if(!mDataSetAlready) mNeedUpdate = true;
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(null != mRemoteRecvedPromptDlg) {
+                        mRemoteRecvedPromptDlg.show();
+                        mRemoteRecvedPromptDlg.setMessage(getFifoMsgList());
+                    }
+                }
+            });
+        }
+    }
+
+// End of H.M.Wang 2021-9-17 追加扫描协议1-FIFO
+
 //	private AlertDialog mRemoteRecvedPromptDlg = null;
 	private RemoteMsgPrompt mRemoteRecvedPromptDlg = null;
 
@@ -948,6 +1030,15 @@ public class DataTransferThread {
 				}
 			});
 // End of H.M.Wang 2021-5-21 追加扫描协议4
+// H.M.Wang 2021-9-17 追加扫描协议1-FIFO
+        } else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1_FIFO) {
+            BarcodeScanParser.setListener(new BarcodeScanParser.OnScanCodeListener() {
+                @Override
+                public void onCodeReceived(String code) {
+                    setScan1DataToFifo(code);
+                }
+            });
+// End of H.M.Wang 2021-9-17 追加扫描协议1-FIFO
 		}
 // End of H.M.Wang 2020-10-30 追加数据源判断，启动扫描处理，因为有两个处理从一个扫码枪途径获取数据
 
@@ -1554,7 +1645,7 @@ private void setCounterPrintedNext(DataTask task, int count) {
 // End of H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
 
 
-	// H.M.Wang 2020-5-6 参数设置页面，在未修改计数器的情况下，点击OK保存后，计数器会跳数，分析是因为设置了	mNeedUpdate=true，重新生成打印缓冲区，重新生成时计数器会自动增量，所以增加了一个重新下发的函数，而不重新生成缓冲区
+// H.M.Wang 2020-5-6 参数设置页面，在未修改计数器的情况下，点击OK保存后，计数器会跳数，分析是因为设置了	mNeedUpdate=true，重新生成打印缓冲区，重新生成时计数器会自动增量，所以增加了一个重新下发的函数，而不重新生成缓冲区
 	public void resendBufferToFPGA() {
 		if(null != mPrintBuffer) {
 			FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_UPDATE, FpgaGpioOperation.FPGA_STATE_OUTPUT, mPrintBuffer, mPrintBuffer.length * 2);
@@ -1614,6 +1705,11 @@ private void setCounterPrintedNext(DataTask task, int count) {
 // H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
 			setContentsFromQRFile();
 // End of H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
+// H.M.Wang 2021-9-17 追加扫描协议1-FIFO
+            if(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1_FIFO) {
+				setFifoDataToDtAtBeginning();
+            }
+// End of H.M.Wang 2021-9-17 追加扫描协议1-FIFO
 
 			mPrintBuffer = mDataTask.get(index()).getPrintBuffer(true);
 			if (isLanPrint()) {
@@ -1836,6 +1932,12 @@ private void setCounterPrintedNext(DataTask task, int count) {
 // End of H.M.Wang 2021-3-4 DataTask中的isReady变量，由于读QR文件的操作转移至这里，已经失效，在本类中追加isReady变量，并且据此进行判断操作
 // End of H.M.Wang 2021-3-4 此断代码转移至此
 
+// H.M.Wang 2021-9-17 追加扫描协议1-FIFO
+                            if(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1_FIFO) {
+                                setAndClearFifoDataToDt();
+                            }
+// End of H.M.Wang 2021-9-17 追加扫描协议1-FIFO
+
 							if (isLanPrint()) {
 								mPrintBuffer = getLanBuffer(index());
 								Debug.i(TAG, "--->mPrintBuffer.length: " + mPrintBuffer.length);
@@ -1928,6 +2030,13 @@ private void setCounterPrintedNext(DataTask task, int count) {
 						mHandler.removeMessages(MESSAGE_DATA_UPDATE);
 					//在此处发生打印数据，同时
 // H.M.Wang 2019-12-29 在重新生成打印缓冲区的时候，考虑网络打印的因素
+
+// H.M.Wang 2021-9-17 追加扫描协议1-FIFO
+                        if(SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1_FIFO) {
+                            setFifoDataToDt();
+                        }
+// End of H.M.Wang 2021-9-17 追加扫描协议1-FIFO
+
 						if (isLanPrint()) {
 							mPrintBuffer = getLanBuffer(index());
 						} else {

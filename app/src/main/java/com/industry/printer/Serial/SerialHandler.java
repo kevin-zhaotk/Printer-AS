@@ -69,6 +69,8 @@ public class SerialHandler {
         ByteArrayBuffer bab = new ByteArrayBuffer(0);
         bab.append(data, 0, data.length);
 
+        Debug.d(TAG, "DataSource: " + SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE));
+
         if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1 ||
             SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2) {
             EC_DOD_Protocol p = new EC_DOD_Protocol(mSerialPort);

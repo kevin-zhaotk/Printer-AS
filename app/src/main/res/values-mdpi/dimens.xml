@@ -5,7 +5,22 @@
          screen margins) for sw600dp devices (e.g. 7" tablets) here.
     -->
 	<dimen name="top_btn_height">80dp</dimen>
+	<dimen name="top_btn_width">160dp</dimen>
 	<dimen name="top_btn_height_half">40dp</dimen>
 	<dimen name="top_btn_textsize">35sp</dimen>
-	
+	<dimen name="textsize_40sp">40sp</dimen>
+	<dimen name="textsize_25sp">25sp</dimen>
+	<dimen name="textsize_18sp">18sp</dimen>
+	<dimen name="space_50dp">50dp</dimen>
+	<dimen name="space_20dp">20dp</dimen>
+	<dimen name="space_15dp">15dp</dimen>
+	<dimen name="space_10dp">10dp</dimen>
+	<dimen name="space_5dp">5dp</dimen>
+	<dimen name="height_150dp">150dp</dimen>
+	<dimen name="height_60dp">60dp</dimen>
+	<dimen name="height_58dp">58dp</dimen>
+	<dimen name="height_40dp">40dp</dimen>
+	<dimen name="width_60dp">60dp</dimen>
+	<dimen name="width_40dp">40dp</dimen>
+
 </resources>

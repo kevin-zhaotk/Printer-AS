@@ -374,7 +374,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mCopy.setOnClickListener(this);
 		
 		try {
-			// InputStreamReader sReader = new InputStreamReader(getAssets().open("Version"));
+			// InputStreamReader sReader = new InputStreamReader(getAssets().open("Version"));cd .
 			// BufferedReader reader = new BufferedReader(sReader);
 //			String ver = SystemPropertiesProxy.get(this, "ro.build.version.incremental", "1970");
 			PackageInfo packageInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -505,8 +505,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 
 	@Override
 	public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-		Debug.d(TAG, "Screen: [" + getResources().getDisplayMetrics().widthPixels + ", " + getResources().getDisplayMetrics().heightPixels + "]");
-		Debug.d(TAG, "DPI: [" + getResources().getDisplayMetrics().densityDpi + "]");
 		if(arg1 == true) {
 			ExtGpio.playClick();
 		}

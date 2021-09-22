@@ -394,7 +394,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		Timer mHeartBeatTimer = null;
 		private long mLastHeartBeat = System.currentTimeMillis();
 // End of H.M.Wang 2020-9-28 追加一个心跳协议
-
+// H.M.Wang 2021-9-19 追加PI11状态读取功能
+        private Timer mGpio11Timer = null;
+		private int mPI11State = 0;
+// End of H.M.Wang 2021-9-19 追加PI11状态读取功能
 		//Socket___________________________________________________________________________________________
 	
 	public ControlTabActivity() {
@@ -751,6 +754,55 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}, 0L, 2000L);
 
 // End of H.M.Wang 2020-9-28 追加一个心跳协议
+
+// H.M.Wang 2021-9-19 追加PI11状态读取功能
+        if(null == mGpio11Timer) {
+            mGpio11Timer = new Timer();
+            mGpio11Timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+					final int newState = ExtGpio.readPI11State();
+					if(mPI11State == newState) return;
+					mBtnStart.post(new Runnable() {
+						@Override
+						public void run() {
+							DataTransferThread thread = DataTransferThread.getInstance(mContext);
+							if(thread.isPurging) {
+								ToastUtil.show(mContext, R.string.str_under_purging);
+								return;
+							}
+							if(newState == 1) {
+								if(!mBtnStart.isClickable()) {
+//									ToastUtil.show(mContext, "Not executable");
+									return;
+								}
+								if(thread.isRunning()) {
+//									ToastUtil.show(mContext, "Already in printing");
+									return;
+								}
+								mPI11State = newState;
+//								Debug.d(TAG, "Launch Print by pressing PI11!");
+								mBtnStart.performClick();
+							} else if(newState == 0) {
+								mPI11State = newState;
+								if(!mBtnStop.isClickable()) {
+//									ToastUtil.show(mContext, "Not executable");
+									return;
+								}
+								if(!thread.isRunning()) {
+//									ToastUtil.show(mContext, "Not in printing");
+									return;
+								}
+//								Debug.d(TAG, "Stop Print by releasing PI11!");
+								mBtnStop.performClick();
+							}
+						}
+					});
+                }
+            }, 3000L, 1000L);
+        }
+// End of H.M.Wang 2021-9-19 追加PI11状态读取功能
+
 		// End ---------------------------------
 	}
 
@@ -1003,8 +1055,8 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				mPowerStat.setImageResource(R.drawable.battery0);
 			} else {
 				// mPower.setText("--");
-//				mPowerStat.setImageResource(R.drawable.battery0);
-				mPowerStat.setVisibility(View.GONE);
+				mPowerStat.setImageResource(R.drawable.battery0);
+//				mPowerStat.setVisibility(View.GONE);
 			}
 			//mPowerV.setText(String.valueOf(power));
 			// mTime.setText("0");
@@ -1785,7 +1837,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						child.recycle();
 						break;
 					}
-					Debug.d(TAG, "-->child: " + child.getWidth() + "  " + child.getHeight() + "   view h: " + mllPreview.getHeight());
+					Debug.d(TAG, "-->child: [" + child.getWidth() + ", " + child.getHeight() + "]; view h: " + mllPreview.getHeight() + "]; orientation: " + mContext.getResources().getConfiguration().orientation);
 					Bitmap scaledChild = Bitmap.createScaledBitmap(child, (int) (cutWidth*scale), (int) (bmp.getHeight() * scale), true);
 					//child.recycle();
 					//Debug.d(TAG, "--->scaledChild  width = " + child.getWidth() + " scale= " + scale);

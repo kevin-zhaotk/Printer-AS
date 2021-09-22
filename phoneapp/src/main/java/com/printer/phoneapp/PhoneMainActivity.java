@@ -26,6 +26,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.common.StringUtils;
 import com.printer.phoneapp.Devices.ConnectDevice;
 import com.printer.phoneapp.Devices.ConnectDeviceManager;
 import com.printer.phoneapp.Sockets.BluetoothManager;
@@ -69,7 +70,6 @@ public class PhoneMainActivity extends AppCompatActivity {
 
     private ConnectDeviceManager mConDevManager = null;
     private BluetoothManager mBluetoothManager = null;
-
 
     private static final int MSG_ADD_SAVED_DEVICES = 10001;
 
