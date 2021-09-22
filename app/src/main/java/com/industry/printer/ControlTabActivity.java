@@ -1055,8 +1055,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				mPowerStat.setImageResource(R.drawable.battery0);
 			} else {
 				// mPower.setText("--");
-				mPowerStat.setImageResource(R.drawable.battery0);
-//				mPowerStat.setVisibility(View.GONE);
+				mPowerStat.setVisibility(View.GONE);
 			}
 			//mPowerV.setText(String.valueOf(power));
 			// mTime.setText("0");
