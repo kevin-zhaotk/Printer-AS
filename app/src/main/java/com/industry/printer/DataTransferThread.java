@@ -821,6 +821,49 @@ public class DataTransferThread {
 	}
 // End of H.M.Wang 2021-3-6 追加串口协议8
 
+// H.M.Wang 2021-9-24 追加串口协议9
+private void setSerialProtocol9DTs(final String data) {
+	Debug.d(TAG, "String from Remote = [" + data + "]");
+
+	String[] dts = new String[8];
+	dts[0] = data.substring(0, 2);
+	dts[1] = data.substring(2, 4);
+	dts[2] = data.substring(4, 6);
+	dts[3] = data.substring(6, 9);
+	dts[4] = data.substring(9, 10);
+	dts[5] = data.substring(10, 11);
+	dts[6] = data.substring(11, 17);
+	dts[7] = data.substring(17, 28);
+
+	mHandler.post(new Runnable() {
+		@Override
+		public void run() {
+			if(null != mRemoteRecvedPromptDlg) {
+				mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
+				mRemoteRecvedPromptDlg.setMessage(data);
+			}
+		}
+	});
+
+	ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
+	for (BaseObject baseObject : objList) {
+		if (baseObject instanceof DynamicText) {
+			int dtIndex = ((DynamicText)baseObject).getDtIndex();
+			if(dtIndex >= 0 && dtIndex < 8) {
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+				SystemConfigFile.getInstance().setDTBuffer(dtIndex, dts[dtIndex]);
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+				baseObject.setContent(dts[dtIndex]);
+			} else {
+				baseObject.setContent("");
+			}
+		}
+	}
+	mNeedUpdate = true;
+}
+// End of H.M.Wang 2021-9-24 追加串口协议9
+
 // H.M.Wang 2021-9-17 追加扫描协议1-FIFO
     private final int SCAN_FIFO_MAX_COUNT = 10;
     private ArrayList<String> mScan1FifoMsgList = null;
@@ -838,6 +881,7 @@ public class DataTransferThread {
 
 	private synchronized void setFifoDataToDtAtBeginning() {
 		mIsAtBeginning = true;
+
 		setFifoDataToDt();
 	}
 
@@ -858,7 +902,11 @@ public class DataTransferThread {
         }
 
         if(mScan1FifoMsgList.size() > 0) {
-            setScanDataToDt(mScan1FifoMsgList.get(0));
+			if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_9) {
+				setSerialProtocol9DTs(mScan1FifoMsgList.get(0));
+			} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1_FIFO) {
+				setScanDataToDt(mScan1FifoMsgList.get(0));
+			}
             mDataSetAlready = true;
             mHandler.post(new Runnable() {
                 @Override
@@ -872,8 +920,8 @@ public class DataTransferThread {
         }
     }
 
-    private synchronized void setScan1DataToFifo(String code) {
-        Debug.d(TAG, "String from Scanner = [" + code + "]");
+    private synchronized void setRemoteDataToFifo(String code) {
+        Debug.d(TAG, "String from Remote = [" + code + "]");
 
         if(null == mScan1FifoMsgList) {
             mScan1FifoMsgList = new ArrayList<String>();
@@ -898,6 +946,47 @@ public class DataTransferThread {
 
 // End of H.M.Wang 2021-9-17 追加扫描协议1-FIFO
 
+// H.M.Wang 2021-9-28 追加串口协议10
+    public void setSP10DataToDt(final String data) {
+        Debug.d(TAG, "String from Remote = [" + data + "]");
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (null != mRemoteRecvedPromptDlg) {
+                    mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
+                    mRemoteRecvedPromptDlg.setMessage(data);
+                }
+            }
+        });
+
+        if(data.length() < 12) {                               // 数据长度36
+            ToastUtil.show(mContext, R.string.invalid_protocol);
+            return;
+        }
+
+        String dt0 = data.substring(8, 12);
+
+        for(DataTask dataTask : mDataTask) {
+            ArrayList<BaseObject> objList = dataTask.getObjList();
+            for(BaseObject baseObject: objList) {
+                if(baseObject instanceof DynamicText) {
+                    int dtIndex = ((DynamicText)baseObject).getDtIndex();
+                    if(dtIndex == 0) {
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+                        SystemConfigFile.getInstance().setDTBuffer(dtIndex, dt0);
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+                        baseObject.setContent(dt0);
+                    } else {
+                        baseObject.setContent("");
+                    }
+                    mNeedUpdate = true;
+                }
+            }
+        }
+    }
+// End of H.M.Wang 2021-9-28 追加串口协议10
+
 //	private AlertDialog mRemoteRecvedPromptDlg = null;
 	private RemoteMsgPrompt mRemoteRecvedPromptDlg = null;
 
@@ -908,8 +997,12 @@ public class DataTransferThread {
 
 		// H.M.Wang 2019-12-19 支持多种串口协议的修改
 		// H.M.Wang 2019-10-23 串口发送数据支持
-		final SerialHandler serialHandler = SerialHandler.getInstance();
+		final SerialHandler serialHandler = SerialHandler.getInstance(mContext);
 		serialHandler.setPrintCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
+			@Override
+			public void onError(String errCode) {
+				ToastUtil.show(mContext, errCode);
+			}
 			@Override
 			public void onCommandReceived(int cmd, byte[] data) {
 				if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1 ||
@@ -990,6 +1083,17 @@ public class DataTransferThread {
 					setScan2DataToDt(datastring);
 					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
 // End of H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
+// H.M.Wang 2021-9-24 追加串口协议9
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_9) {
+					setRemoteDataToFifo(new String(data, 0, data.length));
+//					setSerialProtocol9DTs(new String(data, 0, data.length));
+// End of H.M.Wang 2021-9-24 追加串口协议9
+// H.M.Wang 2021-9-28 追加串口协议10
+                } else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_10) {
+                    String datastring = new String(data, 0, data.length);
+                    setSP10DataToDt(datastring);
+                    serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
+// End of H.M.Wang 2021-9-28 追加串口协议10
 				}
 			}
 		});
@@ -1035,7 +1139,7 @@ public class DataTransferThread {
             BarcodeScanParser.setListener(new BarcodeScanParser.OnScanCodeListener() {
                 @Override
                 public void onCodeReceived(String code) {
-                    setScan1DataToFifo(code);
+					setRemoteDataToFifo(code);
                 }
             });
 // End of H.M.Wang 2021-9-17 追加扫描协议1-FIFO
@@ -1127,7 +1231,7 @@ public class DataTransferThread {
 			mRemoteRecvedPromptDlg = null;
 		}
 		// H.M.Wang 2019-10-23 串口发送数据支持
-		SerialHandler serialHandler =  SerialHandler.getInstance();
+		SerialHandler serialHandler =  SerialHandler.getInstance(mContext);
 		serialHandler.setPrintCommandListener(null);
 		// End --------------------
 

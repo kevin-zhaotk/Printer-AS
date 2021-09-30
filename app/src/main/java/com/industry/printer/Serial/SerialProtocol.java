@@ -1,5 +1,7 @@
 package com.industry.printer.Serial;
 
+import android.content.Context;
+
 import org.apache.http.util.ByteArrayBuffer;
 
 import java.nio.charset.Charset;
@@ -19,8 +21,11 @@ abstract public class SerialProtocol {
     protected SerialHandler.OnSerialPortCommandListenner mNormalCmdListeners = null;
     protected SerialHandler.OnSerialPortCommandListenner mPrintCmdListeners = null;
 
-    protected SerialProtocol(SerialPort serialPort){
+    private Context mContext;
+
+    protected SerialProtocol(SerialPort serialPort, Context ctx){
         mSerialPort = serialPort;
+        mContext = ctx;
     }
 
     abstract protected int parseFrame(ByteArrayBuffer recvMsg);
@@ -39,6 +44,23 @@ abstract public class SerialProtocol {
         }
         if(null != mPrintCmdListeners) {
             mPrintCmdListeners.onCommandReceived(cmd, data);
+        }
+    }
+
+    protected void procError(int errCode) {
+        if(null != mContext) {
+            procError(mContext.getResources().getString(errCode));
+        } else {
+            procError("ERROR_FAILED");
+        }
+    }
+
+    protected void procError(String err) {
+        if(null != mNormalCmdListeners) {
+            mNormalCmdListeners.onError(err);
+        }
+        if(null != mPrintCmdListeners) {
+            mPrintCmdListeners.onError(err);
         }
     }
 

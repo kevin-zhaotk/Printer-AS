@@ -1,5 +1,7 @@
 package com.industry.printer.Serial;
 
+import android.content.Context;
+
 import org.apache.http.util.ByteArrayBuffer;
 
 import java.nio.charset.Charset;
@@ -11,8 +13,8 @@ import java.nio.charset.Charset;
 public class SerialProtocol6 extends SerialProtocol {
     public static String TAG = SerialProtocol5.class.getSimpleName();
 
-    public SerialProtocol6(SerialPort serialPort){
-        super(serialPort);
+    public SerialProtocol6(SerialPort serialPort, Context ctx){
+        super(serialPort, ctx);
     }
 
     @Override
@@ -37,6 +39,8 @@ public class SerialProtocol6 extends SerialProtocol {
         if (result == ERROR_SUCESS) {
             byte[] recvData = bab.toByteArray();
             procCommands(result, recvData);
+        } else {
+            procError("ERROR_FAILED");
         }
     }
 

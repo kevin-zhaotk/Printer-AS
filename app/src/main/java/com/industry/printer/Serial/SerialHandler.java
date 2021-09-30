@@ -1,5 +1,7 @@
 package com.industry.printer.Serial;
 
+import android.content.Context;
+
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Debug;
@@ -18,9 +20,11 @@ public class SerialHandler {
     private final String SERIAL_PORT = "/dev/ttyS4";
 
     private SerialPort mSerialPort = null;
+    private Context mContext;
 
     public interface OnSerialPortCommandListenner {
         public void onCommandReceived(int cmd, byte[] data);
+        public void onError(String errCode);
     }
 
     private OnSerialPortCommandListenner mNormalCmdListeners = null;
@@ -28,14 +32,28 @@ public class SerialHandler {
 
     private static SerialHandler mSerialHandler = null;
 
-    public static SerialHandler getInstance() {
+    public static SerialHandler getInstance(Context ctx) {
         if(null == mSerialHandler) {
-            mSerialHandler = new SerialHandler();
+            mSerialHandler = new SerialHandler(ctx);
 //            if(!mSerialHandler.isInitialized()) {
-                mSerialHandler.init();
+            mSerialHandler.init();
 //            }
         }
         return mSerialHandler;
+    }
+
+    public static SerialHandler getInstance() {
+        if(null == mSerialHandler) {
+            mSerialHandler = new SerialHandler(null);
+//            if(!mSerialHandler.isInitialized()) {
+            mSerialHandler.init();
+//            }
+        }
+        return mSerialHandler;
+    }
+
+    public SerialHandler(Context ctx) {
+        mContext = ctx;
     }
 
     public boolean isInitialized() {
@@ -69,46 +87,56 @@ public class SerialHandler {
         ByteArrayBuffer bab = new ByteArrayBuffer(0);
         bab.append(data, 0, data.length);
 
-        Debug.d(TAG, "DataSource: " + SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE));
+//        Debug.d(TAG, "DataSource: " + SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE));
 
         if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1 ||
             SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2) {
-            EC_DOD_Protocol p = new EC_DOD_Protocol(mSerialPort);
+            EC_DOD_Protocol p = new EC_DOD_Protocol(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_3) {
-            SerialProtocol3 p = new SerialProtocol3(mSerialPort);
+            SerialProtocol3 p = new SerialProtocol3(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_4) {
-            XK3190_A30_Protocol p = new XK3190_A30_Protocol(mSerialPort);
+            XK3190_A30_Protocol p = new XK3190_A30_Protocol(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1) {
-            SerialProtocol5 p = new SerialProtocol5(mSerialPort);
+            SerialProtocol5 p = new SerialProtocol5(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // H.M.Wang 2020-6-9 追加串口6协议
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_6) {
-            SerialProtocol6 p = new SerialProtocol6(mSerialPort);
+            SerialProtocol6 p = new SerialProtocol6(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // End of H.M.Wang 2020-6-9 追加串口6协议
 // H.M.Wang 2020-8-13 追加串口7协议
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_7) {
-            SerialProtocol7 p = new SerialProtocol7(mSerialPort);
+            SerialProtocol7 p = new SerialProtocol7(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // End of H.M.Wang 2020-8-13 追加串口7协议
 // H.M.Wang 2020-10-30 追加扫描2串口协议
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER2) {
-            Scaner2Protocol p = new Scaner2Protocol(mSerialPort);
+            Scaner2Protocol p = new Scaner2Protocol(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // End of H.M.Wang 2020-10-30 追加扫描2串口协议
 // H.M.Wang 2021-1-15 追加扫描协议3，协议内容与扫描2协议完全一致，仅在打印的时候，仅可以打印一次
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER3) {
-            Scaner2Protocol p = new Scaner2Protocol(mSerialPort);
+            Scaner2Protocol p = new Scaner2Protocol(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // End of H.M.Wang 2021-1-15 追加扫描协议3
 // H.M.Wang 2021-3-6 追加串口协议8
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_8) {
-            SerialProtocol8 p = new SerialProtocol8(mSerialPort);
+            SerialProtocol8 p = new SerialProtocol8(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // End of H.M.Wang 2021-3-6 追加串口协议8
+// H.M.Wang 2021-9-24 追加串口协议9
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_9) {
+            SerialProtocol9 p = new SerialProtocol9(mSerialPort, mContext);
+            p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
+// End of H.M.Wang 2021-9-24 追加串口协议9
+// H.M.Wang 2021-9-28 追加串口协议10
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_10) {
+            SerialProtocol10 p = new SerialProtocol10(mSerialPort, mContext);
+            p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
+// End of H.M.Wang 2021-9-28 追加串口协议10
         }
     }
 
@@ -126,37 +154,42 @@ public class SerialHandler {
 
         if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1 ||
             SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2) {
-            EC_DOD_Protocol p = new EC_DOD_Protocol(mSerialPort);
+            EC_DOD_Protocol p = new EC_DOD_Protocol(mSerialPort, mContext);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_3) {
-            SerialProtocol3 p = new SerialProtocol3(mSerialPort);
+            SerialProtocol3 p = new SerialProtocol3(mSerialPort, mContext);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_4) {
-            XK3190_A30_Protocol p = new XK3190_A30_Protocol(mSerialPort);
+            XK3190_A30_Protocol p = new XK3190_A30_Protocol(mSerialPort, mContext);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER1) {
-            SerialProtocol5 p = new SerialProtocol5(mSerialPort);
+            SerialProtocol5 p = new SerialProtocol5(mSerialPort, mContext);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
 // H.M.Wang 2020-6-9 追加串口6协议
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_6) {
-            SerialProtocol6 p = new SerialProtocol6(mSerialPort);
+            SerialProtocol6 p = new SerialProtocol6(mSerialPort, mContext);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
 // End of H.M.Wang 2020-6-9 追加串口6协议
 // H.M.Wang 2020-8-13 追加串口7协议
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_7) {
-            SerialProtocol7 p = new SerialProtocol7(mSerialPort);
+            SerialProtocol7 p = new SerialProtocol7(mSerialPort, mContext);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
 // End of H.M.Wang 2020-8-13 追加串口7协议
 // H.M.Wang 2020-10-30 追加扫描2串口协议
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_SCANER2) {
-            Scaner2Protocol p = new Scaner2Protocol(mSerialPort);
+            Scaner2Protocol p = new Scaner2Protocol(mSerialPort, mContext);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
 // End of H.M.Wang 2020-10-30 追加扫描2串口协议
 // H.M.Wang 2021-3-6 追加串口协议8
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_8) {
-            SerialProtocol8 p = new SerialProtocol8(mSerialPort);
+            SerialProtocol8 p = new SerialProtocol8(mSerialPort, mContext);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
 // End of H.M.Wang 2021-3-6 追加串口协议8
+// H.M.Wang 2021-9-24 追加串口协议9
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_9) {
+            SerialProtocol9 p = new SerialProtocol9(mSerialPort, mContext);
+            p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
+// End of H.M.Wang 2021-9-24 追加串口协议9
         }
     }
 }

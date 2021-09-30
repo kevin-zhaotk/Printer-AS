@@ -112,6 +112,7 @@ public class PlatformInfo {
 // H.M.Wang 2021-4-16 追加机器类型码的取得和显示
 	public static String getImgUniqueCode() {
 		try {
+
 			Class<?> mClassType = Class.forName("android.os.SystemProperties");
 			Method mGetMethod = mClassType.getDeclaredMethod("get", String.class);
 			String buildID = (String) mGetMethod.invoke(mClassType, PROPERTY_BUILD_ID);
@@ -120,7 +121,8 @@ public class PlatformInfo {
 			if("JDQ39".equals(buildID)) {
 				ret = "OLD-" + verInc;
 			} else {
-				ret = buildID.substring(0,2) + "xx" + verInc.substring(1);
+//				ret = buildID.substring(0,2) + "xx" + verInc.substring(1);
+				ret = buildID + verInc;
 			}
 			Debug.d(TAG, "===>Img Unique Code: " + ret);
 			return ret;

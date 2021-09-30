@@ -33,8 +33,12 @@ public class FpgaGpioOperation {
 // H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
     public static final int FPGA_CMD_GET_DPI_VER = 0x0B;
 // End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+// H.M.Wang 2021-9-24 追加输入设置参数
+    public static final int FPGA_CMD_INPUT_PROC = 0x0C;
+// End of H.M.Wang 2021-9-24 追加输入设置参数
 
-// H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+
+    // H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
     public static final int DPI_VERSION_NONE  = 0;
     public static final int DPI_VERSION_150   = 1;
     public static final int DPI_VERSION_300   = 2;
@@ -530,4 +534,14 @@ public class FpgaGpioOperation {
         return ioctl(fd, FPGA_CMD_GET_DPI_VER, 0);
     }
 // End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+// H.M.Wang 2021-9-24 追加输入设置参数
+    public static int setInputProc(int proc) {
+        int fd = open();
+        if (fd > 0) {
+            Debug.d(TAG, "FPGA_CMD_INPUT_PROC");
+            return ioctl(fd, FPGA_CMD_INPUT_PROC, proc);
+        }
+        return -1;
+    }
+// End of H.M.Wang 2021-9-24 追加输入设置参数
 }

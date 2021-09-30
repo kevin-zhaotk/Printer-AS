@@ -27,10 +27,6 @@ import java.util.ArrayList;
  * Created by hmwan on 2020/5/16.
  */
 
-/**
- * Created by hmwan on 2020/4/24.
- */
-
 public class QRLastEditDialog extends Dialog implements android.view.View.OnClickListener {
     private static final String TAG = CounterEditDialog.class.getSimpleName();
 

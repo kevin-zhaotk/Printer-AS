@@ -648,8 +648,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 		// H.M.Wang 2019-12-19 修改支持多种协议
 		// H.M.Wang 2019-10-26 追加串口命令处理部分
-		final SerialHandler sHandler = SerialHandler.getInstance();
+		final SerialHandler sHandler = SerialHandler.getInstance(mContext);
 		sHandler.setNormalCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
+			@Override
+			public void onError(String errCode) {
+				ToastUtil.show(mContext, errCode);
+			}
 			@Override
 			public void onCommandReceived(int cmd, byte[] data) {
 				if( SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1 ||
@@ -761,6 +765,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
             mGpio11Timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
+					if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) != SystemConfigFile.INPUT_PROC_PRINT) return;
 					final int newState = ExtGpio.readPI11State();
 					if(mPI11State == newState) return;
 					mBtnStart.post(new Runnable() {
@@ -1784,6 +1789,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			}
 		}
 	}
+
+// H.M.Wang 2021-9-24 注释：由于这个Segment创建的太早，导致屏幕还没有反转就已经画图完毕了，因此首次进入这个函数时屏幕是竖屏的，变为横屏的时候onConfigurationChanged事件被过滤掉了，因此
+// 如果把preview的高度设成match_parent，就会获得一个竖屏模式下获取的高度，从而变大
 
 	private void dispPreview(final Bitmap bmp) {
 // H.M.Wang 2021-6-1 修改预览页面显示方法。保修切割图片，延迟显示方法
@@ -3601,7 +3609,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			// End of H.M.Wang 2020-1-8 向PC通报打印状态，附加命令ID
 // H.M.Wang 2020-8-13 追加串口7协议
 			if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_7) {
-				final SerialHandler serialHandler = SerialHandler.getInstance();
+				final SerialHandler serialHandler = SerialHandler.getInstance(mContext);
 // H.M.Wang 2020-11-18 cmdStatus=2,表示打印完成，msg里面放mCounter
 				serialHandler.sendCommandProcessResult(0, 1, 0, 2, String.valueOf(mCounter));
 // End of H.M.Wang 2020-11-18 cmdStatus=2,表示打印完成，msg里面放mCounter

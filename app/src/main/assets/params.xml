@@ -226,5 +226,13 @@
 		<max>100</max>
 		<default>50</default>
 	</param>
+<!--	H.M.Wang 2021-9-24 追加输入设置参数 -->
+	<param>
+		<id>57</id>
+		<min>0</min>
+		<max>2</max>
+		<default>0</default>
+	</param>
+<!--	End of H.M.Wang 2021-9-24 追加输入设置参数 -->
 
 </Params>

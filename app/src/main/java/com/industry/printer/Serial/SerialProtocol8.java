@@ -1,5 +1,7 @@
 package com.industry.printer.Serial;
 
+import android.content.Context;
+
 import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Debug;
@@ -84,8 +86,8 @@ public class SerialProtocol8 extends SerialProtocol {
     private static int mLastValue = 0;
     private static int mTypeCode = 0;
 
-    public SerialProtocol8(SerialPort serialPort){
-        super(serialPort);
+    public SerialProtocol8(SerialPort serialPort, Context ctx){
+        super(serialPort, ctx);
 
         SystemConfigFile sysConfig = SystemConfigFile.getInstance();
         mLocalID = sysConfig.getParam(SystemConfigFile.INDEX_LOCAL_ID);
@@ -244,6 +246,7 @@ public class SerialProtocol8 extends SerialProtocol {
         switch(result & ERROR_MASK) {
             case ERROR_ID_NOT_MATCH:                // 本地ID不匹配错误
                 Debug.e(TAG, "ERROR_ID_NOT_MATCH");
+                procError("ERROR_ID_NOT_MATCH");
                 break;
             case ERROR_CRC_FAILED:                  // CRC校验失败
                 Debug.e(TAG, "ERROR_CRC_FAILED");
@@ -259,6 +262,7 @@ public class SerialProtocol8 extends SerialProtocol {
                 break;
             case ERROR_FAILED:                      // 解析帧失败
                 Debug.e(TAG, "ERROR_FAILED");
+                procError("ERROR_FAILED");
                 break;
             case ERROR_SUCESS:
                 if(CMD_WRITE == mCmd) procCommands(mCmd, recvData);

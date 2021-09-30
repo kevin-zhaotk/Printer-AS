@@ -1,5 +1,7 @@
 package com.industry.printer.Serial;
 
+        import android.content.Context;
+
         import com.industry.printer.Utils.Debug;
 
         import org.apache.http.util.ByteArrayBuffer;
@@ -15,8 +17,8 @@ public class Scaner2Protocol extends SerialProtocol {
 
     public final static String TEXT_SEPERATOR         = "#";          // 串口接收文本的间隔符
 
-    public Scaner2Protocol(SerialPort serialPort){
-        super(serialPort);
+    public Scaner2Protocol(SerialPort serialPort, Context ctx){
+        super(serialPort, ctx);
     }
 
     @Override

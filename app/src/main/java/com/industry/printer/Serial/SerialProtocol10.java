@@ -2,40 +2,32 @@ package com.industry.printer.Serial;
 
 import android.content.Context;
 
-import com.industry.printer.Utils.ByteArrayUtils;
-import com.industry.printer.Utils.Debug;
-
 import org.apache.http.util.ByteArrayBuffer;
 
 import java.nio.charset.Charset;
 
 /**
- * Created by hmwan on 2019/12/20.
+ * Created by hmwan on 2021/9/28.
  */
 
-public class SerialProtocol3 extends SerialProtocol {
-    public static String TAG = SerialProtocol3.class.getSimpleName();
+/**
+ * Created by hmwan on 2020/6/9.
+ */
 
-    public SerialProtocol3(SerialPort serialPort, Context ctx){
+public class SerialProtocol10 extends SerialProtocol {
+    public static String TAG = SerialProtocol5.class.getSimpleName();
+
+    public SerialProtocol10(SerialPort serialPort, Context ctx){
         super(serialPort, ctx);
     }
 
     @Override
     protected int parseFrame(ByteArrayBuffer recvMsg) {
-        int recvCmd = ERROR_FAILED;
-        try {
-            for (int i=recvMsg.length()-1; i>=0; i--) {
-                if (recvMsg.byteAt(i) == 0x0A) {
-                    recvMsg.setLength(i);
-                    recvCmd = ERROR_SUCESS;
-                    break;
-                }
-            }
-            return recvCmd;
-        } catch (Exception e) {
-            Debug.e(TAG, e.getMessage());
+        if(recvMsg.length() < 12) {             // 本来定义的数据长度是36，但是只有18字以内有效，且仅使用9-12的内容，因此可以判断是否大于12就可以了
+            return ERROR_FAILED;
         }
-        return ERROR_FAILED;
+
+        return ERROR_SUCESS;
     }
 
     @Override
@@ -50,7 +42,6 @@ public class SerialProtocol3 extends SerialProtocol {
         int result = parseFrame(bab);
         if (result == ERROR_SUCESS) {
             byte[] recvData = bab.toByteArray();
-
             procCommands(result, recvData);
         } else {
             procError("ERROR_FAILED");

@@ -1,5 +1,7 @@
 package com.industry.printer.Serial;
 
+import android.content.Context;
+
 import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Debug;
 
@@ -45,8 +47,8 @@ public class XK3190_A30_Protocol extends SerialProtocol {
     public final static int ERROR_INVALID_CMD         = 0x83000000;   // 不可识别的命令
     public final static int ERROR_CHECK_FAILED        = 0x84000000;   // 校验失败
 
-    public XK3190_A30_Protocol(SerialPort serialPort){
-        super(serialPort);
+    public XK3190_A30_Protocol(SerialPort serialPort, Context ctx){
+        super(serialPort, ctx);
     }
 
     @Override
@@ -152,7 +154,7 @@ public class XK3190_A30_Protocol extends SerialProtocol {
         setListeners(normalCmdListenner, printCmdListenner);
 
         int result = parseFrame(bab);
-        if((result & ERROR_MASK) == XK3190_A30_Protocol.ERROR_SUCESS) {
+        if((result & ERROR_MASK) == ERROR_SUCESS) {
             String value = Integer.toString(result & CMD_MASK);
 
             if(null == mPrintCmdListeners) {

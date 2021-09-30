@@ -436,7 +436,10 @@
 	<string name="str_textview_param54">54.Counter9</string>
 	<string name="str_textview_param55">55.QR Index</string>
 	<string name="str_textview_param56">56.FIFO</string>
-	<string name="str_textview_param57">57.Reserved</string>
+	<!-- H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
+<!--	<string name="str_textview_param57">57.Reserved</string> -->
+	<string name="str_textview_param57">57.Input</string>
+	<!-- End of H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
 	<string name="str_textview_param58">58.IP</string>
 	<string name="str_textview_param59">59.Reserved</string>
 	<string name="str_textview_param60">60.Log</string>

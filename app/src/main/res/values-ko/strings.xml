@@ -411,7 +411,10 @@
 	<string name="str_textview_param54">54.계수기9</string>
 	<string name="str_textview_param55">55.QR자막</string>
 	<string name="str_textview_param56">56.프린트 및 보존</string>
-	<string name="str_textview_param57">57.보류</string>
+	<!-- H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
+	<!--		<string name="str_textview_param57">57.보류</string> -->
+	<string name="str_textview_param57">57.Input</string>
+	<!-- End of H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
 	<string name="str_textview_param58">58.주소</string>
 	<string name="str_textview_param59">59.보류</string>
 	<string name="str_textview_param60">60.기록</string>

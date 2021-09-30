@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.hardware.RTCDevice;
 import org.xml.sax.InputSource;
 import org.xmlpull.v1.XmlPullParser;
@@ -179,10 +180,45 @@ public class SystemConfigFile{
 // H.M.Wang 2021-3-6 追加串口协议8
 	public static final int DATA_SOURCE_RS232_8 	= 18;		// 数据源使用串口协议8。
 // End of H.M.Wang 2021-3-6 追加串口协议8
+// H.M.Wang 2021-9-24 追加串口协议9
+	public static final int DATA_SOURCE_RS232_9 	= 19;		// 数据源使用串口协议9。具体内容是：
+																// 接收上位机查询指令 "AA 0D 0A"，如处于待机状态（即打印状态）则返回"DD 0D 0A"，如果不是该状态则不返回或返回其他内容，选择"EE 0D 0A"返回
+																// 接收到28位数字字符串 如：2110042290110005265129211009
+																// 其中：Bit1-2 (21) -> DT0
+																// 		Bit3-4 (10) -> DT1
+																// 		Bit5-6 (04) -> DT2
+																// 		Bit7-9 (229) -> DT3
+																// 		Bit10 (0) -> DT4
+																// 		Bit11 (1) -> 如果为0，1，2，3，则分别向DT5赋值N，L，M，H
+																// 		Bit12-17 (100052) -> DT6
+																// 		Bit18-28 (65129211009) -> DT7
+// End of H.M.Wang 2021-9-24 追加串口协议9
+// H.M.Wang 2021-9-28 追加串口协议10
+    public static final int DATA_SOURCE_RS232_10 	= 20;		// 数据源使用串口协议10。具体内容是：
+                                                                // 数据总长度是36位，   1-18 位和19-36 完全相同
+
+                                                                // 这是表头传输数据格
+                                                                // 53 54 2C 4E 54 2C 2B 20 20 20 20 35 2E 30 6B 67 0D 0A
+                                                                // 我门要做
+                                                                // 1. 接收前18位
+                                                                // 2.9-12位赋给DT 0.
+// End of H.M.Wang 2021-9-28 追加串口协议10
 
 // H.M.Wang 2021-3-6 追加串口协议8
 	public static final int INDEX_LOCAL_ID 			= 57;		// 用于串口协议8当中的本地机器ID。
 // End of H.M.Wang 2021-3-6 追加串口协议8
+
+// H.M.Wang 2021-9-24 追加输入设置参数
+//	输入信号/Input:
+//			0.  屏蔽  None
+//			1. 打印/停止Print/Stop
+//			2.  镜像    /Mirror
+	public static final int INDEX_IPURT_PROC 		= 56;		// 外部输入（PI11）的动作定义参数
+
+	public static final int INPUT_PROC_NONE = 0;
+	public static final int INPUT_PROC_PRINT = 1;
+	public static final int INPUT_PROC_MIRROR = 2;
+// End of H.M.Wang 追加输入设置参数
 
 // H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
 	public static final int DIRECTION_NORMAL = 0;
@@ -1211,6 +1247,11 @@ public class SystemConfigFile{
 			return ;
 		}
 		mParam[index] = value;
+// H.M.Wang 2021-9-24 追加输入设置参数
+		if(index == INDEX_IPURT_PROC) {
+			FpgaGpioOperation.setInputProc(value);
+		}
+// End of H.M.Wang 2021-9-24 追加输入设置参数
 	}
 
 	public PrinterNozzle getPNozzle() {

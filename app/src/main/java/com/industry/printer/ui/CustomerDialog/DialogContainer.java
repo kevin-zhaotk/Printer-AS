@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Window;
 
+@Deprecated
 public class DialogContainer extends Dialog {
 
 	public DialogContainer(Context context) {

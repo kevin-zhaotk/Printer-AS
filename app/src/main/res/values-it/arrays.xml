@@ -31,6 +31,12 @@
         <!--  H.M.Wang 2021-3-6 追加串口8 -->
         <item>RS232-8</item>
         <!--  End of H.M.Wang 2021-3-6 追加串口8 -->
+        <!--  H.M.Wang 2021-9-24 追加串口9 -->
+        <item>RS232-9</item>
+        <!--  End of H.M.Wang 2021-9-24 追加串口9 -->
+        <!--  H.M.Wang 2021-9-28 追加串口10 -->
+        <item>RS232-10</item>
+        <!--  End of H.M.Wang 2021-9-28 追加串口10 -->
     </string-array>
 <!-- End of H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
 
@@ -322,4 +328,11 @@
         <item>6</item>
     </string-array>
 
+    <!-- H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
+    <string-array name="input_proc_item_entries">
+        <item>None</item>
+        <item>Print</item>
+        <item>Mirror</item>
+    </string-array>
+    <!-- End of H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
 </resources>

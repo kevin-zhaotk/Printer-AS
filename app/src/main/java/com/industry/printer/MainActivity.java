@@ -323,7 +323,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		Debug.d(TAG, "--->onConfigurationChanged: " + newConfig.locale.getLanguage());
-		
+
 		if (!newConfig.locale.getLanguage().equals(mLanguage)) {
 			onConfigChange();
 		}

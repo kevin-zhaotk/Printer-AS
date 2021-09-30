@@ -92,6 +92,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 //	private PopWindowAdapter mLan;
 	// End of H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用
 
+// H.M.Wang 2021-9-24 追加输入设置参数
+	private PopWindowAdapter mInputProc;
+// End of H.M.Wang 2021-9-24 追加输入设置参数
+
 	private ItemViewHolder mEncoderHolder;
 //	private HashMap<Integer, ItemViewHolder> mHoldMap;
 	
@@ -208,15 +212,15 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 				break;
 // End of H.M.Wang 2020-4-27 编码器脉冲设置改为对话窗
 // H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
-				case MSG_QRLAST_SET:
-					mSettingItems[SystemConfigFile.INDEX_QRCODE_LAST].setValue(msg.arg1);		// 更新编辑页面数据
-					mSysconfig.setParam(SystemConfigFile.INDEX_QRCODE_LAST, msg.arg1);			// 更新参数设置数据
-					RTCDevice.getInstance(mContext).writeQRLast(msg.arg1);						// 更新不挥发保存区数据
+			case MSG_QRLAST_SET:
+				mSettingItems[SystemConfigFile.INDEX_QRCODE_LAST].setValue(msg.arg1);		// 更新编辑页面数据
+				mSysconfig.setParam(SystemConfigFile.INDEX_QRCODE_LAST, msg.arg1);			// 更新参数设置数据
+				RTCDevice.getInstance(mContext).writeQRLast(msg.arg1);						// 更新不挥发保存区数据
 // H.M.Wang 2020-5-19 写入不挥发存储区后，重新初始化QRReader类，否则，上次执行结果留存，新设置内容不起作用
-					QRReader.reInstance(mContext);												// 重新初始化QRReader类，必须在更新了不挥发存储区后执行
+				QRReader.reInstance(mContext);												// 重新初始化QRReader类，必须在更新了不挥发存储区后执行
 // End of H.M.Wang 2020-5-19 写入不挥发存储区后，重新初始化QRReader类，否则，上次执行结果留存，新设置内容不起作用
-					notifyDataSetChanged();
-					break;
+				notifyDataSetChanged();
+				break;
 // End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 			}
 		}
@@ -356,6 +360,11 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		// H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用
 		// mLan = new PopWindowAdapter(mContext, null);
 		// End of H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用
+
+// H.M.Wang 2021-9-24 追加输入设置参数
+		mInputProc = new PopWindowAdapter(mContext, null);
+// End of H.M.Wang 2021-9-24 追加输入设置参数
+
 		initAdapters();
 
 		// H.M.Wang 增加3行。注册广播接收器，接收计数器更新值，设置到编辑区内
@@ -562,7 +571,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[54] = new ItemOneLine(55, R.string.str_textview_param55, 0, ItemType.TYPE_DIALOG);
 // End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 		mSettingItems[55] = new ItemOneLine(56, R.string.str_textview_param56, 0);
-		mSettingItems[56] = new ItemOneLine(57, R.string.str_textview_param57, 0);
+// H.M.Wang 2021-9-24 追加输入设置参数
+//		mSettingItems[56] = new ItemOneLine(57, R.string.str_textview_param57, 0);
+		mSettingItems[56] = new ItemOneLine(57, R.string.str_textview_param57, R.array.input_proc_item_entries, 0, ItemType.TYPE_SWITCH);
+// End of H.M.Wang 2021-9-24 追加输入设置参数
 		mSettingItems[57] = new ItemOneLine(58, R.string.str_textview_param58, 0);
 		mSettingItems[58] = new ItemOneLine(59, R.string.str_textview_param59, 0);
 		mSettingItems[59] = new ItemOneLine(60, R.string.str_textview_param60, 0);
@@ -682,6 +694,13 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		for (int i = 0; i < items.length; i++) {
 			mDots.addItem(items[i]);
 		}
+
+// H.M.Wang 2021-9-24 追加输入设置参数
+		items = mContext.getResources().getStringArray(R.array.input_proc_item_entries);
+		for (int i = 0; i < items.length; i++) {
+			mInputProc.addItem(items[i]);
+		}
+// End of H.M.Wang 2021-9-24 追加输入设置参数
 	}
 	private String getEntry(int id,int index) {
 		String entries[] = mContext.getResources().getStringArray(id);
@@ -805,6 +824,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			dialog.show();
 			return;
 // End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
+// H.M.Wang 2021-9-24 追加输入设置参数
+		} else if (position == 56) { //參數57
+			mSpiner.setAdapter(mInputProc);
+// End of H.M.Wang 2021-9-24 追加输入设置参数
 		}
 		mSpiner.setWidth(view.getWidth());
 		//mSpiner.showAsDropDown(view);

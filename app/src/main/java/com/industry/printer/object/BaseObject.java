@@ -483,7 +483,8 @@ public class BaseObject{
 	private int getfeedsent() {
 		return (int)(mHeight/10 * 11/20 + 1);
 	}
-	
+
+	@Deprecated
 	protected Bitmap getBitmap(Context context)
 	{
 		//mPaint.setColor(Color.RED);

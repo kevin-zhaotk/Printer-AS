@@ -393,7 +393,10 @@
 	<string name="str_textview_param54">54.计数器9</string>
 	<string name="str_textview_param55">55.QR索引</string>
 	<string name="str_textview_param56">56.打印緩存</string>
-	<string name="str_textview_param57">57.保留</string>
+	<!-- H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
+	<!--	<string name="str_textview_param57">57.保留</string> -->
+	<string name="str_textview_param57">57.輸入信號</string>
+	<!-- End of H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
 	<string name="str_textview_param58">58.地址</string>
 	<string name="str_textview_param59">59.保留</string>
 	<string name="str_textview_param60">60.Log</string>
