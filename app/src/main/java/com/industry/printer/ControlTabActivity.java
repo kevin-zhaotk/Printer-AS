@@ -1927,7 +1927,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 		// 鍒濆鍖朾uffer
 		mDTransThread.initDataBuffer(mContext, mMsgTask);
-		// TLKFileParser parser = new TLKFileParser(mContext, mObjPath);
+
 		// 璁剧疆dot count
 		mDTransThread.setDotCount(mMsgTask);
 		// 璁剧疆UI鍥炶皟

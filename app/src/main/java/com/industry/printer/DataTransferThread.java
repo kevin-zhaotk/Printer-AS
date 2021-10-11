@@ -960,12 +960,15 @@ private void setSerialProtocol9DTs(final String data) {
             }
         });
 
-        if(data.length() < 12) {                               // 数据长度36
+        if(data.length() < 14) {                               // 数据长度36
             ToastUtil.show(mContext, R.string.invalid_protocol);
             return;
         }
 
-        String dt0 = data.substring(8, 12);
+		String dt0 = data.substring(8, 12);
+// H.M.Wang 2021-10-11 追加第14位赋给DT1的功能
+		String dt1 = data.substring(13, 14);
+// End of H.M.Wang 2021-10-11 追加第14位赋给DT1的功能
 
         for(DataTask dataTask : mDataTask) {
             ArrayList<BaseObject> objList = dataTask.getObjList();
@@ -977,6 +980,13 @@ private void setSerialProtocol9DTs(final String data) {
                         SystemConfigFile.getInstance().setDTBuffer(dtIndex, dt0);
 // End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
                         baseObject.setContent(dt0);
+// H.M.Wang 2021-10-11 追加第14位赋给DT1的功能
+					} else if(dtIndex == 1) {
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+							SystemConfigFile.getInstance().setDTBuffer(dtIndex, dt1);
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+							baseObject.setContent(dt1);
+// End of H.M.Wang 2021-10-11 追加第14位赋给DT1的功能
                     } else {
                         baseObject.setContent("");
                     }

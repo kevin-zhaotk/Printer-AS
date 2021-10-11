@@ -23,7 +23,7 @@ public class SerialProtocol10 extends SerialProtocol {
 
     @Override
     protected int parseFrame(ByteArrayBuffer recvMsg) {
-        if(recvMsg.length() < 12) {             // 本来定义的数据长度是36，但是只有18字以内有效，且仅使用9-12的内容，因此可以判断是否大于12就可以了
+        if(recvMsg.length() < 14) {             // 本来定义的数据长度是36，但是只有18字以内有效，且仅使用9-12的内容，因此可以判断是否大于12就可以了. 2021-10-11 修改14位赋给DT1，因此修改有效性判断位数
             return ERROR_FAILED;
         }
 

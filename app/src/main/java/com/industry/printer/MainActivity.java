@@ -292,6 +292,225 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				ExtGpio.playClick();
 			}
 		}.start();
+
+/*
+		Debug.d(TAG, "TEST - START");
+		Debug.d(TAG, "TEST - 情形1：变宽 -> 单体移位");
+//		obj : (0, 0, 10,10) - (0, 0, 20, 10)
+//		obj1:(10,0,15,10) - (?, ?, ?, ?) (20, 0, 25, 10)
+		mObjs.clear();
+		mMovedObjs.clear();
+		mObjs.add(new OBJ("Org", 0, 0, 10, 10, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Dst1", 10, 0, 15, 10, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Dst2", 10, 0, 15, 10, OBJ.POSITION_FLOAT));
+		mObjs.get(0).adjustWidth(10);
+		adjustPosition();
+
+		Debug.d(TAG, "TEST - 情形2：变宽 -> 单体中途移位（初始状态是顶在其他的无关obj上了，）");
+//		obj : (0, 0, 10,10) - (0, 0, 20, 10)
+//		obja:(5, 10, 15, 20) - (5, 10, 15, 20)
+//		obj1:(15,5,25,15) - (?, ?, ?, ?) (20,5,30,15)
+		mObjs.clear();
+		mMovedObjs.clear();
+		mObjs.add(new OBJ("Org", 0, 0, 10, 10, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Obs", 5, 10, 15, 20, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Dst", 15, 5, 25, 15, OBJ.POSITION_FLOAT));
+		mObjs.get(0).adjustWidth(10);
+		adjustPosition();
+
+		Debug.d(TAG, "TEST - 情形3：变宽 -> 复合移位，一个制约一个");
+//		obj : (0, 0, 10,10) - (0, 0, 20, 10)
+//		obj1:(10,5,15,15) - (?, ?, ?, ?) (20,5,25,15)
+//		obj2:(15,10,20,20) - (?, ?, ?, ?) (25,10,30,20)
+		mObjs.clear();
+		mMovedObjs.clear();
+		mObjs.add(new OBJ("Org", 0, 0, 10, 10, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Dst1", 10, 5, 15, 15, OBJ.POSITION_FLOAT));
+		mObjs.add(new OBJ("Dst2", 15, 10, 20, 20, OBJ.POSITION_FLOAT));
+		mObjs.get(0).adjustWidth(10);
+		adjustPosition();
+
+		Debug.d(TAG, "TEST - 情形4：变宽 -> 复合移位，受两个变量影响");
+//		obj : (0, 0, 10,20) - (0, 0, 20, 20)
+//		obj1:(10,0,15,10) - (20,0,25,10)
+//		obj2:(10,10,17,20) - (20,10,27,20)
+//		obj3:(17,0,20,20) - (?, ?, ?, ?) (27,0,30,20)
+		mObjs.clear();
+		mMovedObjs.clear();
+		mObjs.add(new OBJ("Org", 0, 0, 10, 20, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Dst1", 10, 0, 15, 10, OBJ.POSITION_FLOAT));
+		mObjs.add(new OBJ("Dst2", 10, 10, 17, 20, OBJ.POSITION_FLOAT));
+		mObjs.add(new OBJ("Dst3", 17, 0, 20, 20, OBJ.POSITION_FLOAT));
+		mObjs.get(0).adjustWidth(10);
+		adjustPosition();
+
+		Debug.d(TAG, "TEST - 情形5：变窄 -> 单体移位");
+//		obj : (0, 0, 20,10) - (0, 0, 10, 10)
+//		obj1:(20,0,25,10) - (?, ?, ?, ?) (10,0,15,10)
+		mObjs.clear();
+		mMovedObjs.clear();
+		mObjs.add(new OBJ("Org", 0, 0, 20, 10, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Dst", 20, 0, 25, 10, OBJ.POSITION_FLOAT));
+		mObjs.get(0).adjustWidth(-10);
+		adjustPosition();
+
+		Debug.d(TAG, "TEST - 情形6：变窄 -> 单体中途移位（最后状态是顶在其他的obj上了）");
+//		obj : (0, 0, 20,10) - (0, 0, 10, 10)
+//		obja:(5, 10, 15, 20) - (5, 10, 15, 20)
+//		obj1:(20,5,30,15) - (?, ?, ?, ?) (15,5,25,15)
+		mObjs.clear();
+		mMovedObjs.clear();
+		mObjs.add(new OBJ("Org", 0, 0, 20, 10, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Obs", 5, 10, 15, 20, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Dst", 20, 5, 30, 15, OBJ.POSITION_FLOAT));
+		mObjs.get(0).adjustWidth(-10);
+		adjustPosition();
+
+		Debug.d(TAG, "TEST - 情形7：变窄 -> 复合移位，一个制约一个");
+//		obj : (0, 0, 20,10) - (0, 0, 10, 10)
+//		obj1:(20,5,25,15) - (?, ?, ?, ?) (10,5,15,15)
+//		obj2:(25,10,30,20) - (?, ?, ?, ?) (15,10,20,20)
+		mObjs.clear();
+		mMovedObjs.clear();
+		mObjs.add(new OBJ("Org", 0, 0, 20, 10, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Dst1", 20, 5, 25, 15, OBJ.POSITION_FLOAT));
+		mObjs.add(new OBJ("Dst2", 25, 10, 30, 20, OBJ.POSITION_FLOAT));
+		mObjs.get(0).adjustWidth(-10);
+		adjustPosition();
+
+		Debug.d(TAG, "TEST - 情形8：变窄 -> 复合移位，受两个变量影响");
+//		obj : (0, 0, 20,20) - (0, 0, 10, 20)
+//		obj1:(20,0,25,10) - (10,0,15,10)
+//		obj2:(20,10,27,20) - (10,10,17,20)
+//		obj3:(27,0,30,20) - (?, ?, ?, ?) (17,0,20,20)
+		mObjs.clear();
+		mMovedObjs.clear();
+		mObjs.add(new OBJ("Org", 0, 0, 20, 20, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Dst1", 20, 0, 25, 10, OBJ.POSITION_FLOAT));
+		mObjs.add(new OBJ("Dst2", 20, 10, 27, 20, OBJ.POSITION_FLOAT));
+		mObjs.add(new OBJ("Dst3", 27, 0, 30, 20, OBJ.POSITION_FLOAT));
+		mObjs.get(0).adjustWidth(-10);
+		adjustPosition();
+
+		Debug.d(TAG, "TEST - FINISH (如果中途没有LOG输出，用时不到10ms，如果输出LOG，则用时要达到将近100ms");
+*/
+	}
+
+	private ArrayList<OBJ> mObjs = new ArrayList<OBJ>();
+	private ArrayList<OBJ> mMovedObjs = new ArrayList<OBJ>();
+
+	private boolean hasBlockObj(OBJ orgObj, OBJ tarObj, Rect affectRect) {
+		boolean has = false;
+
+		if(affectRect.isEmpty()) return has;
+
+		for(OBJ aObj : mObjs) {
+			if(aObj.equals(orgObj)) continue;		// 原变量，跳过
+			if(aObj.equals(tarObj)) continue;		// 目标变量， 跳过
+			if(aObj.mPositionType == OBJ.POSITION_FIXED) continue;	// 当前变量为固定变量，不在考虑之列
+// Intersects
+			if(aObj.mLastRect.bottom <= affectRect.top) continue;	// 当前变量完全在监视范围之上，不做考虑
+			if(aObj.mLastRect.top >= affectRect.bottom) continue;	// 当前变量完全在监视范围之下，不做考虑
+			if(aObj.mLastRect.left >= affectRect.right) continue;	// 当前变量的左端在监视范围的右面，因此不会被推到
+			if(aObj.mLastRect.right <= affectRect.left) continue;	// 当前变量的右端在监视范围的左面，因此不会被推到
+//			if(!Rect.intersects(aObj.mLastRect, affectRect)) continue;	// 等价与上面4行
+// End of Intersects
+			if(aObj.mLastRect.left < affectRect.left) continue;		// 当前变量的左端在监视范围的左面，因此不会被推到
+			if(aObj.mLastRect.right > affectRect.right) continue;	// 当前变量的右端在监视范围的右面，因此不会阻碍到目标变量
+			has = true;
+			break;
+		}
+//		Debug.d(TAG, "TEST - hasBlockObj =  " + has);
+		return has;
+	}
+
+	private int getTargetLeft(OBJ orgObj, OBJ tarObj, int defLeft) {
+		int targetLeft = defLeft;
+
+		for(OBJ aObj : mObjs) {
+			if(aObj.equals(orgObj)) continue;		// 原变量，跳过
+			if(aObj.equals(tarObj)) continue;		// 目标变量， 跳过
+// 即使是固定位置的变量，也作为障碍物			if(aObj.mPositionType == OBJ.POSITION_FIXED) continue;	// 当前变量为固定变量，不在考虑之列
+			if(aObj.mCurRect.bottom <= tarObj.mCurRect.top) continue;	// 当前变量完全在监视范围之上，不做考虑
+			if(aObj.mCurRect.top >= tarObj.mCurRect.bottom) continue;	// 当前变量完全在监视范围之下，不做考虑
+			if(aObj.mCurRect.right > tarObj.mCurRect.left) continue;	// 当前变量的右端在目标变量左边的右侧，不会成为障碍
+			if(aObj.mCurRect.right <= targetLeft) continue;				// 当前变量的右端在障碍线的左侧，因此不会被触及到
+			targetLeft = aObj.mCurRect.right;
+		}
+		return targetLeft;
+	}
+
+	public void adjustPosition() {
+		while(mMovedObjs.size() > 0) {
+			adjustPosition(mMovedObjs.get(0));
+			mMovedObjs.remove(0);
+		}
+	}
+
+	public void adjustPosition(OBJ orgObj) {
+//		Debug.d(TAG, "TEST - orgObj " + orgObj.mID + " mLastRect " + orgObj.mLastRect.toString() + " - mCurRect " + orgObj.mCurRect.toString());
+		for(OBJ tarObj : mObjs) {		// 目标变量
+//			Debug.d(TAG, "TEST - tarObj " + tarObj.mID + " mLastRect " + tarObj.mLastRect.toString() + " - mCurRect " + tarObj.mCurRect.toString());
+			if(tarObj.equals(orgObj)) continue;									// 原变量，跳过
+			if(tarObj.mPositionType == OBJ.POSITION_FIXED) continue;			// 固定位置变量，不做考虑
+			if(tarObj.mLastRect.bottom <= orgObj.mLastRect.top) continue;		// 如果目标变量与参照变量高度不重叠，则无关
+			if(tarObj.mLastRect.top >= orgObj.mLastRect.bottom) continue;		// 如果目标变量与参照变量高度不重叠，则无关
+			// 变宽的情形，如果目标变量的左侧在参照变量原来位置的右边，新位置的左边，则需要将其调整至新位置的右边
+			if(orgObj.mCurRect.right > orgObj.mLastRect.right) {
+				if(tarObj.mLastRect.left >= orgObj.mCurRect.right) continue;		// 如果目标变量与参照变量不触及，则无关
+				if(tarObj.mLastRect.left < orgObj.mLastRect.right) continue;		// 如果目标变量与参照变量不触及，则无关
+				Rect affectRect = new Rect(
+						orgObj.mLastRect.right,
+						Math.max(orgObj.mCurRect.top, tarObj.mCurRect.top),
+						tarObj.mLastRect.left,
+						Math.min(orgObj.mCurRect.bottom, tarObj.mCurRect.bottom));
+//				Debug.d(TAG, "TEST - affectRect " + affectRect.toString());
+				if(!hasBlockObj(orgObj, tarObj, affectRect)) {
+					if(tarObj.mCurRect.left < orgObj.mCurRect.right) {
+						tarObj.mCurRect.offsetTo(orgObj.mCurRect.right, tarObj.mCurRect.top);
+						mMovedObjs.remove(tarObj);
+						mMovedObjs.add(tarObj);
+//						Debug.d(TAG, "TEST - moved " + tarObj.mID + " to " + tarObj.mCurRect.toString() + " by " + orgObj.mID);
+					}
+				}
+			}
+			// 变窄的情形，如果目标变量的左侧在参照变量的右边紧邻（如果有空隙，则说明目标变量与参照变量位置调整关系，如果在参照变量的里面，也无参照关系），并且在新位置的右边，则需要调整至参照变量的右边，
+			// 但是，不排除这中间有其他的变量阻挡，因此，需要找到做小调整距离的变量及其右侧位置，并且将其调整至此
+			if(orgObj.mCurRect.right < orgObj.mLastRect.right) {
+				if(tarObj.mCurRect.left <= orgObj.mCurRect.right) continue;		// 如果目标变量与参照变量不触及，则无关
+				int newLeft = getTargetLeft(orgObj, tarObj, orgObj.mCurRect.right);
+				if(newLeft < tarObj.mCurRect.left) {
+					tarObj.mCurRect.offsetTo(newLeft, tarObj.mCurRect.top);
+					mMovedObjs.remove(tarObj);
+					mMovedObjs.add(tarObj);
+//					Debug.d(TAG, "TEST - moved " + tarObj.mID + " to " + tarObj.mCurRect.toString() + " by " + orgObj.mID);
+				}
+			}
+		}
+	}
+
+	private class OBJ {
+		public static final int POSITION_FIXED = 0;			// 定位种类：固定位置
+		public static final int POSITION_FLOAT = 1;			// 定位种类：流动位置（根据前面的变量的宽度进行位置调整）
+		private int mPositionType = POSITION_FIXED;			// 定位种类：缺省为固定位置
+
+		private String mID;
+		private Rect mLastRect;
+		private Rect mCurRect;
+
+		public OBJ(String id, int left, int top, int right, int bottom, int posType) {
+			mID = id;
+			mLastRect = new Rect(left, top, right, bottom);
+			mCurRect = new Rect(left, top, right, bottom);
+			mPositionType = posType;
+//			Debug.d(TAG, "TEST - new " + mID + " - " + mCurRect.toString());
+		}
+
+		public void adjustWidth(int change) {
+			mCurRect.right += change;
+			mMovedObjs.add(this);
+//			Debug.d(TAG, "TEST - change " + mID + " from " + mLastRect.toString() + " to " + mCurRect.toString());
+		}
 	}
 
 	@Override

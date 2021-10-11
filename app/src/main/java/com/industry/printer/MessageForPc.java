@@ -6,7 +6,6 @@ import com.industry.printer.FileFormat.TlkFileParser;
 import com.industry.printer.MessageTask;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.MessageObject;
-import com.industry.printer.object.TLKFileParser;
 
 import android.os.Handler;
 

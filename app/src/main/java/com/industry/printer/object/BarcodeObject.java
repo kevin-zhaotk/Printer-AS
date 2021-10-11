@@ -82,6 +82,8 @@ public class BarcodeObject extends BaseObject {
 	/** UPC/EAN extension format. Not a stand-alone format. */
 	// UPC_EAN_EXTENSION
 
+// H.M.Wang 2021-10-7 EAN128的生成有错误
+// 参照模型：CODE(本机支持的格式如下，仅作为保存数值使用) -> FORMAT(内部的格式定义，如上）-> FORMAT（Zxing的BarcodeFormat格式，如getBarcodeFormat的返回，但该函数直接使用的字符串）
 	private static final int CODE_EAN8 							= 0;
 	private static final int CODE_EAN13 						= 1;
 	private static final int CODE_EAN128 						= 2;
@@ -680,11 +682,13 @@ public class BarcodeObject extends BaseObject {
 				paint.setTextScaleX(Math.min(2, numDispWid/numWid));
 				paint.setColor(Color.BLACK);
 				paint.setTextAlign(Paint.Align.CENTER);
-
+// H.M.Wang 2021-10-6 修改显示编码内容，追加导入码的显示
+				can.drawText(content.substring(0, 1), left / 2, h-3, paint);
 				for(int i=0; i<6; i++) {
-					can.drawText(content.substring(i, i+1), left + modWidth * 3 + (i+0.5f)* numDispWid, h-3, paint);
-					can.drawText(content.substring(i+6, i+7), left + modWidth * 50 + (i+0.5f) * numDispWid, h-3, paint);
+					can.drawText(content.substring(i+1, i+2), left + modWidth * 3 + (i+0.5f)* numDispWid, h-3, paint);
+					can.drawText(content.substring(i+7, i+8), left + modWidth * 50 + (i+0.5f) * numDispWid, h-3, paint);
 				}
+// End of H.M.Wang 2021-10-6 修改显示编码内容，追加导入码的显示
 			}
 
 			return Bitmap.createScaledBitmap(bitmap, w, h, false);
@@ -1154,6 +1158,22 @@ public class BarcodeObject extends BaseObject {
 	 * 取结果的个位数：128的个位数为8
 	 * 用10减去这个个位数：10 - 8 = 2
 	 * @return
+	 */
+	/*
+		H.M.Wang 2021-10-6 计算EAN13的校验和的方法
+		预输入的数字位数为12位：[N0 N1 N2 N3 N4 N5 N6 N7 N8 N9 NA NB]
+		Sum-Even = N0 + N2 + N4 + N6 + N8 + NA
+		Sum-Odd = N1 + N3 + N5 + N7 + N9 + NB
+		Sum = Sum-Even + 3 * Sum-Odd
+		C = 10 - Sum % 10
+		组成EAN-13码：
+		  N0 [N1 N2 N3 N4 N5 N6] [N7 N8 N9 NA NB C]
+		[举例]	1 2 3 4 5 6 7 8 9 0 1 2
+			Sum-Even = 1 + 3 + 5 + 7 + 9 + 1 = 26
+			Sum-Odd = 2 + 4 + 6 + 8 + 0 + 2 = 22
+			Sum = 26 + 22 * 3 = 92
+			C = 8
+			组成EAN-13码：1 [2 3 5 5 6 7][8 9 0 1 2 8]
 	 */
 	private String checkSum() {
 		String code = "";

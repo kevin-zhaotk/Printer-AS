@@ -42,10 +42,8 @@ import com.industry.printer.object.RealtimeObject;
 import com.industry.printer.object.RealtimeSecond;
 import com.industry.printer.object.RealtimeYear;
 import com.industry.printer.object.ShiftObject;
-import com.industry.printer.object.TLKFileParser;
 import com.industry.printer.object.WeekDayObject;
 import com.industry.printer.object.WeekOfYearObject;
-import com.industry.printer.object.data.SegmentBuffer;
 
 import org.apache.http.util.CharArrayBuffer;
 
