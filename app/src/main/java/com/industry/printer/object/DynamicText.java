@@ -14,7 +14,6 @@ import com.industry.printer.cache.FontCache;
 import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.data.BinFromBitmap;
 import com.industry.printer.hardware.FpgaGpioOperation;
-import com.industry.printer.object.data.BitmapWriter;
 
 public class DynamicText extends BaseObject {
     private static final String TAG = DynamicText.class.getSimpleName();

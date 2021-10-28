@@ -9,7 +9,7 @@ import com.industry.printer.FileFormat.SystemConfigFile;
 public class N_NozzleManager {
     private static N_Nozzle mNozzle = null;
 
-    public static N_Nozzle getPrinterNozzle() {
+    public static N_Nozzle getSystemNozzle() {
         SystemConfigFile configFile = SystemConfigFile.getInstance();
         if(null == configFile) return null;
 

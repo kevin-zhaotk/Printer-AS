@@ -6,11 +6,14 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import rx.Observable;
 import rx.functions.Action0;
@@ -78,6 +81,7 @@ import com.industry.printer.Utils.ZipUtil;
 import com.industry.printer.hardware.BarcodeScanParser;
 import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.FpgaGpioOperation;
+import com.industry.printer.object.N_BaseObject;
 import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
 import com.industry.printer.ui.CustomerDialog.DialogListener;
 import com.industry.printer.ui.CustomerDialog.ImportDialog;
@@ -293,7 +297,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			}
 		}.start();
 
-/*
+/* 测试一组Obejct中，中间的某个Object如果位置发生变化（宽度变化和位置变化，导致右端发生变化），受其影响的Object重新定位算法
+		long tStart = System.currentTimeMillis();
 		Debug.d(TAG, "TEST - START");
 		Debug.d(TAG, "TEST - 情形1：变宽 -> 单体移位");
 //		obj : (0, 0, 10,10) - (0, 0, 20, 10)
@@ -313,7 +318,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mObjs.clear();
 		mMovedObjs.clear();
 		mObjs.add(new OBJ("Org", 0, 0, 10, 10, OBJ.POSITION_FIXED));
-		mObjs.add(new OBJ("Obs", 5, 10, 15, 20, OBJ.POSITION_FIXED));
+		mObjs.add(new OBJ("Obs", 5, 10, 15, 20, OBJ.POSITION_FLOAT));
 		mObjs.add(new OBJ("Dst", 15, 5, 25, 15, OBJ.POSITION_FLOAT));
 		mObjs.get(0).adjustWidth(10);
 		adjustPosition();
@@ -321,12 +326,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		Debug.d(TAG, "TEST - 情形3：变宽 -> 复合移位，一个制约一个");
 //		obj : (0, 0, 10,10) - (0, 0, 20, 10)
 //		obj1:(10,5,15,15) - (?, ?, ?, ?) (20,5,25,15)
-//		obj2:(15,10,20,20) - (?, ?, ?, ?) (25,10,30,20)
+//		obj2:(15,8,20,20) - (?, ?, ?, ?) (25,8,30,20)
 		mObjs.clear();
 		mMovedObjs.clear();
 		mObjs.add(new OBJ("Org", 0, 0, 10, 10, OBJ.POSITION_FIXED));
 		mObjs.add(new OBJ("Dst1", 10, 5, 15, 15, OBJ.POSITION_FLOAT));
-		mObjs.add(new OBJ("Dst2", 15, 10, 20, 20, OBJ.POSITION_FLOAT));
+		mObjs.add(new OBJ("Dst2", 15, 8, 20, 20, OBJ.POSITION_FLOAT));
 		mObjs.get(0).adjustWidth(10);
 		adjustPosition();
 
@@ -392,13 +397,65 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mObjs.get(0).adjustWidth(-10);
 		adjustPosition();
 
-		Debug.d(TAG, "TEST - FINISH (如果中途没有LOG输出，用时不到10ms，如果输出LOG，则用时要达到将近100ms");
+		Debug.d(TAG, "TEST - FINISH " + (System.currentTimeMillis() - tStart) + " (如果中途没有LOG输出，用时不到10ms，如果输出LOG，则用时要达到将近100ms");
 */
+//		OBJ1 obj1 = new OBJ1();
+
+/* 测试ReentrantLock和synchronized的区别
+		mRLock = new ReentrantLock();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for(int i=0; i<10; i++) {
+					Debug.d(TAG, "TEST - Thread1 try to get lock");
+//					synchronized (MainActivity.this) {
+					try{
+						while(!mRLock.tryLock(10, TimeUnit.MILLISECONDS)) {Debug.d(TAG, "TEST - Thread1 retrying to get lock");};
+						Debug.d(TAG, "TEST - Thread1 got lock");
+						Thread.sleep(100);
+					} catch(Exception e){
+					} finally {
+						Debug.d(TAG, "TEST - Thread1 release lock");
+						mRLock.unlock();
+					};
+//					}
+					try{Thread.sleep(200);} catch(Exception e){};
+				}
+			}
+		}).start();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for(int i=0; i<10; i++) {
+					Debug.d(TAG, "TEST - Thread2 try to get lock");
+//					synchronized (MainActivity.this) {
+					try{
+						while(!mRLock.tryLock(10, TimeUnit.MILLISECONDS)) {Debug.d(TAG, "TEST - Thread2 retrying to get lock");};
+						Debug.d(TAG, "TEST - Thread2 got lock");
+						Thread.sleep(100);
+					} catch(Exception e){
+					} finally {
+						Debug.d(TAG, "TEST - Thread2 release lock");
+						mRLock.unlock();
+					};
+//					}
+					try{Thread.sleep(300);} catch(Exception e){};
+				}
+			}
+		}).start();
+*/
+	}
+	private ReentrantLock mRLock;
+
+	private void threadTest(final int sleep) {
 	}
 
 	private ArrayList<OBJ> mObjs = new ArrayList<OBJ>();
 	private ArrayList<OBJ> mMovedObjs = new ArrayList<OBJ>();
 
+/*
 	private boolean hasBlockObj(OBJ orgObj, OBJ tarObj, Rect affectRect) {
 		boolean has = false;
 
@@ -423,7 +480,24 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 //		Debug.d(TAG, "TEST - hasBlockObj =  " + has);
 		return has;
 	}
+*/
 
+	private boolean hasBlockObj(List<OBJ> excepts, Rect affectecRect) {
+		boolean has = false;
+
+		for(OBJ aObj : mObjs) {
+			if(excepts.contains(aObj)) continue;		// 原变量，跳过
+			if(aObj.isPositionFixed()) continue;	// 当前变量为固定变量，不在考虑之列
+			if(aObj.isForwardBlock(affectecRect)) {
+				has = true;
+				break;
+			}
+		}
+//		Debug.d(TAG, "TEST - hasBlockObj =  " + has);
+		return has;
+	}
+
+/*
 	private int getTargetLeft(OBJ orgObj, OBJ tarObj, int defLeft) {
 		int targetLeft = defLeft;
 
@@ -439,6 +513,17 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		}
 		return targetLeft;
 	}
+*/
+
+	private int getTargetLeft(List<OBJ> excepts, Rect affectRect) {
+		for(OBJ aObj : mObjs) {
+			if(excepts.contains(aObj)) continue;		// 原变量，跳过
+//			if(aObj.isPositionFixed()) continue;	// 当前变量为固定变量，不在考虑之列
+			affectRect.left = aObj.getBackwardLine(affectRect);
+//			Debug.d(TAG, "TEST - affectRect.left " + affectRect.left);
+		}
+		return affectRect.left;
+	}
 
 	public void adjustPosition() {
 		while(mMovedObjs.size() > 0) {
@@ -448,6 +533,49 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	}
 
 	public void adjustPosition(OBJ orgObj) {
+//		Debug.d(TAG, "TEST - ORG(" + orgObj.mID + ") mLastRect " + orgObj.mLastRect.toString() + " - mCurRect " + orgObj.mCurRect.toString());
+		Rect movedRect = orgObj.getMovedRect();
+//		Debug.d(TAG, "TEST - movedRect " + movedRect.toString());
+		if(movedRect.isEmpty()) return;
+
+		for(OBJ tarObj : mObjs) {        // 目标变量
+//			Debug.d(TAG, "TEST - TAR(" + tarObj.mID + ") mLastRect " + tarObj.mLastRect.toString() + " - mCurRect " + tarObj.mCurRect.toString());
+			if(tarObj.adjustPosition(orgObj)) {
+				mMovedObjs.remove(tarObj);
+				mMovedObjs.add(tarObj);
+				Debug.d(TAG, "TEST - moved (" + tarObj.mID + ") to " + tarObj.mCurRect.toString() + " by (" + orgObj.mID + ")");
+			}
+/*
+			if(tarObj.isPositionFixed()) continue;			// 固定位置变量，不做考虑
+
+			if(orgObj.isMovedForward()) {
+				if(tarObj.intersectsForward(movedRect)) {
+					Rect affectRect = tarObj.getInterRectForward(movedRect);
+//					Debug.d(TAG, "TEST - affectRect " + affectRect.toString());
+
+					if(!hasBlockObj(orgObj, tarObj, affectRect)) {
+						if(tarObj.moveForwardTo(movedRect.right)) {
+							mMovedObjs.remove(tarObj);
+							mMovedObjs.add(tarObj);
+							Debug.d(TAG, "TEST - moved (" + tarObj.mID + ") to " + tarObj.mCurRect.toString() + " by (" + orgObj.mID + ")");
+						}
+					}
+				}
+			} else if(orgObj.isMovedBackward()) {
+				if(tarObj.intersectsBackward(movedRect)) {
+					Rect affectRect = tarObj.getInterRectBackward(movedRect);
+//					Debug.d(TAG, "TEST - affectRect " + affectRect.toString());
+
+					if(tarObj.moveBackwardTo(getTargetLeft(orgObj, tarObj, affectRect))) {
+						mMovedObjs.remove(tarObj);
+						mMovedObjs.add(tarObj);
+						Debug.d(TAG, "TEST - moved (" + tarObj.mID + ") to " + tarObj.mCurRect.toString() + " by (" + orgObj.mID + ")");
+					}
+				}
+			}
+*/
+		}
+/*
 //		Debug.d(TAG, "TEST - orgObj " + orgObj.mID + " mLastRect " + orgObj.mLastRect.toString() + " - mCurRect " + orgObj.mCurRect.toString());
 		for(OBJ tarObj : mObjs) {		// 目标变量
 //			Debug.d(TAG, "TEST - tarObj " + tarObj.mID + " mLastRect " + tarObj.mLastRect.toString() + " - mCurRect " + tarObj.mCurRect.toString());
@@ -487,6 +615,19 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				}
 			}
 		}
+*/
+	}
+
+	private class OBJ1 extends OBJ {
+		public OBJ1() {
+			super("",1,1,1,1,1);
+		}
+
+		@Override
+		protected void AAA() {
+			super.AAA();
+			Debug.d(TAG, "TEST - OBJ1::AAA");
+		}
 	}
 
 	private class OBJ {
@@ -503,13 +644,126 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			mLastRect = new Rect(left, top, right, bottom);
 			mCurRect = new Rect(left, top, right, bottom);
 			mPositionType = posType;
-//			Debug.d(TAG, "TEST - new " + mID + " - " + mCurRect.toString());
+//			Debug.d(TAG, "TEST - new (" + mID + ") - " + mCurRect.toString() + " " + mPositionType);
+			outputAAA();
+		}
+
+		protected void AAA() {
+			Debug.d(TAG, "TEST - OBJ::AAA");
+		}
+
+		public void outputAAA() {
+			AAA();
 		}
 
 		public void adjustWidth(int change) {
 			mCurRect.right += change;
 			mMovedObjs.add(this);
-//			Debug.d(TAG, "TEST - change " + mID + " from " + mLastRect.toString() + " to " + mCurRect.toString());
+//			Debug.d(TAG, "TEST - change (" + mID + ") from " + mLastRect.toString() + " to " + mCurRect.toString());
+		}
+
+		public boolean isPositionFixed() {
+			return mPositionType == POSITION_FIXED;
+		}
+
+		private Rect getMovedRect() {
+			return new Rect(
+				Math.min(mLastRect.right, mCurRect.right),
+				mCurRect.top,
+				Math.max(mLastRect.right, mCurRect.right),
+				mCurRect.bottom
+			);
+		}
+
+		private boolean isMovedForward() {
+			return mCurRect.right > mLastRect.right;
+		}
+
+		private boolean isMovedBackward() {
+			return mCurRect.right < mLastRect.right;
+		}
+
+		private boolean intersectsForward(Rect movedRect) {
+//			return Rect.intersects(mLastRect, movedRect) && mLastRect.left >= movedRect.left && mLastRect.left < movedRect.right;
+			return mLastRect.bottom > movedRect.top && mLastRect.top < movedRect.bottom && mLastRect.left >= movedRect.left && mLastRect.left < movedRect.right;
+		}
+
+		private Rect getInterRectForward(Rect movedRect) {
+			return new Rect(
+					movedRect.left,
+					Math.max(movedRect.top, mCurRect.top),
+					mLastRect.left,
+					Math.min(movedRect.bottom, mCurRect.bottom)
+			);
+		}
+
+		public boolean isForwardBlock(Rect affectRect) {
+//			return Rect.intersects(mLastRect, affectRect) && mLastRect.left >= affectRect.left && mLastRect.right <= affectRect.right;
+			return mLastRect.bottom > affectRect.top && mLastRect.top < affectRect.bottom && mLastRect.left >= affectRect.left && mLastRect.right <= affectRect.right;
+		}
+
+		private boolean intersectsBackward(Rect movedRect) {
+			return mLastRect.bottom > movedRect.top && mLastRect.top < movedRect.bottom && mCurRect.left > movedRect.left;
+		}
+
+		private Rect getInterRectBackward(Rect movedRect) {
+			return new Rect(
+					movedRect.left,
+					mCurRect.top,
+					mLastRect.left,
+					mCurRect.bottom
+			);
+		}
+
+		public int getBackwardLine(Rect affectRect) {
+			return mCurRect.bottom > affectRect.top && mCurRect.top < affectRect.bottom ?
+					(mCurRect.right > affectRect.left && mCurRect.right < affectRect.right ?
+					 mCurRect.right : affectRect.left) :
+					affectRect.left;
+		}
+
+		private boolean moveForwardTo(int targetLine) {
+			if(targetLine > mCurRect.left) {
+				mLastRect.set(mCurRect);
+				mCurRect.offsetTo(targetLine, mCurRect.top);
+				return true;
+			}
+			return false;
+		}
+
+		private boolean moveBackwardTo(int targetLine) {
+			if(targetLine < mCurRect.left) {
+				mLastRect.set(mCurRect);
+				mCurRect.offsetTo(targetLine, mCurRect.top);
+				return true;
+			}
+			return false;
+		}
+
+		public boolean adjustPosition(OBJ orgObj) {
+			if(this.equals(orgObj)) return false;
+			if(isPositionFixed()) return false;
+
+			Rect movedRect = orgObj.getMovedRect();
+			if(movedRect.isEmpty()) return false;
+
+			if(orgObj.isMovedForward()) {
+				if(intersectsForward(movedRect)) {
+					if(!hasBlockObj(Arrays.asList(orgObj, this), getInterRectForward(movedRect))) {
+						if(moveForwardTo(movedRect.right)) {
+							return true;
+						}
+					}
+				}
+			} else if(orgObj.isMovedBackward()) {
+				if(intersectsBackward(movedRect)) {
+					if(moveBackwardTo(getTargetLeft(Arrays.asList(orgObj, this), getInterRectBackward(movedRect)))) {
+						return true;
+					}
+				}
+			}
+
+			return false;
 		}
 	}
 

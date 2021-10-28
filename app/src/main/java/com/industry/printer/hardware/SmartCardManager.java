@@ -197,7 +197,7 @@ public class SmartCardManager implements IInkDevice {
                 mCallback = callback;
 
                 if(SMARTCARD_ACCESS) {
-                    synchronized (this) {
+                    synchronized (SmartCardManager.this) {
                         SmartCard.init();
                         for(int i=0; i<mPenNum+mBagNum; i++) {
                             mCards[i].mRecentLevels.clear();
@@ -254,7 +254,7 @@ public class SmartCardManager implements IInkDevice {
 
         if(!SMARTCARD_ACCESS || !CONSISTENCY_CHECK) return;
 
-        synchronized (this) {
+        synchronized (SmartCardManager.this) {
             if(mCards[penIdx].mInitialized && mCards[penIdx].mValid) {
                 int ret = SmartCard.checkConsistency(mCards[penIdx].mCardType, mCards[bagIdx].mCardType);
                 if(SmartCard.SC_SUCCESS != ret) {
@@ -273,7 +273,7 @@ public class SmartCardManager implements IInkDevice {
             return;
         }
 
-        synchronized (this) {
+        synchronized (SmartCardManager.this) {
             if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
                 mHandler.obtainMessage(MSG_SHOW_CONSISTENCY, SmartCard.readConsistency(mCards[cardIdx].mCardType)).sendToTarget();
             } else {
@@ -287,7 +287,7 @@ public class SmartCardManager implements IInkDevice {
 
         if(!SMARTCARD_ACCESS || !OIB_CHECK) return true;
 
-        synchronized (this) {
+        synchronized (SmartCardManager.this) {
             if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
                 int ret = SmartCard.checkOIB(mCards[cardIdx].mCardType);
                 if(SmartCard.SC_SUCCESS != ret) {
@@ -306,7 +306,7 @@ public class SmartCardManager implements IInkDevice {
         if(Configs.SMARTCARDMANAGER || !SUM_CHECK) return;
         if(!SMARTCARD_ACCESS) return;
 
-        synchronized (this) {
+        synchronized (SmartCardManager.this) {
             if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
                 int ret = SmartCard.checkSum(mCards[cardIdx].mCardType, Configs.CLIENT_UNIQUE_CODE);
                 if(0 != ret) {
@@ -328,7 +328,7 @@ public class SmartCardManager implements IInkDevice {
                 readLevels += 14000000;
                 readCount++;
             } else {
-                synchronized (this) {
+                synchronized (SmartCardManager.this) {
                     if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
                         int level = SmartCard.readLevel(mCards[cardIdx].mLevelType);
                         if ((level & 0xF0000000) == 0x00000000) {
@@ -413,7 +413,7 @@ public class SmartCardManager implements IInkDevice {
 // H.M.Wang 2020-11-13 当墨量<5%时，如果3次加墨失败则写OIB，本人认为这个操作不太好
 // H.M.Wang 2020-11-27 修改<5%的数值BUG，getLocalInkPercentage函数返回的是0-100的值，不是0-1的值
                     if(mCards[mCurBagIdx].mInkLevel / mCards[mCurBagIdx].mMaxVolume < 0.05f) {
-                        synchronized (this) {
+                        synchronized (SmartCardManager.this) {
                             SmartCard.writeOIB(mCards[mCurBagIdx].mCardType);
                         }
                     }
@@ -487,7 +487,7 @@ public class SmartCardManager implements IInkDevice {
         mLibInited = false;
 
         if(SMARTCARD_ACCESS) {
-            synchronized (this) {
+            synchronized (SmartCardManager.this) {
                 SmartCard.shutdown();
             }
         }
@@ -506,7 +506,7 @@ public class SmartCardManager implements IInkDevice {
                 if(!SMARTCARD_ACCESS) {
                     mCards[cardIdx].mInkLevel = mCards[cardIdx].mMaxVolume / 2;
                 } else {
-                    synchronized (this) {
+                    synchronized (SmartCardManager.this) {
                         if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
                             mCards[cardIdx].mInkLevel = SmartCard.getLocalInk(mCards[cardIdx].mCardType);
                             mCards[cardIdx].mInkLevel = (mCards[cardIdx].mInkLevel >= 0 ? mCards[cardIdx].mMaxVolume - mCards[cardIdx].mInkLevel : mCards[cardIdx].mInkLevel);
@@ -571,12 +571,16 @@ public class SmartCardManager implements IInkDevice {
 
         mCards[cardIdx].mInkLevel--;
 
+// H.M.Wang 2021-10-26 取消重新读取卡中的值来修正本地值的操作后，bag的值没有修正
+        mCards[mCurBagIdx].mInkLevel--;
+// H.M.Wang 2021-10-26 取消重新读取卡中的值来修正本地值的操作后，bag的值没有修正
+
         if(!SMARTCARD_ACCESS) return;
 
         mCachedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                synchronized (this) {
+                synchronized (SmartCardManager.this) {
                     if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
 // H.M.Wang 2021-8-7 追加当写SC卡出现错误的时候报错的处理
 //                        SmartCard.downLocal(mCards[cardIdx].mCardType);

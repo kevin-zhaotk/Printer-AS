@@ -274,14 +274,14 @@ public class BinCreater {
     		dots[2*i +1] = (byte) ((c_dots[i] >> 8) & 0x0ff);
     	}
     	int columns = dots.length/bytesPerCol;
-    	Debug.d(TAG, "--->saveBin columns:" + columns + "   bytesPerCol=" + bytesPerCol + "  dot.len= " + dots.length);
+//..    	Debug.d(TAG, "--->saveBin columns:" + columns + "   bytesPerCol=" + bytesPerCol + "  dot.len= " + dots.length);
     	try {
     		
     		File file = new File(f);
     		if (file.exists()) {
 				file.delete();
 			}
-    		Debug.d(TAG, "--->saveBin f:" + file.getAbsoluteFile());
+//..    		Debug.d(TAG, "--->saveBin f:" + file.getAbsoluteFile());
     		if (!file.exists() && !file.createNewFile()) {
 				Debug.d(TAG, "===>error: create bin file failed");
 				return false;

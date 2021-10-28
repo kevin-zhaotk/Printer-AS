@@ -22,7 +22,7 @@ public class MessageObject extends BaseObject {
 
 	public PrinterNozzle mPNozzle;
 	
-	public static final int PIXELS_PER_MM = 12;
+	public static final int PIXELS_PER_MM = 12;		// 最好设置为 152 / 12.7 更加准确（11.96850393700787）
 	public static final float[] mBaseList = {1, 1.5f, 2, 2.5f, 3, 3.5f, 4, 4.5f, 5, 5.5f, 6, 6.5f, 
 											7, 7.5f, 8, 8.5f, 9, 9.5f, 10, 10.5f, 11, 11.5f, 12, 12.7f};
 	public static final float[] mBaseList_9mm = {1, 1.5f, 2, 2.5f, 3, 3.5f, 4, 4.5f, 5, 5.5f, 6, 6.5f,7, 7.5f, 8, 8.5f, 9};

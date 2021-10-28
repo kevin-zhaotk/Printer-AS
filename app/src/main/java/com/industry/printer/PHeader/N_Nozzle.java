@@ -20,6 +20,8 @@ abstract public class N_Nozzle {
     protected boolean mRotatable;           // 是否支持旋转
     protected boolean mBuffer8Enable;       // buffer 8 times extension Switch
 
+    protected boolean mBigDot;              // 大字机标识
+
     public N_Nozzle(int index) {
         mIndex = index;
 
@@ -34,6 +36,8 @@ abstract public class N_Nozzle {
         mReversable = false;
         mRotatable = false;
         mBuffer8Enable = false;
+
+        mBigDot = false;
     }
 
     public int getIndex() {
@@ -51,7 +55,16 @@ abstract public class N_Nozzle {
     public boolean isRotatable() { return mRotatable; }
     public boolean is8Enable() { return mBuffer8Enable; }
 
-    abstract public boolean isBigDotNozzle();
+    public boolean isBigDotNozzle() {
+        return mBigDot;
+    }
+
+    public String getDefalutFont() {
+        if(mBigDot) {
+            return "7";             // 字体7 = 16x12
+        }
+        return "1+";                // 字体1+，标准字体
+    }
 
     // 打印头索引定义，该索引的值必须与R.arrays.strPrinterArray当中的项目顺序相对应
     public static class Index {

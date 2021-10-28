@@ -167,6 +167,9 @@ public enum PrinterNozzle {
         initHeight();
     }
 
+    /*
+        这里的高度是实际打印时的打印缓冲区的高度。但是12.7xN头，由于历史原因，在下发之前，在BinInfo里面会做19字节到20字节的补位
+     */
     private void initHeight() {
         switch (mType) {
             case NozzleType.NOZZLE_TYPE_12_7:
@@ -242,6 +245,63 @@ public enum PrinterNozzle {
         return mHeight;
     }
 
+    /*
+        该函数取得的scaleX值是为了在标准内部坐标（152）到打印的绘制区域之间的转换。具体的如下：
+        NOZZLE_TYPE_12_7
+        NOZZLE_TYPE_R6X48
+        NOZZLE_TYPE_R6X50
+            基础打印头为12.7打印头
+            ratioX = 1.0f。换算成pixels为152，即高度按152点，19个字节，在下发的时候，补齐一个字节，凑足20个字节（因为FPGA下发是两个字节一下发，所以每列必须有偶数个字节）
+            生成bin的时候，高度为152个点，19个字节
+        NOZZLE_TYPE_25_4
+            基础打印头为12.7x2打印头
+            ratioX = 2.0f。换算成pixels为304，即高度按304点，每个头19个字节，在下发的时候，补齐一个字节，凑足20个字节（因为FPGA下发是两个字节一下发，所以每列必须有偶数个字节）
+            生成bin的时候，高度为304个点，19x2个字节
+        NOZZLE_TYPE_38_1
+            基础打印头为12.7x3打印头
+            ratioX = 3.0f。换算成pixels为456，即高度按456点，每个头19个字节，在下发的时候，补齐一个字节，凑足20个字节（因为FPGA下发是两个字节一下发，所以每列必须有偶数个字节）
+            生成bin的时候，高度为456个点，19x3个字节
+        NOZZLE_TYPE_50_8
+            基础打印头为12.7x4打印头
+            ratioX = 4.0f。换算成pixels为608，即高度按608点，每个头19个字节，在下发的时候，补齐一个字节，凑足20个字节（因为FPGA下发是两个字节一下发，所以每列必须有偶数个字节）
+            生成bin的时候，高度为608个点，19x4个字节
+
+        以上由于历史原因，每个单头补齐的一个字节是在BinInfo类里面动态实现的。其实，在绘图的时候按着152xN进行绘制，然后在每个头之间插入一个字节的空挡，保存bin的时候直接保存每个单头的数据为20字节的话就更加方便了，
+        后面的25.4xN头就是这么实现的
+
+        NOZZLE_TYPE_1_INCH
+            基础打印头为25.4x1打印头
+            ratioX = 1.0f * 308 / 152。换算成pixels为308，即在绘制的时候的高度是308，但是下发之前会在后面插入空行，调整为320个pixels的高度
+            生成bin的时候，高度为320个点，即40个字节，其中只有38.5个字节是实际数据，后面的1.5个字节是补空
+        NOZZLE_TYPE_1_INCH_DUAL:
+        NOZZLE_TYPE_1_INCH_TRIPLE:
+        NOZZLE_TYPE_1_INCH_FOUR:
+            同理，参照NOZZLE_TYPE_1_INCH。纵向放大相应倍数
+        NOZZLE_TYPE_16_DOT
+            基础打印头为16DOT打印头（大字机）
+            ratioX = 1.0f * 16 / 152。就是16个点高，绘制在这16点内，但是生成bin时会生成32点高，下部16点为空，下发时也是下发每列32点（4个字节）
+        NOZZLE_TYPE_32_DOT
+        NOZZLE_TYPE_32DN
+        NOZZLE_TYPE_32SN
+            基础打印头为32DOT打印头（大字机）
+            ratioX = 1.0f * 32 / 152。就是32个点高，绘制在这32点内,并且生成bin时会生成32点高，下发时也是下发每列32点（4个字节）
+        NOZZLE_TYPE_64_DOT
+        NOZZLE_TYPE_64SN
+            基础打印头为64DOT打印头（大字机）
+            ratioX = 1.0f * 64 / 152。就是64个点高，绘制在这64点内,并且生成bin时会生成64点高，下发时也是下发每列64点（8个字节）
+        NOZZLE_TYPE_96DN
+            基础打印头为96DOT打印头（大字机）
+            ratioX = 1.0f * 96 / 152。就是96个点高，绘制在这96点内,并且生成bin时会生成96点高，下发时也是下发每列64点（12个字节）
+            case NozzleType.NOZZLE_TYPE_9MM:
+        NOZZLE_TYPE_9MM
+        NOZZLE_TYPE_E6X48
+        NOZZLE_TYPE_E6X50
+        NOZZLE_TYPE_E6X1
+        NOZZLE_TYPE_E5X48
+        NOZZLE_TYPE_E5X50
+            基础打印头为9MM打印头
+            ratioX = 1.0f * 104 / 152。就是104个点高，绘制在这104点内,生成bin时会生成112点高，下发时也是下发每列112点
+     */
     private void initScale() {
         switch (mType) {
             case NozzleType.NOZZLE_TYPE_12_7:

@@ -105,7 +105,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -2782,8 +2784,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		             } catch (IOException e) {  
 		                 e.printStackTrace();  
 		             }  
-		               
-		         }  
+		         }
 
 				public void stop() {
 					Debug.d(TAG, "--->stop: " + Thread.currentThread().getName());

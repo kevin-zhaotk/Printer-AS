@@ -25,9 +25,4 @@ public class N_NozzleR6X48 extends N_Nozzle {
         mRotatable          = false;
         mBuffer8Enable      = false;
     }
-
-    @Override
-    public boolean isBigDotNozzle() {
-        return false;
-    }
 }

@@ -298,11 +298,19 @@ public class DataTransferThread {
 		
 		Debug.e(TAG, "--->buffer len: " + buffer.length);
 		FpgaGpioOperation.updateSettings(context, task, purgeType);
-		FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+// H.M.Wang 2021-10-22 修改清洗，从特别处理改为按普通打印下发，但是与正常的打印不共存，先停止正常打印，在开始清洗打印，然后在恢复打印
+//		FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+		FpgaGpioOperation.init(mContext);
+		FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
+// End of H.M.Wang 2021-10-22 修改清洗，从特别处理改为按普通打印下发，但是与正常的打印不共存，先停止正常打印，在开始清洗打印，然后在恢复打印
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+// H.M.Wang 2021-10-22 修改清洗，从特别处理改为按普通打印下发，但是与正常的打印不共存，先停止正常打印，在开始清洗打印，然后在恢复打印
+		} finally {
+			FpgaGpioOperation.uninit();
+// End of H.M.Wang 2021-10-22 修改清洗，从特别处理改为按普通打印下发，但是与正常的打印不共存，先停止正常打印，在开始清洗打印，然后在恢复打印
 		}
 
 		FpgaGpioOperation.clean();

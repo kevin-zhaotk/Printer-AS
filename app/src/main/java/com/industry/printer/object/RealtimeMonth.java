@@ -49,7 +49,7 @@ public class RealtimeMonth extends BaseObject {
 		
 		t.set(System.currentTimeMillis() + mOffset * RealtimeObject.MS_DAY - timeDelay());
 		setContent(BaseObject.intToFormatString(t.month+1, 2));
-		Log.d(TAG, ">>getContent: "+mContent);
+//..		Log.d(TAG, ">>getContent: "+mContent);
 		return mContent;
 	}
 

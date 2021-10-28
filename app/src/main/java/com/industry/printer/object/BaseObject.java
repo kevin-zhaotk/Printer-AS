@@ -27,7 +27,6 @@ import com.industry.printer.cache.FontCache;
 import com.industry.printer.data.BinFileMaker;
 import com.industry.printer.data.BinFromBitmap;
 import com.industry.printer.hardware.FpgaGpioOperation;
-import com.industry.printer.object.data.BitmapWriter;
 
 public class BaseObject{
 	private static final String TAG = BaseObject.class.getSimpleName();
@@ -1124,7 +1123,7 @@ public class BaseObject{
 
 	public void setContent(String content)
 	{
-		Debug.d(TAG, "setContent: [" + content + "]");
+//..		Debug.d(TAG, "setContent: [" + content + "]");
 
 		if(mContent!=null && mContent.equals(content))
 			return;

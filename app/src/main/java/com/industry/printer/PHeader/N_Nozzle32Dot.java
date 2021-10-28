@@ -20,10 +20,7 @@ public class N_Nozzle32Dot extends N_Nozzle {
         mReversable         = false;
         mRotatable          = true;
         mBuffer8Enable      = true;
-    }
 
-    @Override
-    public boolean isBigDotNozzle() {
-        return true;
+        mBigDot             = true;
     }
 }

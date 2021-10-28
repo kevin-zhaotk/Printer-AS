@@ -66,9 +66,9 @@ public class RealtimeDate extends BaseObject {
 		Time t = new Time();
 		
 		t.set(System.currentTimeMillis() + mOffset * RealtimeObject.MS_DAY - timeDelay());
-		Debug.d(TAG, "--->Date: " + t.monthDay);
+//..		Debug.d(TAG, "--->Date: " + t.monthDay);
 		setContent(BaseObject.intToFormatString(t.monthDay, 2));
-		Debug.d(TAG, ">>getContent: " + mContent);
+//..		Debug.d(TAG, ">>getContent: " + mContent);
 		return mContent;
 	}
 

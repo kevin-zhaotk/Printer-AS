@@ -288,7 +288,10 @@ public class FpgaGpioOperation {
             data[1] = 4;
             data[3] = 100 * 4;
             data[4] = 1000;
-            data[5] = 100 * 4;
+// H.M.Wang 2021-10-22 修改清洗，重复打印设置改为2000ms，这样放置在清洗完成后还连续产生PH14
+//            data[5] = 100 * 4;
+            data[5] = 500 * 4;
+// End of H.M.Wang 2021-10-22 修改清洗，重复打印设置改为2000ms，这样放置在清洗完成后还连续产生PH14
 // H.M.Wang 2021-4-1 当清洗时，将bold设为头数，以避免清洗变淡
             data[15] = (char) (config.getPNozzle().mHeads);
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
@@ -299,10 +302,14 @@ public class FpgaGpioOperation {
 // End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X48 ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X50) {
+// H.M.Wang 2021-10-20 E5,E6头的清洗加重值，从16改为128。2021-10-22 回复为16
                 data[15] = 16;
+// End of H.M.Wang 2021-10-20 E5,E6头的清洗加重值，从16改为128。2021-10-22 回复为16
             }
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_E6X1) {
+// H.M.Wang 2021-10-20 E5,E6头的清洗加重值，从16改为128。2021-10-22 回复为16
                 data[15] = 16;
+// End of H.M.Wang 2021-10-20 E5,E6头的清洗加重值，从16改为128。2021-10-22 回复为16
             }
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT ||
@@ -455,7 +462,35 @@ public class FpgaGpioOperation {
         data[25] = (char) config.getParam(31 - 1);
         //雙列偏移量
         data[26] = (char) config.getParam(32 - 1);
-
+/*
+        data[0] = 1;
+        data[1] = 4;
+        data[2] = 10;
+        data[3] = 61;
+        data[4] = 170;
+        data[5] = 1632;
+        data[6] = 1;
+        data[7] = 11;
+        data[8] = 11;
+        data[9] = 35;
+        data[10] = 0;
+        data[11] = 0;
+        data[12] = 0;
+        data[13] = 0;
+        data[14] = 0;
+        data[15] = 2;
+        data[16] = 656;
+        data[17] = 16;
+        data[18] = 112;
+        data[19] = 200;
+        data[20] = 0;
+        data[21] = 0;
+        data[22] = 0;
+        data[23] = 1;
+        data[24] = 20;
+        data[25] = 17;
+        data[26] = 0;
+*/
         for (int i = 0; i < data.length; i++) {
             Debug.e(TAG, "--->mFPGAParam[" + i + "]=" + (int) data[i]);
         }
@@ -469,6 +504,7 @@ public class FpgaGpioOperation {
 		data[Configs.gParams - 2] = (char)minute;
 		data[Configs.gParams - 1] = (char)second;
 		*/
+
         writeData(DATA_GENRE_IGNORE, FPGA_STATE_SETTING, data, data.length * 2);
     }
 
