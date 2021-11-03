@@ -2,9 +2,9 @@ package com.industry.printer.Serial;
 
 import android.content.Context;
 
-import org.apache.http.util.ByteArrayBuffer;
+import com.industry.printer.Utils.StreamTransport;
 
-import java.nio.charset.Charset;
+import org.apache.http.util.ByteArrayBuffer;
 
 /**
  * Created by hmwan on 2020/5/18.
@@ -17,14 +17,14 @@ abstract public class SerialProtocol {
     public final static int ERROR_SUCESS                = 0x00000000;   // 无错误
     public final static int ERROR_FAILED                = 0x85000000;   // 解析帧失败
 
-    protected SerialPort mSerialPort = null;
+    protected StreamTransport mStreamTransport = null;
     protected SerialHandler.OnSerialPortCommandListenner mNormalCmdListeners = null;
     protected SerialHandler.OnSerialPortCommandListenner mPrintCmdListeners = null;
 
     private Context mContext;
 
-    protected SerialProtocol(SerialPort serialPort, Context ctx){
-        mSerialPort = serialPort;
+    protected SerialProtocol(StreamTransport st, Context ctx){
+        mStreamTransport = st;
         mContext = ctx;
     }
 
@@ -65,8 +65,8 @@ abstract public class SerialProtocol {
     }
 
     protected void sendCommandProcessResult(byte[] message) {
-        if(null != mSerialPort && null != message) {
-            mSerialPort.writeSerial(message);
+        if(null != message) {
+            mStreamTransport.write(message);
         }
     }
 }

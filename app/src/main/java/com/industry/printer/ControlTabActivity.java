@@ -3,6 +3,7 @@ package com.industry.printer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -81,6 +82,7 @@ import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
 import com.industry.printer.object.TextObject;
 import com.industry.printer.object.TlkObject;
+import com.industry.printer.pccommand.PCCommandManager;
 import com.industry.printer.ui.CustomerDialog.ConfirmDialog;
 import com.industry.printer.ui.CustomerDialog.DialogListener;
 import com.industry.printer.ui.CustomerDialog.MessageGroupsortDialog;
@@ -377,7 +379,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		private List<Socket> mList = new ArrayList<Socket>(); //socket list
 		private Map<Socket, Service> mServices = new HashMap<Socket, Service>();
 		private volatile boolean flag= true;// status flag
-		private String PrnComd="";//printing word
+		public String PrnComd="";//printing word
 		private Printer_Database Querydb;// database class
 		private Paths_Create Paths=new Paths_Create();//get and creat path class
 		private String AddPaths;//create paths
@@ -392,9 +394,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //		private int StopFlag=0;
 		private Socket Gsocket;
 
+// H.M.Wang 2021-10-30 更新网络命令实现机制
+	private PCCommandManager mPCCommandManager = null;
+// End of H.M.Wang 2021-10-30 更新网络命令实现机制
+
 // H.M.Wang 2020-9-28 追加一个心跳协议
 		Timer mHeartBeatTimer = null;
-		private long mLastHeartBeat = System.currentTimeMillis();
+		public long mLastHeartBeat = System.currentTimeMillis();
 // End of H.M.Wang 2020-9-28 追加一个心跳协议
 // H.M.Wang 2021-9-19 追加PI11状态读取功能
         private Timer mGpio11Timer = null;
@@ -645,7 +651,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		mHandler.sendEmptyMessageDelayed(RFIDManager.MSG_RFID_INIT, 1000);
 
 		refreshCount();
-		SocketBegin();// Beging Socket service start;
+// H.M.Wang 2021-10-30 更新网络命令实现机制
+//// 暂时关闭		SocketBegin();// Beging Socket service start;
+		mPCCommandManager = new PCCommandManager(mContext, this);
+// End of H.M.Wang 2021-10-30 更新网络命令实现机制
 		Querydb=new Printer_Database(mContext);
 
 		// H.M.Wang 2019-12-19 修改支持多种协议
@@ -653,8 +662,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		final SerialHandler sHandler = SerialHandler.getInstance(mContext);
 		sHandler.setNormalCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
 			@Override
-			public void onError(String errCode) {
-				ToastUtil.show(mContext, errCode);
+			public void onError(final String errCode) {
+				mHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						ToastUtil.show(mContext, errCode);
+					}
+				});
 			}
 			@Override
 			public void onCommandReceived(int cmd, byte[] data) {
@@ -861,7 +875,15 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			mBackward.setVisibility(View.GONE);
 		}
 	}
-	
+
+// H.M.Wang 2021-10-30 更新网络命令实现机制
+	@Override
+	public void onDestroyView() {
+		if(null != mPCCommandManager) mPCCommandManager.close();
+		super.onDestroyView();
+	}
+// End of H.M.Wang 2021-10-30 更新网络命令实现机制
+
 	@Override
 	public void onDestroy()
 	{
@@ -2602,15 +2624,21 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			}
 		});
 	}
-	
+
 	private void sendToRemote(String msg) {
+// H.M.Wang 2021-10-30 更新网络命令实现机制
+		if(null != mPCCommandManager) {
+			mPCCommandManager.sendMessage(msg);
+			return;
+		}
+// End of H.M.Wang 2021-10-30 更新网络命令实现机制
+
 		try {
 			PrintWriter pout = new PrintWriter(new BufferedWriter(
-                     new OutputStreamWriter(Gsocket.getOutputStream())),true); 
+                     new OutputStreamWriter(Gsocket.getOutputStream())),true);
              pout.println(msg);
 		} catch (Exception e) {
 		}
-		
 	}
 
 // 2020-7-21 在未开始打印前，网络清洗命令不响应问题解决，追加一个类变量
@@ -2689,7 +2717,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			 }
 
 			// H.M.Wang 2020-1-8 增加网络命令ID，在向PC报告打印状态的时候用来识别命令
-			private String mPCCmdId = "";
+			public String mPCCmdId = "";
 			// End of H.M.Wang 2020-1-8 增加网络命令ID，在向PC报告打印状态的时候用来识别命令
 
 			//Server服务
@@ -2745,6 +2773,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		    }
 
 		    public void sendMsg(String msg) {
+// H.M.Wang 2021-10-30 更新网络命令实现机制
+				if(null != mPCCommandManager) {
+					mPCCommandManager.sendMessage(msg);
+					return;
+				}
+// End of H.M.Wang 2021-10-30 更新网络命令实现机制
 				Iterator<Socket> clients = mServices.keySet().iterator();
 				for (;clients.hasNext();) {
 					Socket socket = clients.next();
@@ -2764,12 +2798,12 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			}
 
 		    //线程池，子线程
-		    class Service implements Runnable {  
-		         private volatile boolean kk=true;  
+		    class Service implements Runnable {
+                private volatile boolean kk=true;
 		      
 		         private BufferedReader in = null;
 		         private String msg = "";  
-		           
+
 		         public Service(Socket socket) {  
 		        	 Gsocket = socket;  
 		             try {  
@@ -2811,129 +2845,129 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		         public void run() {  
 		               
 		                 while(kk) {  
-		                     try {  
-		                        if((msg = in.readLine())!= null) {  
-		                             //100是打印  
-		                          //	msg= toStringHex(msg); 
-		                        	Debug.d(TAG, "--->fromPc: " + msg);
-									PCCommand cmd = PCCommand.fromString(msg);
+		                     try {
+								 if((msg = in.readLine())!= null) {
+									 //100是打印
+									 //	msg= toStringHex(msg);
+									 Debug.d(TAG, "--->fromPc: " + msg);
+									 PCCommand cmd = PCCommand.fromString(msg);
 
-									// End of H.M.Wang 2020-1-8 提取命令ID
-									mPCCmdId = cmd.check;
-									// End of H.M.Wang 2020-1-8 提取命令ID
+									 // End of H.M.Wang 2020-1-8 提取命令ID
+									 mPCCmdId = cmd.check;
+									 // End of H.M.Wang 2020-1-8 提取命令ID
 
 // H.M.Wang 当解析命令失败时，抛弃这个命令
 // H.M.Wang 2019-12-30 收到空命令的时候，返回错误
-									if(null == cmd) {
-										this.sendmsg(Constants.pcErr("<Null Command>"));
-										continue;
-									}
+									 if(null == cmd) {
+										 this.sendmsg(Constants.pcErr("<Null Command>"));
+										 continue;
+									 }
 // End of H.M.Wang 2019-12-30 收到空命令的时候，返回错误
 
-                                    if (PCCommand.CMD_SEND_BIN.equalsIgnoreCase(cmd.command) ||  // LAN Printing
-                                        PCCommand.CMD_SEND_BIN_S.equalsIgnoreCase(cmd.command)) {  // LAN Printing
+									 if (PCCommand.CMD_SEND_BIN.equalsIgnoreCase(cmd.command) ||  // LAN Printing
+											 PCCommand.CMD_SEND_BIN_S.equalsIgnoreCase(cmd.command)) {  // LAN Printing
 
-										cacheBin(Gsocket, msg);
-                                    } else if (PCCommand.CMD_DEL_LAN_BIN.equalsIgnoreCase(cmd.command) ||
-                                                PCCommand.CMD_DEL_LAN_BIN_S.equalsIgnoreCase(cmd.command)) {
+										 cacheBin(Gsocket, msg);
+									 } else if (PCCommand.CMD_DEL_LAN_BIN.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_DEL_LAN_BIN_S.equalsIgnoreCase(cmd.command)) {
 
-		                        	    DataTransferThread.deleteLanBuffer(Integer.valueOf(cmd.content));
-                                    } else if (PCCommand.CMD_RESET_INDEX.equalsIgnoreCase(cmd.command) ||
-                                                PCCommand.CMD_RESET_INDEX_S.equalsIgnoreCase(cmd.command)) {
+										 DataTransferThread.deleteLanBuffer(Integer.valueOf(cmd.content));
+									 } else if (PCCommand.CMD_RESET_INDEX.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_RESET_INDEX_S.equalsIgnoreCase(cmd.command)) {
 
-										if(null != mDTransThread) {
-											mDTransThread.resetIndex();
-											this.sendmsg(Constants.pcOk(msg));
-										} else {
-											sendmsg(Constants.pcErr(msg));
-										}
+										 if(null != mDTransThread) {
+											 mDTransThread.resetIndex();
+											 this.sendmsg(Constants.pcOk(msg));
+										 } else {
+											 sendmsg(Constants.pcErr(msg));
+										 }
 // H.M.Wang 2019-12-16 支持网络下发计数器和动态二维码的值
-                                    } else if (PCCommand.CMD_SET_REMOTE.equalsIgnoreCase(cmd.command) ||
-                                                PCCommand.CMD_SET_REMOTE_S.equalsIgnoreCase(cmd.command)) {
-    // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
-                                        if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
+									 } else if (PCCommand.CMD_SET_REMOTE.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_SET_REMOTE_S.equalsIgnoreCase(cmd.command)) {
+										 // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
+										 if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
 // H.M.Wang 2020-6-28 追加专门为网络快速打印设置
-											SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
+												 SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
 // End of H.M.Wang 2020-6-28 追加专门为网络快速打印设置
-                                            if(null != mDTransThread && mDTransThread.isRunning()) {
-												mDTransThread.setRemoteTextSeparated(cmd.content);
-                                                this.sendmsg(Constants.pcOk(msg));
-                                            } else {
-                                                this.sendmsg(Constants.pcErr(msg));
-                                            }
-                                        } else {
-                                            this.sendmsg(Constants.pcErr(msg));
-                                        }
-    // End.
+											 if(null != mDTransThread && mDTransThread.isRunning()) {
+												 mDTransThread.setRemoteTextSeparated(cmd.content);
+												 this.sendmsg(Constants.pcOk(msg));
+											 } else {
+												 this.sendmsg(Constants.pcErr(msg));
+											 }
+										 } else {
+											 this.sendmsg(Constants.pcErr(msg));
+										 }
+										 // End.
 // End. -----
-                                    } else if(PCCommand.CMD_PRINT.equalsIgnoreCase(cmd.command) ||
-                                                PCCommand.CMD_PRINT_S.equalsIgnoreCase(cmd.command)) {
+									 } else if(PCCommand.CMD_PRINT.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_PRINT_S.equalsIgnoreCase(cmd.command)) {
 
-										File msgfile = new File(cmd.content);
-										if (!isTlkReady(msgfile)) {
-											sendmsg(Constants.pcErr(msg));
-											return;
-										}
-		                            	if(PrinterFlag==0)
-		                            	{
-		                            		//打印赵工写好了，再测试
-		                            		PrnComd="100";
-		                            	    PrinterFlag=1;
+										 File msgfile = new File(cmd.content);
+										 if (!isTlkReady(msgfile)) {
+											 sendmsg(Constants.pcErr(msg));
+											 return;
+										 }
+										 if(PrinterFlag==0)
+										 {
+											 //打印赵工写好了，再测试
+											 PrnComd="100";
+											 PrinterFlag=1;
 //		                            		StopFlag=1;
-		                            		CleanFlag=0;
+											 CleanFlag=0;
 
 // H.M.Wang 2020-6-23 设置mObjPath，以便打开成功后显示信息名称
-		                                 	mObjPath= msgfile.getName();
+											 mObjPath= msgfile.getName();
 // End of H.M.Wang 2020-6-23 设置mObjPath，以便打开成功后显示信息名称
 
-		                                 	Message message = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
-		                                 	Bundle bundle = new Bundle();
-		         							bundle.putString("file", mObjPath);  // f表示信息名称
-											bundle.putString(Constants.PC_CMD, msg);
-		         							message.setData(bundle);
-		         							mHandler.sendMessage(message);
+											 Message message = mHandler.obtainMessage(MESSAGE_OPEN_TLKFILE);
+											 Bundle bundle = new Bundle();
+											 bundle.putString("file", mObjPath);  // f表示信息名称
+											 bundle.putString(Constants.PC_CMD, msg);
+											 message.setData(bundle);
+											 mHandler.sendMessage(message);
 
-		                            	}
-		                            } else if(PCCommand.CMD_CLEAN.equalsIgnoreCase(cmd.command) ||
-		                                        PCCommand.CMD_CLEAN_S.equalsIgnoreCase(cmd.command)) {
-		                            	//200是清洗
-										CleanFlag=1;
-		                            	if(null != mDTransThread) {
-											mDTransThread.purge(mContext);
-											this.sendmsg(Constants.pcOk(msg));
-										} else {
+										 }
+									 } else if(PCCommand.CMD_CLEAN.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_CLEAN_S.equalsIgnoreCase(cmd.command)) {
+										 //200是清洗
+										 CleanFlag=1;
+										 if(null != mDTransThread) {
+											 mDTransThread.purge(mContext);
+											 this.sendmsg(Constants.pcOk(msg));
+										 } else {
 // 2020-7-21 在未开始打印前，网络清洗命令不响应问题解决
-											thread = DataTransferThread.getInstance(mContext);
-											thread.purge(mContext);
-											this.sendmsg(Constants.pcOk(msg));
+											 thread = DataTransferThread.getInstance(mContext);
+											 thread.purge(mContext);
+											 this.sendmsg(Constants.pcOk(msg));
 // End of 2020-7-21 在未开始打印前，网络清洗命令不响应问题解决
 //											sendmsg(Constants.pcErr(msg));
-										}
+										 }
 
-		                            } else if(PCCommand.CMD_SEND_FILE.equalsIgnoreCase(cmd.command) ||
-                                                PCCommand.CMD_SEND_FILE_S.equalsIgnoreCase(cmd.command)) {
-		                            	//300发文件
-		                            	AddPaths="";
-		                            	if(SendFileFlag==0)//发文件等赵工写好了，再测试
-		                            	{
-		                            		SendFileFlag=1;
-		                            		this.sendmsg(WriteFiles(Gsocket,msg));
-		                            	}
-		                            } else if(PCCommand.CMD_READ_COUNTER.equalsIgnoreCase(cmd.command) ||
-		                                        PCCommand.CMD_READ_COUNTER_S.equalsIgnoreCase(cmd.command)) {
-		                            	//400取计数器
+									 } else if(PCCommand.CMD_SEND_FILE.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_SEND_FILE_S.equalsIgnoreCase(cmd.command)) {
+										 //300发文件
+										 AddPaths="";
+										 if(SendFileFlag==0)//发文件等赵工写好了，再测试
+										 {
+											 SendFileFlag=1;
+											 this.sendmsg(WriteFiles(Gsocket,msg));
+										 }
+									 } else if(PCCommand.CMD_READ_COUNTER.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_READ_COUNTER_S.equalsIgnoreCase(cmd.command)) {
+										 //400取计数器
 // H.M.Wang 2020-4-22 修改读取Counter命令返回格式
-										StringBuilder sb = new StringBuilder();
+										 StringBuilder sb = new StringBuilder();
 
-										sb.append("" + mCounter);
-		                            	for(int i=0; i<8; i++) {
-  	  										sb.append("|" + (int)(mInkManager.getLocalInk(i)));
-		                            	}
+										 sb.append("" + mCounter);
+										 for(int i=0; i<8; i++) {
+											 sb.append("|" + (int)(mInkManager.getLocalInk(i)));
+										 }
 // H.M.Wang 2020-6-29 打印任务还没有启动时，DataTransferThread.getInstance(mContext)会自动生成instance，导致错误，应避免使用
-										sb.append("|" + (null != mDTransThread && mDTransThread.isRunning() ? "T" : "F") + "|");
+										 sb.append("|" + (null != mDTransThread && mDTransThread.isRunning() ? "T" : "F") + "|");
 // H.M.Wang 2020-6-29 打印任务还没有启动时，DataTransferThread.getInstance(mContext)会自动生成instance，导致错误，应避免使用
-										sb.append(msg);
-										this.sendmsg(Constants.pcOk(sb.toString()));
+										 sb.append(msg);
+										 this.sendmsg(Constants.pcOk(sb.toString()));
 // End of H.M.Wang 2020-4-22 修改读取Counter命令返回格式
 
 /*
@@ -2946,28 +2980,28 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
                                         }
 // End of H.M.Wang 2020-7-1 临时版本，回复原来的回复格式
 */
-                                    } else if(PCCommand.CMD_STOP_PRINT.equalsIgnoreCase(cmd.command) ||
-                                                PCCommand.CMD_STOP_PRINT_S.equalsIgnoreCase(cmd.command)) {
-		                            	//500停止打印
-										if(null != mDTransThread && mDTransThread.isRunning())
+									 } else if(PCCommand.CMD_STOP_PRINT.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_STOP_PRINT_S.equalsIgnoreCase(cmd.command)) {
+										 //500停止打印
+										 if(null != mDTransThread && mDTransThread.isRunning())
 //		                            	if(StopFlag==1)
-		                            	{
+										 {
 //		                            		StopFlag=0;
-		                            		PrinterFlag=0;
-											Message message = mHandler.obtainMessage(MESSAGE_PRINT_STOP);
-											Bundle bundle = new Bundle();
-											bundle.putString(Constants.PC_CMD, msg);
-											message.setData(bundle);
-		                            		message.sendToTarget();
-		                            		//this.sendmsg(msg+"recv success!");
-		                            	
-		                            	}
-		                            }
+											 PrinterFlag=0;
+											 Message message = mHandler.obtainMessage(MESSAGE_PRINT_STOP);
+											 Bundle bundle = new Bundle();
+											 bundle.putString(Constants.PC_CMD, msg);
+											 message.setData(bundle);
+											 message.sendToTarget();
+											 //this.sendmsg(msg+"recv success!");
+
+										 }
+									 }
 // H.M.Wang 2020-6-16 这个条件重复，应该注释掉
 /*
 		                            else if(PCCommand.CMD_SET_REMOTE.equalsIgnoreCase(cmd.command)) {
 		                           //600字符串长成所需文件
-		                            	
+
 		                    			StrInfo_Stack.push(cmd.content);//用堆栈存储收的信息，先进称出;
 		                    			try {
 											int count = Integer.parseInt(cmd.content);
@@ -2986,207 +3020,207 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		                            }*/
 // End of H.M.Wang 2020-6-16 这个条件重复，应该注释掉
 
-                                    else if(PCCommand.CMD_MAKE_TLK.equalsIgnoreCase(cmd.command) ||
-		                                    PCCommand.CMD_MAKE_TLK_S.equalsIgnoreCase(cmd.command)) {
-		                           		//700
-		                    			this.sendmsg(getString(R.string.str_build_tlk_start));
-		                            	String[] parts = msg.split("\\|");
-		                            	for (int j = 0; j < parts.length; j++) {
-		                            		Debug.d(TAG, "--->parts[" + j + "] = " + parts[j]);
-										}
-		                            	
-		                            	if (parts != null || parts.length > 4) {
-		                            		MakeTlk(parts[3]);
-										}
-		                            }
-                                    else if(PCCommand.CMD_DEL_FILE.equalsIgnoreCase(cmd.command) ||
-		                                    PCCommand.CMD_DEL_FILE_S.equalsIgnoreCase(cmd.command)) {
-		                           		//600字符串长成所需文件
-		                    			if (deleteFile(msg)) {
-		                            		this.sendmsg(Constants.pcOk(msg));
-		                            	} else {
-		                    			this.sendmsg(Constants.pcErr(msg));
-		                            	}
-		                            }
-                                    else if(PCCommand.CMD_DEL_DIR.equalsIgnoreCase(cmd.command) ||
-		                                    PCCommand.CMD_DEL_DIR_S.equalsIgnoreCase(cmd.command)) {
-                                        //600字符串长成所需文件
-                                        if (deleteDirectory(msg)) {
-                                            this.sendmsg(Constants.pcOk(msg));
-                                        } else {
-                                            this.sendmsg(Constants.pcErr(msg));
-                                        }
-                                    // H.M.Wang 2019-12-25 追加速度和清洗命令
-                                    } else if(PCCommand.CMD_SET_DOTSIZE.equalsIgnoreCase(cmd.command)) {
-                                        try {
+									 else if(PCCommand.CMD_MAKE_TLK.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_MAKE_TLK_S.equalsIgnoreCase(cmd.command)) {
+										 //700
+										 this.sendmsg(getString(R.string.str_build_tlk_start));
+										 String[] parts = msg.split("\\|");
+										 for (int j = 0; j < parts.length; j++) {
+											 Debug.d(TAG, "--->parts[" + j + "] = " + parts[j]);
+										 }
+
+										 if (parts != null || parts.length > 4) {
+											 MakeTlk(parts[3]);
+										 }
+									 }
+									 else if(PCCommand.CMD_DEL_FILE.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_DEL_FILE_S.equalsIgnoreCase(cmd.command)) {
+										 //600字符串长成所需文件
+										 if (deleteFile(msg)) {
+											 this.sendmsg(Constants.pcOk(msg));
+										 } else {
+											 this.sendmsg(Constants.pcErr(msg));
+										 }
+									 }
+									 else if(PCCommand.CMD_DEL_DIR.equalsIgnoreCase(cmd.command) ||
+											 PCCommand.CMD_DEL_DIR_S.equalsIgnoreCase(cmd.command)) {
+										 //600字符串长成所需文件
+										 if (deleteDirectory(msg)) {
+											 this.sendmsg(Constants.pcOk(msg));
+										 } else {
+											 this.sendmsg(Constants.pcErr(msg));
+										 }
+										 // H.M.Wang 2019-12-25 追加速度和清洗命令
+									 } else if(PCCommand.CMD_SET_DOTSIZE.equalsIgnoreCase(cmd.command)) {
+										 try {
 // H.M.Wang 2019-12-27 暂时取消3.7倍的系数。修改设置参数为23。取值范围0-6000。 2019-12-28 内部保存在参数33
-                                            SystemConfigFile.getInstance().setParamBroadcast(SystemConfigFile.INDEX_DOT_SIZE, Math.max(0, Math.min(6000, Integer.parseInt(cmd.content))));
+											 SystemConfigFile.getInstance().setParamBroadcast(SystemConfigFile.INDEX_DOT_SIZE, Math.max(0, Math.min(6000, Integer.parseInt(cmd.content))));
 //                                            SystemConfigFile.getInstance().setParamBroadcast(0, Math.round(3.7f * Integer.parseInt(cmd.content)));
 // End of H.M.Wang 2019-12-27 暂时取消3.7倍的系数。修改设置参数为23。取值范围0-6000
-                                            SystemConfigFile.getInstance().saveConfig();
-											if(null != mDTransThread && mDTransThread.isRunning()) {
+											 SystemConfigFile.getInstance().saveConfig();
+											 if(null != mDTransThread && mDTransThread.isRunning()) {
 // H.M.Wang 2019-12-29 修改在打印状态下设置FPGA参数的逻辑
-												DataTask task = mDTransThread.getCurData();
+												 DataTask task = mDTransThread.getCurData();
 // 2020-5-8												FpgaGpioOperation.clean();
-												FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+												 FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 //												mDTransThread.mNeedUpdate = true;
 //												while(mDTransThread.mNeedUpdate) {
 //													Thread.sleep(10);
 //												}
-												FpgaGpioOperation.init(mContext);
+												 FpgaGpioOperation.init(mContext);
 // H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
 //												mDTransThread.resendBufferToFPGA();
 // End of H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
 // End of H.M.Wang 2019-12-29 修改在打印状态下设置FPGA参数的逻辑
-											}
-											this.sendmsg(Constants.pcOk(msg));
-                                        } catch (NumberFormatException e) {
-                                            Debug.e(TAG, e.getMessage());
-                                        }
-                                    } else if(PCCommand.CMD_SET_CLEAN.equalsIgnoreCase(cmd.command)) {
-										if(null != mDTransThread && mDTransThread.isRunning()) {
-											DataTask task = mDTransThread.getCurData();
+											 }
+											 this.sendmsg(Constants.pcOk(msg));
+										 } catch (NumberFormatException e) {
+											 Debug.e(TAG, e.getMessage());
+										 }
+									 } else if(PCCommand.CMD_SET_CLEAN.equalsIgnoreCase(cmd.command)) {
+										 if(null != mDTransThread && mDTransThread.isRunning()) {
+											 DataTask task = mDTransThread.getCurData();
 
-											int param0 = SystemConfigFile.getInstance().getParam(0);
+											 int param0 = SystemConfigFile.getInstance().getParam(0);
 // H.M.Wang 2019-12-27 修改取值，以达到下发FPGA时参数4的值为9
-											SystemConfigFile.getInstance().setParam(0, 18888);
+											 SystemConfigFile.getInstance().setParam(0, 18888);
 // End of H.M.Wang 2019-12-27 修改取值，以达到下发FPGA时参数4的值为9
-											FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+											 FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 // H.M.Wang 2019-12-27 间隔时间修改为10ms
-											Thread.sleep(10);
+											 Thread.sleep(10);
 // End of H.M.Wang 2019-12-27 间隔时间修改为10ms
-											SystemConfigFile.getInstance().setParam(0, param0);
+											 SystemConfigFile.getInstance().setParam(0, param0);
 // 2020-5-8											FpgaGpioOperation.clean();
-											FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+											 FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 // H.M.Wang 2019-12-27 重新启动打印
 //											mDTransThread.mNeedUpdate = true;
 //											while(mDTransThread.mNeedUpdate) {
 //												Thread.sleep(10);
 //											}
-											FpgaGpioOperation.init(mContext);
+											 FpgaGpioOperation.init(mContext);
 // H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
 //												mDTransThread.resendBufferToFPGA();
 // End of H.M.Wang 2020-7-9 取消下发参数设置后重新下发打印缓冲区操作
 // End of H.M.Wang 2019-12-27 重新启动打印
-										}
-                                    // End of H.M.Wang 2019-12-25 追加速度和清洗命令
-                                        this.sendmsg(Constants.pcOk(msg));
+										 }
+										 // End of H.M.Wang 2019-12-25 追加速度和清洗命令
+										 this.sendmsg(Constants.pcOk(msg));
 // H.M.Wang 2020-7-1 追加一个计数器设置数值命令
-									} else if(PCCommand.CMD_SET_COUNTER.equalsIgnoreCase(cmd.command)) {
-										try {
-											int cIndex = Integer.valueOf(cmd.content);
-											if(cIndex < 0 || cIndex > 9) {
-												Debug.e(TAG, "CMD_SET_COUNTER command, Index overflow.");
-												this.sendmsg(Constants.pcErr(msg));
-											} else {
-												try {
-													int cValue = Integer.valueOf(cmd.note2);
-													SystemConfigFile.getInstance().setParamBroadcast(cIndex + SystemConfigFile.INDEX_COUNT_1, cValue);
-													RTCDevice.getInstance(mContext).write(cValue, cIndex);
-													DataTransferThread dt = DataTransferThread.mInstance;
-													if(null != dt && dt.isRunning()) {
-														resetCounterIfNeed();
-														dt.mNeedUpdate = true;
+									 } else if(PCCommand.CMD_SET_COUNTER.equalsIgnoreCase(cmd.command)) {
+										 try {
+											 int cIndex = Integer.valueOf(cmd.content);
+											 if(cIndex < 0 || cIndex > 9) {
+												 Debug.e(TAG, "CMD_SET_COUNTER command, Index overflow.");
+												 this.sendmsg(Constants.pcErr(msg));
+											 } else {
+												 try {
+													 int cValue = Integer.valueOf(cmd.note2);
+													 SystemConfigFile.getInstance().setParamBroadcast(cIndex + SystemConfigFile.INDEX_COUNT_1, cValue);
+													 RTCDevice.getInstance(mContext).write(cValue, cIndex);
+													 DataTransferThread dt = DataTransferThread.mInstance;
+													 if(null != dt && dt.isRunning()) {
+														 resetCounterIfNeed();
+														 dt.mNeedUpdate = true;
 // H.M.Wang 2020-7-9 追加计数器重置标识
-														dt.mCounterReset = true;
+														 dt.mCounterReset = true;
 // End of H.M.Wang 2020-7-9 追加计数器重置标识
-													}
+													 }
 
-													this.sendmsg(Constants.pcOk(msg));
-												} catch (NumberFormatException e) {
-													Debug.e(TAG, "CMD_SET_COUNTER command, invalid value.");
-													this.sendmsg(Constants.pcErr(msg));
-												}
-											}
-										} catch (NumberFormatException e) {
-											Debug.e(TAG, "CMD_SET_COUNTER command, invalid index.");
-											this.sendmsg(Constants.pcErr(msg));
-										}
+													 this.sendmsg(Constants.pcOk(msg));
+												 } catch (NumberFormatException e) {
+													 Debug.e(TAG, "CMD_SET_COUNTER command, invalid value.");
+													 this.sendmsg(Constants.pcErr(msg));
+												 }
+											 }
+										 } catch (NumberFormatException e) {
+											 Debug.e(TAG, "CMD_SET_COUNTER command, invalid index.");
+											 this.sendmsg(Constants.pcErr(msg));
+										 }
 // End of H.M.Wang 2020-7-1 追加一个计数器设置数值命令
-                                    } else if(PCCommand.CMD_SET_TIME.equalsIgnoreCase(cmd.command)) {
-                                        try {
-                                            int cYear = Integer.valueOf(cmd.content.substring(0,2));
-                                            int cMonth = Integer.valueOf(cmd.content.substring(2,4));
-                                            int cDate = Integer.valueOf(cmd.content.substring(4,6));
-                                            int cHour = Integer.valueOf(cmd.content.substring(6,8));
-                                            int cMinute = Integer.valueOf(cmd.content.substring(8,10));
-                                            int cSecond = Integer.valueOf(cmd.content.substring(10,12));
+									 } else if(PCCommand.CMD_SET_TIME.equalsIgnoreCase(cmd.command)) {
+										 try {
+											 int cYear = Integer.valueOf(cmd.content.substring(0,2));
+											 int cMonth = Integer.valueOf(cmd.content.substring(2,4));
+											 int cDate = Integer.valueOf(cmd.content.substring(4,6));
+											 int cHour = Integer.valueOf(cmd.content.substring(6,8));
+											 int cMinute = Integer.valueOf(cmd.content.substring(8,10));
+											 int cSecond = Integer.valueOf(cmd.content.substring(10,12));
 
-                                            if(cYear < 0 || cYear > 99) {
-                                                Debug.e(TAG, "CMD_SET_TIME command, invalid year.");
-                                                this.sendmsg(Constants.pcErr(msg));
-                                            } else if(cMonth < 1 || cMonth > 12) {
-                                                Debug.e(TAG, "CMD_SET_TIME command, invalid month.");
-                                                this.sendmsg(Constants.pcErr(msg));
-                                            } else if(cDate < 1 || cDate > 31) {
-                                                Debug.e(TAG, "CMD_SET_TIME command, invalid date.");
-                                                this.sendmsg(Constants.pcErr(msg));
-                                            } else if(cHour < 0 || cHour > 23) {
-                                                Debug.e(TAG, "CMD_SET_TIME command, invalid hour.");
-                                                this.sendmsg(Constants.pcErr(msg));
-                                            } else if(cMinute < 0 || cMinute > 59) {
-                                                Debug.e(TAG, "CMD_SET_TIME command, invalid minute.");
-                                                this.sendmsg(Constants.pcErr(msg));
-                                            } else if(cSecond < 0 || cSecond > 59) {
-                                                Debug.e(TAG, "CMD_SET_TIME command, invalid second.");
-                                                this.sendmsg(Constants.pcErr(msg));
-                                            } else {
-                                                Calendar c = Calendar.getInstance();
+											 if(cYear < 0 || cYear > 99) {
+												 Debug.e(TAG, "CMD_SET_TIME command, invalid year.");
+												 this.sendmsg(Constants.pcErr(msg));
+											 } else if(cMonth < 1 || cMonth > 12) {
+												 Debug.e(TAG, "CMD_SET_TIME command, invalid month.");
+												 this.sendmsg(Constants.pcErr(msg));
+											 } else if(cDate < 1 || cDate > 31) {
+												 Debug.e(TAG, "CMD_SET_TIME command, invalid date.");
+												 this.sendmsg(Constants.pcErr(msg));
+											 } else if(cHour < 0 || cHour > 23) {
+												 Debug.e(TAG, "CMD_SET_TIME command, invalid hour.");
+												 this.sendmsg(Constants.pcErr(msg));
+											 } else if(cMinute < 0 || cMinute > 59) {
+												 Debug.e(TAG, "CMD_SET_TIME command, invalid minute.");
+												 this.sendmsg(Constants.pcErr(msg));
+											 } else if(cSecond < 0 || cSecond > 59) {
+												 Debug.e(TAG, "CMD_SET_TIME command, invalid second.");
+												 this.sendmsg(Constants.pcErr(msg));
+											 } else {
+												 Calendar c = Calendar.getInstance();
 
-                                                c.set(cYear + 2000, cMonth-1, cDate, cHour, cMinute, cSecond);
-                                                SystemClock.setCurrentTimeMillis(c.getTimeInMillis());
-                                                RTCDevice rtcDevice = RTCDevice.getInstance(mContext);
-                                                rtcDevice.syncSystemTimeToRTC(mContext);
-                                                Debug.d(TAG, "Set time to: " + (cYear + 2000) + "-" + cMonth + "-" + cDate + " " + cHour + ":" + cMinute + ":" + cSecond);
-												this.sendmsg(Constants.pcOk(msg));
-                                            }
-                                        } catch (Exception e) {
-                                            Debug.e(TAG, "CMD_SET_TIME command, " + e.getMessage() + ".");
-                                            this.sendmsg(Constants.pcErr(msg));
-                                        }
+												 c.set(cYear + 2000, cMonth-1, cDate, cHour, cMinute, cSecond);
+												 SystemClock.setCurrentTimeMillis(c.getTimeInMillis());
+												 RTCDevice rtcDevice = RTCDevice.getInstance(mContext);
+												 rtcDevice.syncSystemTimeToRTC(mContext);
+												 Debug.d(TAG, "Set time to: " + (cYear + 2000) + "-" + cMonth + "-" + cDate + " " + cHour + ":" + cMinute + ":" + cSecond);
+												 this.sendmsg(Constants.pcOk(msg));
+											 }
+										 } catch (Exception e) {
+											 Debug.e(TAG, "CMD_SET_TIME command, " + e.getMessage() + ".");
+											 this.sendmsg(Constants.pcErr(msg));
+										 }
 // H.M.Wang 2020-7-28 追加一个设置参数命令
-									} else if(PCCommand.CMD_SET_PARAMS.equalsIgnoreCase(cmd.command)) {
-										try {
-											int cIndex = Integer.valueOf(cmd.content);
-                                            cIndex--;
-											if(cIndex < 0 || cIndex > 63) {
-												Debug.e(TAG, "Invalid PARAM index.");
-												this.sendmsg(Constants.pcErr(msg));
-											} else {
-												try {
-													int cValue = Integer.valueOf(cmd.note2);
+									 } else if(PCCommand.CMD_SET_PARAMS.equalsIgnoreCase(cmd.command)) {
+										 try {
+											 int cIndex = Integer.valueOf(cmd.content);
+											 cIndex--;
+											 if(cIndex < 0 || cIndex > 63) {
+												 Debug.e(TAG, "Invalid PARAM index.");
+												 this.sendmsg(Constants.pcErr(msg));
+											 } else {
+												 try {
+													 int cValue = Integer.valueOf(cmd.note2);
 //													if(cIndex == 3 || cIndex == 0 || cIndex == 1 || cIndex == 32 || (cIndex >= SystemConfigFile.INDEX_COUNT_1 && cIndex <= SystemConfigFile.INDEX_COUNT_10)) {
-														mSysconfig.setParamBroadcast(cIndex, cValue);
+													 mSysconfig.setParamBroadcast(cIndex, cValue);
 //													} else {
 //														mSysconfig.setParam(cIndex, cValue);
 //													}
-													this.sendmsg(Constants.pcOk(msg));
-												} catch (NumberFormatException e) {
-													Debug.e(TAG, "Invalid PARAM value.");
-													this.sendmsg(Constants.pcErr(msg));
-												}
-											}
-										} catch (NumberFormatException e) {
-											Debug.e(TAG, "Invalid PARAM index.");
-											this.sendmsg(Constants.pcErr(msg));
-										}
+													 this.sendmsg(Constants.pcOk(msg));
+												 } catch (NumberFormatException e) {
+													 Debug.e(TAG, "Invalid PARAM value.");
+													 this.sendmsg(Constants.pcErr(msg));
+												 }
+											 }
+										 } catch (NumberFormatException e) {
+											 Debug.e(TAG, "Invalid PARAM index.");
+											 this.sendmsg(Constants.pcErr(msg));
+										 }
 // End of H.M.Wang 2020-7-28 追加一个设置参数命令
 // H.M.Wang 2020-9-28 追加一个心跳协议
-									} else if(PCCommand.CMD_HEARTBEAT.equalsIgnoreCase(cmd.command)) {
-										mLastHeartBeat = System.currentTimeMillis();
-										this.sendmsg(Constants.pcOk(msg));
+									 } else if(PCCommand.CMD_HEARTBEAT.equalsIgnoreCase(cmd.command)) {
+										 mLastHeartBeat = System.currentTimeMillis();
+										 this.sendmsg(Constants.pcOk(msg));
 // End of H.M.Wang 2020-9-28 追加一个心跳协议
 // H.M.Wang 2021-2-4 追加软启动打印命令
-                                    } else if(PCCommand.CMD_SOFT_PHO.equalsIgnoreCase(cmd.command)) {
-                                        FpgaGpioOperation.softPho();
-                                        this.sendmsg(Constants.pcOk(msg));
+									 } else if(PCCommand.CMD_SOFT_PHO.equalsIgnoreCase(cmd.command)) {
+										 FpgaGpioOperation.softPho();
+										 this.sendmsg(Constants.pcOk(msg));
 // End of H.M.Wang 2021-2-4 追加软启动打印命令
-									} else {
-		                            	this.sendmsg(Constants.pcErr(msg));
-		                            }
-		                                          
-								}
-                             } catch (SocketTimeoutException e) {
+									 } else {
+										 this.sendmsg(Constants.pcErr(msg));
+									 }
+
+								 }
+							 } catch (SocketTimeoutException e) {
 
                              }catch (IOException e) {
                                  Debug.i(TAG, "--->socketE: " + e.getMessage());
@@ -3207,7 +3241,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		         public void sendmsg(String msg) {  
 		            //System.out.println(msg);
 					 Debug.i(TAG, "--->send: " + msg);
-		             PrintWriter pout = null;  
+		             PrintWriter pout = null;
 		             try {  
 		                 pout = new PrintWriter(new BufferedWriter(  
 		                         new OutputStreamWriter(Gsocket.getOutputStream())),true);  

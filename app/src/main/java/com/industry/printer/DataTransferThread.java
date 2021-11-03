@@ -1018,8 +1018,13 @@ private void setSerialProtocol9DTs(final String data) {
 		final SerialHandler serialHandler = SerialHandler.getInstance(mContext);
 		serialHandler.setPrintCommandListener(new SerialHandler.OnSerialPortCommandListenner() {
 			@Override
-			public void onError(String errCode) {
-				ToastUtil.show(mContext, errCode);
+			public void onError(final String errCode) {
+				mHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						ToastUtil.show(mContext, errCode);
+					}
+				});
 			}
 			@Override
 			public void onCommandReceived(int cmd, byte[] data) {

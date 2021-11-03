@@ -1269,7 +1269,10 @@ public class DataTask {
 			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_96DN) {
 // End of H.M.Wang 2021-8-16 追加96DN头
 			heads = 4;		// 16点，32点和64点，在这里假设按4个头来算，主要是为了就和当前的实现逻辑
-			offsetDiv = 6;	// 打字机位移量除6
+// H.M.Wang 2021-11-3 大字节4mm是一列，参数设置的是1/6mm的单位数，因此，如果参数10（11，18，19都一样）设置24，才能够达到位移一位的效果
+//			offsetDiv = 6;	// 打字机位移量除6
+			offsetDiv = 24;
+// End of H.M.Wang 2021-11-3 大字节4mm是一列，参数设置的是1/6mm的单位数，因此，如果参数10（11，18，19都一样）设置24，才能够达到位移一位的效果
 		}
 
 		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);

@@ -84,13 +84,14 @@ static speed_t getBaudrate(jint baudrate) {
 /*
  * Class:     com_industry_printer_Serial_SerialPort
  * Method:    open
- * Signature: (Ljava/lang/String;I)I;
+ * Signature: (Ljava/lang/String;I)Ljava/io/FileDescriptor;
  */
-JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_open
+JNIEXPORT jobject JNICALL Java_com_industry_printer_Serial_SerialPort_open
   (JNIEnv *env, jobject object, jstring path, jint baudrate) {
 
     speed_t speed;
     int fd = -1;
+    jobject mFileDescriptor;
 
     LOGI("Check arguments");
     /* Check arguments */
@@ -99,7 +100,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_open
         if (speed == -1) {
             /* TODO: throw an exception */
             LOGE("Invalid baudrate");
-            return -1;
+            return NULL;
         }
     }
 
@@ -109,13 +110,14 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_open
         jboolean iscopy;
         const char *path_utf = env->GetStringUTFChars(path, &iscopy);
         LOGD("Opening serial port %s", path_utf);
-        fd = open(path_utf, O_RDWR | O_NOCTTY | O_NONBLOCK | O_NDELAY);
+//        fd = open(path_utf, O_RDWR | O_NOCTTY | O_NONBLOCK | O_NDELAY);
+        fd = open(path_utf, O_RDWR);
         LOGD("Opened serial port[%s] as [%d]", path_utf, fd);
         if (fd == -1) {
             /* Throw an exception */
             LOGE("Failed to open port %s", path_utf);
             env->ReleaseStringUTFChars(path, path_utf);
-            return -1;
+            return NULL;
         }
         env->ReleaseStringUTFChars(path, path_utf);
     }
@@ -154,8 +156,91 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_open
         }
     }
 
+    {
+        jclass cFileDescriptor = env->FindClass("java/io/FileDescriptor");
+        jmethodID iFileDescriptor = env->GetMethodID(cFileDescriptor, "<init>", "()V");
+        jfieldID descriptorID = env->GetFieldID(cFileDescriptor, "descriptor", "I");
+        mFileDescriptor = env->NewObject(cFileDescriptor, iFileDescriptor);
+        env->SetIntField(mFileDescriptor, descriptorID, (jint)fd);
+    }
+
+    return mFileDescriptor;
+}
+
+/*
+ * Class:     com_industry_printer_Serial_SerialPort
+ * Method:    open
+ * Signature: (Ljava/lang/String;I)I;
+ */
+/*
+JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_open
+        (JNIEnv *env, jobject object, jstring path, jint baudrate) {
+
+    speed_t speed;
+    int fd = -1;
+
+    LOGI("Check arguments");
+    // Check arguments
+    {
+        speed = getBaudrate(baudrate);
+        if (speed == -1) {
+            LOGE("Invalid baudrate");
+            return -1;
+        }
+    }
+
+    LOGI("Opening device!");
+    // Opening device
+    {
+        jboolean iscopy;
+        const char *path_utf = env->GetStringUTFChars(path, &iscopy);
+        LOGD("Opening serial port %s", path_utf);
+        fd = open(path_utf, O_RDWR | O_NOCTTY | O_NONBLOCK | O_NDELAY);
+        LOGD("Opened serial port[%s] as [%d]", path_utf, fd);
+        if (fd == -1) {
+            LOGE("Failed to open port %s", path_utf);
+            env->ReleaseStringUTFChars(path, path_utf);
+            return -1;
+        }
+        env->ReleaseStringUTFChars(path, path_utf);
+    }
+
+    LOGI("Configure device!");
+    // Configure device
+    {
+        struct termios cfg;
+        if (0 != tcgetattr(fd, &cfg)) {
+            LOGE("Failed to get port attribute!");
+//            close(fd);
+//            return -1;
+        }
+
+        // cfmakeraw set the following parameters
+        //  cfg->c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
+        //  cfg->c_oflag &= ~OPOST;
+        //  cfg->c_lflag &= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);
+        //  cfg->c_cflag &= ~(CSIZE|PARENB);
+        //  cfg->c_cflag |= CS8;
+        cfmakeraw(&cfg);
+
+        cfsetispeed(&cfg, speed);
+        cfsetospeed(&cfg, speed);
+
+        tcflush(fd, TCIOFLUSH);
+
+//        TCSANOW：不等数据传输完毕就立即改变属性。
+//        TCSADRAIN：等待所有数据传输结束才改变属性。
+//        TCSAFLUSH：清空输入输出缓冲区才改变属性。
+        if (tcsetattr(fd, TCSANOW, &cfg)) {
+            LOGE("Failed to set port attribute!");
+//            close(fd);
+//            return -1;
+        }
+    }
+
     return fd;
 }
+*/
 
 static bool mKeepRunning = false;
 
@@ -174,10 +259,31 @@ JNIEXPORT void JNICALL Java_com_industry_printer_Serial_SerialPort_stop
 /*
 * Class:     com_industry_printer_Serial_SerialPort
 * Method:    close
+* Signature: ()V
+*/
+JNIEXPORT void JNICALL Java_com_industry_printer_Serial_SerialPort_close
+  (JNIEnv *env, jobject object) {
+
+    jclass SerialPortClass = env->GetObjectClass(object);
+    jclass FileDescriptorClass = env->FindClass("java/io/FileDescriptor");
+
+    jfieldID mFdID = env->GetFieldID(SerialPortClass, "mFd", "Ljava/io/FileDescriptor;");
+    jfieldID descriptorID = env->GetFieldID(FileDescriptorClass, "descriptor", "I");
+
+    jobject mFd = env->GetObjectField(object, mFdID);
+    jint descriptor = env->GetIntField(mFd, descriptorID);
+
+    close(descriptor);
+}
+
+/*
+* Class:     com_industry_printer_Serial_SerialPort
+* Method:    close
 * Signature: (I)I
 */
+/*
 JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_close
-  (JNIEnv *env, jobject object, jint fd) {
+        (JNIEnv *env, jobject object, jint fd) {
 
     if(fd <= 0) {
         LOGE("Invalid fd[%d]!", fd);
@@ -190,6 +296,8 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_close
 
     return close(fd);
 }
+*/
+
 /*
 char* toHexString(const char* buf, int len) {
     char ret_buf[3072];
@@ -241,7 +349,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
 
     mKeepRunning = true;
 
-    maxfd = 1;
+    maxfd = 1;          // fd应该为fd+1,是文件描述符+1，而不是文件描述符的个数
     timeout.tv_sec = 0;
     timeout.tv_usec = 100;
 
@@ -262,6 +370,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
             memset(temp_buf, 0x00, MAX_TEMP_BUFFER_LEN);
 
             int rnum = read(fd, temp_buf, MAX_TEMP_BUFFER_LEN);
+            LOGD("[%d] bytes read.", rnum);
 
             if(rnum > 0) {
                 rnum = ((recv_num + rnum) > MAX_RETRIVAL_BUFFER_LEN ? (MAX_RETRIVAL_BUFFER_LEN - recv_num) : rnum);
@@ -331,8 +440,8 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_write
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
-    LOGI("SerialPort.so 1.0.53 Loaded.");
-
+    // 2021-10-29 1.0.54 修改为FileDescriptor版本的open和close。因此，本库中仅有open和close函数是实际有效的函数，其他函数将不会被使用到
+    LOGI("SerialPort.so 1.0.54 Loaded.");
 
     return JNI_VERSION_1_4;     //这里很重要，必须返回版本，否则加载会失败。
 }

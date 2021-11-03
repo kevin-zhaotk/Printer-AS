@@ -4,6 +4,7 @@ package com.industry.printer.Serial;
 
         import com.industry.printer.Utils.ByteArrayUtils;
         import com.industry.printer.Utils.Debug;
+        import com.industry.printer.Utils.StreamTransport;
 
         import org.apache.http.util.ByteArrayBuffer;
 
@@ -101,8 +102,8 @@ public class SerialProtocol7 extends SerialProtocol {
 
     public final static String TEXT_SEPERATOR         = ",";          // 串口接收文本的间隔符
 
-    public SerialProtocol7(SerialPort serialPort, Context ctx){
-        super(serialPort, ctx);
+    public SerialProtocol7(StreamTransport st, Context ctx){
+        super(st, ctx);
     }
 
     private byte getXorOf(byte[] org) {

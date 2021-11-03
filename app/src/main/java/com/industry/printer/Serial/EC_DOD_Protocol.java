@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.StreamTransport;
 
 import org.apache.http.util.ByteArrayBuffer;
 
@@ -102,8 +103,8 @@ public class EC_DOD_Protocol extends SerialProtocol {
     // H.M.Wang 2019-12-15 追加串口文本间隔符
     public final static String TEXT_SEPERATOR         = ",";          // 串口接收文本的间隔符
 
-    public EC_DOD_Protocol(SerialPort serialPort, Context ctx){
-        super(serialPort, ctx);
+    public EC_DOD_Protocol(StreamTransport st, Context ctx){
+        super(st, ctx);
     }
 
     @Override

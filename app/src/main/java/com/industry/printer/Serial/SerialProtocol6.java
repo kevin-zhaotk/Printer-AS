@@ -2,6 +2,8 @@ package com.industry.printer.Serial;
 
 import android.content.Context;
 
+import com.industry.printer.Utils.StreamTransport;
+
 import org.apache.http.util.ByteArrayBuffer;
 
 import java.nio.charset.Charset;
@@ -13,8 +15,8 @@ import java.nio.charset.Charset;
 public class SerialProtocol6 extends SerialProtocol {
     public static String TAG = SerialProtocol5.class.getSimpleName();
 
-    public SerialProtocol6(SerialPort serialPort, Context ctx){
-        super(serialPort, ctx);
+    public SerialProtocol6(StreamTransport st, Context ctx){
+        super(st, ctx);
     }
 
     @Override

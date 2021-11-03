@@ -22,10 +22,18 @@ extern "C" {
 /*
  * Class:     com_industry_printer_Serial_SerialPort
  * Method:    open
+ * Signature: (Ljava/lang/String;I)Ljava/io/FileDescriptor;
+ */
+JNIEXPORT jobject JNICALL Java_com_industry_printer_Serial_SerialPort_open
+  (JNIEnv *, jobject, jstring, jint);
+
+/*
+ * Class:     com_industry_printer_Serial_SerialPort
+ * Method:    open
  * Signature: (Ljava/lang/String;I)I;
  */
-JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_open
-  (JNIEnv *, jobject, jstring, jint);
+// JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_open
+//        (JNIEnv *, jobject, jstring, jint);
 
 /*
  * Class:     com_industry_printer_Serial_SerialPort
@@ -39,10 +47,18 @@ JNIEXPORT void JNICALL Java_com_industry_printer_Serial_SerialPort_stop
 /*
  * Class:     com_industry_printer_Serial_SerialPort
  * Method:    close
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_industry_printer_Serial_SerialPort_close
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_industry_printer_Serial_SerialPort
+ * Method:    close
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_close
-  (JNIEnv *, jobject, jint);
+// JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_close
+//        (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_industry_printer_Serial_SerialPort

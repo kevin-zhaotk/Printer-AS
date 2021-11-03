@@ -3,10 +3,9 @@ package com.industry.printer.Serial;
 import android.content.Context;
 
 import com.industry.printer.DataTransferThread;
-import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.R;
-import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.StreamTransport;
 
 import org.apache.http.util.ByteArrayBuffer;
 
@@ -35,8 +34,8 @@ public class SerialProtocol9 extends SerialProtocol {
     private final static int REQURYING_CMD             = 0x81000000;   // 查询状态命令
     private final static int ERROR_INVALID_CMD         = 0x83000000;   // 不可识别的命令
 
-    public SerialProtocol9(SerialPort serialPort, Context ctx) {
-        super(serialPort, ctx);
+    public SerialProtocol9(StreamTransport st, Context ctx) {
+        super(st, ctx);
     }
 
     @Override

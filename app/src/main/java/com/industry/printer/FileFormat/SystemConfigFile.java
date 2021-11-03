@@ -203,6 +203,9 @@ public class SystemConfigFile{
                                                                 // 1. 接收前18位
                                                                 // 2.9-12位赋给DT 0.
 // End of H.M.Wang 2021-9-28 追加串口协议10
+// H.M.Wang 2021-1-30 追加PC命令
+	public static final int DATA_PC_COMMAND 	    = 21;		// PC Command
+// End of H.M.Wang 2021-1-30 追加PC命令
 
 // H.M.Wang 2021-3-6 追加串口协议8
 	public static final int INDEX_LOCAL_ID 			= 57;		// 用于串口协议8当中的本地机器ID。

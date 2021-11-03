@@ -3,13 +3,13 @@ package com.industry.printer.pccommand;
 import android.content.Context;
 
 import com.industry.printer.ControlTabActivity;
+import com.industry.printer.Serial.SerialPort;
+import com.industry.printer.Utils.StreamTransport;
 import com.industry.printer.Utils.Debug;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by hmwan on 2021/10/28.
@@ -19,31 +19,50 @@ public class PCCommandManager {
     private static final String TAG = PCCommandManager.class.getSimpleName();
 
     private Context mContext = null;
-    private ServerThread mServerThread = null;
+    private ControlTabActivity mControlTabActivity = null;
 
-    public PCCommandManager(Context ctx) {
+    private ServerThread mServerThread = null;
+    private ClientSocket mClientSocket = null;
+    private PCCommandHandler mSocketHandler = null;
+    private SerialPort mSerialPort = null;
+    private PCCommandHandler mSerialHandler = null;
+
+    private static PCCommandManager mInstance = null;
+
+    public static PCCommandManager getInstance() {
+        return mInstance;
+    }
+
+    public PCCommandManager(Context ctx, ControlTabActivity act) {
+        mInstance = this;
+        mControlTabActivity = act;
         mContext = ctx;
         mServerThread = null;
         mServerThread = new ServerThread();
         mServerThread.start();
     }
 
-    public void stop() {
+    public void close() {
         if(null != mServerThread) {
             mServerThread.stopServer();
+        }
+        if(null != mSocketHandler) {
+            mSocketHandler.close();
+        }
+        if(null != mClientSocket) {
+            mClientSocket.close();
+        }
+        if(null != mSerialHandler) {
+            mSerialHandler.close();
         }
     }
 
     class ServerThread extends Thread {
         private static final int PORT = 3550; // port number;
         private ServerSocket mServerSocket = null; //socket service object
-        private ExecutorService mExecutor = null; //hnadle ExecutorService
-        private ClientSocketThread mClientSocketThread = null;
 
         public ServerThread() {
             mServerSocket = null;
-            mExecutor = Executors.newCachedThreadPool();
-            mClientSocketThread = null;
         }
 
         public void stopServer(){
@@ -57,6 +76,7 @@ public class PCCommandManager {
             }
         }
 
+        @Override
         public void run() {
             try {
                 mServerSocket = new ServerSocket(PORT);
@@ -73,16 +93,41 @@ public class PCCommandManager {
                     client.setSoTimeout(2 * 1000);
                     //client.setSoTimeout(5000);
 
-                    if(null != mClientSocketThread) {
-                        mClientSocketThread.stop();
+                    if(null != mSocketHandler) {
+                        mSocketHandler.close();
+                    }
+                    if(null != mClientSocket) {
+                        mClientSocket.close();
                     }
 
-                    mClientSocketThread = new ClientSocketThread(client, mContext);
-                    mExecutor.execute(mClientSocketThread);
+                    mClientSocket = new ClientSocket(client, mContext);
+                    mSocketHandler = new PCCommandHandler(mContext, mClientSocket.getStreamTransport(), mControlTabActivity);
+                    mSocketHandler.work();
                 }catch ( IOException e) {
                     Debug.e(TAG, e.getMessage());
                 }
             }
+        }
+    }
+
+    public void addSeriHandler(SerialPort serialPort) {
+        if(null != mSerialHandler) {
+            mSerialHandler.close();
+        }
+        if(null != mSerialPort) {
+            mSerialPort.closeSerial();
+        }
+        mSerialPort = serialPort;
+        mSerialHandler = new PCCommandHandler(mContext, mSerialPort.getStreamTransport(), mControlTabActivity);
+        mSerialHandler.work();
+    }
+
+    public void sendMessage(String msg) {
+        if(null != mSocketHandler) {
+            mSocketHandler.sendmsg(msg);
+        }
+        if(null != mSerialHandler) {
+            mSerialHandler.sendmsg(msg);
         }
     }
 }
