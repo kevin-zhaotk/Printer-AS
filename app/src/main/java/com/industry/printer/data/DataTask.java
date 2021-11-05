@@ -223,7 +223,7 @@ public class DataTask {
 // End of H.M.Wang 2020-9-6 取消64SN的打印缓冲区转换
 
 //		BinCreater.saveBin("/mnt/sdcard/print1.bin", mPrintBuffer, 32);
-//..		Debug.d(TAG, "--->BytesPerColumn: " + mBinInfo.mBytesPerColumn);
+///./...		Debug.d(TAG, "--->BytesPerColumn: " + mBinInfo.mBytesPerColumn);
 //		if (mBinInfo.mBytesPerColumn == 4)  {
 //			evenBitShift();
 //		} // else{
@@ -232,7 +232,7 @@ public class DataTask {
 		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
 
 // H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
-//..		Debug.d(TAG, "INDEX_PRINT_TIMES = " + sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES));
+///./...		Debug.d(TAG, "INDEX_PRINT_TIMES = " + sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES));
 		if(sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 31) {
 			int maxColNumPerUnit = 0;
 			if( sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7 ||
@@ -307,7 +307,7 @@ public class DataTask {
 		BinCreater.saveBin("/mnt/usbhost1/print.bin", buffer, 32);
 		*/
 		/*test bin*/
-//..		Debug.d(TAG, "--->buffer = " + mBuffer.length);
+///./...		Debug.d(TAG, "--->buffer = " + mBuffer.length);
 
 // H.M.Wang 2020-4-18 从DataTransferThread移至此
         if(bSave) {
@@ -731,14 +731,14 @@ public class DataTask {
 				(headType != PrinterNozzle.MESSAGE_TYPE_64_DOT) &&
 				(headType != PrinterNozzle.MESSAGE_TYPE_96DN)) {
 // End of H.M.Wang 2021-8-16 追加96DN头
-//..				Debug.d(TAG, "--->High Resolution");
+///./...				Debug.d(TAG, "--->High Resolution");
 				scaleW = scaleW / 2;
 				div = div / 2;
 			}
 // End of H.M.Wang 2021-4-9 修改为只有在非大字机的时候才处理高清
 		}
 //		div = div/stat.getScale();
-//..		Debug.d(TAG, "-----scaleW = " + scaleW + " div = " + div);
+///./...		Debug.d(TAG, "-----scaleW = " + scaleW + " div = " + div);
 		//mPreBitmap = Arrays.copyOf(mBg.mBits, mBg.mBits.length);
 
 // H.M.Wang 2021-3-3 由于从QR.txt文件当中读取的变量信息要对群组有效，在这里会导致每个任务都会读取一行，所以需要移植DataTransferThread类处理
@@ -769,7 +769,7 @@ public class DataTask {
 
 		for(BaseObject o:mObjList)
 		{
-//..			Debug.d(TAG, "Name " + o.mName);
+///./...			Debug.d(TAG, "Name " + o.mName);
 			if (o instanceof BarcodeObject) {
 // H.M.Wang 2020-7-31 该判断的内容相当于非动态二维码不继续执行后续代码，但是由于存在超文本，可能内容会发生变化
 //				Debug.d(TAG, "+++++++++++++>source: " + o.getSource());
@@ -893,7 +893,7 @@ public class DataTask {
 				// End ------------------------------------------
 //				BinInfo info = mVarBinList.get(o);
 				BinInfo info = null;
-//..				Debug.d(TAG, "--->object index=" + o.getIndex());
+///./...				Debug.d(TAG, "--->object index=" + o.getIndex());
 //				if (info == null) {
 				// H.M.Wang 2019-12-19 追加多种协议支持
 				// H.M.Wang 2019-12-5 为对应串口打印时，vbin的元素个数不是传统计数器的10位，而是128位，做了区分
@@ -968,7 +968,7 @@ public class DataTask {
 // H.M.Wang 2020-1-2 添加 * stat.getScale()以调整1带多时的高度，info.getCharsFeed()只是取一个头的高
 					BinInfo.overlap(mPrintBuffer, var, (int) (rtSub.getX() / div), info.getCharsFeed() * stat.getScale());
 // End of H.M.Wang 2020-1-2 添加 * stat.getScale()以调整1带多时的高度，info.getCharsFeed()只是取一个头的高
-//..					Debug.d(TAG, "--->real x=" + rtSub.getX() / div);
+///./...					Debug.d(TAG, "--->real x=" + rtSub.getX() / div);
 //					BinCreater.saveBin("/sdcard/" + o.getIndex() + substr + ".bin", var, info.getCharsFeed() * stat.getScale() * 16);
 				}
 // H.M.Wang 2020-2-17 追加HyperText控件
@@ -1087,7 +1087,7 @@ public class DataTask {
 // End of H.M.Wang 2020-1-2 添加 * stat.getScale()以调整1带多时的高度，info.getCharsFeed()只是取一个头的高
 			} else
 			{
-//..				Debug.d(TAG, "not Variable object");
+///./...				Debug.d(TAG, "not Variable object");
 			}
 
 		}
@@ -1101,7 +1101,7 @@ public class DataTask {
 	
 	
 	public void setDots(int dots) {
-//..		Debug.d(TAG, "--->dotcount: " + dots);
+///./...		Debug.d(TAG, "--->dotcount: " + dots);
 		mDots = dots;
 	}
 	
@@ -1111,7 +1111,7 @@ public class DataTask {
 		}
 		
 		for (int i = 0; i < dots.length; i++) {
-//..			Debug.d(TAG, "--->setDotsEach: dots[" + i + "]=" + dots[i]);
+///./...			Debug.d(TAG, "--->setDotsEach: dots[" + i + "]=" + dots[i]);
 			if (mDotsEach.length <= i) {
 				break;
 			}
@@ -1192,7 +1192,7 @@ public class DataTask {
 		if (interceptor.getExtend() != ExtendStat.NONE) {
 			heads = interceptor.getExtend().activeNozzleCount();
 		}
-//..		Debug.d(TAG, "--->type=" + heads);
+///./...		Debug.d(TAG, "--->type=" + heads);
 
 // H.M.Wang 2020-3-3 修改生成偏移，镜像以及倒置的算法
 /*
@@ -1311,7 +1311,7 @@ public class DataTask {
 // End of H.M.Wang 2020-3-3 修改生成偏移，镜像以及倒置的算法
 
 		int slant = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_SLANT);
-//..		Debug.d(TAG, "--->slant: " + slant);
+///./...		Debug.d(TAG, "--->slant: " + slant);
 		expendColumn(mBuffer, br.getColumnNum(), slant);
 	}
 	/**

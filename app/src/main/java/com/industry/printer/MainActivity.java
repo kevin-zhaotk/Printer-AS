@@ -1216,7 +1216,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	}
 	@Override
 	public boolean onTouch(View view, MotionEvent event) {
-		Debug.d(TAG, "--->onTouch");
+		Debug.d(TAG, "--->onTouch：" + event.getX() + ", " + event.getY());
 		switch(view.getId()) {
 		case R.id.btn_control:
 		case R.id.btn_edit:

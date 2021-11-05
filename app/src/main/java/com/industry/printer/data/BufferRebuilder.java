@@ -17,7 +17,7 @@ public class BufferRebuilder {
 //    private int mBytesPerBlock = 0;         // 每个块的字节数；mBlockNum * mBytesPerBlock === mBytesPerColumn
 
     public BufferRebuilder(char[] src, int colCharNum, int blockNum) {
-//..        Debug.d(TAG, "src.length = " + src.length + "; colCharNum = " + colCharNum + "; blockNum = " + blockNum);
+///./...        Debug.d(TAG, "src.length = " + src.length + "; colCharNum = " + colCharNum + "; blockNum = " + blockNum);
         try {
             mColNum = src.length / colCharNum;
 //            mBytesPerColumn = colCharNum * 2;
@@ -59,7 +59,7 @@ public class BufferRebuilder {
                 addedCols = Math.max(s, addedCols);
             }
             if(addedCols == 0)  {
-//..                Debug.i(TAG, "No shift required!");
+///./...                Debug.i(TAG, "No shift required!");
                 return this;
             }
 
@@ -98,7 +98,7 @@ public class BufferRebuilder {
                 }
             }
             if(!needed)  {
-//..                Debug.i(TAG, "No mirror required!");
+///./...                Debug.i(TAG, "No mirror required!");
                 return this;
             }
 

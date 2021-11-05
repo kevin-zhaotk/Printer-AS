@@ -100,12 +100,12 @@ public class BinInfo {
 
 	public BinInfo(String file) {
 		this(file, null, null);
-		//..Debug.d(TAG, "===>binFile: " + file);
+		///./...Debug.d(TAG, "===>binFile: " + file);
 	}
 	
 	public BinInfo(String file, ExtendStat extension) {
 		this(file, null, extension);
-		//..Debug.d(TAG, "===>binFile: " + file);
+		///./...Debug.d(TAG, "===>binFile: " + file);
 	}
 
 	public BinInfo(String file, MessageTask task, ExtendStat extension)
@@ -130,7 +130,7 @@ public class BinInfo {
 			mBuffer = new byte[mFStream.available()];
 			mFStream.read(mBuffer);
 			mFStream.close();
-			//..Debug.d(TAG, "--->buffer.size=" + mBuffer.length);
+			///./...Debug.d(TAG, "--->buffer.size=" + mBuffer.length);
 			resolve();
 		} catch (Exception e) {
 			Debug.d(TAG, ""+e.getMessage());
@@ -154,7 +154,7 @@ public class BinInfo {
 			mBuffer = new byte[stream.available()];
 			stream.read(mBuffer);
 			// mFStream.close();
-			//..Debug.d(TAG, "--->buffer.size=" + mBuffer.length);
+			///./...Debug.d(TAG, "--->buffer.size=" + mBuffer.length);
 			resolve();
 		} catch (Exception e) {
 			Debug.d(TAG, ""+e.getMessage());
@@ -173,11 +173,11 @@ public class BinInfo {
 		ByteArrayBuffer buffer = new ByteArrayBuffer(0);
 		byte[] header = new byte[BinCreater.RESERVED_FOR_HEADER];
 		int width = bmp.getWidth();
-		//..Debug.d(TAG, "--->width=" + width);
+		///./...Debug.d(TAG, "--->width=" + width);
 		header[2] = (byte) (width & 0x0ff);
     	header[1] = (byte) ((width>>8) & 0x0ff);
     	header[0] = (byte) ((width>>16) & 0x0ff);
-		//..Debug.d(TAG, "--->header= " + header[0] + "  " + header[1] + "  " + header[2]);
+		///./...Debug.d(TAG, "--->header= " + header[0] + "  " + header[1] + "  " + header[2]);
     	// BinCreater.saveBin("/mnt/usbhost0/bar.bin", mBuffer, 19*8);
     	buffer.append(header, 0, header.length);
     	buffer.append(mBuffer, 0, mBuffer.length);
@@ -192,15 +192,15 @@ public class BinInfo {
 
 		mCacheStream.read(head, 0, BinCreater.RESERVED_FOR_HEADER);
 		mColumn =  (head[0]&0xff) << 16 | (head[1] & 0xff)<<8 | (head[2]&0xff);
-		//..Debug.d(TAG, "--->header= " + head[0] + "  " + head[1] + "  " + head[2]);
+		///./...Debug.d(TAG, "--->header= " + head[0] + "  " + head[1] + "  " + head[2]);
 		//bin文件总长度
 		mLength = mCacheStream.available();
-		//..Debug.d(TAG, "--->mLength=" + mLength + "  column = " + mColumn);
+		///./...Debug.d(TAG, "--->mLength=" + mLength + "  column = " + mColumn);
 		
 		
 		//文件的总字节数/总列数 = 每列的字节数
 		mBytesPerColumn = mLength/mColumn;
-		//..Debug.d(TAG, "--->mBytesPerColumn =" + mBytesPerColumn);
+		///./...Debug.d(TAG, "--->mBytesPerColumn =" + mBytesPerColumn);
 		//文件的总字符数/总列数/2 = 每列的字符数
 		mCharsPerColumn = mBytesPerColumn/2;
 		/*如果mBytesPerColumn不是type的整数倍，说明这个bin文件不是一个合法的bin文件
@@ -209,7 +209,7 @@ public class BinInfo {
 
 		mBytesPerH = mBytesPerColumn/mType;
 
-		//..Debug.d(TAG, "--->mBytesPerH =" + mBytesPerH + ", type=" + mType);
+		///./...Debug.d(TAG, "--->mBytesPerH =" + mBytesPerH + ", type=" + mType);
 		mCharsPerH = mBytesPerH/2;
 		/* 如果每列的字节数为奇数则 +1 变为偶数， 以便于FPGA处理*/
 		if (mBytesPerH%2 != 0) {
@@ -220,11 +220,11 @@ public class BinInfo {
 		if (mNeedFeed) {
 			mBytesPerHFeed = mBytesPerH + 1;
 			mBytesFeed = mBytesPerColumn + mType;
-			//..Debug.d(TAG, "--->117 mBytesPerHFeed =" + mBytesPerHFeed + ", mBytesPerFeed=" + mBytesFeed);
+			///./...Debug.d(TAG, "--->117 mBytesPerHFeed =" + mBytesPerHFeed + ", mBytesPerFeed=" + mBytesFeed);
 		} else {
 			mBytesPerHFeed = mBytesPerH;
 			mBytesFeed = mBytesPerColumn;
-			//..Debug.d(TAG, "--->120 mBytesPerHFeed =" + mBytesPerHFeed + ", mBytesPerFeed=" + mBytesFeed);
+			///./...Debug.d(TAG, "--->120 mBytesPerHFeed =" + mBytesPerHFeed + ", mBytesPerFeed=" + mBytesFeed);
 		}
 		mCharsPerHFeed = mBytesPerHFeed/2;
 		mCharsFeed = mBytesFeed/2;
@@ -234,7 +234,7 @@ public class BinInfo {
 			if (mVarCount <= 0) {
 				mVarCount = 10;
 			}
-			//..Debug.d(TAG, "===>varCount: " + mVarCount);
+			///./...Debug.d(TAG, "===>varCount: " + mVarCount);
 			// H.M.Wang 2019-12-20 修改为浮点数
 			mColPerElement = 1.0f * mColumn/mVarCount;
 		} else {
@@ -443,7 +443,7 @@ public class BinInfo {
     	int n;
 		byte[] feed = {0};
 
-		//..Debug.d(TAG, "===>String: " + var);
+		///./...Debug.d(TAG, "===>String: " + var);
 
 		// H.M.Wang 追加下列11行。为计数器清楚前置0
 		byte[] blank = new byte[mBytesPerH];
@@ -460,7 +460,7 @@ public class BinInfo {
 
 		ByteArrayBuffer ba = new ByteArrayBuffer(0);
 
-		//..Debug.d(TAG, "===>mColPerElement:" + mColPerElement + ", mBytesPerH=" + mBytesPerH + ", type=" + mType);
+		///./...Debug.d(TAG, "===>mColPerElement:" + mColPerElement + ", mBytesPerH=" + mBytesPerH + ", type=" + mType);
 
    		for(int i=0; i<var.length(); i++)
    		{
@@ -560,7 +560,7 @@ public class BinInfo {
 			mBufferChars[i] = 0xffff;
 		}
 
-   		//..Debug.d(TAG, "--->char len = " + mBufferChars.length + "   bytes: " + mBufferBytes.length);
+   		///./...Debug.d(TAG, "--->char len = " + mBufferChars.length + "   bytes: " + mBufferBytes.length);
     	for(int i = 0; i < mBufferChars.length; i++) {
     		mBufferChars[i] = (char) ((char)((mBufferBytes[2*i+1] << 8) & 0x0ff00) | (mBufferBytes[2*i] & 0x0ff)); 
     	}
@@ -629,7 +629,7 @@ public class BinInfo {
 			if (mBuffer == null || mBuffer.length < (n+1) * mColPerElement * mBytesPerColumn) {
 				continue;
 			}
-			//..Debug.d(TAG, "===>mColPerElement:" + mColPerElement + ", mBytesPerH=" + mBytesPerH + ", type=" + mType);
+			///./...Debug.d(TAG, "===>mColPerElement:" + mColPerElement + ", mBytesPerH=" + mBytesPerH + ", type=" + mType);
 			/* 如果每列的字节数为单数，则需要在每列尾部补齐一个字节 */
 			for (int k = 0; k < (int)mColPerElement; k++) {
 				for (int j = 0; j < mType; j++) {
@@ -651,7 +651,7 @@ public class BinInfo {
 		if (mExtend != null && mExtend.getScale() > 1) {
 			mBufferChars = new char[mBufferBytes.length/2];
 		}
-		//..Debug.d(TAG, "--->char len = " + mBufferChars.length + "   bytes: " + mBufferBytes.length);
+		///./...Debug.d(TAG, "--->char len = " + mBufferChars.length + "   bytes: " + mBufferBytes.length);
 		for(int i = 0; i < mBufferChars.length; i++) {
 			mBufferChars[i] = (char) ((char)((mBufferBytes[2*i+1] << 8) & 0x0ff00) | (mBufferBytes[2*i] & 0x0ff));
 		}
@@ -671,7 +671,7 @@ public class BinInfo {
 		x = x * columnExtension;
     	if(dst.length < x*high +src.length)
     	{
-    		//..Debug.d(TAG, "dst buffer no enough space!!!!");
+    		///./...Debug.d(TAG, "dst buffer no enough space!!!!");
     		len = dst.length - x*high;
     		//return;
     	}
@@ -695,11 +695,11 @@ public class BinInfo {
 
     	if(dst.length < x*high + src.length)
     	{
-    		//..Debug.d(TAG, "dst buffer no enough space!!!! dst.len=" + dst.length + " , src=" + src.length + " , pos=" + x*high);
+    		///./...Debug.d(TAG, "dst buffer no enough space!!!! dst.len=" + dst.length + " , src=" + src.length + " , pos=" + x*high);
     		len = dst.length - x*high;
     		//return;
     	}
-    	//..Debug.d(TAG, "--->high = " + high);
+    	///./...Debug.d(TAG, "--->high = " + high);
     	int  matrix = PlatformInfo.isBufferFromDotMatrix();
     	for(int i=0; i< len; i++)
     	{
@@ -725,10 +725,10 @@ public class BinInfo {
     	int len = src.length;
 		// column extension, adjust the x coordinate
 		x = x * columnExtension;
-    	//..Debug.d(TAG, "--->cover: " + dst.length + "  " + x + "  " + high + "  " + src.length);
+    	///./...Debug.d(TAG, "--->cover: " + dst.length + "  " + x + "  " + high + "  " + src.length);
     	if(dst.length < x*high + src.length)
     	{
-    		//..Debug.d(TAG, "dst buffer no enough space!!!! dst.len=" + dst.length + " , src=" + src.length + " , pos=" + x*high);
+    		///./...Debug.d(TAG, "dst buffer no enough space!!!! dst.len=" + dst.length + " , src=" + src.length + " , pos=" + x*high);
     		len = dst.length - x*high;
     		//return;
     	}
@@ -747,7 +747,7 @@ public class BinInfo {
      */
     public static void Matrix880(byte[] buffer){
     	byte[] tmp= new byte[110];
-    	//..Debug.d(TAG, "===>Matrix880 : buffer len:"+buffer.length);
+    	///./...Debug.d(TAG, "===>Matrix880 : buffer len:"+buffer.length);
     	for(int i=0; i< buffer.length/(Configs.gDots/8); i++){
     		for(int j=0; j<Configs.gDots/(2*8); j++){
     			tmp[2*j] = buffer[i*(Configs.gDots/8)+j];
@@ -765,7 +765,7 @@ public class BinInfo {
      */
     public static void Matrix880Revert(byte[] buffer) {
     	byte[] tmp= new byte[110];
-    	//..Debug.d(TAG, "===>Matrix880Revert : buffer len:"+buffer.length);
+    	///./...Debug.d(TAG, "===>Matrix880Revert : buffer len:"+buffer.length);
     	for(int i=0; i< buffer.length/(Configs.gDots/8); i++){
     		for(int j=0; j<Configs.gDots/(2*8); j++){
     			tmp[j] = buffer[i*(Configs.gDots/8)+2*j];
@@ -792,7 +792,7 @@ public class BinInfo {
 
 //		BinCreater.saveBin("/mnt/sdcard/print_var_" + pcount + "_org.bin", mBufferChars, mCharsFeed * 16);
 
-		//..Debug.d(TAG, "--->expend scale : " + scale + " length: " + mBufferChars.length);
+		///./...Debug.d(TAG, "--->expend scale : " + scale + " length: " + mBufferChars.length);
 		char[] buffer = mBufferChars;
     	mBufferChars = new char[buffer.length * scale];
     	
@@ -806,7 +806,7 @@ public class BinInfo {
 			
 			for (int j = 0; j < scale; j++) {
 				reader.mark(0);
-				//..Debug.d(TAG, "--->j = " + j + "  column = " + column);
+				///./...Debug.d(TAG, "--->j = " + j + "  column = " + column);
 				for (int i = 0; i < column; i++) {
 // H.M.Wang 2020-1-3 解决1带多情况计算不准确的问题
 //					reader.read(mBufferChars, (i*scale + j) * mCharsPerHFeed, mCharsPerHFeed);

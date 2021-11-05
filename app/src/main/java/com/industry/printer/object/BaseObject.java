@@ -1123,7 +1123,7 @@ public class BaseObject{
 
 	public void setContent(String content)
 	{
-//..		Debug.d(TAG, "setContent: [" + content + "]");
+///./...		Debug.d(TAG, "setContent: [" + content + "]");
 
 		if(mContent!=null && mContent.equals(content))
 			return;
