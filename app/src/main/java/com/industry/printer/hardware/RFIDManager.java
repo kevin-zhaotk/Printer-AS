@@ -1,6 +1,8 @@
 package com.industry.printer.hardware;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.content.Context;
@@ -114,11 +116,28 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 				
 				break;
 			case MSG_RFID_CHECK_NEXT:
-				if (RFIDDevice.isNewModel) {
-					mDevice.readBlock(RFIDDevice.SECTOR_UUID, RFIDDevice.BLOCK_UUID, RFIDDevice.RFID_DATA_MIFARE_KEY_A);    // RFID_CMD_READ_VERIFY
-				} else {
-					mDevice.keyVerfication(RFIDDevice.SECTOR_UUID, RFIDDevice.BLOCK_UUID, RFIDDevice.RFID_DATA_MIFARE_KEY_A);   // RFID_CMD_MIFARE_KEY_VERIFICATION
-				}
+// H.M.Wang 2021-11-9 尝试修改checkUID的方法，不去读(0x21命令，而是跑自动寻卡命令，目的是获取SN）
+				mDevice.autoSearch(new RfidCallback() {
+					@Override
+					public void onFinish(RFIDData data) {
+						byte[] orgSN = mDevice.mSN.clone();
+						mDevice.parseAutosearch(data);
+						if(Arrays.equals(orgSN, mDevice.mSN)) {
+							mHandler.sendEmptyMessageDelayed(MSG_RFID_CHECK_SWITCH_DEVICE, 200);
+						} else {
+							Message msg = mHandler.obtainMessage(MSG_RFID_CHECK_COMPLETE);
+							msg.arg1 = 0;
+							msg.sendToTarget();
+						}
+					}
+				});
+// End of H.M.Wang 2021-11-9 尝试修改checkUID的方法，不去读(0x21命令，而是跑自动寻卡命令，目的是获取SN）
+
+//				if (RFIDDevice.isNewModel) {
+//					mDevice.readBlock(RFIDDevice.SECTOR_UUID, RFIDDevice.BLOCK_UUID, RFIDDevice.RFID_DATA_MIFARE_KEY_A);    // RFID_CMD_READ_VERIFY
+//				} else {
+//					mDevice.keyVerfication(RFIDDevice.SECTOR_UUID, RFIDDevice.BLOCK_UUID, RFIDDevice.RFID_DATA_MIFARE_KEY_A);   // RFID_CMD_MIFARE_KEY_VERIFICATION
+//				}
 				break;
 			case MSG_RFID_CHECK_COMPLETE:
 // H.M.Wang 2021-3-16 修改不检测特征码的问题
@@ -457,6 +476,7 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 		mDevice.removeListener(this);
 		mDevice.addLisetener(this);
 		mHandler.sendEmptyMessage(MSG_RFID_CHECK_NEXT);
+
 		return true;
 	}
 

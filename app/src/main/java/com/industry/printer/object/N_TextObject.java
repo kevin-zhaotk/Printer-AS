@@ -35,6 +35,9 @@ public class N_TextObject extends N_BaseObject {
         fromTlkString(tlkLine);
     }
 
+    /*
+        按照给定的高度，和颜色，画出给定字符串内容的图片，并且返回该图片。这个是一个工具性的函数，凡是需要讲文字转化为图片的需求，都可以使用该函数
+     */
     private Bitmap drawText(int height, String cnt, int color) {
         Bitmap bitmap;
 
@@ -47,13 +50,13 @@ public class N_TextObject extends N_BaseObject {
             Debug.d(TAG, "--->e: " + e.getMessage());
         }
 
-        paint.setTextSize(mCurRect.height());
+        paint.setTextSize(height);
         paint.setAntiAlias(true);       // 去除锯齿
         paint.setFilterBitmap(true);    // 对位图进行滤波处理
 
         Paint.FontMetrics fontMetrics = paint.getFontMetrics();
 
-        int width = (int)Math.ceil(paint.measureText(mContent));
+        int width = (int)Math.ceil(paint.measureText(cnt));
 
         bitmap = Bitmap.createBitmap(width , height, Configs.BITMAP_CONFIG);
 
@@ -63,10 +66,10 @@ public class N_TextObject extends N_BaseObject {
         return bitmap;
     }
 
-    private Bitmap createBitmap(String cnt, int color, int clipWidth, int drawHeight) {
+    private Bitmap createBitmap(String cnt, int color, int dstWidth, int dstHeight) {
         Bitmap retBitmap = null;
 
-        Bitmap bmp = drawText(drawHeight, cnt, color);
+        Bitmap bmp = drawText(dstHeight, cnt, color);
         if(null == bmp) return null;
 
         switch (mDrawType) {
@@ -76,12 +79,12 @@ public class N_TextObject extends N_BaseObject {
                 break;
             case DRAW_TYPE_CLIP:
 //                mDrawFrame.set(mCurRect.left, mCurRect.top, mCurRect.left + Math.min(mCurRect.width(), bmp.getWidth()), mCurRect.bottom);
-                retBitmap = Bitmap.createBitmap(bmp, 0, 0, clipWidth, drawHeight);
+                retBitmap = Bitmap.createBitmap(bmp, 0, 0, dstWidth, dstHeight);
                 break;
             default:
 //            case DRAW_TYPE_FIT:
 //                mDrawFrame.set(mCurRect);
-                retBitmap = Bitmap.createScaledBitmap(bmp, clipWidth, drawHeight, false);
+                retBitmap = Bitmap.createScaledBitmap(bmp, dstWidth, dstHeight, false);
                 break;
         }
 
@@ -201,22 +204,22 @@ public class N_TextObject extends N_BaseObject {
     protected final int TLK_INDEX_CONTENT                       = 21;                                  // 21. 内容
 
     @Override
-    public void fromTlkString(String[] tlkLine) {
-        if(tlkLine.length >= NUMBER_OF_TLK_INDEXS) {
+    public void fromTlkString(String[] items) {
+        if(items.length >= NUMBER_OF_TLK_INDEXS) {
             try {
-                mIndex = Integer.parseInt(tlkLine[TLK_INDEX_OBJINDEX]);
-                mId = tlkLine[TLK_INDEX_ID];
-                mDragable = tlkLine[TLK_INDEX_DRAGABLE].equals("1") ? true : false;
-                mReverse = tlkLine[TLK_INDEX_REVERSE].equals("1") ? true : false;
-                mParent = Integer.parseInt(tlkLine[TLK_INDEX_PARENT]) > 0 ? mTask.getParentObject(Integer.parseInt(tlkLine[TLK_INDEX_PARENT])) : null;
+                mIndex = Integer.parseInt(items[TLK_INDEX_OBJINDEX]);
+                mId = items[TLK_INDEX_ID];
+                mDragable = items[TLK_INDEX_DRAGABLE].equals("1") ? true : false;
+                mReverse = items[TLK_INDEX_REVERSE].equals("1") ? true : false;
+                mParent = Integer.parseInt(items[TLK_INDEX_PARENT]) > 0 ? mTask.getParentObject(Integer.parseInt(items[TLK_INDEX_PARENT])) : null;
                 mCurRect.set(
-                    Integer.parseInt(tlkLine[TLK_INDEX_FRAME_LEFT]) / 2,
-                    Integer.parseInt(tlkLine[TLK_INDEX_FRAME_TOP]) / 2,
-                    Integer.parseInt(tlkLine[TLK_INDEX_FRAME_RIGHT]) / 2,
-                    Integer.parseInt(tlkLine[TLK_INDEX_FRAME_BOTTOM]) / 2
+                    Integer.parseInt(items[TLK_INDEX_FRAME_LEFT]) / 2,
+                    Integer.parseInt(items[TLK_INDEX_FRAME_TOP]) / 2,
+                    Integer.parseInt(items[TLK_INDEX_FRAME_RIGHT]) / 2,
+                    Integer.parseInt(items[TLK_INDEX_FRAME_BOTTOM]) / 2
                 );
-                mFont = tlkLine[TLK_INDEX_FONT];
-                mContent = tlkLine[TLK_INDEX_CONTENT];
+                mFont = items[TLK_INDEX_FONT];
+                mContent = items[TLK_INDEX_CONTENT];
             } catch(NumberFormatException e) {
                 Debug.e(TAG, e.getMessage());
             }
@@ -224,29 +227,29 @@ public class N_TextObject extends N_BaseObject {
     }
 
     @Override
-    protected void fillTlkArray(String[] tlkLine) {
-        tlkLine[TLK_INDEX_OBJINDEX] = String.valueOf(mIndex);                                           // 0. 序号
-        tlkLine[TLK_INDEX_ID] = mId;                                                                    // 1. 种类
-        tlkLine[TLK_INDEX_FRAME_LEFT] = String.format("%05d", mCurRect.left * 2);                       // 2. Left坐标（乘2）
-        tlkLine[TLK_INDEX_FRAME_TOP] = String.format("%05d", mCurRect.top * 2);                         // 3. Top坐标（乘2）
-        tlkLine[TLK_INDEX_FRAME_RIGHT] = String.format("%05d", mCurRect.right * 2);                     // 4. Right坐标（乘2）
-        tlkLine[TLK_INDEX_FRAME_BOTTOM] = String.format("%05d", mCurRect.bottom * 2);                   // 5. Bottom坐标（乘2）
-        tlkLine[TLK_INDEX_6] = "0";                                                                     // 6. 不明
-        tlkLine[TLK_INDEX_DRAGABLE] = String.format("%03d", mDragable ? "1" : "0");                     // 7. 是否可以拖拽
-        tlkLine[TLK_INDEX_CONTENT_LEN] = String.format("%03d", mContent.length());                      // 8. 内容长度
-        tlkLine[TLK_INDEX_9] = "000";                                                                   // 9. 不明
-        tlkLine[TLK_INDEX_10] = "000";                                                                  // 10. 不明
-        tlkLine[TLK_INDEX_REVERSE] = String.format("%03d", mReverse ? "1" : "0");                       // 11. Reverse
-        tlkLine[TLK_INDEX_12] = "000";                                                                  // 12. 不明
-        tlkLine[TLK_INDEX_13] = "00000000";                                                             // 13. 不明
-        tlkLine[TLK_INDEX_14] = "00000000";                                                             // 14. 不明
-        tlkLine[TLK_INDEX_15] = "00000000";                                                             // 15. 不明
-        tlkLine[TLK_INDEX_16] = "00000000";                                                             // 16. 不明
-        tlkLine[TLK_INDEX_OBJINDEX] = String.valueOf(mParent.getIndex());                               // 17. 父Object
-        tlkLine[TLK_INDEX_18] = "0000";                                                                 // 18. 不明
-        tlkLine[TLK_INDEX_FONT] = mFont;                                                                // 19. 字体
-        tlkLine[TLK_INDEX_20] = "000";                                                                  // 20. 不明
-        tlkLine[TLK_INDEX_CONTENT] = mContent;                                                          // 21. 内容
+    protected void fillTlkArray(String[] items) {
+        items[TLK_INDEX_OBJINDEX] = String.valueOf(mIndex);                                           // 0. 序号
+        items[TLK_INDEX_ID] = mId;                                                                    // 1. 种类
+        items[TLK_INDEX_FRAME_LEFT] = String.format("%05d", mCurRect.left * 2);                       // 2. Left坐标（乘2）
+        items[TLK_INDEX_FRAME_TOP] = String.format("%05d", mCurRect.top * 2);                         // 3. Top坐标（乘2）
+        items[TLK_INDEX_FRAME_RIGHT] = String.format("%05d", mCurRect.right * 2);                     // 4. Right坐标（乘2）
+        items[TLK_INDEX_FRAME_BOTTOM] = String.format("%05d", mCurRect.bottom * 2);                   // 5. Bottom坐标（乘2）
+        items[TLK_INDEX_6] = "0";                                                                     // 6. 不明
+        items[TLK_INDEX_DRAGABLE] = String.format("%03d", mDragable ? "1" : "0");                     // 7. 是否可以拖拽
+        items[TLK_INDEX_CONTENT_LEN] = String.format("%03d", mContent.length());                      // 8. 内容长度
+        items[TLK_INDEX_9] = "000";                                                                   // 9. 不明
+        items[TLK_INDEX_10] = "000";                                                                  // 10. 不明
+        items[TLK_INDEX_REVERSE] = String.format("%03d", mReverse ? "1" : "0");                       // 11. Reverse
+        items[TLK_INDEX_12] = "000";                                                                  // 12. 不明
+        items[TLK_INDEX_13] = "00000000";                                                             // 13. 不明
+        items[TLK_INDEX_14] = "00000000";                                                             // 14. 不明
+        items[TLK_INDEX_15] = "00000000";                                                             // 15. 不明
+        items[TLK_INDEX_16] = "00000000";                                                             // 16. 不明
+        items[TLK_INDEX_PARENT] = String.valueOf(mParent.getIndex());                                 // 17. 父Object
+        items[TLK_INDEX_18] = "0000";                                                                 // 18. 不明
+        items[TLK_INDEX_FONT] = mFont;                                                                // 19. 字体
+        items[TLK_INDEX_20] = "000";                                                                  // 20. 不明
+        items[TLK_INDEX_CONTENT] = mContent;                                                          // 21. 内容
 
 /*
         sb.append(mIndex).append("^")                                                                   // 0. 序号

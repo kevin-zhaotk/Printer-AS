@@ -171,7 +171,10 @@ public class RFIDDevice implements RfidCallback{
 	public static byte[] RFID_DATA_SEARCHCARD_WAKE = {0x26};
 	public static byte[] RFID_DATA_SEARCHCARD_ALL = {0x52};
 	public static byte[] RFID_DATA_MIFARE_CONFLICT_PREVENTION = {0x04};
-	public static byte[] RFID_DATA_MIFARE_KEY_A = {0x60,0x00, 0x00,0x00,0x00,0x00,0x00,0x00};
+// H.M.Wang 2021-11-9 暂时修改缺省密钥为FF（按厂家的规定），取消00，为什么这里设为00了不清楚
+	//public static byte[] RFID_DATA_MIFARE_KEY_A = {0x60,0x00, 0x00,0x00,0x00,0x00,0x00,0x00};
+	public static byte[] RFID_DATA_MIFARE_KEY_A = {(byte) 0x0ff, (byte) 0x0ff, (byte) 0x0ff, (byte) 0x0ff, (byte) 0x0ff, (byte) 0x0ff};
+// End of H.M.Wang 2021-11-9 暂时修改缺省密钥为FF（按厂家的规定），取消00，为什么这里设为00了不清楚
 	public static byte[] RFID_DATA_MIFARE_KEY_B = {0x61,0x00, 0x00,0x00,0x00,0x00,0x00,0x00};
 	//返回值
 	public static byte	RFID_RESULT_OK = 0x00;
@@ -308,7 +311,14 @@ public class RFIDDevice implements RfidCallback{
 			return false;
 		}*/
 	}
-	
+
+	public byte[] autoSearch(RfidCallback callback) {
+		Debug.e(TAG, "--->autoSearch callback");
+		openDevice();
+		RFIDData data = new RFIDData(RFID_CMD_AUTO_SEARCH, RFID_DATA_SEARCH_MODE);
+		RFIDAsyncTask.execute(mFd, data, callback);
+		return null;
+	}
 	/**
 	 * 自動尋卡
 	 * @param blind
@@ -1187,7 +1197,7 @@ public class RFIDDevice implements RfidCallback{
 		
 	}
 	
-	private void parseAutosearch(RFIDData data) {
+	public void parseAutosearch(RFIDData data) {
 		byte[] rfid = data.getData();
 		if (rfid == null || rfid[0] != 0 || rfid.length != 5) {
 			Debug.e(TAG, "===>rfid data error");
