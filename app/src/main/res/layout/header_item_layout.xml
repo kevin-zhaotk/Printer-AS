@@ -13,6 +13,8 @@
 	    android:layout_weight="10"
 	    android:gravity="center"
 	    android:background="@drawable/style_dialog_btn"
+		android:textColor="@color/black"
+		android:padding="5dp"
 	    android:textSize="30sp"
         />
     

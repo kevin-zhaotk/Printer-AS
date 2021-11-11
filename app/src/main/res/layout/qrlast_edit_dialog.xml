@@ -11,6 +11,7 @@
         android:layout_margin="30dp"
         android:lines="1"
         android:text="@string/strQRLastEditTitle"
+        android:textColor="@color/black"
         android:gravity="center"
         android:textSize="30sp" />
 
@@ -42,6 +43,7 @@
             android:background="@drawable/style_dialog_btn"
             android:gravity="center"
             android:textSize="30sp"
+            android:textColor="@color/black"
             android:text="@string/str_ok"
             />
 
@@ -53,6 +55,7 @@
             android:background="@drawable/style_dialog_btn"
             android:gravity="center"
             android:textSize="30sp"
+            android:textColor="@color/black"
             android:text="@string/strNativeBtn"
             />
     </LinearLayout>

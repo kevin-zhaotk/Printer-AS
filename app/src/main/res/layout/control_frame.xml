@@ -28,13 +28,15 @@
             android:id="@+id/StartPrint"
             android:layout_width="0dp"
             android:layout_height="150dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
             android:layout_weight="1"
             >
-            <ImageView
+<!--            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/style_ctrlbtn_big"
-                />
+                /> -->
             <TextView
                 android:id="@+id/tv_start"
                 android:layout_width="match_parent"
@@ -42,6 +44,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="@color/ctrl_btn_print_selector"
+                android:background="@drawable/style_ctrlbtn"
                 android:text="@string/str_btn_print"
                 />
         </RelativeLayout>
@@ -49,13 +52,15 @@
             android:id="@+id/StopPrint"
             android:layout_width="0dp"
             android:layout_height="150dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
             android:layout_weight="1"
             >
-            <ImageView
+<!--            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/style_ctrlbtn_big"
-                />
+                />-->
             <TextView
                 android:id="@+id/tv_stop"
                 android:layout_width="match_parent"
@@ -63,6 +68,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="@color/ctrl_btn_print_selector"
+                android:background="@drawable/style_ctrlbtn"
                 android:text="@string/str_btn_stop"
                 />
         </RelativeLayout>
@@ -70,13 +76,15 @@
             android:id="@+id/btnFlush"
             android:layout_width="0dp"
             android:layout_height="150dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
             android:layout_weight="1"
             >
-            <ImageView
+<!--            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/style_ctrlbtn_big"
-                />
+                />-->
             <TextView
                 android:id="@+id/tv_flush"
                 android:layout_width="match_parent"
@@ -84,6 +92,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="#000000"
+                android:background="@drawable/style_ctrlbtn"
                 android:text="@string/str_btn_clean"
                 />
         </RelativeLayout>
@@ -92,13 +101,15 @@
             android:id="@+id/btnBinfile"
             android:layout_width="0dp"
             android:layout_height="150dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
             android:layout_weight="1"
             >
-            <ImageView
+<!--            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/style_ctrlbtn_big"
-                />
+                />-->
             <TextView
                 android:id="@+id/tv_binfile"
                 android:layout_width="match_parent"
@@ -106,6 +117,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="#000000"
+                android:background="@drawable/style_ctrlbtn"
                 android:text="@string/str_openfile"
                 />
         </RelativeLayout>

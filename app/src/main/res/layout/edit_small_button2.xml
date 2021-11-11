@@ -10,18 +10,19 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:id="@+id/btn_detail_tv"
 			    android:layout_width="match_parent"
 			    android:layout_height="match_parent"
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
-		        android:textColor="#000000" 
+		        android:textColor="#000000"
+				android:background="@drawable/style_ctrlbtn"
 		        android:text="@string/str_btn_detail"
 			    />
 	    </RelativeLayout>
@@ -32,18 +33,19 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:id="@+id/btn_list_tv"
 			    android:layout_width="match_parent"
 			    android:layout_height="match_parent"
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
-		        android:textColor="#000000" 
+		        android:textColor="#000000"
+				android:background="@drawable/style_ctrlbtn"
 		        android:text="@string/strInfoname"
 			    />
 	    </RelativeLayout>
@@ -54,11 +56,11 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:id="@+id/btn_insert_tv"
 			    android:layout_width="match_parent"
@@ -66,7 +68,8 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="@color/black"
-		        android:text="@string/str_edit_btn_insert" 
+				android:background="@drawable/style_ctrlbtn"
+		        android:text="@string/str_edit_btn_insert"
 			    />
 	    </RelativeLayout>
 	    

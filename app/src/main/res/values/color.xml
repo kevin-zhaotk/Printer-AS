@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<color name="white">#ffffff</color>
+	<color name="orange">#FFAA00</color>
 	<color name="blue">#0000ff</color>
 	<color name="black">#000000</color>
 	<color name="green">#00ff00</color>
@@ -12,7 +13,8 @@
 	<color name="UnitText">#080808</color>
 	<color name="message_abstract_color">#000000</color>
 	<color name="message_selected_color">#436EEE</color>
-	<color name="background">#436EEE</color>
+<!--	<color name="background">#436EEE</color> -->
+	<color name="background">#7E9CF3</color>
 	<drawable name="transparent">#00000000</drawable>
 	<drawable name="line_gray">#77b3b3b3</drawable>
 	<drawable name="gray_frame">#c8c7cc</drawable>

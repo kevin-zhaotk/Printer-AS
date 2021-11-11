@@ -10,11 +10,11 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:id="@+id/btn_new_tv"
 			    android:layout_width="match_parent"
@@ -22,7 +22,8 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="@color/black"
-		        android:text="@string/str_btn_new" 
+				android:background="@drawable/style_ctrlbtn"
+		        android:text="@string/str_btn_new"
 			    />
 	    </RelativeLayout>
 	    
@@ -32,11 +33,11 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:id="@+id/btn_open_tv"
 			    android:layout_width="match_parent"
@@ -44,7 +45,8 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="#000000"
-		        android:text="@string/str_btn_open" 
+				android:background="@drawable/style_ctrlbtn"
+		        android:text="@string/str_btn_open"
 			    />
 	    </RelativeLayout>
 	    
@@ -54,11 +56,11 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:id="@+id/btn_save_tv"
 			    android:layout_width="match_parent"
@@ -66,7 +68,8 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:text="@string/str_btn_save"
-		        android:textColor="@color/black" 
+		        android:textColor="@color/black"
+				android:background="@drawable/style_ctrlbtn"
 			    />
 	    </RelativeLayout>
 	    
@@ -76,11 +79,11 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:id="@+id/btn_saveas_tv"
 			    android:layout_width="match_parent"
@@ -89,6 +92,7 @@
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:text="@string/str_btn_saveas"
 		        android:textColor="@color/black"
+				android:background="@drawable/style_ctrlbtn"
 			    />
 	    </RelativeLayout>
 	    
@@ -130,11 +134,11 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:id="@+id/btn_cursor_tv"
 			    android:layout_width="match_parent"
@@ -143,6 +147,7 @@
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:text="@string/cursor"
 		        android:textColor="@color/black"
+				android:background="@drawable/style_ctrlbtn"
 			    />
 	    </RelativeLayout>
 </LinearLayout>
