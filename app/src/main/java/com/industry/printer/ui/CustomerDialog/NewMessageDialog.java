@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Window;
 
+@Deprecated
 public class NewMessageDialog extends Dialog {
 
 	public NewMessageDialog(Context context) {

@@ -53,7 +53,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:background="@color/background"
+		android:divider="@drawable/divider"
+		android:showDividers="middle"
         >
         
 	    <RelativeLayout
@@ -73,7 +74,7 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/settingsBtnsize"
 		        android:textColor="#000000"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 		        android:text="@string/str_btn_settings_sync"
 			    />
 	    </RelativeLayout>
@@ -97,7 +98,7 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/settingsBtnsize"
 		        android:textColor="#000000"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 		        android:text="@string/str_file_cancel"
 			    />
 	    </RelativeLayout> 
@@ -121,7 +122,7 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/settingsBtnsize"
 		        android:textColor="#000000"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 		        android:text="@string/str_setting_upgrade"
 			    />
 	    </RelativeLayout>
@@ -144,7 +145,7 @@
 				android:gravity="center"
 				android:textSize="@dimen/settingsBtnsize"
 				android:textColor="#000000"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 				android:text="@string/str_setting_clean"
 				/>
 		</RelativeLayout>
@@ -168,7 +169,7 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/settingsBtnsize"
 		        android:textColor="#000000"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 		        android:text="@string/str_setting_time"
 			    />
 	    </RelativeLayout> 
@@ -192,7 +193,7 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/settingsBtnsize"
 		        android:textColor="#000000"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 		        android:text="@string/str_system_setting"
 			    />
 	    </RelativeLayout> 
@@ -215,7 +216,7 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/settingsBtnsize"
 		        android:textColor="#000000"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 		        android:text="@string/str_page_prev"
 			    />
 	    </RelativeLayout> 
@@ -238,7 +239,7 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/settingsBtnsize"
 		        android:textColor="#000000"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 		        android:text="@string/str_page_next"
 			    />
 	    </RelativeLayout> 

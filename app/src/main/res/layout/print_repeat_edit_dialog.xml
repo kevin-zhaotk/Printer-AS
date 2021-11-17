@@ -34,6 +34,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="60dp"
 		android:layout_alignParentBottom="true"
+		android:divider="@drawable/divider"
+		android:showDividers="middle"
 		android:orientation="horizontal" >
 		<TextView
 			android:id="@+id/confirm"

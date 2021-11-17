@@ -10,16 +10,18 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_marginTop="20dp"
+        android:divider="@drawable/divider"
+        android:showDividers="middle"
         android:orientation="horizontal" >
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="150dp"
             android:layout_weight="1" >
-            <ImageView
+<!--            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/style_ctrlbtn_big"
-            />
+            />-->
             <TextView
                 android:id="@+id/btn_preview"
                 android:layout_width="match_parent"
@@ -27,6 +29,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="@color/ctrl_btn_print_selector"
+                android:background="@drawable/bg_big_button"
                 android:text="@string/str_preview"
             />
         </RelativeLayout>
@@ -34,11 +37,11 @@
             android:layout_width="0dp"
             android:layout_height="150dp"
             android:layout_weight="1" >
-            <ImageView
+<!--            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/style_ctrlbtn_big"
-            />
+            />-->
             <TextView
                 android:id="@+id/tv_flush"
                 android:layout_width="match_parent"
@@ -47,6 +50,7 @@
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="#000000"
                 android:text="@string/str_btn_clean"
+                android:background="@drawable/bg_big_button"
             />
         </RelativeLayout>
 
@@ -54,11 +58,11 @@
             android:layout_width="0dp"
             android:layout_height="150dp"
             android:layout_weight="1" >
-            <ImageView
+<!--            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/style_ctrlbtn_big"
-            />
+            />-->
             <TextView
                 android:id="@+id/tv_binfile"
                 android:layout_width="match_parent"
@@ -67,6 +71,7 @@
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="#000000"
                 android:text="@string/str_openfile"
+                android:background="@drawable/bg_big_button"
             />
         </RelativeLayout>
         <RelativeLayout

@@ -93,7 +93,7 @@ public class PhoneMainActivity extends AppCompatActivity {
         if(null != linearLayout) {
             lineHeight += (linearLayout.getPaddingTop() + linearLayout.getPaddingBottom());
             TextView textView = (TextView) linearLayout.findViewById(R.id.Text);
-            lineHeight += Math.round(textView.getTextSize() * 1.35f);
+            lineHeight += Math.round(textView.getTextSize() * 1.35f);       // 文字的高度是标定高度的1.35倍
         }
 
         LinearLayout.LayoutParams layoutParams =

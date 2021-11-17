@@ -12,6 +12,8 @@
         android:layout_height="@dimen/top_btn_height"
         android:gravity="center"
         android:orientation="horizontal"
+        android:divider="@drawable/divider"
+        android:showDividers="middle"
         android:layout_marginTop="0dip">
 
         <RadioButton
@@ -19,7 +21,8 @@
             android:layout_width="@dimen/top_btn_width"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:background="@drawable/control_selector"
+            android:background="@drawable/bg_mid_button"
+            android:drawableTop="@drawable/control"
             android:button="@null"
             android:checked="true"
             android:focusable="false"
@@ -34,7 +37,8 @@
             android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
-            android:background="@drawable/edit_selector"
+            android:background="@drawable/bg_mid_button"
+            android:drawableTop="@drawable/edit"
             android:textColor="@color/tab_color_selector"
             android:textSize="@dimen/top_btn_textsize"
             android:focusable="false"
@@ -47,7 +51,8 @@
             android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
-            android:background="@drawable/settings_selector"
+            android:background="@drawable/bg_mid_button"
+            android:drawableTop="@drawable/setting"
             android:textColor="@color/tab_color_selector"
             android:textSize="@dimen/top_btn_textsize"
             android:focusable="false"
@@ -60,7 +65,8 @@
             android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
-            android:background="@drawable/custom_btn_selector"
+            android:background="@drawable/bg_mid_button"
+            android:drawableTop="@drawable/custom_btn"
             android:textColor="@color/tab_color_selector"
             android:textSize="@dimen/top_btn_textsize"
             android:focusable="false"
@@ -74,7 +80,8 @@
             android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
-            android:background="@drawable/but_socket"
+            android:background="@drawable/bg_mid_button"
+            android:drawableTop="@drawable/right"
             android:textColor="@color/tab_color_selector"
             android:textSize="@dimen/top_btn_textsize"
             android:focusable="false"
@@ -121,11 +128,11 @@
             android:id="@+id/msg_transfer1"
             android:layout_width="@dimen/top_btn_height"
             android:layout_height="@dimen/top_btn_height"
-            android:src="@drawable/link"
             android:scaleType="centerInside"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/space_10dp"
-            android:layout_marginTop="@dimen/space_10dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="@dimen/space_5dp"
+            android:visibility="invisible"
             />
         <!-- H.M.Wang 2020-8-11 追加时间显示 -->
         <LinearLayout
@@ -208,8 +215,9 @@
             android:src="@drawable/link"
             android:scaleType="centerInside"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/space_10dp"
-            android:layout_marginTop="@dimen/space_10dp"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/bg_small_button"
+            android:layout_marginRight="@dimen/space_5dp"
             />
     </RelativeLayout>
 
@@ -230,14 +238,15 @@
             android:textColor="#000000"
             android:textSize="25sp"
             android:gravity="center"
-
             />
 
         <TextView
             android:id="@+id/delete"
-            android:layout_width="80dp"
-            android:layout_height="60dp"
-            android:background="@drawable/style_ctrlbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:background="@drawable/bg_small_button"
             android:layout_alignParentRight="true"
             android:text="@string/str_del"
             android:textSize="25sp"
@@ -311,6 +320,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="10dp"
             android:src="@drawable/link"
+            android:background="@drawable/bg_small_button"
             android:visibility="gone"
             />
         <RelativeLayout

@@ -8,6 +8,7 @@ import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,29 +23,29 @@ public class ObjectInsertDialog extends Dialog implements android.view.View.OnCl
 	public static final String OBJECT_SOURCE = "ObjSource";
 	
 	private Context 	mContext;
-	public Button 	mText;
-	public Button 	mRTime;
-	public Button 	mCounter;
-	public Button	mBarcode;
-	public Button	mBarcodeV;
-	public Button	mJulian;
-	public Button	mGraphic;
-	public Button	mLine;
-	public Button	mRect;
-	public Button	mEllipse;
-	public Button 	mHour;
-	public Button 	mWoy;
-	public Button 	mWday;
+	public ImageView mText;
+	public ImageView 	mRTime;
+	public ImageView 	mCounter;
+	public ImageView	mBarcode;
+	public ImageView	mBarcodeV;
+	public ImageView	mJulian;
+	public ImageView	mGraphic;
+	public ImageView	mLine;
+	public ImageView	mRect;
+	public ImageView	mEllipse;
+	public ImageView 	mHour;
+	public ImageView 	mWoy;
+	public ImageView 	mWday;
 // H.M.Wang 2020-1-21 追加shift控件
-	public Button 	mShift;
+	public ImageView 	mShift;
 // End of H.M.Wang 2020-1-21 追加shift控件
 
 // H.M.Wang 2020-2-16 追加HyperText控件
-	public Button 	mHyperText;
+	public ImageView 	mHyperText;
 // End of H.M.Wang 2020-2-16 追加HyperText控件
 
 // H.M.Wang 2020-6-10 追加DynamicText控件
-	public Button 	mDynamicText;
+	public ImageView 	mDynamicText;
 // End of H.M.Wang 2020-6-10 追加DynamicText控件
 
 	public Message		mDismissMsg;
@@ -61,23 +62,23 @@ public class ObjectInsertDialog extends Dialog implements android.view.View.OnCl
 		this.setContentView(R.layout.layout_objinsert_gridview);
 		
 		
-		mText = (Button)findViewById(R.id.objinsert_text);
+		mText = (ImageView)findViewById(R.id.objinsert_text);
 		mText.setOnClickListener(this);
 		
-		mRTime = (Button)findViewById(R.id.objinsert_time);
+		mRTime = (ImageView)findViewById(R.id.objinsert_time);
 		mRTime.setOnClickListener(this);
 		
-		mCounter = (Button) findViewById(R.id.objinsert_counter);
+		mCounter = (ImageView) findViewById(R.id.objinsert_counter);
 		mCounter.setOnClickListener(this);
 		
-		mBarcode = (Button) findViewById(R.id.objinsert_barcode);
+		mBarcode = (ImageView) findViewById(R.id.objinsert_barcode);
 		mBarcode.setOnClickListener(this);
 		
-		mBarcodeV = (Button) findViewById(R.id.objinsert_barcode_var);
+		mBarcodeV = (ImageView) findViewById(R.id.objinsert_barcode_var);
 		mBarcodeV.setOnClickListener(this);
 		
 		
-		mGraphic = (Button) findViewById(R.id.objinsert_graphic);
+		mGraphic = (ImageView) findViewById(R.id.objinsert_graphic);
 		mGraphic.setOnClickListener(this);
 /*		
 		mLine = (Button) findViewById(R.id.objinsert_line);
@@ -89,30 +90,30 @@ public class ObjectInsertDialog extends Dialog implements android.view.View.OnCl
 		mEllipse = (Button) findViewById(R.id.objinsert_ellipse);
 		mEllipse.setOnClickListener(this);
 */
-		mJulian = (Button) findViewById(R.id.objinsert_julian);
+		mJulian = (ImageView) findViewById(R.id.objinsert_julian);
 		mJulian.setOnClickListener(this);
 		
-		mHour = (Button) findViewById(R.id.objinsert_hour);
+		mHour = (ImageView) findViewById(R.id.objinsert_hour);
 		mHour.setOnClickListener(this);
 		
-		mWoy = (Button) findViewById(R.id.objinsert_week_year);
+		mWoy = (ImageView) findViewById(R.id.objinsert_week_year);
 		mWoy.setOnClickListener(this);
 
-		mWday = (Button) findViewById(R.id.objinsert_week_day);
+		mWday = (ImageView) findViewById(R.id.objinsert_week_day);
 		mWday.setOnClickListener(this);
 
 // H.M.Wang 2020-1-21 追加shift控件
-		mShift = (Button) findViewById(R.id.objinsert_shift);
+		mShift = (ImageView) findViewById(R.id.objinsert_shift);
 		mShift.setOnClickListener(this);
 // End of H.M.Wang 2020-1-21 追加shift控件
 
 // H.M.Wang 2020-2-16 追加HyperText控件
-		mHyperText = (Button) findViewById(R.id.objinsert_hypertext);
+		mHyperText = (ImageView) findViewById(R.id.objinsert_hypertext);
 		mHyperText.setOnClickListener(this);
 // End of H.M.Wang 2020-2-16 追加HyperText控件
 
 // H.M.Wang 2020-6-10 追加DynamicText控件
-		mDynamicText = (Button) findViewById(R.id.objinsert_dynamictext);
+		mDynamicText = (ImageView) findViewById(R.id.objinsert_dynamictext);
 		mDynamicText.setOnClickListener(this);
 // End of H.M.Wang 2020-6-10 追加DynamicText控件
 	}

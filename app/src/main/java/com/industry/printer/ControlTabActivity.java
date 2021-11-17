@@ -975,7 +975,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 			// H.M.Wang RFID错误时报警，禁止打印
 			mBtnStart.setClickable(false);
-			mTvStart.setTextColor(Color.DKGRAY);
+			mTvStart.setTextColor(Color.GRAY);
 
 			mHandler.sendEmptyMessage(MESSAGE_RFID_ALARM);
 // H.M.Wang 2020-11-27 追加当墨量小于5%的时候，黄底字报警
@@ -1976,16 +1976,16 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		switch(state) {
 			case STATE_PRINTING:
 				mBtnStart.setClickable(false);
-				mTvStart.setTextColor(Color.DKGRAY);
+				mTvStart.setTextColor(Color.GRAY);
 				mBtnStop.setClickable(true);
 				mTvStop.setTextColor(Color.BLACK);
 				mBtnOpenfile.setClickable(false);
-				mTvOpen.setTextColor(Color.DKGRAY);
+				mTvOpen.setTextColor(Color.GRAY);
 				mTVPrinting.setVisibility(View.VISIBLE);
 				mTVStopped.setVisibility(View.GONE);
 // 2020-7-21 取消打印状态下清洗按钮无效的设置
 //				mBtnClean.setEnabled(false);
-//				mTvClean.setTextColor(Color.DKGRAY);
+//				mTvClean.setTextColor(Color.GRAY);
 // End of 2020-7-21 取消打印状态下清洗按钮无效的设置
 
 				// mMsgNext.setClickable(false);
@@ -2000,7 +2000,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				mBtnStart.setClickable(true);
 				mTvStart.setTextColor(Color.BLACK);
 				mBtnStop.setClickable(false);
-				mTvStop.setTextColor(Color.DKGRAY);
+				mTvStop.setTextColor(Color.GRAY);
 				mBtnOpenfile.setClickable(true);
 				mTvOpen.setTextColor(Color.BLACK);
 				mTVPrinting.setVisibility(View.GONE);

@@ -139,15 +139,17 @@
             <ImageButton
                 android:id="@+id/ctrl_btn_up"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:src="@drawable/ctrl_up"
+                android:background="@drawable/bg_small_button"
                 />
             <ImageButton
                 android:id="@+id/ctrl_btn_down"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_toRightOf="@id/ctrl_btn_up"
                 android:src="@drawable/ctrl_down"
+                android:background="@drawable/bg_small_button"
                 android:layout_marginLeft="10dp"/>
         </RelativeLayout>
 
@@ -394,7 +396,7 @@
                 android:paddingBottom="5dp"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:background="#FF88FF88"
+                android:background="@drawable/bg_small_button"
                 android:textSize="35sp"
                 android:gravity="center"
                 android:textColor="@color/ctrl_btn_print_selector"

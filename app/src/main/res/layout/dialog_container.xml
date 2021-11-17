@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- 经确认，这个已经不再使用了。 2021-11-16 -->
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="500dp"
     android:layout_height="400dp"

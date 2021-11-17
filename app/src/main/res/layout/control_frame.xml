@@ -44,7 +44,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="@color/ctrl_btn_print_selector"
-                android:background="@drawable/style_ctrlbtn"
+                android:background="@drawable/bg_big_button"
                 android:text="@string/str_btn_print"
                 />
         </RelativeLayout>
@@ -68,7 +68,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="@color/ctrl_btn_print_selector"
-                android:background="@drawable/style_ctrlbtn"
+                android:background="@drawable/bg_big_button"
                 android:text="@string/str_btn_stop"
                 />
         </RelativeLayout>
@@ -92,7 +92,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="#000000"
-                android:background="@drawable/style_ctrlbtn"
+                android:background="@drawable/bg_big_button"
                 android:text="@string/str_btn_clean"
                 />
         </RelativeLayout>
@@ -117,7 +117,7 @@
                 android:gravity="center"
                 android:textSize="@dimen/ctrlButtonsTextsize"
                 android:textColor="#000000"
-                android:background="@drawable/style_ctrlbtn"
+                android:background="@drawable/bg_big_button"
                 android:text="@string/str_openfile"
                 />
         </RelativeLayout>
@@ -307,16 +307,22 @@
             <ImageButton
                 android:id="@+id/ctrl_btn_up"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:src="@drawable/ctrl_up"
+                android:background="@drawable/bg_small_button"
                 />
             <ImageButton
                 android:id="@+id/ctrl_btn_down"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:layout_toRightOf="@id/ctrl_btn_up"
                 android:src="@drawable/ctrl_down"
-                android:layout_marginLeft="10dp"/>
+                android:background="@drawable/bg_small_button"
+                android:layout_marginLeft="20dp"/>
         </RelativeLayout>
 
         <RelativeLayout

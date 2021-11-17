@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+	android:divider="@drawable/divider"
+	android:showDividers="middle"
     android:orientation="horizontal" >
 	    
 	    <RelativeLayout
@@ -22,7 +24,7 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="@color/black"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 		        android:text="@string/str_btn_new"
 			    />
 	    </RelativeLayout>
@@ -45,7 +47,7 @@
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="#000000"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 		        android:text="@string/str_btn_open"
 			    />
 	    </RelativeLayout>
@@ -69,7 +71,7 @@
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:text="@string/str_btn_save"
 		        android:textColor="@color/black"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 			    />
 	    </RelativeLayout>
 	    
@@ -92,7 +94,7 @@
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:text="@string/str_btn_saveas"
 		        android:textColor="@color/black"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 			    />
 	    </RelativeLayout>
 	    
@@ -103,6 +105,7 @@
 	        android:focusable="false"
 	        android:layout_weight="1"
 	        android:src="@drawable/wide"
+			android:background="@drawable/bg_mid_button"
 	        />
 	    
 	    <ImageView
@@ -112,6 +115,7 @@
 	        android:focusable="false"
 	        android:layout_weight="1"
 	        android:src="@drawable/narrow"
+			android:background="@drawable/bg_mid_button"
 	        />
 	    
 	    <RelativeLayout
@@ -124,6 +128,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_up_edit"
+				android:background="@drawable/bg_mid_button"
 			    />
 			
 	    </RelativeLayout>
@@ -147,7 +152,7 @@
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:text="@string/cursor"
 		        android:textColor="@color/black"
-				android:background="@drawable/style_ctrlbtn"
+				android:background="@drawable/bg_mid_button"
 			    />
 	    </RelativeLayout>
 </LinearLayout>

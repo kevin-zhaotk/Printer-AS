@@ -15,6 +15,7 @@
 	<color name="message_selected_color">#436EEE</color>
 <!--	<color name="background">#436EEE</color> -->
 	<color name="background">#7E9CF3</color>
+	<color name="button_background">#6786F0</color>
 	<drawable name="transparent">#00000000</drawable>
 	<drawable name="line_gray">#77b3b3b3</drawable>
 	<drawable name="gray_frame">#c8c7cc</drawable>

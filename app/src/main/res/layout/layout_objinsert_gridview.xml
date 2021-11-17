@@ -6,136 +6,150 @@
     android:orientation="horizontal"
 	android:background="@color/background"
 	>
-    <Button 
+    <ImageView
         android:id="@+id/objinsert_text"
         android:layout_width="130dp"
         android:layout_height="130dp"
-        android:background="@drawable/style_editbtn"
-        android:button="@null"
+        android:background="@drawable/bg_mid_button"
+		android:src="@drawable/text"
+		android:scaleType="fitCenter"
 	    android:layout_gravity="center"
 	    android:layout_margin="0dp"
         />
-        
-    <Button 
-            android:id="@+id/objinsert_time"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/style_clock"
-            android:button="@null"
-	        android:layout_gravity="center"
-            />
-        
-    <Button 
-            android:id="@+id/objinsert_counter"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/style_cnt"
-            android:button="@null"
-	        android:layout_gravity="center"
-            />
-        
-    <Button 
-            android:id="@+id/objinsert_barcode"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/style_barcode"
-            android:button="@null"
-	        android:layout_gravity="center"
-            />
-    
-     <Button 
-            android:id="@+id/objinsert_barcode_var"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/style_barcode_var"
-            android:button="@null"
-	        android:layout_gravity="center"
-            />
-        
-    <Button 
-            android:id="@+id/objinsert_julian"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/style_julian"
-            android:button="@null"
-	        android:layout_gravity="center"
-            />
-    <Button
-            android:id="@+id/objinsert_hour"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/style_letter_hour"
-            android:button="@null"
-	        android:layout_gravity="center"
-            />
-    
-    <Button
-            android:id="@+id/objinsert_graphic"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/style_image"
-            android:button="@null"
-	        android:layout_gravity="center"
-            />
 
-    <Button
-            android:id="@+id/objinsert_week_year"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/style_weekofyear"
-            android:button="@null"
-	        android:layout_gravity="center"
-            />
+    <ImageView
+		android:id="@+id/objinsert_time"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/clock"
+		android:scaleType="fitCenter"
+		android:layout_gravity="center"
+		/>
 
-    <Button
-            android:id="@+id/objinsert_week_day"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/style_weekday"
-            android:button="@null"
-	        android:layout_gravity="center"
-            />
+    <ImageView
+		android:id="@+id/objinsert_counter"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/cnt"
+		android:scaleType="fitCenter"
+		android:layout_gravity="center"
+		/>
+
+    <ImageView
+		android:id="@+id/objinsert_barcode"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/barcode"
+		android:scaleType="fitCenter"
+		android:layout_gravity="center"
+		/>
+
+     <ImageView
+		 android:id="@+id/objinsert_barcode_var"
+		 android:layout_width="130dp"
+		 android:layout_height="130dp"
+		 android:layout_margin="10dp"
+		 android:background="@drawable/bg_mid_button"
+		 android:src="@drawable/barcode_dyn"
+		 android:scaleType="fitCenter"
+		 android:layout_gravity="center"
+		 />
+
+    <ImageView
+		android:id="@+id/objinsert_julian"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/julian"
+		android:scaleType="fitCenter"
+		android:layout_gravity="center"
+		/>
+
+    <ImageView
+		android:id="@+id/objinsert_hour"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/letter_hour"
+		android:scaleType="fitCenter"
+		android:layout_gravity="center"
+		/>
+
+    <ImageView
+		android:id="@+id/objinsert_graphic"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/image"
+		android:scaleType="fitCenter"
+		android:layout_gravity="center"
+		/>
+
+    <ImageView
+		android:id="@+id/objinsert_week_year"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/woy"
+		android:scaleType="fitCenter"
+		android:layout_gravity="center"
+		/>
+
+    <ImageView
+		android:id="@+id/objinsert_week_day"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/weekday"
+		android:scaleType="fitCenter"
+		android:layout_gravity="center"
+		/>
 <!-- H.M.Wang 2020-1-21 追加Shift控件 -->
-	<Button
-            android:id="@+id/objinsert_shift"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/style_shift"
-            android:button="@null"
-	        android:layout_gravity="center"
-            />
+	<ImageView
+		android:id="@+id/objinsert_shift"
+		android:layout_width="130dp"
+		android:layout_height="130dp"
+		android:layout_margin="10dp"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/shift"
+		android:scaleType="fitCenter"
+		android:layout_gravity="center"
+		/>
 <!-- End of H.M.Wang 2020-1-21 追加Shift控件 -->
 
 <!-- H.M.Wang 2020-2-16 追加HyperText控件 -->
-	<Button
+	<ImageView
 		android:id="@+id/objinsert_hypertext"
 		android:layout_width="130dp"
 		android:layout_height="130dp"
 		android:layout_margin="10dp"
-		android:background="@drawable/style_hypertext"
-		android:button="@null"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/hypertext"
+		android:scaleType="fitCenter"
 		android:layout_gravity="center"
 		/>
 <!-- End of H.M.Wang 2020-2-16 追加HyperText控件 -->
 
 <!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
-	<Button
+	<ImageView
 		android:id="@+id/objinsert_dynamictext"
 		android:layout_width="130dp"
 		android:layout_height="130dp"
 		android:layout_margin="10dp"
-		android:background="@drawable/style_dynamictext"
-		android:button="@null"
+		android:background="@drawable/bg_mid_button"
+		android:src="@drawable/dynamictext"
+		android:scaleType="fitCenter"
 		android:layout_gravity="center"
 		/>
 <!-- End of 2020-6-10 追加DynamicText控件 -->
@@ -169,5 +183,5 @@
 	        android:layout_gravity="center"
             />
 	 -->
-	 
+
 </GridLayout>
