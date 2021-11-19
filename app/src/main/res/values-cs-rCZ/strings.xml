@@ -374,7 +374,10 @@
 	<string name="str_textview_param58">58.IP</string>
 	<string name="str_textview_param59">59.Vyhrazeno</string>
 	<string name="str_textview_param60">60.Log</string>
-	<string name="str_textview_param61">61.Vyhrazeno</string>
+<!-- H.M.Wang 2021-11-19 修改双列支持的名称
+    <string name="str_textview_param61">61.Vyhrazeno</string> -->
+	<string name="str_textview_param61">61.Nozzle Offset</string>
+<!-- End of H.M.Wang 2021-11-19 修改双列支持的名称 -->
 	<string name="str_textview_param62">62.Vyhrazeno</string>
 	<string name="str_textview_param63">63.Vyhrazeno</string>
 	<string name="str_textview_param64">64.Vyhrazeno</string>

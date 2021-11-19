@@ -421,7 +421,10 @@
 	<string name="str_textview_param58">58.地址</string>
 	<string name="str_textview_param59">59.保留</string>
 	<string name="str_textview_param60">60.记录</string>
-	<string name="str_textview_param61">61.保留</string>
+<!-- H.M.Wang 2021-11-19 修改双列支持的名称
+    <string name="str_textview_param61">61.保留</string> -->
+	<string name="str_textview_param61">61.双列偏移</string>
+<!-- End of H.M.Wang 2021-11-19 修改双列支持的名称 -->
 	<string name="str_textview_param62">62.保留</string>
 	<string name="str_textview_param63">63.保留</string>
 	<string name="str_textview_param64">64.保留</string>

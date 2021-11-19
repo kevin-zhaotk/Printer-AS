@@ -366,6 +366,21 @@ public class FpgaGpioOperation {
                 data[17] &= 0xFFF0;
             }
 // End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+// H.M.Wang 2021-11-18 追加根据双列打印对参数的修改
+            if (config.getParam(SystemConfigFile.INDEX_DUAL_COLUMNS) > 0) { // >0 代表启用双列打印
+                if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_12_7) {
+                    data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_1_INCH;
+                } else if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_25_4) {
+                    data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_1_INCH_DUAL;
+                } else if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_38_1) {
+                    data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_1_INCH_TRIPLE;
+                } else if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_50_8) {
+                    data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_1_INCH_FOUR;
+                }
+                data[17] &= 0xFFF0;
+                Debug.d(TAG, "data[17] = " + data[17]);
+            }
+// End of H.M.Wang 2021-11-18 追加根据双列打印对参数的修改
         }
 
         if (type == SETTING_TYPE_PURGE1) {
@@ -459,9 +474,15 @@ public class FpgaGpioOperation {
 // End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 
         //是否雙列打印
-        data[25] = (char) config.getParam(31 - 1);
+// H.M.Wang 2021-11-17 修改参数61为双列位移设项
+//        data[25] = (char) config.getParam(31 - 1);
+        data[25] = (char) config.getParam(SystemConfigFile.INDEX_DUAL_COLUMNS);
+// End of H.M.Wang 2021-11-17 修改参数61为双列位移设项
         //雙列偏移量
-        data[26] = (char) config.getParam(32 - 1);
+// H.M.Wang 2021-11-19 增加打印方向参数传递
+//        data[26] = (char) config.getParam(32 - 1);
+        data[26] = (char) config.getParam(7);
+// End of H.M.Wang 2021-11-19 增加打印方向参数传递
 /*
         data[0] = 1;
         data[1] = 4;

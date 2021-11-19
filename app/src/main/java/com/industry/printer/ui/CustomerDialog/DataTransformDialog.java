@@ -31,6 +31,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+@Deprecated
 public class DataTransformDialog extends Dialog {
 
 	public static final String TAG="DataTransformDialog";

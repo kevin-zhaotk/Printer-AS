@@ -373,7 +373,10 @@
     <string name="str_textview_param58">58.IP</string>
     <string name="str_textview_param59">59.Ayrılmış</string>
     <string name="str_textview_param60">60.Log</string>
-    <string name="str_textview_param61">61.Ayrılmış</string>
+<!-- H.M.Wang 2021-11-19 修改双列支持的名称
+    <string name="str_textview_param61">61.Ayrılmış</string> -->
+    <string name="str_textview_param61">61.Nozzle Offset</string>
+<!-- End of H.M.Wang 2021-11-19 修改双列支持的名称 -->
     <string name="str_textview_param62">62.Ayrılmış</string>
     <string name="str_textview_param63">63.Ayrılmış</string>
     <string name="str_textview_param64">64.Ayrılmış</string>

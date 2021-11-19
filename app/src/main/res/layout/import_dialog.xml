@@ -18,6 +18,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:src="@drawable/usb_to_flash"
+			android:background="@drawable/bg_big_button"
 			/>
 
 		<ImageButton
@@ -26,6 +27,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginLeft="15dp"
 			android:src="@drawable/flash_to_usb"
+			android:background="@drawable/bg_big_button"
 			/>
 
 		<ImageButton
@@ -34,6 +36,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginLeft="15dp"
 			android:src="@drawable/usb_to_flash_override"
+			android:background="@drawable/bg_big_button"
 			/>
 	</LinearLayout>
 
@@ -47,7 +50,9 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentRight="true"
-			android:background="@drawable/button_style"
+			android:background="@drawable/bg_mid_button"
+			android:layout_marginTop="10dp"
+			android:padding="10dp"
 			android:text="@string/str_btn_cancel"
 			android:textSize="40sp"/>
 	</RelativeLayout>

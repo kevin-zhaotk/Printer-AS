@@ -131,6 +131,10 @@ public class SystemConfigFile{
 	// Kevin-zhao
 	public static final int INDEX_LOG_ENABLE = 59;
 
+// H.M.Wang 2021-11-18 追击双列打印头索引
+	public static final int INDEX_DUAL_COLUMNS = 60;
+// End of H.M.Wang 2021-11-18 追击双列打印头索引
+
 	public static final int INDEX_PARAM_63 = 62;
 
 // H.M.Wang 11-13 调整各项目的排列顺序，使得相同接近的数据源排在一起。同时调整arrays.xml的数据源排列顺序
