@@ -80,7 +80,7 @@ public class PCCommandHandler {
     }
 
     public void sendmsg(String msg) {
-        mStreamTransport.write(msg);
+        mStreamTransport.writeLine(msg);
     }
 
     public void handle(String msg) {

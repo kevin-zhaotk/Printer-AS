@@ -17,6 +17,7 @@ public class SerialPort {
     //    private native int open(String path, int baudrate);
 //    private native int close(int fd);
     private native static FileDescriptor open(String path, int baudrate);
+
     private native static void close();
 //    private native int read(int fd);        // 一定不能是static的，否则，JNI无法访问到回调函数nativeDataReceived
 //    private native int read1(int fd);

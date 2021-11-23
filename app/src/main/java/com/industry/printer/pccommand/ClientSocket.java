@@ -30,7 +30,7 @@ public class ClientSocket {
         mContext = ctx;
         try {
             mStreamTransport = new StreamTransport(socket.getInputStream(), socket.getOutputStream());
-            mStreamTransport.write("connected success!!!");
+            mStreamTransport.writeLine("connected success!!!");
         } catch (IOException e) {
             Debug.e(TAG, e.getMessage());
         }

@@ -1,9 +1,12 @@
 package com.industry.printer.Utils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeoutException;
@@ -54,10 +57,15 @@ public class StreamTransport {
         write(buffer, 0, buffer.length);
     }
 
-    public void write(String msg) {
+// H.M.Wang 2021-11-23 发送字符串的时候，自动加上一个换行符，以便对方接收，对方可能是在readLine。函数名从write(String)改为writeLine(String)
+    public void writeLine(String msg) {
+//        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(mFileOutputStream));
+//        PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mFileOutputStream)));
         Debug.d(TAG, "Send Data :[" + msg + "]");
-        write(msg.getBytes(Charset.forName("UTF-8")));
+//        pw.println(msg);
+        write((msg + "\n").getBytes(Charset.forName("UTF-8")));
     }
+// End of H.M.Wang 2021-11-23 发送字符串的时候，自动加上一个换行符，以便对方接收，对方可能是在readLine
 
     public String readLine() {
         String line = null;

@@ -377,8 +377,10 @@ public class FpgaGpioOperation {
                 } else if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_50_8) {
                     data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_1_INCH_FOUR;
                 }
-                data[17] &= 0xFFF0;
-                Debug.d(TAG, "data[17] = " + data[17]);
+//                data[17] &= 0xFFF0;
+                data[17] |= 0x0010;
+
+                Debug.d(TAG, "data[17] = " + Integer.toHexString(data[17]));
             }
 // End of H.M.Wang 2021-11-18 追加根据双列打印对参数的修改
         }
@@ -481,7 +483,7 @@ public class FpgaGpioOperation {
         //雙列偏移量
 // H.M.Wang 2021-11-19 增加打印方向参数传递
 //        data[26] = (char) config.getParam(32 - 1);
-        data[26] = (char) config.getParam(7);
+        data[26] = (char) config.getParam(1);
 // End of H.M.Wang 2021-11-19 增加打印方向参数传递
 /*
         data[0] = 1;
@@ -513,7 +515,7 @@ public class FpgaGpioOperation {
         data[26] = 0;
 */
         for (int i = 0; i < data.length; i++) {
-            Debug.e(TAG, "--->mFPGAParam[" + i + "]=" + (int) data[i]);
+            Debug.e(TAG, "--->mFPGAParam[" + i + "] = 0x" + Integer.toHexString(data[i]));
         }
         //时间参数放在最后3个
 		/*
