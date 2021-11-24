@@ -52,7 +52,7 @@ public class Configs {
 	public static final int USER_MSG_COUNT_NOLIMIT 	= 0;	// 不限制信息条数
 	public static final int USER_MSG_COUNT_200 	= 200;		// 限制200条信息
 
-	public static final int USER_MSG_COUNT = USER_MSG_COUNT_200;
+	public static final int USER_MSG_COUNT = USER_MSG_COUNT_NOLIMIT;
 // End of H.M.Wang 2021-8-11 追加信息浏览数量锁的标识
 
 	/**vol

@@ -17,14 +17,16 @@ abstract public class SerialProtocol {
     public final static int ERROR_SUCESS                = 0x00000000;   // 无错误
     public final static int ERROR_FAILED                = 0x85000000;   // 解析帧失败
 
-    protected StreamTransport mStreamTransport = null;
+    protected SerialPort mSerialPort = null;
+    //    protected StreamTransport mStreamTransport = null;
     protected SerialHandler.OnSerialPortCommandListenner mNormalCmdListeners = null;
     protected SerialHandler.OnSerialPortCommandListenner mPrintCmdListeners = null;
 
     private Context mContext;
 
-    protected SerialProtocol(StreamTransport st, Context ctx){
-        mStreamTransport = st;
+    protected SerialProtocol(/*StreamTransport st*/SerialPort serialPort, Context ctx){
+//        mStreamTransport = st;
+        mSerialPort = serialPort;
         mContext = ctx;
     }
 
@@ -65,8 +67,11 @@ abstract public class SerialProtocol {
     }
 
     protected void sendCommandProcessResult(byte[] message) {
-        if(null != message) {
-            mStreamTransport.write(message);
+        if(null != mSerialPort && null != message) {
+            mSerialPort.writeSerial(message);
         }
+//        if(null != message) {
+//            mStreamTransport.write(message);
+//        }
     }
 }

@@ -115,7 +115,7 @@ public class PCCommandManager {
             mSerialHandler.close();
         }
         if(null != mSerialPort) {
-            mSerialPort.closeSerial();
+            mSerialPort.closeStream();
         }
         mSerialPort = serialPort;
         mSerialHandler = new PCCommandHandler(mContext, mSerialPort.getStreamTransport(), mControlTabActivity);

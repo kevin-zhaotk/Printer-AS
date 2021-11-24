@@ -86,7 +86,7 @@ static speed_t getBaudrate(jint baudrate) {
  * Method:    open
  * Signature: (Ljava/lang/String;I)Ljava/io/FileDescriptor;
  */
-JNIEXPORT jobject JNICALL Java_com_industry_printer_Serial_SerialPort_open
+JNIEXPORT jobject JNICALL Java_com_industry_printer_Serial_SerialPort_openStream
   (JNIEnv *env, jobject object, jstring path, jint baudrate) {
 
     speed_t speed;
@@ -172,8 +172,8 @@ JNIEXPORT jobject JNICALL Java_com_industry_printer_Serial_SerialPort_open
  * Method:    open
  * Signature: (Ljava/lang/String;I)I;
  */
-/*
-JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_open
+
+JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_openSerial
         (JNIEnv *env, jobject object, jstring path, jint baudrate) {
 
     speed_t speed;
@@ -240,7 +240,6 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_open
 
     return fd;
 }
-*/
 
 static bool mKeepRunning = false;
 
@@ -259,21 +258,21 @@ JNIEXPORT void JNICALL Java_com_industry_printer_Serial_SerialPort_stop
 /*
 * Class:     com_industry_printer_Serial_SerialPort
 * Method:    close
-* Signature: ()V
+* Signature: (Ljava/io/FileDescriptor)I
 */
-JNIEXPORT void JNICALL Java_com_industry_printer_Serial_SerialPort_close
-  (JNIEnv *env, jobject object) {
+JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_closeStream
+  (JNIEnv *env, jobject object, jobject fd) {
 
-    jclass SerialPortClass = env->GetObjectClass(object);
+//    jclass SerialPortClass = env->GetObjectClass(object);
     jclass FileDescriptorClass = env->FindClass("java/io/FileDescriptor");
 
-    jfieldID mFdID = env->GetFieldID(SerialPortClass, "mFd", "Ljava/io/FileDescriptor;");
+//    jfieldID mFdID = env->GetFieldID(SerialPortClass, "mFd", "Ljava/io/FileDescriptor;");
     jfieldID descriptorID = env->GetFieldID(FileDescriptorClass, "descriptor", "I");
 
-    jobject mFd = env->GetObjectField(object, mFdID);
-    jint descriptor = env->GetIntField(mFd, descriptorID);
+//    jobject mFd = env->GetObjectField(object, mFdID);
+    jint descriptor = env->GetIntField(fd, descriptorID);
 
-    close(descriptor);
+    return close(descriptor);
 }
 
 /*
@@ -281,8 +280,8 @@ JNIEXPORT void JNICALL Java_com_industry_printer_Serial_SerialPort_close
 * Method:    close
 * Signature: (I)I
 */
-/*
-JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_close
+
+JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_closeSerial
         (JNIEnv *env, jobject object, jint fd) {
 
     if(fd <= 0) {
@@ -296,7 +295,6 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_close
 
     return close(fd);
 }
-*/
 
 /*
 char* toHexString(const char* buf, int len) {
@@ -363,21 +361,19 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
         FD_ZERO(&set);
         FD_SET(fd, &set);
 
-//        usleep(100000);
         select(maxfd, &set, NULL, NULL, &timeout);
         if(FD_ISSET(fd, &set)) {
             char temp_buf[MAX_TEMP_BUFFER_LEN];
             memset(temp_buf, 0x00, MAX_TEMP_BUFFER_LEN);
 
             int rnum = read(fd, temp_buf, MAX_TEMP_BUFFER_LEN);
-            LOGD("[%d] bytes read.", rnum);
 
             if(rnum > 0) {
                 rnum = ((recv_num + rnum) > MAX_RETRIVAL_BUFFER_LEN ? (MAX_RETRIVAL_BUFFER_LEN - recv_num) : rnum);
                 memcpy(&recv_buf[recv_num], temp_buf, (recv_num + rnum));
                 recv_num += rnum;
                 timeout_count = 0;
-            } else if(rnum < 0) {
+            } else if(rnum <= 0) {       // 即使没有接收到数据，也会立即返回（-1）或者（0），睡眠10ms，等待下次接收数据
                 usleep(10);
                 timeout_count++;
                 if(recv_num > 0 && timeout_count > 10000) {
@@ -398,8 +394,6 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
 	}
 
     LOGD("Quit reading process. (fd = %d)", fd);
-
-//    mKeepRunning = true;
 
     env->DeleteLocalRef(SerialPortClass);
 
@@ -440,8 +434,9 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_write
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    // 2021-11-24 为了PCCommand的按着Stream方式打开，原来的串口通讯方式恢复原样
     // 2021-10-29 1.0.54 修改为FileDescriptor版本的open和close。因此，本库中仅有open和close函数是实际有效的函数，其他函数将不会被使用到
-    LOGI("SerialPort.so 1.0.54 Loaded.");
+    LOGI("SerialPort.so 1.0.55 Loaded.");
 
     return JNI_VERSION_1_4;     //这里很重要，必须返回版本，否则加载会失败。
 }

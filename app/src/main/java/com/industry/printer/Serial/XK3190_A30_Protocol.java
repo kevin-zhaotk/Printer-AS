@@ -47,8 +47,8 @@ public class XK3190_A30_Protocol extends SerialProtocol {
     public final static int ERROR_INVALID_CMD         = 0x83000000;   // 不可识别的命令
     public final static int ERROR_CHECK_FAILED        = 0x84000000;   // 校验失败
 
-    public XK3190_A30_Protocol(StreamTransport st, Context ctx){
-        super(st, ctx);
+    public XK3190_A30_Protocol(/*StreamTransport st*/SerialPort serialPort, Context ctx){
+        super(serialPort, ctx);
     }
 
     @Override

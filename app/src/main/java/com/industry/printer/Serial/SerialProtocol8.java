@@ -87,8 +87,8 @@ public class SerialProtocol8 extends SerialProtocol {
     private static int mLastValue = 0;
     private static int mTypeCode = 0;
 
-    public SerialProtocol8(StreamTransport st, Context ctx){
-        super(st, ctx);
+    public SerialProtocol8(/*StreamTransport st*/SerialPort serialPort, Context ctx){
+        super(serialPort, ctx);
 
         SystemConfigFile sysConfig = SystemConfigFile.getInstance();
         mLocalID = sysConfig.getParam(SystemConfigFile.INDEX_LOCAL_ID);

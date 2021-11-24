@@ -34,8 +34,8 @@ public class SerialProtocol9 extends SerialProtocol {
     private final static int REQURYING_CMD             = 0x81000000;   // 查询状态命令
     private final static int ERROR_INVALID_CMD         = 0x83000000;   // 不可识别的命令
 
-    public SerialProtocol9(StreamTransport st, Context ctx) {
-        super(st, ctx);
+    public SerialProtocol9(/*StreamTransport st*/SerialPort serialPort, Context ctx) {
+        super(serialPort, ctx);
     }
 
     @Override

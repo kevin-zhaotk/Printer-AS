@@ -1278,10 +1278,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mControlTab.onConfigureChanged();
 		mEditSmallTab.onConfigureChanged();
 		mSettingsTab.onConfigureChanged();
-		String title = mEditTitle.getText().toString();
-		if (title != null && (title.equals("New") || title.equals("新建"))) {
-			mEditTitle.setText(R.string.str_filename_no);
-		}
+// H.M.Wang 2021-11-24 取消新建字样的显示
+//		String title = mEditTitle.getText().toString();
+//		if (title != null && (title.equals("New") || title.equals("新建"))) {
+//			mEditTitle.setText(R.string.str_filename_no);
+//		}
+// End of H.M.Wang 2021-11-24 取消新建字样的显示
 		mVerTitle.setText(R.string.app_version);
 
 		mDelete.setText(R.string.str_del);

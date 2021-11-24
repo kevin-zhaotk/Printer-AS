@@ -17,8 +17,8 @@ public class Scaner2Protocol extends SerialProtocol {
 
     public final static String TEXT_SEPERATOR         = "#";          // 串口接收文本的间隔符
 
-    public Scaner2Protocol(StreamTransport st, Context ctx){
-        super(st, ctx);
+    public Scaner2Protocol(/*StreamTransport st*/SerialPort serialPort, Context ctx){
+        super(serialPort, ctx);
     }
 
     @Override

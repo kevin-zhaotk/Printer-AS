@@ -102,8 +102,8 @@ public class SerialProtocol7 extends SerialProtocol {
 
     public final static String TEXT_SEPERATOR         = ",";          // 串口接收文本的间隔符
 
-    public SerialProtocol7(StreamTransport st, Context ctx){
-        super(st, ctx);
+    public SerialProtocol7(/*StreamTransport st*/SerialPort serialPort, Context ctx){
+        super(serialPort, ctx);
     }
 
     private byte getXorOf(byte[] org) {
