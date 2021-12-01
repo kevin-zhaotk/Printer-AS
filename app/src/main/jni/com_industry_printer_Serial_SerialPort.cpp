@@ -195,7 +195,9 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_openSerial
         jboolean iscopy;
         const char *path_utf = env->GetStringUTFChars(path, &iscopy);
         LOGD("Opening serial port %s", path_utf);
-        fd = open(path_utf, O_RDWR | O_NOCTTY | O_NONBLOCK | O_NDELAY);
+
+        // 一定要设置O_NONBLOCK，否则read函数会一直等待MAX_RETRIVAL_BUFFER_LEN字节接收完成
+        fd = open(path_utf, O_RDWR | O_NOCTTY | O_NONBLOCK/* | O_NDELAY*/);
         LOGD("Opened serial port[%s] as [%d]", path_utf, fd);
         if (fd == -1) {
             LOGE("Failed to open port %s", path_utf);
@@ -241,7 +243,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_openSerial
     return fd;
 }
 
-static bool mKeepRunning = false;
+//static bool mKeepRunning = false;
 
 /*
  * Class:     com_industry_printer_Serial_SerialPort
@@ -252,7 +254,7 @@ static bool mKeepRunning = false;
 JNIEXPORT void JNICALL Java_com_industry_printer_Serial_SerialPort_stop
         (JNIEnv *, jobject) {
 
-    mKeepRunning = false;
+//    mKeepRunning = false;
 }
 
 /*
@@ -289,7 +291,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_closeSerial
         return -1;
     }
 
-    mKeepRunning = false;
+//    mKeepRunning = false;
 
     LOGD("close(fd = %d)", fd);
 
@@ -315,16 +317,71 @@ char* toHexString(const char* buf, int len) {
 }
 */
 
-#define MAX_RETRIVAL_BUFFER_LEN  920
-#define MAX_TEMP_BUFFER_LEN     1024
+#define MAX_RETRIVAL_BUFFER_LEN  1024
+#define MAX_TEMP_BUFFER_LEN      128
 
 /*
 * Class:     com_industry_printer_Serial_SerialPort
 * Method:    read
-* Signature: (I)I
+* Signature: (I)[B
 */
-JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
+JNIEXPORT jbyteArray JNICALL Java_com_industry_printer_Serial_SerialPort_read
   (JNIEnv *env, jobject object, jint fd) {
+
+    if (fd <= 0) {
+        LOGE("Invalid fd[%d]!", fd);
+        return NULL;
+    }
+
+    LOGD("Reading from Serial Port (%d) ...", fd);
+
+    struct timeval timeout;
+    fd_set set;
+
+    char recv_buf[MAX_RETRIVAL_BUFFER_LEN];
+//    jbyte *recv_buf = new jbyte[MAX_RETRIVAL_BUFFER_LEN];
+//    memset(recv_buf, 0x00, MAX_RETRIVAL_BUFFER_LEN);
+    char temp_buf[MAX_TEMP_BUFFER_LEN];
+
+    int recv_num = 0;
+
+	while(true) {
+        FD_ZERO(&set);
+        FD_SET(fd, &set);
+        timeout.tv_sec = 0;
+        timeout.tv_usec = 100000;        // 等待100ms，如果100ms没有数据即按超时处理，此时，如果缓冲区有数据，视为数据接收完成，如果没有数据视为没有数据传送
+
+        // 无论O_NONBLOCK,O_NDELAY设与不设，这里都会等待到超时，如果中间没有数据发生
+        select(fd+1, &set, NULL, NULL, &timeout);
+
+        if(FD_ISSET(fd, &set)) {
+            // 阻断模式会等到MAX_TEMP_BUFFER_LEN字节全部接收完成，非阻断模式则会在接收到现有数据后立即返回
+            int rnum = read(fd, temp_buf, MAX_TEMP_BUFFER_LEN);
+
+            if(rnum > 0) {
+                rnum = ((recv_num + rnum) > MAX_RETRIVAL_BUFFER_LEN ? (MAX_RETRIVAL_BUFFER_LEN - recv_num) : rnum);
+                memcpy(&recv_buf[recv_num], temp_buf, rnum);
+                recv_num += rnum;
+            }
+        } else {
+            if (recv_num > 0) {
+                break;
+            }
+        }
+	}
+
+    LOGD("[%d] bytes read.", recv_num);
+
+    jbyteArray ret_buf = env->NewByteArray(recv_num);
+    env->SetByteArrayRegion(ret_buf, 0, recv_num, (jbyte *)recv_buf);
+//    env->ReleaseByteArrayElements(ret_buf, recv_buf, JNI_ABORT);
+
+    return ret_buf;
+
+}
+/*
+JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
+        (JNIEnv *env, jobject object, jint fd) {
 
     if (fd <= 0) {
         LOGE("Invalid fd[%d]!", fd);
@@ -341,57 +398,49 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
         return -1;
     }
 
-    int maxfd = 0;
     struct timeval timeout;
     fd_set set;
 
     mKeepRunning = true;
 
-    maxfd = 1;          // fd应该为fd+1,是文件描述符+1，而不是文件描述符的个数
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 100;
-
     char recv_buf[MAX_RETRIVAL_BUFFER_LEN];
     memset(recv_buf, 0x00, MAX_RETRIVAL_BUFFER_LEN);
+    char temp_buf[MAX_TEMP_BUFFER_LEN];
 
     int recv_num = 0;
-    int timeout_count = 0;
 
-	while(mKeepRunning) {
+    while(mKeepRunning) {
         FD_ZERO(&set);
         FD_SET(fd, &set);
 
-        select(maxfd, &set, NULL, NULL, &timeout);
-        if(FD_ISSET(fd, &set)) {
-            char temp_buf[MAX_TEMP_BUFFER_LEN];
-            memset(temp_buf, 0x00, MAX_TEMP_BUFFER_LEN);
+        timeout.tv_sec = 0;
+        timeout.tv_usec = 100000;        // 等待30ms，如果30ms没有数据即按超时处理，此时，如果缓冲区有数据，视为数据接收完成，如果没有数据视为没有数据传送
 
+        // 无论O_NONBLOCK,O_NDELAY设于不设，这里都会等待到超时，如果中间没有数据发生
+        select(fd+1, &set, NULL, NULL, &timeout);
+
+        if(FD_ISSET(fd, &set)) {
+            // 阻断模式会等到MAX_TEMP_BUFFER_LEN字节全部接收完成，非阻断模式则会在接收到现有数据后立即返回
             int rnum = read(fd, temp_buf, MAX_TEMP_BUFFER_LEN);
 
             if(rnum > 0) {
                 rnum = ((recv_num + rnum) > MAX_RETRIVAL_BUFFER_LEN ? (MAX_RETRIVAL_BUFFER_LEN - recv_num) : rnum);
-                memcpy(&recv_buf[recv_num], temp_buf, (recv_num + rnum));
+                memcpy(&recv_buf[recv_num], temp_buf, rnum);
                 recv_num += rnum;
-                timeout_count = 0;
-            } else if(rnum <= 0) {       // 即使没有接收到数据，也会立即返回（-1）或者（0），睡眠10ms，等待下次接收数据
-                usleep(10);
-                timeout_count++;
-                if(recv_num > 0 && timeout_count > 10000) {
-//                if(recv_num > 0) {
-                    LOGD("[%d] bytes read.", recv_num);
+            }
+        } else {
+            if (recv_num > 0) {
+                LOGD("[%d] bytes read.", recv_num);
 
-                    jbyteArray ret_buf = env->NewByteArray(recv_num);
-                    env->SetByteArrayRegion(ret_buf, 0, recv_num, (jbyte*)recv_buf);
-                    env->CallVoidMethod(object, method, ret_buf);
-                    env->DeleteLocalRef(ret_buf);
+                jbyteArray ret_buf = env->NewByteArray(recv_num);    // 不知道为什么，这里设800，接收大数据没有问题，881就崩溃。中间的没有测，意义不大了
+                env->SetByteArrayRegion(ret_buf, 0, recv_num, (jbyte *) recv_buf);
+                env->CallVoidMethod(object, method, ret_buf);
+                env->DeleteLocalRef(ret_buf);
 
-                    recv_num = 0;
-                    memset(recv_buf, 0x00, MAX_RETRIVAL_BUFFER_LEN);
-                    timeout_count = 0;
-                }
+                recv_num = 0;
             }
         }
-	}
+    }
 
     LOGD("Quit reading process. (fd = %d)", fd);
 
@@ -400,7 +449,7 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
     return 0;
 
 }
-
+*/
 static int __write(int fd, const char *buf, int len) {
     LOGD("Writing [%d] bytes to serial port (%d) ...", len, fd);
 
@@ -434,9 +483,11 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_write
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    // 2021-11-25 修改读数据方式，取消从JNI向JAVA回写的方式，改为直接返回
+    // 2021-11-25 select的超时设置为30ms，取消30000次计数，一定要设置O_NONBLOCK，否则read函数会一直等待MAX_RETRIVAL_BUFFER_LEN字节接收完成
     // 2021-11-24 为了PCCommand的按着Stream方式打开，原来的串口通讯方式恢复原样
     // 2021-10-29 1.0.54 修改为FileDescriptor版本的open和close。因此，本库中仅有open和close函数是实际有效的函数，其他函数将不会被使用到
-    LOGI("SerialPort.so 1.0.55 Loaded.");
+    LOGI("SerialPort.so 1.0.58 Loaded.");
 
     return JNI_VERSION_1_4;     //这里很重要，必须返回版本，否则加载会失败。
 }

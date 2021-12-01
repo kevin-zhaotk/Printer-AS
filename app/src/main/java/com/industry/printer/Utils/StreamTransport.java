@@ -59,11 +59,19 @@ public class StreamTransport {
 
 // H.M.Wang 2021-11-23 发送字符串的时候，自动加上一个换行符，以便对方接收，对方可能是在readLine。函数名从write(String)改为writeLine(String)
     public void writeLine(String msg) {
-//        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(mFileOutputStream));
-//        PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mFileOutputStream)));
-        Debug.d(TAG, "Send Data :[" + msg + "]");
-//        pw.println(msg);
-        write((msg + "\n").getBytes(Charset.forName("UTF-8")));
+        try {
+            Debug.d(TAG, "Send Data :[" + msg + "]");
+// 使用BufferedWriter
+//            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(mFileOutputStream, Charset.forName("UTF-8")));
+//            bw.write(msg + "\n");
+// 使用PrintWriter
+//            PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(mFileOutputStream, Charset.forName("UTF-8"))));
+//            pw.println(msg);
+// 直接使用OutputStream
+            write((msg + "\n").getBytes(Charset.forName("UTF-8")));
+        } catch(Exception e) {
+            Debug.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
     }
 // End of H.M.Wang 2021-11-23 发送字符串的时候，自动加上一个换行符，以便对方接收，对方可能是在readLine
 
@@ -81,6 +89,7 @@ public class StreamTransport {
         } catch(SocketTimeoutException e) {
             line = "";
         } catch(Exception e) {
+            line = null;
             Debug.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
         }
         return line;

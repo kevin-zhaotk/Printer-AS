@@ -3,6 +3,7 @@ package com.industry.printer.Serial;
 import android.content.Context;
 
 import com.industry.printer.FileFormat.SystemConfigFile;
+import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.StreamTransport;
 import com.industry.printer.pccommand.PCCommandManager;
@@ -37,9 +38,7 @@ public class SerialHandler {
     public static SerialHandler getInstance(Context ctx) {
         if(null == mSerialHandler) {
             mSerialHandler = new SerialHandler(ctx);
-//            if(!mSerialHandler.isInitialized()) {
             mSerialHandler.init();
-//            }
         }
         return mSerialHandler;
     }
@@ -47,9 +46,7 @@ public class SerialHandler {
     public static SerialHandler getInstance() {
         if(null == mSerialHandler) {
             mSerialHandler = new SerialHandler(null);
-//            if(!mSerialHandler.isInitialized()) {
             mSerialHandler.init();
-//            }
         }
         return mSerialHandler;
     }
@@ -73,32 +70,18 @@ public class SerialHandler {
         } else {
             mSerialPort.openSerial(SERIAL_PORT);
             Debug.i(TAG, "Start normal Receiver");
-            mSerialPort.readSerial(new SerialPort.SerialPortDataReceiveListenner() {
+            new Thread() {
                 @Override
-                public void onDataReceived(byte[] data) {
-                    dispatchProtocol(data);
+                public void run() {
+                    mRunning = true;
+                    while(mRunning) {
+                        byte[] data = mSerialPort.readSerial();
+                        if(null != data) {
+                            dispatchProtocol(data);
+                        }
+                    }
                 }
-            });
-// 下面的代码是接收文本专用的(0x0A为换行符)，串口通讯协议中包含非文本的传送格式，没有通讯结束符的定义，因此需要靠超时（在JNI中）判断通讯的结束，并且接收到的数据为二进制
-//            new Thread() {
-//                @Override
-//                public void run() {
-//                    Debug.i(TAG, "Start normal Receiver");
-//                    mRunning = true;
-//                    while(mRunning) {
-//                        try {
-//                            String cmd = mSerialPort.getStreamTransport().readLine();
-//                            if(null != cmd) {       // 连接还在
-//                                if(!cmd.isEmpty()) dispatchProtocol(cmd);
-//                            } else {                // 连接已经关闭
-//                                sleep(100);         // 如果返回null，说明连接切断了。机制还保留，但是睡一会儿
-//                            }
-//                        } catch(Exception e) {
-//                            Debug.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
-//                        }
-//                    }
-//                }
-//            }.start();
+            }.start();
         }
     }
 
@@ -115,7 +98,6 @@ public class SerialHandler {
         if(!isInitialized()) return;
 
         ByteArrayBuffer bab = new ByteArrayBuffer(0);
-//        byte[] data = cmd.getBytes(Charset.forName("UTF-8"));
         bab.append(data, 0, data.length);
 
 //        Debug.d(TAG, "DataSource: " + SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE));

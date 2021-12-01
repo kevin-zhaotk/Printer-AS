@@ -24,18 +24,19 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 				android:background="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:layout_width="match_parent"
 			    android:layout_height="match_parent"
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="#000000"
-		        android:text="@string/str_btn_new" 
+				android:background="@drawable/bg_mid_button"
+		        android:text="@string/str_btn_new"
 			    />
 	    </RelativeLayout>
 	    
@@ -45,18 +46,19 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:layout_width="match_parent"
 			    android:layout_height="match_parent"
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="#000000"
-		        android:text="@string/str_btn_open" 
+				android:background="@drawable/bg_mid_button"
+		        android:text="@string/str_btn_open"
 			    />
 	    </RelativeLayout>
 	    
@@ -66,18 +68,19 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_editbtn_pop"
-			    />
+			    />-->
 			<TextView
 			    android:layout_width="match_parent"
 			    android:layout_height="match_parent"
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="#000000"
-		        android:text="@string/str_btn_save" 
+				android:background="@drawable/bg_mid_button"
+		        android:text="@string/str_btn_save"
 			    />
 	    </RelativeLayout>
 	    
@@ -87,18 +90,19 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:layout_width="match_parent"
 			    android:layout_height="match_parent"
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="#000000"
-		        android:text="@string/str_edit_btn_insert" 
+				android:background="@drawable/bg_mid_button"
+		        android:text="@string/str_edit_btn_insert"
 			    />
 	    </RelativeLayout>
 	    
@@ -108,18 +112,19 @@
 	        android:layout_height="@dimen/editButtonsHeight"
 	        android:focusable="false"
 	        android:layout_weight="1">
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:layout_width="match_parent"
 			    android:layout_height="match_parent"
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="#000000"
-		        android:text="@string/str_page_prev" 
+				android:background="@drawable/bg_mid_button"
+		        android:text="@string/str_page_prev"
 			    />
 	    </RelativeLayout>
 	    
@@ -130,18 +135,19 @@
 	        android:layout_weight="1"
 			android:focusable="false"
 	        >
-	        <ImageView 
+<!--	        <ImageView
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:src="@drawable/style_btn_state"
-			    />
+			    />-->
 			<TextView
 			    android:layout_width="match_parent"
 			    android:layout_height="match_parent"
 			    android:gravity="center"
 		        android:textSize="@dimen/editButtonsTextsize"
 		        android:textColor="#000000"
-		        android:text="@string/str_page_next" 
+				android:background="@drawable/bg_mid_button"
+		        android:text="@string/str_page_next"
 			    />
 	    </RelativeLayout>
 	    

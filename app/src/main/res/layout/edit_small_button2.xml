@@ -113,7 +113,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_left"
+		        android:src="@drawable/left"
 				android:background="@drawable/bg_mid_button"
 			    />
 	    </RelativeLayout>
@@ -127,7 +127,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_down_edit"
+		        android:src="@drawable/down"
 				android:background="@drawable/bg_mid_button"
 			    />
 			
@@ -142,7 +142,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_right"
+		        android:src="@drawable/right"
 				android:background="@drawable/bg_mid_button"
 			    />
 	    </RelativeLayout>

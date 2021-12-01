@@ -9,12 +9,12 @@
           android:layout_height="wrap_content"
           android:gravity="center"
         >
-        <ImageView
+<!--        <ImageView
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
 	        android:background="@drawable/edit_default_btn_style"
-        	/>
+        	/>-->
 		<TextView 
 		    android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -22,6 +22,7 @@
 	        android:text="@string/str_btn_new"
 	        android:textSize="20sp"
 	        android:textColor="#ffffff"
+			android:background="@drawable/bg_mid_button"
 		    />
     </RelativeLayout>
 	
@@ -32,12 +33,12 @@
           android:layout_toRightOf="@id/btn_new"
           android:gravity="center"
         >
-        <ImageView
+<!--        <ImageView
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
 	        android:background="@drawable/edit_default_btn_style"
-        	/>
+        	/>-->
 		<TextView 
 		    android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -45,6 +46,7 @@
 	        android:text="@string/str_btn_save"
 	        android:textSize="20sp"
 	        android:textColor="#ffffff"
+			android:background="@drawable/bg_mid_button"
 		    />
     </RelativeLayout>
     
@@ -55,12 +57,12 @@
           android:layout_toRightOf="@id/btn_save"
           android:gravity="center"
         >
-        <ImageView
+<!--        <ImageView
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
 	        android:background="@drawable/edit_default_btn_style"
-        	/>
+        	/>-->
 		<TextView 
 		    android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -68,6 +70,7 @@
 	        android:text="@string/str_btn_saveas"
 	        android:textSize="20sp"
 	        android:textColor="#ffffff"
+			android:background="@drawable/bg_mid_button"
 		    />
     </RelativeLayout>
     
@@ -78,12 +81,12 @@
           android:layout_toRightOf="@id/btn_saveas"
           android:gravity="center"
         >
-        <ImageView
+<!--        <ImageView
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
 	        android:background="@drawable/edit_default_btn_style"
-        	/>
+        	/>-->
 		<TextView 
 		    android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -91,6 +94,7 @@
 	        android:text="@string/str_btn_open"
 	        android:textSize="20sp"
 	        android:textColor="#ffffff"
+			android:background="@drawable/bg_mid_button"
 		    />
     </RelativeLayout>
     
@@ -100,7 +104,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_toRightOf="@id/btn_open"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_left"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_right"
@@ -108,7 +112,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_toRightOf="@id/btn_left"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_right"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_up"
@@ -116,7 +120,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_toRightOf="@id/btn_right"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_up"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_down"
@@ -124,7 +128,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_toRightOf="@id/btn_up"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_down"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_zoominx"
@@ -132,7 +136,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_toRightOf="@id/btn_down"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_zoominx"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_zoominy"
@@ -140,7 +144,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_toRightOf="@id/btn_zoominx"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_zoominy"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_zoomoutx"
@@ -148,7 +152,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_toRightOf="@id/btn_zoominy"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_zoomoutx"
+		android:background="@drawable/bg_mid_button"
 	    />
 
 	<ImageButton android:id="@+id/btn_zoomouty"
@@ -156,7 +160,7 @@
 	    android:layout_height="wrap_content"
 	    android:layout_toRightOf="@id/btn_zoomoutx"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_zoomouty"
+		android:background="@drawable/bg_mid_button"
 	    />
 
 
@@ -168,7 +172,7 @@
 	    android:layout_marginTop="5dp"
 	    android:layout_alignParentLeft="true"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_abc"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_cnt"
@@ -178,7 +182,7 @@
 	    android:layout_toRightOf="@id/btn_ABC"
 	    android:layout_alignBaseline="@id/btn_ABC"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_cnt"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_barcode"
@@ -188,7 +192,7 @@
 	    android:layout_toRightOf="@id/btn_cnt"
 	    android:layout_alignBaseline="@id/btn_ABC"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_barcode"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_image"
@@ -198,7 +202,7 @@
 	    android:layout_toRightOf="@id/btn_barcode"
 	    android:layout_alignBaseline="@id/btn_ABC"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_image"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_julian"
@@ -208,7 +212,7 @@
 	    android:layout_toRightOf="@id/btn_image"
 	    android:layout_alignBaseline="@id/btn_ABC"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_julian"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_time"
@@ -218,7 +222,7 @@
 	    android:layout_toRightOf="@id/btn_julian"
 	    android:layout_alignBaseline="@id/btn_ABC"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_clock"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_line"
@@ -228,7 +232,7 @@
 	    android:layout_toRightOf="@id/btn_time"
 	    android:layout_alignBaseline="@id/btn_ABC"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_line"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_rect"
@@ -238,7 +242,7 @@
 	    android:layout_toRightOf="@id/btn_line"
 	    android:layout_alignBaseline="@id/btn_ABC"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_rect"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton android:id="@+id/btn_ellipse"
@@ -248,7 +252,7 @@
 	    android:layout_toRightOf="@id/btn_rect"
 	    android:layout_alignBaseline="@id/btn_ABC"
 	    android:contentDescription="@string/str_btn_new"
-	    android:background="@drawable/style_ellipse"
+		android:background="@drawable/bg_mid_button"
 	    />
 	
 	<ImageButton
@@ -258,7 +262,7 @@
 	    android:layout_alignTop="@id/btn_ABC"
 	    android:layout_toRightOf="@id/btn_ellipse"
 	    android:layout_alignBaseline="@id/btn_ABC"
-	    android:background="@drawable/style_shift"
+		android:background="@drawable/bg_mid_button"
 	    android:contentDescription="@string/str_btn_new"
 	    />
 	
@@ -269,7 +273,7 @@
 	    android:layout_alignTop="@id/btn_ABC"
 	    android:layout_toRightOf="@id/btn_shift"
 	    android:layout_alignBaseline="@id/btn_ABC"
-	    android:background="@drawable/style_second"
+		android:background="@drawable/bg_mid_button"
 	    android:contentDescription="@string/str_btn_new"
 	    />
 
@@ -281,7 +285,7 @@
 		android:layout_alignTop="@id/btn_ABC"
 		android:layout_toRightOf="@id/btn_second"
 		android:layout_alignBaseline="@id/btn_ABC"
-		android:background="@drawable/style_hypertext"
+		android:background="@drawable/bg_mid_button"
 		android:contentDescription="@string/str_btn_new"
 		/>
 <!-- H.M.Wang 2020-6-10 追加DynamicText控件 -->
@@ -292,7 +296,7 @@
 		android:layout_alignTop="@id/btn_ABC"
 		android:layout_toRightOf="@id/btn_hypertext"
 		android:layout_alignBaseline="@id/btn_ABC"
-		android:background="@drawable/style_dynamictext"
+		android:background="@drawable/bg_mid_button"
 		android:contentDescription="@string/str_btn_new"
 		/>
 
@@ -302,7 +306,7 @@
 	    android:layout_alignTop="@id/btn_ABC"
 	    android:layout_alignBaseline="@id/btn_ABC"
 	    android:layout_toRightOf="@id/btn_dynamictext"
-	    android:background="@drawable/style_del"
+		android:background="@drawable/bg_mid_button"
 	    android:contentDescription="@string/str_btn_new"
 	    />
 <!-- End of H.M.Wang 2020-6-10 追加DynamicText控件 -->

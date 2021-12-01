@@ -15,7 +15,9 @@
             android:id="@+id/move_up"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:background="@drawable/style_up" />
+            android:src="@drawable/up"
+            android:background="@drawable/bg_mid_button"
+            />
 
         <ImageButton
             android:id="@+id/move_down"
@@ -23,7 +25,9 @@
             android:layout_height="60dp"
             android:layout_below="@id/move_up"
             android:layout_marginTop="40dp"
-            android:background="@drawable/style_down" />
+            android:src="@drawable/down"
+            android:background="@drawable/bg_mid_button"
+            />
 
         <RelativeLayout
             android:id="@+id/ok"
@@ -32,16 +36,17 @@
             android:layout_below="@id/move_down"
             android:layout_marginTop="40dp" >
 
-            <ImageView
+<!--            <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/style_editbtn" />
+                android:src="@drawable/style_editbtn" />-->
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/str_ok"
+                android:background="@drawable/bg_mid_button"
                 android:textColor="#000000"
                 android:textSize="@dimen/editButtonsTextsize" />
         </RelativeLayout>

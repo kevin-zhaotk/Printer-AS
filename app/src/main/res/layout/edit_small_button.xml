@@ -127,7 +127,7 @@
 	        <ImageView 
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
-		        android:src="@drawable/style_up_edit"
+		        android:src="@drawable/up"
 				android:background="@drawable/bg_mid_button"
 			    />
 			

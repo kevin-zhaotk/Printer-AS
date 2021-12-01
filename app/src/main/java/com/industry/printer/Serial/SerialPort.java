@@ -20,7 +20,7 @@ public class SerialPort {
 
     private native int openSerial(String path, int baudrate);
     private native int closeSerial(int fd);
-    private native int read(int fd);        // 一定不能是static的，否则，JNI无法访问到回调函数nativeDataReceived
+    private native byte[] read(int fd);
     private native int write(int fd, byte[] data, int len);
     private native void stop();
 
@@ -37,15 +37,6 @@ public class SerialPort {
         Debug.d(TAG, "Loading SerialPort library...");
     }
 
-    public interface SerialPortDataReceiveListenner {
-        public void onDataReceived(byte[] data);
-    }
-    private SerialPortDataReceiveListenner mListener;
-
-    public void setListener(SerialPortDataReceiveListenner l) {
-        mListener = l;
-    }
-
     public int openSerial(String port) {
         mFdId = openSerial(port, 9600);
         return mFdId;
@@ -59,7 +50,6 @@ public class SerialPort {
 
     public void stopReading() {
         stop();
-        mListener = null;
     }
 
     public void closeStream() {
@@ -72,30 +62,19 @@ public class SerialPort {
     }
 
     public void closeSerial() {
-        if(closeSerial(mFdId) > 0) {
-            mFdId = -1;
-        }
+        closeSerial(mFdId);
     }
 
-    public void nativeDataReceived(byte[] data) {
-        if(null != mListener) {
-            Debug.d(TAG, "Recv Data :[" + ByteArrayUtils.toHexString(data) + "]");
-            mListener.onDataReceived(data);
-        }
-    }
-
-    public void readSerial(SerialPortDataReceiveListenner l) {
+    public byte[] readSerial() {
         if(mFdId <= 0) {
             Debug.e(TAG, "Serial port not opened.");
-            return;
+            return null;
         }
-        mListener = l;
-        new Thread() {
-            @Override
-            public void run() {
-                read(mFdId);
-            }
-        }.start();
+
+        // JNI的read函数，如果没有数据接收则一直等待，如果有数据接收，在连续接收之后，出现100ms的区间没有数据接收的话，则视为接收结束，返回结果给data。单次最大接收1024字节
+        byte[] data = read(mFdId);
+        Debug.d(TAG, "Recv Data :[" + ByteArrayUtils.toHexString(data) + "]");
+        return data;
     }
 
     public int writeSerial(byte[] value) {

@@ -63,10 +63,10 @@ JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_closeSerial
 /*
  * Class:     com_industry_printer_Serial_SerialPort
  * Method:    read
- * Signature: (I)I
+ * Signature: (I)[B
  */
 
-JNIEXPORT jint JNICALL Java_com_industry_printer_Serial_SerialPort_read
+JNIEXPORT jbyteArray JNICALL Java_com_industry_printer_Serial_SerialPort_read
   (JNIEnv *, jobject, jint);
 
 /*
