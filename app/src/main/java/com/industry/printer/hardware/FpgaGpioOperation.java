@@ -380,7 +380,7 @@ public class FpgaGpioOperation {
 //                data[17] &= 0xFFF0;
                 data[17] |= 0x0010;
 
-                Debug.d(TAG, "data[17] = " + Integer.toHexString(data[17]));
+//                Debug.d(TAG, "data[17] = " + Integer.toHexString(data[17]));
             }
 // End of H.M.Wang 2021-11-18 追加根据双列打印对参数的修改
         }
@@ -478,7 +478,9 @@ public class FpgaGpioOperation {
         //是否雙列打印
 // H.M.Wang 2021-11-17 修改参数61为双列位移设项
 //        data[25] = (char) config.getParam(31 - 1);
+// H.M.Wang 2021-12-9 这个参数是int型的，不能只取一个字节
         data[25] = (char) config.getParam(SystemConfigFile.INDEX_DUAL_COLUMNS);
+// End of H.M.Wang 2021-12-9 这个参数是int型的，不能只取一个字节
 // End of H.M.Wang 2021-11-17 修改参数61为双列位移设项
         //雙列偏移量
 // H.M.Wang 2021-11-19 增加打印方向参数传递

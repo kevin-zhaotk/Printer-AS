@@ -55,6 +55,8 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class ObjectInfoDialog extends Dialog implements android.view.View.OnClickListener, IOnItemClickListener, OnCheckedChangeListener
@@ -770,6 +772,32 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 					mContent.setText("#####");
 // End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 // End of H.M.Wang 2020-6-10 追加DynamicText控件
+// H.M.Wang 2021-12-3 设置mContent的内容随位数变化
+					mDigits.addTextChangedListener(new TextWatcher() {
+						@Override
+						public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+						}
+
+						@Override
+						public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+						}
+
+						@Override
+						public void afterTextChanged(Editable s) {
+							try {
+								int digits = Integer.parseInt(s.toString());
+								if(0 < digits && 256 >= digits) {
+									char[] cnt = new char[digits];
+									Arrays.fill(cnt, '#');
+									mContent.setText(new String(cnt));
+								}
+							} catch (Exception e) {
+							}
+						}
+					});
+// End of H.M.Wang 2021-12-3 设置mContent的内容随位数变化
 				}
 				else if(mObject instanceof CounterObject)
 				{
