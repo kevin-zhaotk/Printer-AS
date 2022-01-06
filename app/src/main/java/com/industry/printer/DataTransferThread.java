@@ -251,7 +251,7 @@ public class DataTransferThread {
 				
 				String purgeFile = "purge/single.bin";
 				if (dotHd) {
-					purgeFile = "purge/bigdot.bin";
+					purgeFile = "purge/purge4big.bin";
 				}
 				
 				char[] buffer = task.preparePurgeBuffer(purgeFile);
@@ -347,12 +347,12 @@ public class DataTransferThread {
 			return;
 		}
 
-		// access lock before cleaning begin
-		mPurgeLock.lock();
 		ThreadPoolManager.mThreads.execute(new Runnable() {
 			
 			@Override
 			public void run() {
+				// access lock before cleaning begin
+				mPurgeLock.lock();
 				isCleaning = true;
 				DataTask task = new DataTask(context, null);
 				Debug.e(TAG, "--->task: " + task);
@@ -373,25 +373,30 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-8-26 追加64SN打印头
 					head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头*/
-				String purgeFile = "purge/bigdot.bin";
+				String purgeFile = "purge/purge4big.bin";
 //				}
 				char[] buffer = task.preparePurgeBuffer(purgeFile);
 				
-				for (int i = 0; i < 15; i++) {
-					Debug.e(TAG, "--->buffer len: " + buffer.length);
+// H.M.Wang 2022-1-4 取消PURGE2的清洗，只留PURGE1，间隔还是10s，重复30次
+				FpgaGpioOperation.clean();
+				FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE1);
+				FpgaGpioOperation.init(mContext);
+				for (int i = 0; i < 50; i++) {
+// End of H.M.Wang 2022-1-4 取消PURGE2的清洗，只留PURGE1，间隔还是10s，重复30次
+					Debug.e(TAG, "(" + (i+1) + ")--->buffer len: " + buffer.length);
 					
-					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE1);
-					FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+					FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
 					try {
-//						Thread.sleep(3000 * 5);
-						mPurgeLock.tryLock(10, TimeUnit.SECONDS);
+						Thread.sleep(1000 * 6);
+//						mPurgeLock.tryLock(10, TimeUnit.SECONDS);
 //						break;
-					} catch (InterruptedException e) {
+					} catch (Exception e) {
 						// e.printStackTrace();
 						// mPurgeLock.unlock();
 					}
 
-					FpgaGpioOperation.clean();
+// H.M.Wang 2022-1-4 取消PURGE2的清洗，只留PURGE1，间隔还是10s，重复30次
+/*					FpgaGpioOperation.clean();
 					FpgaGpioOperation.updateSettings(context, task, FpgaGpioOperation.SETTING_TYPE_PURGE2);
 					FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
 					try {
@@ -400,9 +405,17 @@ public class DataTransferThread {
 					} catch (InterruptedException e) {
 						// e.printStackTrace();
 					}
-					FpgaGpioOperation.clean();
+*/
+// End of H.M.Wang 2022-1-4 取消PURGE2的清洗，只留PURGE1，间隔还是10s，重复30次
 				}
-				mPurgeLock.unlock();
+				FpgaGpioOperation.uninit();
+				FpgaGpioOperation.clean();
+				try {
+					mPurgeLock.unlock();
+				} catch (Exception e) {
+					// e.printStackTrace();
+					// mPurgeLock.unlock();
+				}
 				isCleaning = false;
 			}
 			
@@ -1966,6 +1979,16 @@ private void setCounterPrintedNext(DataTask task, int count) {
 			int lastPrintedCount = 0;
 
 			while(mRunning == true) {
+// H.M.Wang 2021-12-30 当正在打印的时候，如果开始清晰，则暂停打印进程
+                if(isPurging) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        Debug.e(TAG, e.getClass().getSimpleName() + ": " + e.getMessage());
+                    }
+                    continue;
+                }
+// End of H.M.Wang 2021-12-30 当正在打印的时候，如果开始清晰，则暂停打印进程
 // H.M.Wang 2021-5-8 试图修改根据打印次数修改主屏幕显示打印数量的功能
 // H.M.Wang 2021-5-7 当在FIFO模式的时候，在这里对实际打印次数进行修正
 				lastPrintedCount = FpgaGpioOperation.getPrintedCount();

@@ -30,8 +30,7 @@ public class Paramter {
 		}
 		// S16
 		mFPGAParam[15] = param[2]/150;
-				
-		
+
 		// S5
 		mFPGAParam[4] = 170000/(param[0]*mFPGAParam[15]);
 		if (mFPGAParam[4] > 65535) {

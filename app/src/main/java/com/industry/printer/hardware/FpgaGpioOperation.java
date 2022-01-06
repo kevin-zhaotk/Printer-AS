@@ -233,6 +233,9 @@ public class FpgaGpioOperation {
             return;
         }
         ioctl(fd, FPGA_CMD_CLEAN, 0);
+// H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
+        ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_CLEAN);
+// End of H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
         Debug.d(TAG, "FPGA_CMD_CLEAN");
         // close(fd);
     }
@@ -264,6 +267,18 @@ public class FpgaGpioOperation {
         }
         char data[] = new char[Configs.gParams];
         SystemConfigFile config = SystemConfigFile.getInstance(context);
+// H.M.Wang 2021-12-31 在打自己的时候，将分辨率参数强制设为150，（其实我认为300dpi的img应该设为300，150dpi的img应该设为150）
+        if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
+            config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32_DOT ||
+            config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT ||
+            config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32DN ||
+            config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32SN ||
+            config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN ||
+            config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_96DN) {
+            config.setParam(2, 150);
+        }
+// End of H.M.Wang 2021-12-31 在打自己的时候，将分辨率参数强制设为150，（其实我认为300dpi的img应该设为300，150dpi的img应该设为150）
+
 //		config.paramTrans();
         //		RFIDManager manager = RFIDManager.getInstance(context);
 //		RFIDDevice device = manager.getDevice(0);
@@ -288,10 +303,10 @@ public class FpgaGpioOperation {
             data[1] = 4;
             data[3] = 100 * 4;
             data[4] = 1000;
-// H.M.Wang 2021-10-22 修改清洗，重复打印设置改为2000ms，这样放置在清洗完成后还连续产生PH14
+// H.M.Wang 2021-10-22 修改清洗，重复打印设置改为2000ms，这样防止在清洗完成后还连续产生PH14
 //            data[5] = 100 * 4;
             data[5] = 500 * 4;
-// End of H.M.Wang 2021-10-22 修改清洗，重复打印设置改为2000ms，这样放置在清洗完成后还连续产生PH14
+// End of H.M.Wang 2021-10-22 修改清洗，重复打印设置改为2000ms，这样防止在清洗完成后还连续产生PH14
 // H.M.Wang 2021-4-1 当清洗时，将bold设为头数，以避免清洗变淡
             data[15] = (char) (config.getPNozzle().mHeads);
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_R6X48 ||
@@ -322,7 +337,9 @@ public class FpgaGpioOperation {
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_96DN) {
 // End of H.M.Wang 2021-8-16 追加96DN头
-                data[15] = 8;
+// H.M.Wang 2021-12-31 将data[15]原来强制设为8改为2（其实2是对应于300dpi的，150dpi应该是1
+                data[15] = 2;
+// End of H.M.Wang 2021-12-31 将data[15]原来强制设为8改为2（其实2是对应于300dpi的，150dpi应该是1
             }
 // End of H.M.Wang 2021-4-1 当清洗时，将bold设为头数，以避免清洗变淡
 // H.M.Wang 2021-4-22 如果打印头的类型是打字机，则取消加重的设置。如果img为300dpi的话，强制设置为300dpi，如果img为150dpi的话，设置为150dpi
@@ -386,7 +403,16 @@ public class FpgaGpioOperation {
         }
 
         if (type == SETTING_TYPE_PURGE1) {
-            data[4] = (char) (data[4] * 2);
+// H.M.Wang 2021-12-29 修改S5，S15，S21，S22，S23为下列固定值
+///////            data[4] = (char) (data[4] * 2);
+            data[20] = 50;
+            data[21] = 50;
+            data[22] = 1000;
+            data[14] = 500;
+            data[4] = 100;
+            data[5] = 1500;
+// End of H.M.Wang 2021-12-29 修改S5，S15，S21，S22，S23为下列固定值
+
 // H.M.Wang 2021-3-30 当清洗时，头类型设为25.4x4
             data[9] = (char) PrinterNozzle.NozzleType.NOZZLE_TYPE_1_INCH_FOUR;
 // End of H.M.Wang 2021-3-30 当清洗时，头类型设为25.4x4
@@ -530,6 +556,9 @@ public class FpgaGpioOperation {
 		data[Configs.gParams - 1] = (char)second;
 		*/
 
+// H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
+        ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_SETTING);
+// End of H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
         writeData(DATA_GENRE_IGNORE, FPGA_STATE_SETTING, data, data.length * 2);
     }
 
@@ -549,6 +578,9 @@ public class FpgaGpioOperation {
         ioctl(fd, FPGA_CMD_BUCKETSIZE, config.getParam(SystemConfigFile.INDEX_FIFO_SIZE));
         Debug.d(TAG, "FPGA_CMD_STARTPRINT");
         ioctl(fd, FPGA_CMD_STARTPRINT, 0);
+// H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
+        ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_OUTPUT);
+// End of H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
     }
 
     /**
@@ -562,6 +594,9 @@ public class FpgaGpioOperation {
 
         Debug.d(TAG, "FPGA_CMD_STOPPRINT");
         ioctl(fd, FPGA_CMD_STOPPRINT, 0);
+// H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
+        ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_CLEAN);
+// End of H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
     }
 
     public static void dispLog() {
@@ -582,6 +617,9 @@ public class FpgaGpioOperation {
 
         Debug.d(TAG, "FPGA_CMD_SOFTPHO");
         ioctl(fd, FPGA_CMD_SOFTPHO, 0);
+// H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
+        ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_SOFTPHO);
+// End of H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
     }
 
 // H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令

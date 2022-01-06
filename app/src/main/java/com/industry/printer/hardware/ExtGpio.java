@@ -25,8 +25,17 @@ public class ExtGpio {
 	private static final int GPIO_RFID_CARD7 = 0x09;		// 在驱动中执行与GPIO_RFID_CARD4相同操作
 	private static final int GPIO_RFID_CARD8 = 0x0A;		// 在驱动中执行与GPIO_RFID_CARD4相同操作
 	private static final int GPIO_WRITE = 0x10;
-	
-	
+
+// H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
+	// 这样操作以后，img也做了相应的修改，新的apk在原有的img上可以无障碍动作，但是互相干扰的现象仍然存在；旧的apk在新的img上面将无法实现对FPGA的控制，即无法打印
+	private static final int GPIO_FPGA_CMD = 0x0C;			// FPGA 设置状态命令（PG1和PG2）
+
+	public static final int FPGA_STATE_OUTPUT = 0x00;
+	public static final int FPGA_STATE_SETTING = 0x04;
+	public static final int FPGA_STATE_SOFTPHO = 0x02;
+	public static final int FPGA_STATE_CLEAN = 0x06;
+// End of H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
+
 	// RFID卡1對應的3-8譯碼器編碼
 	private static final int RFID_CARD1_CODE = 3;
 	// RFID卡2對應的3-8譯碼器編碼
@@ -40,8 +49,16 @@ public class ExtGpio {
 	public static final int RFID_CARD6 = 5;					// PG5-9: 101
 	public static final int RFID_CARD7 = 6;					// PG5-9: 011
 	public static final int RFID_CARD8 = 7;					// PG5-9: 111
-	
+
 	public static int mFd = 0;
+
+// H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
+	public static void setFpgaState(int state) {
+		int fd = open();
+		FpgaGpioOperation.ioctl(fd, GPIO_FPGA_CMD, state);
+	}
+// End of H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
+
 	public static void rfidSwitch(int sw) {
 		int fd = open();
 		if (sw == RFID_CARD1) {

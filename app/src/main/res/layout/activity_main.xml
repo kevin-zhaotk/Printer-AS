@@ -124,6 +124,7 @@
         android:layout_alignParentTop="true"
         >
         <!-- H.M.Wang 2020-6-3 这个完全没有必要，仅仅是为了解决扫码枪扫码时，msg_transfer被自动打开的问题 -->
+        <!-- 一定不要将该控件设置为Invisible或者gone，否则无法起到阻挡作用 -->
         <ImageButton
             android:id="@+id/msg_transfer1"
             android:layout_width="@dimen/top_btn_height"
@@ -132,7 +133,6 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="@dimen/space_5dp"
-            android:visibility="invisible"
             />
         <!-- H.M.Wang 2020-8-11 追加时间显示 -->
         <LinearLayout

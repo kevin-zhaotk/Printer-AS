@@ -1312,7 +1312,11 @@ public class DataTask {
 
 		int slant = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_SLANT);
 ///./...		Debug.d(TAG, "--->slant: " + slant);
-		expendColumn(mBuffer, br.getColumnNum(), slant);
+// H.M.Wang 2021-12-29 将下列判断移到这里，保证正常打印的逻辑不变
+		if (mTask != null && mTask.getNozzle() != null && mTask.getNozzle().buffer8Enable) {
+			expendColumn(mBuffer, br.getColumnNum(), slant);
+		}
+// End of H.M.Wang 2021-12-29 将下列判断移到这里，保证正常打印的逻辑不变
 	}
 	/**
 	 * 双列喷嘴用的，  以后不用了，   替换为旋转逻辑
@@ -1476,13 +1480,27 @@ public char[] bitShiftFor64SN() {
 			stream = mContext.getAssets().open(bin);
 			mBinInfo = new BinInfo(stream, 1);
 			char[] buffer = mBinInfo.getBgBuffer();
+
+// H.M.Wang 2022-1-3 使用直接的bin（purge4big.bin)，不再做扩充的操作
+/*
+//            BinCreater.saveBin("/mnt/sdcard/purge1.bin", buffer, 32);
 			stream.close();
-			char[] rb = new char[buffer.length * 12];
-			for(int i = 0; i < 12; i++) {
+			char[] rb = new char[buffer.length * 36];
+// H.M.Wang 2021-12-29 在扩大3倍，到36倍（原来12倍）
+			for(int i = 0; i < 36; i++) {
+// End of H.M.Wang 2021-12-29 在扩大3倍，到36倍（原来12倍）
 				System.arraycopy(buffer, 0, rb, i * buffer.length, buffer.length -1);
 			}
+// H.M.Wang 2021-12-29 追加为清洗打印缓冲区生成调用slant
+//			BinCreater.saveBin("/mnt/sdcard/purge2.bin", rb, 32);
+			expendColumn(rb, mBinInfo.mColumn*36, 100);
+			rb = mBuffer;
+//            BinCreater.saveBin("/mnt/sdcard/purge3.bin", mBuffer, 32);
+// End of H.M.Wang 2021-12-29 追加为清洗打印缓冲区生成调用slant
 			return rb;
-//			return buffer;
+*/
+// End of H.M.Wang 2022-1-3 使用直接的bin（purge4big.bin)，不再做扩充的操作
+			return buffer;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1587,10 +1605,11 @@ public char[] bitShiftFor64SN() {
 	 * 				第n行，向右偏移（n * shift）列
 	 */
 	public void expendColumn(char[] buffer, int columns, int slant) {
-
-		if (mTask == null || mTask.getNozzle() == null || !mTask.getNozzle().buffer8Enable) {
-			return;
-		}
+// H.M.Wang 2021-12-29 将下列判断移到正常打印流程，取消这里的判断，否则清洗时做的slant会因为mTask为null而返回空
+//		if (mTask == null || mTask.getNozzle() == null || !mTask.getNozzle().buffer8Enable) {
+//			return;
+//		}
+// End of H.M.Wang 2021-12-29 将下列判断移到正常打印流程，取消这里的判断，否则清洗时做的slant会因为mTask为null而返回空
 		int extension = 0;
 		int shift = 0;
 		Debug.d(TAG, "--->slant: " + slant);
@@ -1610,7 +1629,7 @@ public char[] bitShiftFor64SN() {
 		
 		// the  final extension and shift buffer
 		// mBuffer = new char[afterColumns * charsPerColumn];
-		Debug.d(TAG, "--->charsPerColumn: " + charsPerColumn + "  columnH: " + columnH + "  afterColumns: " + afterColumns + "  buffer.len: " + mBuffer.length);
+		Debug.d(TAG, "--->charsPerColumn: " + charsPerColumn + "  columnH: " + columnH + "  afterColumns: " + afterColumns + "  buffer.len: " + buffer_8.length);
 		// 8 times extension buffer
 		for (int i = 0; i < buffer.length/charsPerColumn; i++) {
 			for (int j = 0; j < charsPerColumn; j++) {

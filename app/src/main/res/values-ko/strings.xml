@@ -21,6 +21,7 @@
 	<string name="str_clean_confirm">5분간 세척이 진행되므로 계속할가요?</string>
 	<string name="str_under_purging">세척진행중잠시후 재시도하여주세요</string>
 <!-- End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗 -->
+	<string name="str_under_printing">Please stop print then try again.</string>
 	<string name="str_btn_open">OPEN</string>
 	<string name="str_remain_ink">나머지 잠김수치</string>
 	<string name="str_remain_ptimes">프린트차수: </string>

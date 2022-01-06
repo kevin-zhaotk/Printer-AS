@@ -490,6 +490,12 @@ public static final String TAG="SettingsTabActivity";
 					break;
 				}
 // End of H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
+// H.M.Wang 2022-1-4 追加是否正在打印的判断，打印中不支持长清洗
+				if(thread.isRunning()) {
+					ToastUtil.show(mContext, R.string.str_under_printing);
+					break;
+				}
+// End of H.M.Wang 2022-1-4 追加是否正在打印的判断，打印中不支持长清洗
 
 // H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗
 				AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
