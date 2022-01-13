@@ -1439,6 +1439,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						}
 					}.start();
 					break;
+// H.M.Wang 2022-1-13 追加获取RFID写3次失败后的通知
+                case RFIDManager.MSG_RFID_WRITE_FAIL:
+                    ToastUtil.show(mContext, "rfid write failed.");
+                    break;
+// End of H.M.Wang 2022-1-13 追加获取RFID写3次失败后的通知
 				case SmartCardManager.MSG_SMARTCARD_CHECK_SUCCESS:
 				case RFIDManager.MSG_RFID_CHECK_SUCCESS:
 				case MESSAGE_PRINT_START:
@@ -1562,8 +1567,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						@Override
 						public void run() {
 							FpgaGpioOperation.dispLog();
+// H.M.Wang 2022-1-11 延时400ms再次下发CLEAN，目的是错过beep，因为这个beep可能会导致PG1，2始终为低
 							try{Thread.sleep(400);}catch(Exception e){};
 							FpgaGpioOperation.clean();
+// End of H.M.Wang 2022-1-11 延时400ms再次下发CLEAN，目的是错过beep，因为这个beep可能会导致PG1，2始终为低
 						}
 					}).start();
 
@@ -2300,7 +2307,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 // End of H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
 //	死机			mInkManager.checkRfid();
 //	拔出墨盒仍然返回有效数值56643			mInkManager.getLocalInk(0);
-				mHandler.sendEmptyMessage(MESSAGE_OPEN_TLKFILE);
+// H.M.Wang 2022-1-12 延时1秒下发打印命令
+				mHandler.sendEmptyMessageDelayed(MESSAGE_OPEN_TLKFILE, 1000);
+// End of H.M.Wang 2022-1-12 延时1秒下发打印命令
 				break;
 			case R.id.StopPrint:
 // H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
@@ -2311,10 +2320,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				}
 // End of H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
 				// mHandler.removeMessages(MESSAGE_PAOMADENG_TEST);
-// H.M.Wang 2022-1-11 延时400ms下发打印停止命令，目的是错过beep，因为这个beep可能会导致PG1，2始终为低
 				mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
-//				mHandler.sendEmptyMessageDelayed(MESSAGE_PRINT_STOP, 400);
-// End of H.M.Wang 2022-1-11 延时400ms下发打印停止命令，目的是错过beep，因为这个beep可能会导致PG1，2始终为低
 // H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
                 mGroupIndex.setVisibility(View.GONE);
 // H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp

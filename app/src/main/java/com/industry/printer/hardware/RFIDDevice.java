@@ -1076,7 +1076,7 @@ public class RFIDDevice implements RfidCallback{
 		}
 		return true;
 	}
-	
+
 	public void writeInk(boolean isBack) {
 		byte sector = 0;
 		byte block = 0;
@@ -1252,7 +1252,11 @@ public class RFIDDevice implements RfidCallback{
 	public void setState(int state) {
 		mState = state;
 	}
-	
+
+// H.M.Wang 2022-1-13 追加写操作失败次数
+	public int mWriteError = 0;
+// End of H.M.Wang 2022-1-13 追加写操作失败次数
+
 	@Override
 	public void onFinish(RFIDData data) {
 		byte[] rfid;
@@ -1348,7 +1352,19 @@ public class RFIDDevice implements RfidCallback{
 				if (mState == STATE_RFID_BACKUP_WRITING) {
 					mState = STATE_RFID_BACKUP_SYNCED;
 				} else if (mState == STATE_RFID_VALUE_WRITING) {
+// H.M.Wang 2022-1-13 追加写操作时的返回值判断，如果写操作出现异常，则记录次数
+/*					byte[] res = data.getData();
+					if(null != res && res.length >= 1 && res[0] == 0) {
+						Debug.d(TAG, "RFID_CMD_WRITE_VERIFY succeeded!");
+						mState = STATE_RFID_VALUE_SYNCED;
+						mWriteError = 0;
+					} else {
+						Debug.e(TAG, "RFID_CMD_WRITE_VERIFY failed! " + mWriteError);
+						mState = STATE_RFID_CONNECTED;
+						mWriteError++;
+					}*/
 					mState = STATE_RFID_VALUE_SYNCED;
+// End of H.M.Wang 2022-1-13 追加写操作时的返回值判断，如果写操作出现异常，则记录次数
 				}
 
 				break;

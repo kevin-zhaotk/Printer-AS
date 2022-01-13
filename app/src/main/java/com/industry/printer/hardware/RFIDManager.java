@@ -512,4 +512,10 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 		int vol = dev.getFeature(index);
 		return vol;
 	}
+
+// H.M.Wang 2022-1-13 追加写3次失败后通知上层的功能
+	public void onWriteFailed() {
+		mCallback.sendEmptyMessageDelayed(MSG_RFID_WRITE_FAIL, 100);
+	}
+// End of H.M.Wang 2022-1-13 追加写3次失败后通知上层的功能
 }

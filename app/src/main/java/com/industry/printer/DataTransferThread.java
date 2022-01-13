@@ -2052,11 +2052,11 @@ private void setCounterPrintedNext(DataTask task, int count) {
 
 					synchronized (DataTransferThread.class) {
 ////////////////////////////////////////////////////////
-						IInkDevice id = InkManagerFactory.inkManager(mContext);
-						if(id instanceof SmartCardManager) {
+						IInkDevice scm = InkManagerFactory.inkManager(mContext);
+						if(scm instanceof SmartCardManager) {
 							if(mPrintCount == 0) {
 								mPrintCount = 10;
-								((SmartCardManager) id).updateLevel();
+								((SmartCardManager) scm).updateLevel();
 							}
 							mPrintCount--;
 						}

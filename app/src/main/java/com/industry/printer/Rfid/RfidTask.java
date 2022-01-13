@@ -180,6 +180,11 @@ public class RfidTask implements RfidCallback{
 					mState = STATE_SYNCED;
 					Debug.d(TAG, "--->state=" + mState);
 				}
+// H.M.Wang 2022-1-13 追加写3次失败后通知上层的功能
+				if(dev.mWriteError >= 3) {
+					((RFIDManager)manager).onWriteFailed();
+				}
+// End of H.M.Wang 2022-1-13 追加写3次失败后通知上层的功能
 				break;
 			case RFIDDevice.RFID_CMD_MIFARE_WRITE_BLOCK:
 				if (dev.getState() == RFIDDevice.STATE_RFID_BACKUP_SYNCED) {
