@@ -19,7 +19,7 @@ extern "C" {
 
 JNIEXPORT jint JNICALL Java_com_Smartcard_shutdown(JNIEnv *env, jclass arg);
 
-JNIEXPORT jint JNICALL Java_com_Smartcard_exist(JNIEnv *env, jclass arg);
+JNIEXPORT jint JNICALL Java_com_Smartcard_exist(JNIEnv *env, jclass arg, jint imgtype);
 
 /*
  * 初始化HP智能卡设备和HOST卡

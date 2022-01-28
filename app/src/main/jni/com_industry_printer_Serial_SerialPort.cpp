@@ -359,6 +359,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_industry_printer_Serial_SerialPort_read
             int rnum = read(fd, temp_buf, MAX_TEMP_BUFFER_LEN);
 
             if(rnum > 0) {
+//                LOGD("-[%d] bytes read.", recv_num);
                 rnum = ((recv_num + rnum) > MAX_RETRIVAL_BUFFER_LEN ? (MAX_RETRIVAL_BUFFER_LEN - recv_num) : rnum);
                 memcpy(&recv_buf[recv_num], temp_buf, rnum);
                 recv_num += rnum;

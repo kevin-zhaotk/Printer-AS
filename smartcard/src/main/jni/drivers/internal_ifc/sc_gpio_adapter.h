@@ -25,6 +25,14 @@
 extern "C" {
 #endif
 
+typedef enum
+{
+    M_IMG_FALSE = 0,
+    M_IMG_TRUE  = 1,
+} M_IMG_TYPE;
+
+extern M_IMG_TYPE gMImgType;
+
 #define LOW   0
 #define HIGH  1
 

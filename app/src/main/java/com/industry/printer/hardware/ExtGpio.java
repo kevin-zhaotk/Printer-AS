@@ -16,10 +16,10 @@ public class ExtGpio {
 	
 	private static final int GPIO_PLAY = 0x01;
 	private static final int GPIO_PLAY_ERR = 0x02;
-	private static final int GPIO_RFID_CARD1 = 0x03;		// PG5-9: 011
-	private static final int GPIO_RFID_CARD2 = 0x04;		// PG5-9: 100
-	private static final int GPIO_RFID_CARD3 = 0x05;		// PG5-9: 101
-	private static final int GPIO_RFID_CARD4 = 0x06;		// PG5-9: 110
+	private static final int GPIO_RFID_CARD1 = 0x03;		// PG5-9: 011(3.5), 000(7)
+	private static final int GPIO_RFID_CARD2 = 0x04;		// PG5-9: 100(3.5), 100(7)
+	private static final int GPIO_RFID_CARD3 = 0x05;		// PG5-9: 101(3.5), 010(7)
+	private static final int GPIO_RFID_CARD4 = 0x06;		// PG5-9: 110(3.5), 110(7)
 	private static final int GPIO_RFID_CARD5 = 0x07;		// 在驱动中执行与GPIO_RFID_CARD4相同操作
 	private static final int GPIO_RFID_CARD6 = 0x08;		// 在驱动中执行与GPIO_RFID_CARD4相同操作
 	private static final int GPIO_RFID_CARD7 = 0x09;		// 在驱动中执行与GPIO_RFID_CARD4相同操作
@@ -29,6 +29,10 @@ public class ExtGpio {
 // H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
 	// 这样操作以后，img也做了相应的修改，新的apk在原有的img上可以无障碍动作，但是互相干扰的现象仍然存在；旧的apk在新的img上面将无法实现对FPGA的控制，即无法打印
 	private static final int GPIO_FPGA_CMD = 0x0C;			// FPGA 设置状态命令（PG1和PG2）
+// H.M.Wang 2022-1-17 追加测试GPIO输出与输入对应关系的命令
+	private static final int GPIO_TEST_WRITE_PIN = 0x0D;	// 写输出命令（8组当中的一个，除第8组以外）
+	private static final int GPIO_TEST_READ_PIN  = 0x0E;	// 读输入、输出命令（8组当中的一个，除第8组以外）
+// End of H.M.Wang 2022-1-17 追加测试GPIO输出与输入对应关系的命令
 
 	public static final int FPGA_STATE_OUTPUT = 0x00;
 	public static final int FPGA_STATE_SETTING = 0x04;
@@ -140,4 +144,19 @@ public class ExtGpio {
         }
     }
 
+	public static void writeGpioTestPin(char group, int index, int value) {
+		int fd = open();
+		int g = group - 'A';
+		int v = ((g & 0x0f) << 12) | ((index & 0x0ff) << 4) | value;
+		Debug.d("ExtGpio", "--->writeGpioTestPin: fd= " + fd + "  group=" + group + "  index=" + index + " value=" + value + "  v=" + v);
+		FpgaGpioOperation.ioctl(fd, GPIO_TEST_WRITE_PIN, v);
+	}
+
+	public static int readGpioTestPin(char group, int index) {
+		int fd = open();
+		int g = group - 'A';
+		int v = ((g & 0x0f) << 12) | ((index & 0x0ff) << 4);
+		Debug.d("ExtGpio", "--->readGpioTestPin: fd= " + fd + "  group=" + group + "  index=" + index);
+		return FpgaGpioOperation.ioctl(fd, GPIO_TEST_READ_PIN, v);
+	}
 }

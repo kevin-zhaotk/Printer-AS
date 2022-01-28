@@ -179,6 +179,32 @@ public class SmartCardManager implements IInkDevice {
     private boolean isOpeningInit = false;
     private int reading = 0;
 
+// H.M.Wang 2022-1-24 将单卡的初始化流程提取出来成为一个独立的函数
+    private void initComponent(int index) {
+        if(index < 0 || index >= mPenNum+mBagNum) return;
+
+        mCards[index].mRecentLevels.clear();
+        if(index < mPenNum) {
+            SmartCard.initComponent(mCards[index].mLevelType);
+        }
+        if(SmartCard.SC_SUCCESS == SmartCard.initComponent(mCards[index].mCardType)) {
+            mCards[index].mInitialized = true;
+            mCards[index].mValid = true;
+            MAX_BAG_INK_VOLUME = SmartCard.getMaxVolume(mCards[index].mCardType);
+            if(mCards[index].mCardType == CARD_TYPE_PEN1 || mCards[index].mCardType == CARD_TYPE_PEN2 || mCards[index].mCardType == CARD_TYPE_BULKX) {
+                mCards[index].mMaxVolume = MAX_BAG_INK_VOLUME * PEN_VS_BAG_RATIO;
+            } else {
+                mCards[index].mMaxVolume = MAX_BAG_INK_VOLUME;
+            }
+            checkOIB(index);
+            getLocalInk(index);
+        } else {
+            mCards[index].mInitialized = false;
+            mCards[index].mValid = false;
+        }
+    }
+// End of H.M.Wang 2022-1-24 将单卡的初始化流程提取出来成为一个独立的函数
+
     @Override
     public void init(final Handler callback) {
         Debug.d(TAG, "---> enter init()");
@@ -200,7 +226,9 @@ public class SmartCardManager implements IInkDevice {
                     synchronized (SmartCardManager.this) {
                         SmartCard.init();
                         for(int i=0; i<mPenNum+mBagNum; i++) {
-                            mCards[i].mRecentLevels.clear();
+// H.M.Wang 2022-1-24 将单卡的初始化流程提取出来成为一个独立的函数
+                            initComponent(i);
+/*                            mCards[i].mRecentLevels.clear();
                             if(i<mPenNum) {
                                 SmartCard.initComponent(mCards[i].mLevelType);
                             }
@@ -218,7 +246,8 @@ public class SmartCardManager implements IInkDevice {
                             } else {
                                 mCards[i].mInitialized = false;
                                 mCards[i].mValid = false;
-                            }
+                            }*/
+// End of H.M.Wang 2022-1-24 将单卡的初始化流程提取出来成为一个独立的函数
                         }
                     }
                 }
@@ -240,7 +269,7 @@ public class SmartCardManager implements IInkDevice {
                             @Override
                             public void run() {
                                 checkConsistency(mCurPenIdx, mCurBagIdx);
-                                if(reading < mPenNum + mBagNum )readConsistency(reading++); // 进最初显示一轮而已
+                                if(reading < mPenNum + mBagNum )readConsistency(reading++); // 仅最初显示一轮而已
                             }
                         }, (long)3000, (long)MSG_READ_CONSISTENCY_INTERVAL);
                     }
@@ -538,11 +567,21 @@ public class SmartCardManager implements IInkDevice {
     }
 
     @Override
-    public boolean isValid(int cardIdx) {
+    public boolean isValid(final int cardIdx) {
         Debug.d(TAG, "---> enter isValid(" + cardIdx + ")");
         boolean ret = false;
 
         if(cardIdx < mPenNum + mBagNum) {
+// H.M.Wang 2022-1-24 追加在卡为无效或者未初始化的时候，尝试初始化
+            if(!mCards[cardIdx].mValid || !mCards[cardIdx].mInitialized) {
+                mCachedThreadPool.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        initComponent(cardIdx);
+                    }
+                });
+            }
+// End of H.M.Wang 2022-1-24 追加在卡为无效或者未初始化的时候，尝试初始化
             ret = mCards[cardIdx].mValid;
         }
 

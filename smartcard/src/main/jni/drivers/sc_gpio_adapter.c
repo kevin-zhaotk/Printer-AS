@@ -22,6 +22,8 @@
 #include "internal_ifc/sc_gpio_driver.h"
 #include "../common_log.h"
 
+M_IMG_TYPE gMImgType = M_IMG_FALSE;
+
 // Added by H.M.Wang 2019-10-17
 
 // Added by H.M.Wang 2019-10-17 end
@@ -154,12 +156,22 @@ uint8_t SC_GPIO_ADAPTER_select_device(int device) {
 
     switch(device) {
         case GPIO_DEVICE_BULK1:
-            LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_BULK : GPIO_RFID_CARD5): %d", GPIO_RFID_CARD5);
-            SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD5);
+            if(gMImgType == M_IMG_TRUE) {
+                LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_BULK : GPIO_RFID_CARD4): %d", GPIO_RFID_CARD4);
+                SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD4);
+            } else {
+                LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_BULK : GPIO_RFID_CARD5): %d", GPIO_RFID_CARD5);
+                SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD5);
+            }
             break;
         case GPIO_DEVICE_PEN1:
-            LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1 : GPIO_RFID_CARD2): %d", GPIO_RFID_CARD2);
-            SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD2);
+            if(gMImgType == M_IMG_TRUE) {
+                LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1 : GPIO_RFID_CARD1): %d", GPIO_RFID_CARD1);
+                SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD1);
+            } else {
+                LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1 : GPIO_RFID_CARD2): %d", GPIO_RFID_CARD2);
+                SP_GPIO_DRIVER_select_card(GPIO_RFID_CARD2);
+            }
             break;
         case GPIO_DEVICE_PEN2:
             LOGI(">>> SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN2 : GPIO_RFID_CARD3): %d", GPIO_RFID_CARD3);

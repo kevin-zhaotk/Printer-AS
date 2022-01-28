@@ -1353,20 +1353,20 @@ public class RFIDDevice implements RfidCallback{
 					mState = STATE_RFID_BACKUP_SYNCED;
 				} else if (mState == STATE_RFID_VALUE_WRITING) {
 // H.M.Wang 2022-1-13 追加写操作时的返回值判断，如果写操作出现异常，则记录次数
-/*					byte[] res = data.getData();
+/*	暂时屏蔽				byte[] res = data.getData();
 					if(null != res && res.length >= 1 && res[0] == 0) {
 						Debug.d(TAG, "RFID_CMD_WRITE_VERIFY succeeded!");
 						mState = STATE_RFID_VALUE_SYNCED;
 						mWriteError = 0;
 					} else {
 						Debug.e(TAG, "RFID_CMD_WRITE_VERIFY failed! " + mWriteError);
-						mState = STATE_RFID_CONNECTED;
+						mState = STATE_RFID_VALUE_SYNCED;   // H.M.Wang 2022-1-23 这里如果不设STATE_RFID_VALUE_SYNCED，如果写失败会造成卡1一直尝试写而无法完成，234卡不会被写到
 						mWriteError++;
-					}*/
+					}
+*/
 					mState = STATE_RFID_VALUE_SYNCED;
 // End of H.M.Wang 2022-1-13 追加写操作时的返回值判断，如果写操作出现异常，则记录次数
 				}
-
 				break;
 			default:
 				break;

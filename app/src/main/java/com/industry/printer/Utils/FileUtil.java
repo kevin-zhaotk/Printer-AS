@@ -70,6 +70,7 @@ public class FileUtil {
     	Debug.d(TAG, "--->copyDirectory src: " + sourceDir + "  target: " + targetDir);
     	
     	File src = new File(sourceDir);
+// 取消这个判断会产生一个空（目标）目录，空目录没事， 只要没有里面图片就行        if(!src.exists()) return;
     	if (src.isFile()) {
 			copyFile(sourceDir, targetDir);
 			return;
@@ -118,31 +119,50 @@ public class FileUtil {
 			Debug.e(TAG, "--->exception: " + e.getMessage());
 		}
     }
-    
-    public static void deleteFolder(String filePath) {       
-    	if (!TextUtils.isEmpty(filePath)) {  
+/* H.M.Wang 2022-1-14 这个实现更简洁，暂时保留原样
+    public static void deleteFolder(String filePath) {
+    	if (!TextUtils.isEmpty(filePath)) {
     	    try {  
-    	        File file = new File(filePath);  
-    	        if (file.isDirectory()) { //目录  
-    	            File files[] = file.listFiles();  
-    	            for (int i = 0; i < files.length; i++) {
-    	                deleteFolder(files[i].getAbsolutePath());  
-    	            }  
-    	        }  
-    	           
-    	        if (!file.isDirectory()) { //如果是文件，删除  
-    	            file.delete();  
-    	        } else { //目录  
-    	           if (file.listFiles().length == 0) { //目录下没有文件或者目录，删除  
-    	                file.delete();  
-    	           }  
-    	        }
-    	    } catch (Exception e) {  
+    	        File file = new File(filePath);
+                if(file.exists()) {
+                    if (file.isDirectory()) { //目录
+                        File files[] = file.listFiles();
+                        for (int i = 0; i < files.length; i++) {
+                            deleteFolder(files[i].getAbsolutePath());
+                        }
+                    }
+                    file.delete();
+                }
+    	    } catch (Exception e) {
     	        e.printStackTrace();  
     	    }  
     	}  
-    } 
-    
+    }
+*/
+    public static void deleteFolder(String filePath) {
+        if (!TextUtils.isEmpty(filePath)) {
+            try {
+                File file = new File(filePath);
+                if (file.isDirectory()) { //目录
+                    File files[] = file.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        deleteFolder(files[i].getAbsolutePath());
+                    }
+                }
+
+                if (!file.isDirectory()) { //如果是文件，删除
+                    file.delete();
+                } else { //目录
+                    if (file.listFiles().length == 0) { //目录下没有文件或者目录，删除
+                        file.delete();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static String getFileNameNoEx(String filename) {
     	if ((filename != null) && filename.length() > 0) {
 			int dot = filename.lastIndexOf(".");

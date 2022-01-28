@@ -38,6 +38,11 @@ public class InkManagerFactory {
               return new SmartCardManager(ctx);
 //            return new RFIDManager(ctx);
         } else {
+// H.M.Wang 2022-1-20 根据SmartCard是否连接来判断走SC还是RFID
+            if(SmartCard.exist(PlatformInfo.getImgUniqueCode().startsWith("M") ? 1 : 0) == SmartCard.SC_SUCCESS) {
+                return new SmartCardManager(ctx);
+            }
+// End of H.M.Wang 2022-1-20 根据SmartCard是否连接来判断走SC还是RFID
             return new RFIDManager(ctx);
         }
     }

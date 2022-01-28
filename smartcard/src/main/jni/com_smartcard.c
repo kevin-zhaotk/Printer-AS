@@ -52,7 +52,7 @@ static pthread_mutex_t mutex;
 
 //#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.373"
+#define VERSION_CODE                            "1.0.375"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -134,7 +134,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_shutdown(JNIEnv *env, jclass arg) {
     return SC_SUCCESS;
 }
 
-JNIEXPORT jint JNICALL Java_com_Smartcard_exist(JNIEnv *env, jclass arg) {
+JNIEXPORT jint JNICALL Java_com_Smartcard_exist(JNIEnv *env, jclass arg, jint imgtype) {
     LOGI("Checking smart card existence....\n");
 
     HP_SMART_CARD_gpio_init();
@@ -142,10 +142,14 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_exist(JNIEnv *env, jclass arg) {
 
     LIB_HP_SMART_CARD_init();
 
+    gMImgType = imgtype;
+    LOGE(">>> Image Type: %d.", gMImgType);
+
     if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_HOST)) {
         LOGE(">>> LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_HOST): NOT PRESENT.  ");
         return SC_INIT_HOST_CARD_NOT_PRESENT;
     }
+
     return SC_SUCCESS;
 }
 
@@ -182,6 +186,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jin
 
     pthread_mutex_lock(&mutex);
 
+    uint8_t family_id;
+
     if(CARD_SELECT_PEN1 == card) {
         // Initialize Smart Card 0, this should be a print cartridge
         if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_PEN1)) {
@@ -195,6 +201,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jin
             pthread_mutex_unlock(&mutex);
             return SC_INIT_PRNT_CTRG_INIT_FAILED;
         }
+
         adjustLocalInkValue(HP_SMART_CARD_DEVICE_PEN1);
     } else if(CARD_SELECT_PEN2 == card) {
         // Initialize Smart Card 0, this should be a print cartridge
@@ -209,6 +216,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jin
             pthread_mutex_unlock(&mutex);
             return SC_INIT_PRNT_CTRG_INIT_FAILED;
         }
+
         adjustLocalInkValue(HP_SMART_CARD_DEVICE_PEN2);
     } else if(CARD_SELECT_BULK1 == card || CARD_SELECT_BULKX == card) {
         if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_BULK1)) {
@@ -222,6 +230,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jin
             pthread_mutex_unlock(&mutex);
             return SC_INIT_BULK_CTRG_INIT_FAILED;
         }
+
         adjustLocalInkValue(HP_SMART_CARD_DEVICE_BULK1);
     } else if(SELECT_LEVEL1 == card) {
         SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1);
@@ -872,7 +881,7 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jin
  * RTC操作jni接口
  */
 static JNINativeMethod gMethods[] = {
-        {"exist",					"()I",	                    (void *)Java_com_Smartcard_exist},
+        {"exist",					"(I)I",	                    (void *)Java_com_Smartcard_exist},
         {"init",					"()I",	                    (void *)Java_com_Smartcard_init},
         {"initComponent",			"(I)I",	                    (void *)Java_com_Smartcard_init_comp},
         {"writeCheckSum",	        "(II)I",					(void *)Java_com_Smartcard_writeCheckSum},

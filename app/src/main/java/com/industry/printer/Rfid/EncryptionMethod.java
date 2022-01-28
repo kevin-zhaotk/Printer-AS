@@ -1,5 +1,8 @@
 package com.industry.printer.Rfid;
 
+import com.industry.printer.Utils.ByteArrayUtils;
+import com.industry.printer.Utils.Debug;
+
 public class EncryptionMethod {
 
 	public static EncryptionMethod mInstance = null;
@@ -47,6 +50,10 @@ public class EncryptionMethod {
 		// 校验和要经过高低位倒序
 		for (int i = 0; i < 8; i++) {
 			if ((key[5] >> i & 0x01) == 0x01) {
+				// H.M.Wang 2021-11-8 这个 0x01 << (8-i) 会导致串一位，如
+				// 0001 0000 高低位倒置以后，应该是0000 1000(即0x08）
+				// 当i=4时会走到原来的0001 0000的1的位置，但是0x01 << (8-i)，会生成 0001 0000（左移4位），从而造成串一位的结果
+				// 由于生成卡的时候也是同样的算法，因此将错就错了，这里不用修改
 				tmp |= 0x01 << (8-i);
 			}
 		}

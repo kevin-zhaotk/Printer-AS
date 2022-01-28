@@ -971,7 +971,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 		if (!mInkManager.isValid(mRfid)) {
 			mInkLevel.setBackgroundColor(Color.RED);
-			mInkLevel.setText(String.valueOf(mRfid + 1) + "--");
+// H.M.Wang 2022-1-22 修改错误信息，在Smartcard的时候避免显示1--这样的错误，而是B，P开头的错误信息，与正常信息保持一致
+            if(mInkManager instanceof RFIDManager) {
+                mInkLevel.setText(String.valueOf(mRfid + 1) + "--");
+            } else {
+                mInkLevel.setText((mRfid == mSysconfig.getPNozzle().mHeads ? "B" : "P" + (mRfid + 1)) + "--");
+            }
+// End of H.M.Wang 2022-1-22 修改错误信息，在Smartcard的时候避免显示1--这样的错误，而是B，P开头的错误信息，与正常信息保持一致
 
 			// H.M.Wang RFID错误时报警，禁止打印
 			mBtnStart.setClickable(false);

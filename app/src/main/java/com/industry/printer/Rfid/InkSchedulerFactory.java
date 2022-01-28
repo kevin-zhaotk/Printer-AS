@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.hardware.InkManagerFactory;
+import com.industry.printer.hardware.SmartCard;
 
 public class InkSchedulerFactory {
 
@@ -27,6 +28,11 @@ public class InkSchedulerFactory {
             return new SmardCardScheduler(ctx);
 //            return new RfidScheduler(ctx);
         } else {
+// H.M.Wang 2022-1-23 根据SmartCard是否连接来判断走SC还是RFID
+            if(SmartCard.exist(PlatformInfo.getImgUniqueCode().startsWith("M") ? 1 : 0) == SmartCard.SC_SUCCESS) {
+                return new SmardCardScheduler(ctx);
+            }
+// End of H.M.Wang 2022-1-23 根据SmartCard是否连接来判断走SC还是RFID
             return new RfidScheduler(ctx);
         }
     }

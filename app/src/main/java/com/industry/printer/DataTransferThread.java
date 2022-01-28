@@ -276,10 +276,13 @@ public class DataTransferThread {
 // 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
 //					launch(mContext);
 // End of 2020-7-21 取消清洗时停止打印操作，改为下发适当设置参数
+// H.M.Wang 2022-1-25 使用task设置参数可能会与打印的数据不符，比如打印数据是25.4头的，但是清洗是12.7头的，就会导致每列字节数不同而是恢复打印后的数据产生偏差，以前mDataTask为空的情况可能是还没有加needRestore变量，现在应该不会了，所以恢复原来的实现
+    				FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
 // H.M.Wang 2021-3-19 未开始打印前启动purge时，mDataTask为空，会导致崩溃
-					FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
+//					FpgaGpioOperation.updateSettings(mContext, task, FpgaGpioOperation.SETTING_TYPE_NORMAL);
 //    				FpgaGpioOperation.updateSettings(mContext, mDataTask.get(mIndex), FpgaGpioOperation.SETTING_TYPE_NORMAL);
 // End of H.M.Wang 2021-3-19 未开始打印前启动purge时，mDataTask为空，会导致崩溃
+// End of H.M.Wang 2022-1-25 使用task设置参数可能会与打印的数据不符，比如打印数据是25.4头的，但是清洗是12.7头的，就会导致每列字节数不同而是恢复打印后的数据产生偏差，以前mDataTask为空的情况可能是还没有加needRestore变量，现在应该不会了，所以恢复原来的实现
 					FpgaGpioOperation.init(mContext);
 // H.M.Wang 2021-3-5 暂时取消
 //					resendBufferToFPGA();

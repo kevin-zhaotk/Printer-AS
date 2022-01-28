@@ -88,6 +88,7 @@ import com.industry.printer.ui.CustomerDialog.ImportDialog;
 import com.industry.printer.ui.CustomerDialog.ImportDialog.IListener;
 import com.industry.printer.ui.CustomerDialog.LoadingDialog;
 import com.industry.printer.ui.CustomerDialog.ScreenSaveDialog;
+import com.industry.printer.ui.GpioTestPopWindow;
 
 public class MainActivity extends Activity implements OnCheckedChangeListener, OnTouchListener, OnClickListener {
 
@@ -834,6 +835,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mDelete.setOnClickListener(this);
 		
 		mSettings = (RelativeLayout) findViewById(R.id.settings_view);
+		mSettings.setOnClickListener(this);
 		mSettingTitle = (TextView) findViewById(R.id.setting_ext_view);
 // H.M.Wang 2021-4-16 追加机器类型码的取得和显示
 		mSettingTitle.setText(PlatformInfo.getImgUniqueCode());
@@ -845,7 +847,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 
 		mCopy = (ImageButton) findViewById(R.id.msg_transfer);
 		mCopy.setOnClickListener(this);
-		
+
 		try {
 			// InputStreamReader sReader = new InputStreamReader(getAssets().open("Version"));cd .
 			// BufferedReader reader = new BufferedReader(sReader);
@@ -1210,7 +1212,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 	public boolean dispatchTouchEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			Debug.d(TAG, "--->dispatch down event");
-//			Debug.d(TAG, "--->onTouch：" + event.getX() + ", " + event.getY());
+			Debug.d(TAG, "--->onTouch：" + event.getX() + ", " + event.getY());
 			setScreenBrightness(false);
 		}
 		return super.dispatchTouchEvent(event);
@@ -1243,6 +1245,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		return super.onKeyDown(keyCode, event);
 	}
 
+	private long mLastClick = 0;
+	private int mClickCount = 0;
+
 	@Override
 	public void onClick(View arg0) {
 		switch (arg0.getId()) {
@@ -1259,6 +1264,21 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 //			Debug.e(TAG, "Transfer Clicked!");
 			showImportDialog();
 			// setScreenBrightness(50);
+			break;
+		case R.id.settings_view:
+			Debug.e(TAG, "settings_view Clicked! " + (System.currentTimeMillis() - mLastClick));
+			if(System.currentTimeMillis() - mLastClick > 1000) {
+				mClickCount = 1;
+			} else {
+				mClickCount++;
+			}
+			mLastClick = System.currentTimeMillis();
+
+			if(mClickCount >= 5) {
+				mClickCount = 0;
+				GpioTestPopWindow gtp = new GpioTestPopWindow(MainActivity.this);
+				gtp.show(mSettings);
+			}
 			break;
 		default:
 			break;
@@ -1490,7 +1510,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 					src.put("dest", Configs.CONFIG_PATH_FLASH + File.separator + Configs.FONT_ZIP_FILE);
 					src.put("tips", MainActivity.this.getString(R.string.tips_import_font));
 				}
-				Debug.d(TAG, "--->flatMap");
+				Debug.d(TAG, "--->flatMap: " + src.get("tips"));
 				return Observable.just(src);
 			}
 		})
@@ -1500,6 +1520,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 			public Observable<Void> call(Map<String, String> arg0) {
 				try {
 					//mProgressDialog.setMessage(arg0.get("tips"));
+					Debug.d(TAG, "--->map: " + arg0.get("source") + " -> " + arg0.get("dest"));
 					FileUtil.copyClean(arg0.get("source"), arg0.get("dest"));
 					String dest = arg0.get("dest");
 					if (dest.endsWith(Configs.FONT_ZIP_FILE)) {
@@ -1508,7 +1529,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
-				Debug.d(TAG, "--->map");
 				return null;
 			}
 			

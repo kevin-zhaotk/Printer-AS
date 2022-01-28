@@ -32,7 +32,7 @@ public class SmartCard {
     /**
      * SmartCard JNI APIs
      **/
-    static public native int exist();
+    static public native int exist(int imgtype);
 
     static public native int init();
 

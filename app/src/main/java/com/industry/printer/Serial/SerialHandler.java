@@ -205,4 +205,8 @@ public class SerialHandler {
 // End of H.M.Wang 2021-9-24 追加串口协议9
         }
     }
+
+    public SerialPort getSerialPort() {
+        return mSerialPort;
+    }
 }
