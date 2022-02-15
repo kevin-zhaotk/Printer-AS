@@ -33,6 +33,9 @@ public class ExtGpio {
 	private static final int GPIO_TEST_WRITE_PIN = 0x0D;	// 写输出命令（8组当中的一个，除第8组以外）
 	private static final int GPIO_TEST_READ_PIN  = 0x0E;	// 读输入、输出命令（8组当中的一个，除第8组以外）
 // End of H.M.Wang 2022-1-17 追加测试GPIO输出与输入对应关系的命令
+// H.M.Wang 2022-2-14 追加在计数器到达end的时候，写OUT4两秒的操作
+	private static final int GPIO_SET_OUT4_2S = 0x0F;
+// End of H.M.Wang 2022-2-14 追加在计数器到达end的时候，写OUT4两秒的操作
 
 	public static final int FPGA_STATE_OUTPUT = 0x00;
 	public static final int FPGA_STATE_SETTING = 0x04;
@@ -159,4 +162,11 @@ public class ExtGpio {
 		Debug.d("ExtGpio", "--->readGpioTestPin: fd= " + fd + "  group=" + group + "  index=" + index);
 		return FpgaGpioOperation.ioctl(fd, GPIO_TEST_READ_PIN, v);
 	}
+
+// H.M.Wang 2022-2-14 追加在计数器到达end的时候，写OUT4两秒的操作
+	public static void setOut4_2sec() {
+		int fd = open();
+		FpgaGpioOperation.ioctl(fd, GPIO_SET_OUT4_2S, 1);
+	}
+// End of H.M.Wang 2022-2-14 追加在计数器到达end的时候，写OUT4两秒的操作
 }

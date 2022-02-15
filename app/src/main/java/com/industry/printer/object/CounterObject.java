@@ -16,6 +16,8 @@ import android.graphics.Typeface;
 import android.graphics.Paint.FontMetrics;
 import android.renderscript.Sampler.Value;
 import android.util.Log;
+
+import com.industry.printer.hardware.ExtGpio;
 import com.industry.printer.hardware.RTCDevice;
 
 public class CounterObject extends BaseObject {
@@ -93,6 +95,10 @@ public class CounterObject extends BaseObject {
 
 		mValue = (mDirection == Direction.INCREASE ? Math.max(mValue, mStart) : Math.min(mValue, mStart));
 //		mValue = (mDirection == Direction.INCREASE ? Math.min(mValue, mEnd) : Math.max(mValue, mEnd));
+
+// H.M.Wang 2022-2-14 对mValue进行了操作，反映到mContent里面
+		super.setContent(BaseObject.intToFormatString(mValue, mBits));
+// End of H.M.Wang 2022-2-14 对mValue进行了操作，反映到mContent里面
 	}
 	
 	public int getStart()
@@ -112,6 +118,10 @@ public class CounterObject extends BaseObject {
 
 //		mValue = (mDirection == Direction.INCREASE ? Math.max(mValue, mStart) : Math.min(mValue, mStart));
 		mValue = (mDirection == Direction.INCREASE ? Math.min(mValue, mEnd) : Math.max(mValue, mEnd));
+
+// H.M.Wang 2022-2-14 对mValue进行了操作，反映到mContent里面
+		super.setContent(BaseObject.intToFormatString(mValue, mBits));
+// End of H.M.Wang 2022-2-14 对mValue进行了操作，反映到mContent里面
 	}
 	
 	public int getEnd()
@@ -133,6 +143,10 @@ public class CounterObject extends BaseObject {
 
 		mValue = (mDirection == Direction.INCREASE ? Math.max(mValue, mStart) : Math.min(mValue, mStart));
 		mValue = (mDirection == Direction.INCREASE ? Math.min(mValue, mEnd) : Math.max(mValue, mEnd));
+
+// H.M.Wang 2022-2-14 对mValue进行了操作，反映到mContent里面
+		super.setContent(BaseObject.intToFormatString(mValue, mBits));
+// End of H.M.Wang 2022-2-14 对mValue进行了操作，反映到mContent里面
 	}
 
 	public String getDirection() {
@@ -152,7 +166,9 @@ public class CounterObject extends BaseObject {
 
 	public void setValue(int value) {
 //		if(mDirection == Direction.INCREASE ? value > mEnd || value < mStart : value < mEnd || value > mStart) return;
-		if(mValue == value) return;
+// H.M.Wang 2022-2-14 取消这个值相同不操作的判断。原因是value和mValue可能不在start和end之间，需要后续的调整。还有在本次修改之前，有些对mValue的修改没有反应到super.SetContent里面，导致Value和Content不一致
+//		if(mValue == value) return;
+// End of H.M.Wang 2022-2-14 取消这个值相同不操作的判断。原因是value和mValue可能不在start和end之间，需要后续的调整。还有在本次修改之前，有些对mValue的修改没有反应到super.SetContent里面，导致Value和Content不一致
 
 		mValue = Math.min(Math.max(value, Math.min(mStart, mEnd)), Math.max(mStart, mEnd));
 		mPritedValue = mValue;
@@ -177,6 +193,11 @@ public class CounterObject extends BaseObject {
 
 	public void goNext() {
 		int value = (mDirection == Direction.INCREASE ? mValue + mStepLen : mValue - mStepLen);
+// H.M.Wang 2022-2-14 追加在计数器到达end的时候，写OUT4两秒的操作
+		if(mDirection == Direction.INCREASE ? value > mEnd : value < mEnd) {
+			ExtGpio.setOut4_2sec();
+		}
+// End of H.M.Wang 2022-2-14 追加在计数器到达end的时候，写OUT4两秒的操作
 		mValue = (mDirection == Direction.INCREASE ? (value > mEnd ? mStart : value) : (value < mEnd ? mStart : value));
 		super.setContent(BaseObject.intToFormatString(mValue, mBits));
 

@@ -402,10 +402,14 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		Timer mHeartBeatTimer = null;
 		public long mLastHeartBeat = System.currentTimeMillis();
 // End of H.M.Wang 2020-9-28 追加一个心跳协议
+// H.M.Wang 2022-2-13 将PI11状态的读取，并且根据读取的值进行控制的功能扩展为对IN管脚的读取，并且做相应的控制
 // H.M.Wang 2021-9-19 追加PI11状态读取功能
-        private Timer mGpio11Timer = null;
-		private int mPI11State = 0;
+//        private Timer mGpio11Timer = null;
+//		private int mPI11State = 0;
 // End of H.M.Wang 2021-9-19 追加PI11状态读取功能
+	private Timer mInPinReadTimer = null;
+	private int mInPinState = 0;
+// End of H.M.Wang 2022-2-13 将PI11状态的读取，并且根据读取的值进行控制的功能扩展为对IN管脚的读取，并且做相应的控制
 		//Socket___________________________________________________________________________________________
 	
 	public ControlTabActivity() {
@@ -775,55 +779,116 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 // End of H.M.Wang 2020-9-28 追加一个心跳协议
 
+// H.M.Wang 2022-2-13 将PI11状态的读取，并且根据读取的值进行控制的功能扩展为对IN管脚的读取，并且做相应的控制
 // H.M.Wang 2021-9-19 追加PI11状态读取功能
-        if(null == mGpio11Timer) {
-            mGpio11Timer = new Timer();
-            mGpio11Timer.scheduleAtFixedRate(new TimerTask() {
+        if(null == mInPinReadTimer) {
+			mInPinReadTimer = new Timer();
+			mInPinReadTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-					if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) != SystemConfigFile.INPUT_PROC_PRINT) return;
 					final int newState = ExtGpio.readPI11State();
-					if(mPI11State == newState) return;
-					mBtnStart.post(new Runnable() {
-						@Override
-						public void run() {
-							DataTransferThread thread = DataTransferThread.getInstance(mContext);
-							if(thread.isPurging) {
-								ToastUtil.show(mContext, R.string.str_under_purging);
-								return;
-							}
-							if(newState == 1) {
-								if(!mBtnStart.isClickable()) {
+					Debug.d(TAG, "newState = " + newState);
+					if(mInPinState == newState) return;
+
+					final DataTransferThread thread = DataTransferThread.getInstance(mContext);
+					if((mInPinState & 0x01) != (newState & 0x01)) {
+						if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROC_PRINT) {
+							mBtnStart.post(new Runnable() {
+								@Override
+								public void run() {
+									if(thread.isPurging) {
+										ToastUtil.show(mContext, R.string.str_under_purging);
+//												return;
+									} else {
+										if((newState & 0x01) == 0x01) {
+											if(!mBtnStart.isClickable()) {
 //									ToastUtil.show(mContext, "Not executable");
-									return;
+//												return;
+											} else if(thread.isRunning()) {
+//									ToastUtil.show(mContext, "Already in printing");
+//												return;
+											} else {
+												mInPinState |= 0x01;
+//								Debug.d(TAG, "Launch Print by pressing PI11!");
+												mBtnStart.performClick();
+											}
+										} else if((newState & 0x01) == 0x00) {
+											mInPinState &= (~0x01);
+											if(!mBtnStop.isClickable()) {
+//									ToastUtil.show(mContext, "Not executable");
+//												return;
+											}
+											if(!thread.isRunning()) {
+//									ToastUtil.show(mContext, "Not in printing");
+//												return;
+											}
+//								Debug.d(TAG, "Stop Print by releasing PI11!");
+											mBtnStop.performClick();
+										}
+									}
+								}
+							});
+						}
+					}
+
+					if((mInPinState & 0x02) != (newState & 0x02)) {
+						if((newState & 0x02) == 0x02) {
+							Debug.d(TAG, "Clear counters");
+							SystemConfigFile sysConfigFile = SystemConfigFile.getInstance();
+							long[] counters = new long[10];
+							for (int i = 0; i < 10; i++) {
+								counters[i] = 0;
+								sysConfigFile.setParamBroadcast(i+SystemConfigFile.INDEX_COUNT_1, 0);
+							}
+							RTCDevice.getInstance(mContext).writeAll(counters);
+
+							List<DataTask> tasks = thread.getData();
+							if(null != tasks) {
+								for(DataTask task : tasks) {
+									ArrayList<BaseObject> objList = task.getObjList();
+									for (BaseObject obj : objList) {
+										if (obj instanceof CounterObject) {
+											((CounterObject)obj).setValue(((CounterObject)obj).getStart());
+										}
+									}
 								}
 								if(thread.isRunning()) {
-//									ToastUtil.show(mContext, "Already in printing");
-									return;
+									DataTask task = thread.getCurData();
+									ArrayList<BaseObject> objList = task.getObjList();
+									for (BaseObject obj : objList) {
+										if (obj instanceof CounterObject) {
+											thread.mNeedUpdate = true;
+										}
+									}
 								}
-								mPI11State = newState;
-//								Debug.d(TAG, "Launch Print by pressing PI11!");
-								mBtnStart.performClick();
-							} else if(newState == 0) {
-								mPI11State = newState;
-								if(!mBtnStop.isClickable()) {
-//									ToastUtil.show(mContext, "Not executable");
-									return;
-								}
-								if(!thread.isRunning()) {
-//									ToastUtil.show(mContext, "Not in printing");
-									return;
-								}
-//								Debug.d(TAG, "Stop Print by releasing PI11!");
-								mBtnStop.performClick();
 							}
 						}
-					});
-                }
+						mInPinState = (mInPinState & (~0x02)) + (newState & 0x02);
+					}
+
+					if((mInPinState & 0x0F0) != (newState & 0x0F0)) {
+						mInPinState = (mInPinState & 0x0F) + (newState & 0x0F0);
+						int index = 0x0F & (newState >> 4);
+						if(index != 0x00) {
+							String fileName = "0" + index;
+//						if(index >= 10) {
+							fileName = "" + index;
+//						}
+							Debug.d(TAG, "IN8-IN5 select file: " + fileName);
+							if(new File(ConfigPath.getTlkDir(fileName)).exists()) {
+								Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
+								Bundle bundle = new Bundle();
+								bundle.putString("file", fileName);
+								msg.setData(bundle);
+								mHandler.sendMessage(msg);
+							}
+						}
+					}
+				}
             }, 3000L, 1000L);
         }
 // End of H.M.Wang 2021-9-19 追加PI11状态读取功能
-
+// End of H.M.Wang 2022-2-13 将PI11状态的读取，并且根据读取的值进行控制的功能扩展为对IN管脚的读取，并且做相应的控制
 		// End ---------------------------------
 	}
 
