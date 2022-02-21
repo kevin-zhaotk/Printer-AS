@@ -1200,6 +1200,9 @@ public class RFIDDevice implements RfidCallback{
 	public void parseAutosearch(RFIDData data) {
 		byte[] rfid = data.getData();
 		if (rfid == null || rfid[0] != 0 || rfid.length != 5) {
+// H.M.Wang 2022-2-16 如果读取失败，则mValid设为false，避免后续的执行
+			mValid = false;
+// End of H.M.Wang 2022-2-16 如果读取失败，则mValid设为false，避免后续的执行
 			Debug.e(TAG, "===>rfid data error");
 			return;
 		}

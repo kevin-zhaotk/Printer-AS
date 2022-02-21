@@ -121,9 +121,11 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 					@Override
 					public void onFinish(RFIDData data) {
 						byte[] orgSN = mDevice.mSN.clone();
+// H.M.Wang 2022-2-16 取消2022-1-13的修改，这个修改在第一次读取SN的时候，如果出错会报错，但是如果尝试第二次，则会两个相同的错误进行比较，误判为正确。改为读取失败后，将mValid设为false比较稳妥
 // H.M.Wang 2022-1-13 追加清空SN，如果不清空，会导致如果读失败时保留原值，从而忽略掉拔卡或者读卡错误的问题
-						Arrays.fill(mDevice.mSN, (byte)0x00);
+//						Arrays.fill(mDevice.mSN, (byte)0x00);
 // End of H.M.Wang 2022-1-13 追加清空SN，如果不清空，会导致如果读失败时保留原值，从而忽略掉拔卡或者读卡错误的问题
+// End of H.M.Wang 2022-2-16 取消2022-1-13的修改，这个修改在第一次读取SN的时候，如果出错会报错，但是如果尝试第二次，则会两个相同的错误进行比较，误判为正确
 						mDevice.parseAutosearch(data);
 						if(Arrays.equals(orgSN, mDevice.mSN)) {
 							mHandler.sendEmptyMessageDelayed(MSG_RFID_CHECK_SWITCH_DEVICE, 200);

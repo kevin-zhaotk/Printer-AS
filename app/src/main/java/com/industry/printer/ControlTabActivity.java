@@ -1723,8 +1723,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 					}
 
 // H.M.Wang 2021-1-4 当RFID初始化成功的时候，激活打印键，这个方案可能不完美，暂时可以。要解决的问题是，系统刚刚启动的时候，RFID正在初始化，但是refreshInk函数会按着初始化失败关闭打印键，迟到的初始化成功没办法激活打印键
-					mBtnStart.setClickable(true);
-					mTvStart.setTextColor(Color.BLACK);
+                    if(ready) {
+                        mBtnStart.setClickable(true);
+                        mTvStart.setTextColor(Color.BLACK);
+                    }
 // End of H.M.Wang 2021-1-4 当RFID初始化成功的时候，激活打印键，这个方案可能不完美，暂时可以。要解决的问题是，系统刚刚启动的时候，RFID正在初始化，但是refreshInk函数会按着初始化失败关闭打印键，迟到的初始化成功没办法激活打印键
 
 					if (Configs.READING) {
