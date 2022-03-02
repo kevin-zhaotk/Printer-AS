@@ -612,6 +612,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		/***PG1 PG2杈撳嚭鐘舵�佷负 0x11锛屾竻闆舵ā寮�**/
 		FpgaGpioOperation.clean();
 
+// H.M.Wang 2022-3-1 开机后将参数57下发给FPGA驱动
+		FpgaGpioOperation.setInputProc(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC));
+// End of H.M.Wang 2022-3-1 开机后将参数57下发给FPGA驱动
+
 // H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 		Configs.GetSystemDpiVersion();
 		Debug.d(TAG, "SystemDpiVersion: " + Configs.GetDpiVersion());
@@ -787,7 +791,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
                 @Override
                 public void run() {
 					final int newState = ExtGpio.readPI11State();
-					Debug.d(TAG, "newState = " + newState);
+//					Debug.d(TAG, "newState = " + newState);
 					if(mInPinState == newState) return;
 
 					final DataTransferThread thread = DataTransferThread.getInstance(mContext);
@@ -879,6 +883,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 								Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
 								Bundle bundle = new Bundle();
 								bundle.putString("file", fileName);
+// H.M.Wang 2022-3-1 正在打印中的时候切换打印信息，重新生成打印缓冲区
+								if (mDTransThread != null && mDTransThread.isRunning()) {
+									bundle.putBoolean("printNext", true);
+								}
+// End of H.M.Wang 2022-3-1 正在打印中的时候切换打印信息，重新生成打印缓冲区
 								msg.setData(bundle);
 								mHandler.sendMessage(msg);
 							}
@@ -2455,7 +2464,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						} else {
 							bundle.putString("file", f.get(0));
 						}
-
+// H.M.Wang 2022-3-1 正在打印中的时候切换打印信息，重新生成打印缓冲区
+						if (mDTransThread != null && mDTransThread.isRunning()) {
+							bundle.putBoolean("printNext", true);
+						}
+// End of H.M.Wang 2022-3-1 正在打印中的时候切换打印信息，重新生成打印缓冲区
 						// bundle.putString("file", f);
 						msg.setData(bundle);
 						mHandler.sendMessage(msg);
