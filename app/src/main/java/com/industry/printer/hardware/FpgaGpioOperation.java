@@ -409,7 +409,10 @@ public class FpgaGpioOperation {
             data[21] = 50;
             data[22] = 1000;
             data[14] = 500;
-            data[4] = 100;
+// H.M.Wang 2022-3-4 data[4]设为200
+//            data[4] = 100;
+            data[4] = 200;
+// End of H.M.Wang 2022-3-4 data[4]设为200
             data[5] = 1500;
 // End of H.M.Wang 2021-12-29 修改S5，S15，S21，S22，S23为下列固定值
 
@@ -560,6 +563,9 @@ public class FpgaGpioOperation {
         ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_SETTING);
 // End of H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
         writeData(DATA_GENRE_IGNORE, FPGA_STATE_SETTING, data, data.length * 2);
+// H.M.Wang 2022-3-12 设置之后恢复CLEAN（双高）
+        ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_CLEAN);
+// End of H.M.Wang 2022-3-12 设置之后恢复CLEAN（双高）
     }
 
     /**
