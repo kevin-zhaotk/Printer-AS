@@ -33,9 +33,12 @@ public class FpgaGpioOperation {
 // H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
     public static final int FPGA_CMD_GET_DPI_VER = 0x0B;
 // End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+// H.M.Wang 2022-3-21 修改为设置是否反向生成打印缓冲区
 // H.M.Wang 2021-9-24 追加输入设置参数
-    public static final int FPGA_CMD_INPUT_PROC = 0x0C;
+//    public static final int FPGA_CMD_INPUT_PROC = 0x0C;
+    public static final int FPGA_CMD_MIRROR = 0x0C;
 // End of H.M.Wang 2021-9-24 追加输入设置参数
+// End of H.M.Wang 2022-3-21 修改为设置是否反向生成打印缓冲区
 
 
     // H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
@@ -184,6 +187,12 @@ public class FpgaGpioOperation {
 // End of H.M.Wang 2020-12-25 追加两个命令
         ioctl(fd, FPGA_CMD_SETTING, type);
         Debug.d(TAG, "FPGA_CMD_SETTING -> TYPE = " + type);
+// H.M.Wang 2022-3-19 当type为FPGA_STATE_PURGE的时候，设置ExtGpio的FpgaState为Output，ioctl(fd, FPGA_CMD_SETTING, type)用来控制apk发送数据的用途，ExtGpio.setFpgaState用来切换FPGA的工作状态
+        if(type == FPGA_STATE_PURGE) {
+            ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_OUTPUT);
+        }
+// End of H.M.Wang 2022-3-19 当type为FPGA_STATE_PURGE的时候，设置ExtGpio的FpgaState为Output，ioctl(fd, FPGA_CMD_SETTING, type)用来控制apk发送数据的用途，ExtGpio.setFpgaState用来切换FPGA的工作状态
+
         Debug.d(TAG, "--->writeData len=" + len);
         int wlen = write(fd, data, len);
         if (wlen != len) {
@@ -414,6 +423,10 @@ public class FpgaGpioOperation {
             data[4] = 200;
 // End of H.M.Wang 2022-3-4 data[4]设为200
             data[5] = 1500;
+// H.M.Wang 2022-3-17 data[5]减半，追加data[7]减半
+            data[5] /= 2;
+            data[7] /= 2;
+// End of H.M.Wang 2022-3-17 data[5]减半，追加data[7]减半
 // End of H.M.Wang 2021-12-29 修改S5，S15，S21，S22，S23为下列固定值
 
 // H.M.Wang 2021-3-30 当清洗时，头类型设为25.4x4
@@ -564,7 +577,9 @@ public class FpgaGpioOperation {
 // End of H.M.Wang 2021-12-14 将FPGA的状态设置转移到EXT-GPIO驱动里面，目的是避免这两个驱动（FPGA驱动和EXT-GPIO驱动）都操作PG管脚组，并且无法互斥，而产生互相干扰
         writeData(DATA_GENRE_IGNORE, FPGA_STATE_SETTING, data, data.length * 2);
 // H.M.Wang 2022-3-12 设置之后恢复CLEAN（双高）
-        ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_CLEAN);
+// H.W.Wang 2022-3-17 暂时取消CLEAN设置
+//        ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_CLEAN);
+// End of H.W.Wang 2022-3-17 暂时取消CLEAN设置
 // End of H.M.Wang 2022-3-12 设置之后恢复CLEAN（双高）
     }
 
@@ -639,14 +654,17 @@ public class FpgaGpioOperation {
         return ioctl(fd, FPGA_CMD_GET_DPI_VER, 0);
     }
 // End of H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
+
+// H.M.Wang 2022-3-21 修改为设置是否反向生成打印缓冲区
 // H.M.Wang 2021-9-24 追加输入设置参数
-    public static int setInputProc(int proc) {
+    public static int setMirror(int mirror) {
         int fd = open();
         if (fd > 0) {
-            Debug.d(TAG, "FPGA_CMD_INPUT_PROC");
-            return ioctl(fd, FPGA_CMD_INPUT_PROC, proc);
+            Debug.d(TAG, "FPGA_CMD_MIRROR");
+            return ioctl(fd, FPGA_CMD_MIRROR, mirror);
         }
         return -1;
     }
 // End of H.M.Wang 2021-9-24 追加输入设置参数
+// End of H.M.Wang 2022-3-21 修改为设置是否反向生成打印缓冲区
 }

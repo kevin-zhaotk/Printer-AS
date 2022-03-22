@@ -44,6 +44,7 @@ import com.industry.printer.Serial.SerialProtocol8;
 import com.industry.printer.Utils.ByteArrayUtils;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.data.DataTask;
 import com.industry.printer.data.NativeGraphicJni;
@@ -301,10 +302,18 @@ public class DataTransferThread {
 		
 		Debug.e(TAG, "--->buffer len: " + buffer.length);
 		FpgaGpioOperation.updateSettings(context, task, purgeType);
+// H.M.Wang 2022-3-18 在3.5寸老板新屏的设备上，由于不支持自动打印，恢复到原来的清洗模式
+		if(PlatformInfo.getImgUniqueCode().startsWith("GZJ")) {    // 老板新屏标识
+			FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+		} else {
+			FpgaGpioOperation.init(mContext);
+			FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
+		}
+// End of H.M.Wang 2022-3-18 在3.5寸老板新屏的设备上，由于不支持自动打印，恢复到原来的清洗模式
 // H.M.Wang 2021-10-22 修改清洗，从特别处理改为按普通打印下发，但是与正常的打印不共存，先停止正常打印，在开始清洗打印，然后在恢复打印
-//		FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
-		FpgaGpioOperation.init(mContext);
-		FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
+////		FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
+//		FpgaGpioOperation.init(mContext);
+//		FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
 // End of H.M.Wang 2021-10-22 修改清洗，从特别处理改为按普通打印下发，但是与正常的打印不共存，先停止正常打印，在开始清洗打印，然后在恢复打印
 		try {
 			Thread.sleep(3000);
@@ -312,7 +321,12 @@ public class DataTransferThread {
 			e.printStackTrace();
 // H.M.Wang 2021-10-22 修改清洗，从特别处理改为按普通打印下发，但是与正常的打印不共存，先停止正常打印，在开始清洗打印，然后在恢复打印
 		} finally {
-			FpgaGpioOperation.uninit();
+// H.M.Wang 2022-3-18 在3.5寸老板新屏的设备上，由于不支持自动打印，恢复到原来的清洗模式，这里取消停止打印的操作
+//			FpgaGpioOperation.uninit();
+			if(!PlatformInfo.getImgUniqueCode().startsWith("GZJ")) {    // 不是老板新屏标识
+				FpgaGpioOperation.uninit();
+			}
+// End of H.M.Wang 2022-3-18 在3.5寸老板新屏的设备上，由于不支持自动打印，恢复到原来的清洗模式，这里取消停止打印的操作
 // End of H.M.Wang 2021-10-22 修改清洗，从特别处理改为按普通打印下发，但是与正常的打印不共存，先停止正常打印，在开始清洗打印，然后在恢复打印
 		}
 

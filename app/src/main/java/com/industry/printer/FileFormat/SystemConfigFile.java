@@ -220,11 +220,30 @@ public class SystemConfigFile{
 //			0.  屏蔽  None
 //			1. 打印/停止Print/Stop
 //			2.  镜像    /Mirror
+//    public static final int INPUT_PROC_NONE = 0;
+//    public static final int INPUT_PROC_PRINT = 1;
+//    public static final int INPUT_PROC_MIRROR = 2;
+// H.M.Wang 2022-3-20 新的定义 by 工作中心
+//     协议１：　禁止GPIO　
+//     协议２：　　
+//            0x01：是打印开始停止
+//            其他禁止
+//     协议３：
+//            0x01：方向切换
+//            其他禁止
+//     协议４：
+//            0x01：是打印“开始／停止”控制位。其中，打印开始停止实在apk里面处理的，方向控制是在img里面控制的
+//            0x02：是计数器清零，包括RTC的数据和正在打印的数据
+//            0x04：方向切换
+//            0x08：空
+//            0xF0段，即0x10 - 0xF0)为打印文件的文件名（数字形式，1-15）
+
 	public static final int INDEX_IPURT_PROC 		= 56;		// 外部输入（PI11）的动作定义参数
 
-	public static final int INPUT_PROC_NONE = 0;
-	public static final int INPUT_PROC_PRINT = 1;
-	public static final int INPUT_PROC_MIRROR = 2;
+	public static final int INPUT_PROTO_1           = 0;        // 禁止GPIO
+	public static final int INPUT_PROTO_2           = 1;        // 0x01控制打印，其他管脚禁止
+    public static final int INPUT_PROTO_3           = 2;        // 0x01控制方向，其他管脚禁止
+    public static final int INPUT_PROTO_4           = 3;        // 综合
 // End of H.M.Wang 追加输入设置参数
 
 // H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
@@ -1254,11 +1273,13 @@ public class SystemConfigFile{
 			return ;
 		}
 		mParam[index] = value;
+// H.M.Wang 2022-3-21 由于实现方法做了修改，有apk获取相应管脚的状态后，设置是否对打印缓冲区进行反向操作，因此这里无需再通知驱动参数57的状态
 // H.M.Wang 2021-9-24 追加输入设置参数
-		if(index == INDEX_IPURT_PROC) {
-			FpgaGpioOperation.setInputProc(value);
-		}
+//		if(index == INDEX_IPURT_PROC) {
+//			FpgaGpioOperation.setInputProc(value);
+//		}
 // End of H.M.Wang 2021-9-24 追加输入设置参数
+// End of H.M.Wang 2022-3-21 由于实现方法做了修改，有apk获取相应管脚的状态后，设置是否对打印缓冲区进行反向操作，因此这里无需再通知驱动参数57的状态
 	}
 
 	public PrinterNozzle getPNozzle() {

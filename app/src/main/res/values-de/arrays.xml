@@ -327,9 +327,10 @@
 
     <!-- H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
     <string-array name="input_proc_item_entries">
-        <item>None</item>
-        <item>Print</item>
-        <item>Mirror</item>
+        <item>P-1</item>
+        <item>P-2</item>
+        <item>P-3</item>
+        <item>P-4</item>
     </string-array>
     <!-- End of H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
 </resources>

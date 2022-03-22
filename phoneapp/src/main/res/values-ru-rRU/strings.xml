@@ -415,7 +415,7 @@
 	<!-- H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
 	<!--	<string name="str_textview_param41">41.Com Print</string> -->
 	<!--	<string name="str_textview_param41">41.Reserved</string> -->
-	<string name="str_repeat_times">41.Times</string>
+	<string name="str_repeat_times">41.Резерв</string>
 	<!-- End of H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
 	<!-- End of H.M.Wang 2021-7-23 参数41改为对重复次数(Times)的设置 -->
 	<string name="str_textview_param42">42.На печати</string>

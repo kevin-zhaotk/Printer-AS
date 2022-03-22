@@ -611,10 +611,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		}
 		/***PG1 PG2杈撳嚭鐘舵�佷负 0x11锛屾竻闆舵ā寮�**/
 		FpgaGpioOperation.clean();
-
+// H.M.Wang 2022-3-21 由于实现方法做了修改，有apk获取相应管脚的状态后，设置是否对打印缓冲区进行反向操作，因此这里无需再通知驱动参数57的状态
 // H.M.Wang 2022-3-1 开机后将参数57下发给FPGA驱动
-		FpgaGpioOperation.setInputProc(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC));
+//		FpgaGpioOperation.setInputProc(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC));
 // End of H.M.Wang 2022-3-1 开机后将参数57下发给FPGA驱动
+// End of H.M.Wang 2022-3-21 由于实现方法做了修改，有apk获取相应管脚的状态后，设置是否对打印缓冲区进行反向操作，因此这里无需再通知驱动参数57的状态
 
 // H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
 		Configs.GetSystemDpiVersion();
@@ -783,6 +784,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 // End of H.M.Wang 2020-9-28 追加一个心跳协议
 
+// H.M.Wang 2022-3-21 根据工作中心对输入管脚协议的重新定义，大幅度修改相应的处理方法
 // H.M.Wang 2022-2-13 将PI11状态的读取，并且根据读取的值进行控制的功能扩展为对IN管脚的读取，并且做相应的控制
 // H.M.Wang 2021-9-19 追加PI11状态读取功能
         if(null == mInPinReadTimer) {
@@ -790,114 +792,153 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			mInPinReadTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
+                    //     协议１：　禁止GPIO　
+                    if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_1) {
+                        return;
+                    }
+
 					final int newState = ExtGpio.readPI11State();
-//					Debug.d(TAG, "newState = " + newState);
 					if(mInPinState == newState) return;
+					Debug.d(TAG, "oldState = " + mInPinState + "; newState = " + newState);
 
 					final DataTransferThread thread = DataTransferThread.getInstance(mContext);
-					if((mInPinState & 0x01) != (newState & 0x01)) {
-						if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROC_PRINT) {
-							mBtnStart.post(new Runnable() {
-								@Override
-								public void run() {
-									if(thread.isPurging) {
-										ToastUtil.show(mContext, R.string.str_under_purging);
+
+                    //     协议２：　
+                    //            0x01：是打印开始停止
+                    //     协议４：
+                    //            0x01：是打印“开始／停止”控制位。其中，打印开始停止实在apk里面处理的，方向控制是在img里面控制的
+                    if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_2 ||
+                       mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_4) {
+                        if((mInPinState & 0x01) != (newState & 0x01)) {		// 0x01位的前后值不一致
+                            mBtnStart.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(thread.isPurging) {
+                                        ToastUtil.show(mContext, R.string.str_under_purging);
 //												return;
-									} else {
-										if((newState & 0x01) == 0x01) {
-											if(!mBtnStart.isClickable()) {
+                                    } else {
+                                        if((newState & 0x01) == 0x01) {		// 新值为1，标识按键按下
+                                            if(!mBtnStart.isClickable()) {
 //									ToastUtil.show(mContext, "Not executable");
 //												return;
-											} else if(thread.isRunning()) {
+                                            } else if(thread.isRunning()) {
 //									ToastUtil.show(mContext, "Already in printing");
 //												return;
-											} else {
-												mInPinState |= 0x01;
+                                            } else {
+////                                                mInPinState |= 0x01;
 //								Debug.d(TAG, "Launch Print by pressing PI11!");
-												mBtnStart.performClick();
-											}
-										} else if((newState & 0x01) == 0x00) {
-											mInPinState &= (~0x01);
-											if(!mBtnStop.isClickable()) {
+                                                mBtnStart.performClick();
+                                            }
+                                        } else if((newState & 0x01) == 0x00) {	// 新值为0，标识按键松开
+////                                            mInPinState &= (~0x01);
+                                            if(!mBtnStop.isClickable()) {
 //									ToastUtil.show(mContext, "Not executable");
 //												return;
-											}
-											if(!thread.isRunning()) {
+                                            }
+                                            if(!thread.isRunning()) {
 //									ToastUtil.show(mContext, "Not in printing");
 //												return;
-											}
+                                            }
 //								Debug.d(TAG, "Stop Print by releasing PI11!");
-											mBtnStop.performClick();
-										}
-									}
-								}
-							});
+                                            mBtnStop.performClick();
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    //     协议３：
+                    //            0x01：方向切换
+                    if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_3) {
+						if((mInPinState & 0x01) != (newState & 0x01)) {
+							Debug.d(TAG, "设置方向调整：" + (newState & 0x01));
+							FpgaGpioOperation.setMirror(newState & 0x01);
+////						mInPinState &= (~0x01);
+////						mInPinState |= (newState & 0x01);
 						}
-					}
+                    }
 
-					if((mInPinState & 0x02) != (newState & 0x02)) {
-						if((newState & 0x02) == 0x02) {
-							Debug.d(TAG, "Clear counters");
-							SystemConfigFile sysConfigFile = SystemConfigFile.getInstance();
-							long[] counters = new long[10];
-							for (int i = 0; i < 10; i++) {
-								counters[i] = 0;
-								sysConfigFile.setParamBroadcast(i+SystemConfigFile.INDEX_COUNT_1, 0);
-							}
-							RTCDevice.getInstance(mContext).writeAll(counters);
-
-							List<DataTask> tasks = thread.getData();
-							if(null != tasks) {
-								for(DataTask task : tasks) {
-									ArrayList<BaseObject> objList = task.getObjList();
-									for (BaseObject obj : objList) {
-										if (obj instanceof CounterObject) {
-											((CounterObject)obj).setValue(((CounterObject)obj).getStart());
-										}
-									}
-								}
-								if(thread.isRunning()) {
-									DataTask task = thread.getCurData();
-									ArrayList<BaseObject> objList = task.getObjList();
-									for (BaseObject obj : objList) {
-										if (obj instanceof CounterObject) {
-											thread.mNeedUpdate = true;
-										}
-									}
-								}
-							}
+                    if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_4) {
+						//     协议４：
+						//            0x04：方向切换
+						if((mInPinState & 0x04) != (newState & 0x04)) {
+							Debug.d(TAG, "设置方向调整：" + (((newState & 0x04) == 0x04) ? 1 : 0));
+							FpgaGpioOperation.setMirror(((newState & 0x04) == 0x04) ? 1 : 0);
+////						mInPinState &= (~0x04);
+////						mInPinState |= (newState & 0x04);
 						}
-						mInPinState = (mInPinState & (~0x02)) + (newState & 0x02);
-					}
 
-					if((mInPinState & 0x0F0) != (newState & 0x0F0)) {
-						mInPinState = (mInPinState & 0x0F) + (newState & 0x0F0);
-						int index = 0x0F & (newState >> 4);
-						if(index != 0x00) {
-							String fileName = "0" + index;
+                        //     协议４：
+                        //            0x02：是计数器清零，包括RTC的数据和正在打印的数据
+                        if((mInPinState & 0x02) != (newState & 0x02)) {
+                            if((newState & 0x02) == 0x02) {
+                                Debug.d(TAG, "Clear counters");
+                                SystemConfigFile sysConfigFile = SystemConfigFile.getInstance();
+                                long[] counters = new long[10];
+                                for (int i = 0; i < 10; i++) {
+                                    counters[i] = 0;
+                                    sysConfigFile.setParamBroadcast(i+SystemConfigFile.INDEX_COUNT_1, 0);
+                                }
+                                RTCDevice.getInstance(mContext).writeAll(counters);
+
+                                List<DataTask> tasks = thread.getData();
+                                if(null != tasks) {
+                                    for(DataTask task : tasks) {
+                                        ArrayList<BaseObject> objList = task.getObjList();
+                                        for (BaseObject obj : objList) {
+                                            if (obj instanceof CounterObject) {
+                                                ((CounterObject)obj).setValue(((CounterObject)obj).getStart());
+                                            }
+                                        }
+                                    }
+                                    if(thread.isRunning()) {
+                                        DataTask task = thread.getCurData();
+                                        ArrayList<BaseObject> objList = task.getObjList();
+                                        for (BaseObject obj : objList) {
+                                            if (obj instanceof CounterObject) {
+                                                thread.mNeedUpdate = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+////                            mInPinState = (mInPinState & (~0x02)) + (newState & 0x02);
+                        }
+
+                        //     协议４：
+                        //            0xF0段，即0x10 - 0xF0)为打印文件的文件名（数字形式，1-15）
+                        if((mInPinState & 0x0F0) != (newState & 0x0F0)) {
+////                            mInPinState = (mInPinState & 0x0F) + (newState & 0x0F0);
+                            int index = 0x0F & (newState >> 4);
+                            if(index != 0x00) {
+                                String fileName = "0" + index;
 //						if(index >= 10) {
-							fileName = "" + index;
+                                fileName = "" + index;
 //						}
-							Debug.d(TAG, "IN8-IN5 select file: " + fileName);
-							if(new File(ConfigPath.getTlkDir(fileName)).exists()) {
-								Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
-								Bundle bundle = new Bundle();
-								bundle.putString("file", fileName);
+                                Debug.d(TAG, "IN8-IN5 select file: " + fileName);
+                                if(new File(ConfigPath.getTlkDir(fileName)).exists()) {
+                                    Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("file", fileName);
 // H.M.Wang 2022-3-1 正在打印中的时候切换打印信息，重新生成打印缓冲区
-								if (mDTransThread != null && mDTransThread.isRunning()) {
-									bundle.putBoolean("printNext", true);
-								}
+                                    if (mDTransThread != null && mDTransThread.isRunning()) {
+                                        bundle.putBoolean("printNext", true);
+                                    }
 // End of H.M.Wang 2022-3-1 正在打印中的时候切换打印信息，重新生成打印缓冲区
-								msg.setData(bundle);
-								mHandler.sendMessage(msg);
-							}
-						}
-					}
+                                    msg.setData(bundle);
+                                    mHandler.sendMessage(msg);
+                                }
+                            }
+                        }
+                    }
+					mInPinState = newState;
 				}
             }, 3000L, 1000L);
         }
 // End of H.M.Wang 2021-9-19 追加PI11状态读取功能
 // End of H.M.Wang 2022-2-13 将PI11状态的读取，并且根据读取的值进行控制的功能扩展为对IN管脚的读取，并且做相应的控制
+// End of H.M.Wang 2022-3-21 根据工作中心对输入管脚协议的重新定义，大幅度修改相应的处理方法
 		// End ---------------------------------
 	}
 

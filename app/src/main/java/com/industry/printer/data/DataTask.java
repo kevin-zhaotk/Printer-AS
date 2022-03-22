@@ -23,6 +23,7 @@ import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.FileUtil;
+import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.interceptor.ExtendInterceptor;
 import com.industry.printer.interceptor.ExtendInterceptor.ExtendStat;
@@ -1482,7 +1483,7 @@ public char[] bitShiftFor64SN() {
 			char[] buffer = mBinInfo.getBgBuffer();
 
 // H.M.Wang 2022-1-3 使用直接的bin（purge4big.bin)，不再做扩充的操作
-/*
+
 //            BinCreater.saveBin("/mnt/sdcard/purge1.bin", buffer, 32);
 			stream.close();
 			char[] rb = new char[buffer.length * 36];
@@ -1493,14 +1494,16 @@ public char[] bitShiftFor64SN() {
 			}
 // H.M.Wang 2021-12-29 追加为清洗打印缓冲区生成调用slant
 //			BinCreater.saveBin("/mnt/sdcard/purge2.bin", rb, 32);
-			expendColumn(rb, mBinInfo.mColumn*36, 100);
-			rb = mBuffer;
+			if(!PlatformInfo.getImgUniqueCode().startsWith("GZJ")) {    // 不是老板新屏标识
+				expendColumn(rb, mBinInfo.mColumn*36, 100);
+				rb = mBuffer;
+			}
 //            BinCreater.saveBin("/mnt/sdcard/purge3.bin", mBuffer, 32);
 // End of H.M.Wang 2021-12-29 追加为清洗打印缓冲区生成调用slant
 			return rb;
-*/
+
 // End of H.M.Wang 2022-1-3 使用直接的bin（purge4big.bin)，不再做扩充的操作
-			return buffer;
+//			return buffer;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

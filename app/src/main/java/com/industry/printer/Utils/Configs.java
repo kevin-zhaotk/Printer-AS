@@ -37,8 +37,8 @@ public class Configs {
 	 * set Rfid value to 370/2 if Rfid is missing;
 	 * skip UID checking after 'print' command triggered before data transfer;
 	 */
-//	public static final boolean READING = true;
-	public static final boolean READING = false;
+//	public static final boolean READING = true;			// 忽略RFID检查
+	public static final boolean READING = false;		// 检查RFID
 
 // H.M.Wang 2021-5-21 追加用户特色页面显示开关标识
 	public static final int USER_MODE_NONE 	= 0;		// 不显示用户特色页面
