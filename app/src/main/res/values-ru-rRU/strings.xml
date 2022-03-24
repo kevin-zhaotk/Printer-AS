@@ -394,7 +394,7 @@
 	<string name="str_textview_param40">40.Сигнал</string>
 	<!-- H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
 	<!--	<string name="str_textview_param41">41.Серийная печать</string> -->
-	<string name="str_repeat_times">41.Резерв</string>
+	<string name="str_repeat_times">41.Серийная печать</string>
 	<!-- End of H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
 	<string name="str_textview_param42">42.Печать при вкл. питания</string>
 	<string name="str_textview_param43">43.Количество форсунок</string>
