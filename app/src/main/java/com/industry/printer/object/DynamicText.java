@@ -141,8 +141,8 @@ public class DynamicText extends BaseObject {
     }
 
     public Bitmap getPrintBitmap(float scaledW, float scaledH, int dstHeight) {
-//        Debug.d(TAG,"getPrintBitmap scaledW = " + scaledW + ", scaledH = " + scaledH + ", dstHeight = " + dstHeight);
-//        Debug.d(TAG,"Original width = " + mWidth + ", height = " + mHeight + ", ratio = " + mRatio);
+        Debug.d(TAG,"getPrintBitmap scaledW = " + scaledW + ", scaledH = " + scaledH + ", dstHeight = " + dstHeight);
+        Debug.d(TAG,"Original width = " + mWidth + ", height = " + mHeight + ", ratio = " + mRatio);
 
         Paint paint = new Paint();
 

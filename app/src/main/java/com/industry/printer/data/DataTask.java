@@ -178,10 +178,17 @@ public class DataTask {
 // H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_32DN) {
 //			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
-			mPrintBuffer = bitShiftFor32DN();
+// H.M.Wang 2022-3-29 追加32DN的双列打印，根据slant的设置，如果slant==0，则按着原来的操作，如果不为0，则按着bitShiftFor32DNSlant的说明操作
+            int slant = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_SLANT);
+            if(slant == 0) {
+                mPrintBuffer = bitShiftFor32DN();
+            } else {
+                mPrintBuffer = bitShiftFor32DNSlant(slant);
+            }
+// End of H.M.Wang 2022-3-29 追加32DN的双列打印，根据slant的设置，如果slant==0，则按着原来的操作，如果不为0，则按着bitShiftFor32DNSlant的说明操作
 //			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
 //			Debug.d(TAG, mTask.getPath() + "/print.bin");
-//			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
+//			BinCreater.saveBin(mTask.getPath() + "/printDN.bin", mPrintBuffer, 64);
 		}
 // End of H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 
@@ -829,7 +836,7 @@ public class DataTask {
 				continue;
 // H.M.Wang 2020-5-22 串口数据启用DynamicText，取消代用CounterObject
             } else if(o instanceof DynamicText) {
-				Debug.d(TAG, "--->object index=" + o.getIndex());
+				Debug.d(TAG, "--->object index=" + o.getIndex() + "headType = " + headType);
 
 // H.M.Wang 2021-3-3 由于从QR.txt文件当中读取的变量信息要对群组有效，在这里会导致每个任务都会读取一行，所以需要移植DataTransferThread类处理
 /*
@@ -854,6 +861,17 @@ public class DataTask {
 // End of H.M.Wang 2021-3-3 由于从QR.txt文件当中读取的变量信息要对群组有效，在这里会导致每个任务都会读取一行，所以需要移植DataTransferThread类处理
 
 // H.M.Wang 2020-10-29 修改DynamicText实时生成打印缓冲区，而不是使用Vbin贴图
+/*				if (headType == PrinterNozzle.MESSAGE_TYPE_25_4) {
+					scaleW /=2.0f;
+					scaleH /=2.0f;
+				} else if (headType == PrinterNozzle.MESSAGE_TYPE_38_1) {
+					scaleW /=3.0f;
+					scaleH /=3.0f;
+				} else if (headType == PrinterNozzle.MESSAGE_TYPE_50_8) {
+					scaleW /=4.0f;
+					scaleH /=4.0f;
+				}
+*/
                 Bitmap bmp = ((DynamicText)o).getPrintBitmap(scaleW, scaleH, headType.getHeight());
                 BinInfo info = new BinInfo(mContext, bmp, mExtendStat);
                 BinInfo.overlap(mPrintBuffer, info.getBgBuffer(), (int)(o.getX()/div), info.getCharsFeed() * stat.getScale());
@@ -1408,6 +1426,105 @@ public class DataTask {
 		}
 		return buffer;
 	}
+// H.M.Wang 2022-3-29 追加32DN打印头的双列位移打印功能。功能的要求是
+// ----------
+//  1.  每16 bit 插16bit 0. (每列32 bit 变为64 bit)
+//    示例：
+//      1（代表4bit位）1
+//      1            1
+//      1            1
+//      1            1
+//      2            0
+//      2            0
+//      2            0
+//      2            0
+// (一个32点的完整列)  2
+//                   2
+//                   2
+//                   2
+//                   0
+//                   0
+//                   0
+//                   0
+//           (变为一个64点的插了空的列）
+//  2.  每列插7列0 （64bit x7 的0）
+//      1                      1
+//      1                      1
+//      1                      1
+//      1                      1
+//      0                      0
+//      0                      0
+//      0                      0
+//      0  (中间插入7列64位的0)  0
+//      2                      2
+//      2                      2
+//      2                      2
+//      2                      2
+//      0                      0
+//      0                      0
+//      0                      0
+//      0                      0
+//        (就是把相邻两列的插了空的列拉开，最终结果是原数据被插空后，将空间拉大16倍）
+//  3.  偶数bit 后移slant 列
+
+/*
+2022-3-30 修改
+	感觉是
+32中 奇数bit  ,
+ 放在64 bit 的1-16.
+16 bit 0
+偶数bit， 放在32-48.
+16 bit 0
+
+插7列空  64 bit 0.
+
+偏移的时候， 直接把下面32 bit, 后移 slant 列
+ */
+    public char[] bitShiftFor32DNSlant(int slant) {
+        int CHARS_PER_COLOMN = 2;
+        char[] buffer = new char[(mPrintBuffer.length * 8 + slant * CHARS_PER_COLOMN) * 2];
+                // 2： 代表每列16个bit内容插16个bit空白，空间扩大一倍
+                // CHARS_PER_COLOMN：代表原数据每列的双字节数，32点为2，插入空白后后移slant列，因此增加需要slant * CHARS_PER_COLOMN) * 2的空间
+                // 源数据由于在插入空白后，向后扩展8倍（最终结果达到源数据扩展16倍的效果），因此需要增加mPrintBuffer.length * 8 * 2的空间
+        Arrays.fill(buffer, (char)0x0000);
+
+        for (int i=mBinInfo.mColumn-1; i>-0; i--) {
+// 2022-3-30 修改
+			char d1 = 0x0000;
+			char d2 = 0x0000;
+			for (int j=CHARS_PER_COLOMN-1; j>=0; j--) {
+				char odd = (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0x5555);
+				char even = (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0xaaaa);
+				for(int k=0; k<8; k++) {
+					d1 *= 2;
+					if(((odd << (2*k+1)) & 0x8000) == 0x8000) {
+						d1++;
+					}
+					d2 *= 2;
+					if(((even << (2*k)) & 0x8000) == 0x8000) {
+						d2++;
+					}
+				}
+			}
+			buffer[8 * 2 * i * CHARS_PER_COLOMN] = d1;
+//			buffer[8 * 2 * i * CHARS_PER_COLOMN + 1] = 0x0000;
+			buffer[8 * 2 * i * CHARS_PER_COLOMN + slant * CHARS_PER_COLOMN * 2 + 2] = d2;
+//			buffer[8 * 2 * i * CHARS_PER_COLOMN + slant * CHARS_PER_COLOMN * 2 + 3] = 0x0000;
+// End of 2022-3-30 修改
+/* 2022-3-29 修改
+            for (int j=0; j<CHARS_PER_COLOMN; j++) {
+                char odd = (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0x5555);
+                char even = (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0xaaaa);
+
+                buffer[8 * 2 * i * CHARS_PER_COLOMN + j * 2] = odd;
+                buffer[8 * 2 * i * CHARS_PER_COLOMN + slant * CHARS_PER_COLOMN * 2 + j * 2] = even;
+            }
+*/
+        }
+        return buffer;
+    }
+
+// End of H.M.Wang 2022-3-29 追加32DN打印头的双列位移打印功能。功能的要求是
 
 // H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 	public char[] bitShiftFor32DN() {
