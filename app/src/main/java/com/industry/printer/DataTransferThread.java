@@ -303,9 +303,9 @@ public class DataTransferThread {
 		Debug.e(TAG, "--->buffer len: " + buffer.length);
 		FpgaGpioOperation.updateSettings(context, task, purgeType);
 // H.M.Wang 2022-3-18 在3.5寸老板新屏的设备上，由于不支持自动打印，恢复到原来的清洗模式
-		if(PlatformInfo.getImgUniqueCode().startsWith("GZJ")) {    // 老板新屏标识
+		if(PlatformInfo.getImgUniqueCode().startsWith("GZJ")) {    // GZJ盖章机直接按着清洗数据下发，因为GZJ没有自动打印
 			FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_IGNORE, FpgaGpioOperation.FPGA_STATE_PURGE, buffer, buffer.length*2);
-		} else {
+		} else {			// 其他的还是按打印数据下发
 			FpgaGpioOperation.init(mContext);
 			FpgaGpioOperation.writeData(FpgaGpioOperation.DATA_GENRE_NEW, FpgaGpioOperation.FPGA_STATE_OUTPUT, buffer, buffer.length*2);
 		}

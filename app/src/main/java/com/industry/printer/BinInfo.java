@@ -161,13 +161,24 @@ public class BinInfo {
 		}
 	}
 	
-	public BinInfo(Context ctx, Bitmap bmp, ExtendStat extend) {
+	public BinInfo(Context ctx, Bitmap bmp, int type, ExtendStat extend) {
+// H.M.Wang 2022-4-1 追加mType的参数设置，该参数从函数的参数中传递，否则，生成多头数据会出现乱码
+		if (type <=0 || type > 4) {
+			mType = 1;
+		} else {
+			mType = type;
+		}
+// End of H.M.Wang 2022-4-1 追加mType的参数设置，该参数从函数的参数中传递，否则，生成多头数据会出现乱码
+
 		mExtend = extend;
 		BinFileMaker m = new BinFileMaker(ctx);
 		// BinCreater.saveBitmap(bmp, "bar.png");
 
 		// H.M.Wang 追加一个是否移位的参数
-		m.extract(bmp, 1, false);
+// H.M.Wang 2022-4-1 根据头数设置参数，原来的固定为1是错误的
+//		m.extract(bmp, 1, false);
+		m.extract(bmp, mType, false);
+// End of H.M.Wang 2022-4-1 根据头数设置参数，原来的固定为1是错误的
 
 		mBuffer = m.getBuffer();
 		ByteArrayBuffer buffer = new ByteArrayBuffer(0);
