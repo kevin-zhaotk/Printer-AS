@@ -1487,14 +1487,15 @@ public class DataTask {
  */
     public char[] bitShiftFor32DNSlant(int slant) {
         int CHARS_PER_COLOMN = 2;
-        char[] buffer = new char[(mPrintBuffer.length * 8 + slant * CHARS_PER_COLOMN) * 2];
+// H.M.Wang 2022-4-2 插入7列（跳8列）改为插入3列（跳4列）
+        char[] buffer = new char[(mPrintBuffer.length * 4 + slant * CHARS_PER_COLOMN) * 2];
+// End of H.M.Wang 2022-4-2 插入7列（跳8列）改为插入3列（跳4列）
                 // 2： 代表每列16个bit内容插16个bit空白，空间扩大一倍
                 // CHARS_PER_COLOMN：代表原数据每列的双字节数，32点为2，插入空白后后移slant列，因此增加需要slant * CHARS_PER_COLOMN) * 2的空间
                 // 源数据由于在插入空白后，向后扩展8倍（最终结果达到源数据扩展16倍的效果），因此需要增加mPrintBuffer.length * 8 * 2的空间
         Arrays.fill(buffer, (char)0x0000);
 
         for (int i=mBinInfo.mColumn-1; i>-0; i--) {
-// 2022-3-30 修改
 			char d1 = 0x0000;
 			char d2 = 0x0000;
 			for (int j=CHARS_PER_COLOMN-1; j>=0; j--) {
@@ -1511,11 +1512,12 @@ public class DataTask {
 					}
 				}
 			}
-			buffer[8 * 2 * i * CHARS_PER_COLOMN] = d1;
-//			buffer[8 * 2 * i * CHARS_PER_COLOMN + 1] = 0x0000;
-			buffer[8 * 2 * i * CHARS_PER_COLOMN + slant * CHARS_PER_COLOMN * 2 + 2] = d2;
-//			buffer[8 * 2 * i * CHARS_PER_COLOMN + slant * CHARS_PER_COLOMN * 2 + 3] = 0x0000;
-// End of 2022-3-30 修改
+// H.M.Wang 2022-4-2 插入7列（跳8列）改为插入3列（跳4列）
+			buffer[4 * 2 * i * CHARS_PER_COLOMN] = d1;
+//			buffer[4 * 2 * i * CHARS_PER_COLOMN + 1] = 0x0000;
+			buffer[4 * 2 * i * CHARS_PER_COLOMN + slant * CHARS_PER_COLOMN * 2 + 2] = d2;
+//			buffer[4 * 2 * i * CHARS_PER_COLOMN + slant * CHARS_PER_COLOMN * 2 + 3] = 0x0000;
+// End of H.M.Wang 2022-4-2 插入7列（跳8列）改为插入3列（跳4列）
 /* 2022-3-29 修改
             for (int j=0; j<CHARS_PER_COLOMN; j++) {
                 char odd = (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j] & 0x5555);
@@ -1597,7 +1599,7 @@ public char[] bitShiftFor64SN() {
 	 * 用於清洗的buffer
 	 * @return
 	 */
-	public char[] preparePurgeBuffer(String bin) {
+	public char[] preparePurgeBuffer(String bin, boolean isDZJ) {
 		InputStream stream;
 		try {
 			stream = mContext.getAssets().open(bin);
@@ -1608,10 +1610,12 @@ public char[] bitShiftFor64SN() {
 
 //            BinCreater.saveBin("/mnt/sdcard/purge1.bin", buffer, 32);
 			stream.close();
-			char[] rb = new char[buffer.length * 36];
+// H.M.Wang 2022-4-1 如果是大字机，则恢复回原来的12倍(暂时测试4倍）；如果是惠普则保持36倍
+			char[] rb = new char[buffer.length * (isDZJ ? 1 : 36)];
 // H.M.Wang 2021-12-29 在扩大3倍，到36倍（原来12倍）
-			for(int i = 0; i < 36; i++) {
+			for(int i = 0; i < (isDZJ ? 1 : 36); i++) {
 // End of H.M.Wang 2021-12-29 在扩大3倍，到36倍（原来12倍）
+// End of H.M.Wang 2022-4-1 如果是大字机，则恢复回原来的12倍(暂时测试4倍）；如果是惠普则保持36倍
 				System.arraycopy(buffer, 0, rb, i * buffer.length, buffer.length -1);
 			}
 // H.M.Wang 2021-12-29 追加为清洗打印缓冲区生成调用slant

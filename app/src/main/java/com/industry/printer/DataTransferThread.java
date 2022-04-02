@@ -255,7 +255,7 @@ public class DataTransferThread {
 					purgeFile = "purge/purge4big.bin";
 				}
 				
-				char[] buffer = task.preparePurgeBuffer(purgeFile);
+				char[] buffer = task.preparePurgeBuffer(purgeFile, dotHd);
 
 // H.M.Wang 2020-8-21 取消大字机清洗后直接退出，该恢复打印的还是应该恢复打印
 //				if (dotHd) {
@@ -392,7 +392,7 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-7-23 追加32DN打印头*/
 				String purgeFile = "purge/purge4big.bin";
 //				}
-				char[] buffer = task.preparePurgeBuffer(purgeFile);
+				char[] buffer = task.preparePurgeBuffer(purgeFile, true);
 				
 // H.M.Wang 2022-1-4 取消PURGE2的清洗，只留PURGE1，间隔还是10s，重复30次
 				FpgaGpioOperation.clean();
