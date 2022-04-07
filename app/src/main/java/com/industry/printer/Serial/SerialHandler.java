@@ -20,6 +20,9 @@ public class SerialHandler {
     public static String TAG = SerialHandler.class.getSimpleName();
 
     private final String SERIAL_PORT = "/dev/ttyS4";
+// H.M.Wang 2022-4-4 追加341串口（ttyUSB0）
+    private final String SERIAL_CH341_PORT = "/dev/ttyUSB0";
+// End of H.M.Wang 2022-4-4 追加341串口（ttyUSB0）
 
     private SerialPort mSerialPort = null;
     private Context mContext;
@@ -63,12 +66,21 @@ public class SerialHandler {
     private void init() {
         mSerialPort = new SerialPort();
         if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_PC_COMMAND) {
+            Debug.i(TAG, "Open " + SERIAL_PORT);
             mSerialPort.openStream(SERIAL_PORT);
             Debug.i(TAG, "Start PCCommand Receiver");
             PCCommandManager pcCmdManager = PCCommandManager.getInstance();
             if(null != pcCmdManager)pcCmdManager.addSeriHandler(mSerialPort);
         } else {
-            mSerialPort.openSerial(SERIAL_PORT);
+// H.M.Wang 2022-4-4 根据数据源的类型选择串口
+            if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_11) {
+                Debug.i(TAG, "Open " + SERIAL_CH341_PORT);
+                mSerialPort.openSerial(SERIAL_CH341_PORT);
+            } else {
+                Debug.i(TAG, "Open " + SERIAL_PORT);
+                mSerialPort.openSerial(SERIAL_PORT);
+            }
+// End of H.M.Wang 2022-4-4 根据数据源的类型选择串口
             Debug.i(TAG, "Start normal Receiver");
             new Thread() {
                 @Override
@@ -150,6 +162,11 @@ public class SerialHandler {
             SerialProtocol10 p = new SerialProtocol10(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
 // End of H.M.Wang 2021-9-28 追加串口协议10
+// H.M.Wang 2022-4-5 追加串口协议11(341串口)
+        } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_11) {
+            SerialProtocol11 p = new SerialProtocol11(mSerialPort, mContext);
+            p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
+// End of H.M.Wang 2022-4-5 追加串口协议11(341串口)
         }
     }
 
@@ -205,6 +222,18 @@ public class SerialHandler {
 // End of H.M.Wang 2021-9-24 追加串口协议9
         }
     }
+
+    public void sendCommandProcessResult(int cmd, int ack, int devStatus, int cmdStatus, byte[] message) {
+        if (!isInitialized()) return;
+
+// H.M.Wang 2022-4-5 追加串口协议11(341串口)
+        if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_11) {
+            SerialProtocol11 p = new SerialProtocol11(mSerialPort, mContext);
+            p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
+        }
+// End of H.M.Wang 2022-4-5 追加串口协议11(341串口)
+    }
+
 
     public SerialPort getSerialPort() {
         return mSerialPort;

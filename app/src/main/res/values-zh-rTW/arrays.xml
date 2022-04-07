@@ -40,6 +40,9 @@
         <!--  H.M.Wang 2021-10-30 追加PC命令 -->
         <item>PC命令</item>
         <!--  End of H.M.Wang 2021-10-30 追加PC命令 -->
+        <!--  H.M.Wang 2022-4-5 追加PC命令 -->
+        <item>串口協議11</item>
+        <!--  End of H.M.Wang 2022-4-5 追加PC命令 -->
     </string-array>
 <!-- End of H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
 

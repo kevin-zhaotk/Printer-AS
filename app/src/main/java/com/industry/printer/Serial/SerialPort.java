@@ -67,7 +67,7 @@ public class SerialPort {
 
     public byte[] readSerial() {
         if(mFdId <= 0) {
-            Debug.e(TAG, "Serial port not opened.");
+//            Debug.e(TAG, "Serial port not opened.");
             return null;
         }
 
@@ -79,7 +79,7 @@ public class SerialPort {
 
     public int writeSerial(byte[] value) {
         if(mFdId <= 0) {
-            Debug.e(TAG, "Serial port not opened.");
+//            Debug.e(TAG, "Serial port not opened.");
             return -1;
         }
         Debug.d(TAG, "Send Data :[" + ByteArrayUtils.toHexString(value) + "]");

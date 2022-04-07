@@ -180,8 +180,21 @@ public class DataTask {
 //			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
 // H.M.Wang 2022-3-29 追加32DN的双列打印，根据slant的设置，如果slant==0，则按着原来的操作，如果不为0，则按着bitShiftFor32DNSlant的说明操作
             int slant = SystemConfigFile.getInstance(mContext).getParam(SystemConfigFile.INDEX_SLANT);
-            if(slant == 0) {
-                mPrintBuffer = bitShiftFor32DN();
+/* 2022-4-3 修改 by 吕总要求
+32DN， 也要改一下，
+选择32DN 喷头时：、
+1 . Slant =0 , 不变
+2. Slant>8, 维持上周做的逻辑不变
+3. 1<=slant<=8.    调整逻辑：
+a:  32 bit 每列 变为 64 bit/列。 （规则和=0 相同）
+b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列， 这个是按slant设置，值移动1-8 列
+*/
+// H.M.Wang 2022-4-4 按着吕总要求修改
+//			if(slant == 0) {
+//				mPrintBuffer = bitShiftFor32DN();
+            if(slant >= 0 || slant <= 8) {
+                mPrintBuffer = bitShiftFor32DN(slant);
+// End of H.M.Wang 2022-4-4 按着吕总要求修改
             } else {
                 mPrintBuffer = bitShiftFor32DNSlant(slant);
             }
@@ -1485,6 +1498,7 @@ public class DataTask {
 
 偏移的时候， 直接把下面32 bit, 后移 slant 列
  */
+
     public char[] bitShiftFor32DNSlant(int slant) {
         int CHARS_PER_COLOMN = 2;
 // H.M.Wang 2022-4-2 插入7列（跳8列）改为插入3列（跳4列）
@@ -1534,8 +1548,11 @@ public class DataTask {
 // End of H.M.Wang 2022-3-29 追加32DN打印头的双列位移打印功能。功能的要求是
 
 // H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
-	public char[] bitShiftFor32DN() {
-		int COLUMNS_TO_SHIFT= 4;
+// H.M.Wang 2022-4-4 按着吕总要求修改
+	public char[] bitShiftFor32DN(int slant) {
+//		int COLUMNS_TO_SHIFT= 4;
+		int COLUMNS_TO_SHIFT= ((slant == 0) ? 4 : slant);
+// End of H.M.Wang 2022-4-4 按着吕总要求修改
 		int CHARS_PER_COLOMN = 2;
 		char[] buffer = new char[(mPrintBuffer.length + COLUMNS_TO_SHIFT * CHARS_PER_COLOMN) * 2];	// 每行增加4个字节，共增加16个字节(8个char),并且每列16bit后空余16bit，相当于数据区翻倍
 		Arrays.fill(buffer, (char)0x0000);

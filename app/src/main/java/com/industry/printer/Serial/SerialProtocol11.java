@@ -2,6 +2,7 @@ package com.industry.printer.Serial;
 
 import android.content.Context;
 
+import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.StreamTransport;
 
 import org.apache.http.util.ByteArrayBuffer;
@@ -9,23 +10,42 @@ import org.apache.http.util.ByteArrayBuffer;
 import java.nio.charset.Charset;
 
 /**
- * Created by hmwan on 2021/9/28.
+ * Created by hmwan on 2022/4/5.
  */
 
-public class SerialProtocol10 extends SerialProtocol {
+public class SerialProtocol11 extends SerialProtocol {
     public static String TAG = SerialProtocol5.class.getSimpleName();
 
-    public SerialProtocol10(/*StreamTransport st*/SerialPort serialPort, Context ctx){
+    public SerialProtocol11(/*StreamTransport st*/SerialPort serialPort, Context ctx){
         super(serialPort, ctx);
     }
 
     @Override
     protected int parseFrame(ByteArrayBuffer recvMsg) {
-        if(recvMsg.length() < 14) {             // 本来定义的数据长度是36，但是只有18字以内有效，且仅使用9-12的内容，因此可以判断是否大于12就可以了. 2021-10-11 修改14位赋给DT1，因此修改有效性判断位数
-            return ERROR_FAILED;
-        }
+        try {
+            byte[] msg = recvMsg.toByteArray();
 
-        return ERROR_SUCESS;
+            if(msg.length < 7) {    // 帧长度异常
+                return ERROR_FAILED;
+            }
+
+            if(msg[0] != (byte)0x1B || msg[1] != (byte)0x53) {              // 帧头错误
+                return ERROR_FAILED;
+            }
+
+            if(msg[2] != (byte)0x31 || msg[3] != (byte)0x31) {              // 功能码错误
+                return ERROR_FAILED;
+            }
+
+            if(msg[msg.length-2] != (byte)0x0D || msg[msg.length-1] != (byte)0x0A) {    // 帧尾错误
+                return ERROR_FAILED;
+            }
+
+            return ERROR_SUCESS;                        // 协议格式正确
+        } catch(Exception e) {
+            Debug.e(TAG, e.getMessage());
+        }
+        return ERROR_FAILED;
     }
 
     @Override
@@ -51,4 +71,10 @@ public class SerialProtocol10 extends SerialProtocol {
         byte[] retMsg = createFrame(cmd, ack, devStatus, cmdStatus, message.getBytes(Charset.forName("UTF-8")));
         super.sendCommandProcessResult(retMsg);
     }
+
+    public void sendCommandProcessResult(int cmd, int ack, int devStatus, int cmdStatus, byte[] msg) {
+        byte[] retMsg = createFrame(cmd, ack, devStatus, cmdStatus, msg);
+        super.sendCommandProcessResult(retMsg);
+    }
+
 }

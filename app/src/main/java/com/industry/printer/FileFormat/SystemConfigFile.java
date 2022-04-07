@@ -207,9 +207,23 @@ public class SystemConfigFile{
                                                                 // 1. 接收前18位
                                                                 // 2.9-12位赋给DT 0.
 // End of H.M.Wang 2021-9-28 追加串口协议10
+
 // H.M.Wang 2021-1-30 追加PC命令
 	public static final int DATA_PC_COMMAND 	    = 21;		// PC Command
 // End of H.M.Wang 2021-1-30 追加PC命令
+
+// H.M.Wang 2022-4-5 追加串口协议11(341串口)
+	public static final int DATA_SOURCE_RS232_11 	= 22;		// 数据源使用串口协议11。具体内容是：
+	// 走CH341串口（ttyUSB0）
+	// 具体要求参照《341串口协议.doc》文档
+	// 数据格式为
+	// 	帧头：0x1B, 0x53
+	// 	功能码：0x31, 0x31
+	// 	内容：0x30, 0x30, 0x31, 0x38, 0x2E, 0x32, 0x6B, 0x67
+	// 	校验位：0xCB
+	// 	帧尾：0x0D, 0x0A,
+	// 	（全文实力）：0x1B, 0x53, 0x31, 0x31, 0x30, 0x30, 0x31, 0x38, 0x2E, 0x32, 0x6B, 0x67, 0xCB, 0x0D, 0x0A
+// End of H.M.Wang 2022-4-5 追加串口协议11(341串口)
 
 // H.M.Wang 2021-3-6 追加串口协议8
 	public static final int INDEX_LOCAL_ID 			= 57;		// 用于串口协议8当中的本地机器ID。

@@ -61,6 +61,8 @@ import com.industry.printer.object.DynamicText;
 import com.industry.printer.object.HyperTextObject;
 import com.industry.printer.ui.CustomerDialog.RemoteMsgPrompt;
 
+import org.apache.http.util.ByteArrayBuffer;
+
 /**
  * class DataTransferThread
  * 用一个独立的线程读取fpga的buffer状态，
@@ -426,6 +428,7 @@ public class DataTransferThread {
 // End of H.M.Wang 2022-1-4 取消PURGE2的清洗，只留PURGE1，间隔还是10s，重复30次
 				}
 				FpgaGpioOperation.uninit();
+				FpgaGpioOperation.dispLog();
 				FpgaGpioOperation.clean();
 				try {
 					mPurgeLock.unlock();
@@ -1035,6 +1038,69 @@ private void setSerialProtocol9DTs(final String data) {
     }
 // End of H.M.Wang 2021-9-28 追加串口协议10
 
+// H.M.Wang 2022-4-5 追加串口协议11(341串口)
+	public void setCH341DataToDt(final byte[] data) {
+		Debug.d(TAG, "String from Remote = [" + ByteArrayUtils.toHexString(data) + "]");
+
+		byte check = 0x00;
+
+		for(int i=0; i<data.length-3; i++) {
+			check += data[i];
+		}
+
+		if(check != data[data.length-3]) {
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					if (null != mRemoteRecvedPromptDlg) {
+						mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
+						mRemoteRecvedPromptDlg.setMessage(ByteArrayUtils.toHexString(data) + "\n" + "Data error");
+					}
+				}
+			});
+		} else {
+			byte[] result = new byte[data.length-7];
+
+			for(int i=0; i<result.length; i++) {
+				result[i] = data[i+4];
+			}
+			for(int i=0; i<result.length; i++) {
+				if(result[i] == 0x30) {
+					result[i] = 0x20;
+				}
+			}
+
+			final String resString = new String(result);
+
+			mHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					if (null != mRemoteRecvedPromptDlg) {
+						mRemoteRecvedPromptDlg.show();
+//					mRemoteRecvedPromptDlg.show();
+						mRemoteRecvedPromptDlg.setMessage(ByteArrayUtils.toHexString(data) + "\n" + resString);
+					}
+				}
+			});
+
+			for(DataTask dataTask : mDataTask) {
+				ArrayList<BaseObject> objList = dataTask.getObjList();
+				for(BaseObject baseObject: objList) {
+					if(baseObject instanceof DynamicText) {
+						int dtIndex = ((DynamicText)baseObject).getDtIndex();
+						if(dtIndex == 0) {
+							baseObject.setContent(resString);
+						}
+						mNeedUpdate = true;
+					}
+				}
+			}
+		}
+	}
+
+// End of H.M.Wang 2022-4-5 追加串口协议11(341串口)
+
 //	private AlertDialog mRemoteRecvedPromptDlg = null;
 	private RemoteMsgPrompt mRemoteRecvedPromptDlg = null;
 
@@ -1147,6 +1213,11 @@ private void setSerialProtocol9DTs(final String data) {
                     setSP10DataToDt(datastring);
                     serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, datastring + " set.");
 // End of H.M.Wang 2021-9-28 追加串口协议10
+// H.M.Wang 2022-4-5 追加串口协议11(341串口)
+				} else if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_11) {
+					setCH341DataToDt(data);
+					serialHandler.sendCommandProcessResult(SerialProtocol.ERROR_SUCESS, 1, 0, 0, data);
+// End of H.M.Wang 2022-4-5 追加串口协议11(341串口)
 				}
 			}
 		});
