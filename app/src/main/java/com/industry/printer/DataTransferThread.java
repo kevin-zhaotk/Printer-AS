@@ -1068,6 +1068,8 @@ private void setSerialProtocol9DTs(final String data) {
 			for(int i=0; i<result.length; i++) {
 				if(result[i] == 0x30) {
 					result[i] = 0x20;
+				} else {
+					break;
 				}
 			}
 

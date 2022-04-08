@@ -2754,7 +2754,24 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 	@Override
 	public void OnFinished(int code) {
 		Debug.d(TAG, "--->onFinished");
-		mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
+// H.M.Wang 2022-4-8 当QR_R.csv文件全部打印完成时，取消停止打印，因为取消太快的话，打印内容可能被切掉，改为报警
+//		mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
+		new Thread() {
+			@Override
+			public void run() {
+				try{
+					ExtGpio.playClick();
+					sleep(50);
+					ExtGpio.playClick();
+					sleep(50);
+					ExtGpio.playClick();
+				} catch (Exception e) {
+					Debug.e(TAG, e.getMessage());
+				}
+			}
+		}.start();
+// End of H.M.Wang 2022-4-8 当QR_R.csv文件全部打印完成时，取消停止打印，因为取消太快的话，打印内容可能被切掉，改为报警
+
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
