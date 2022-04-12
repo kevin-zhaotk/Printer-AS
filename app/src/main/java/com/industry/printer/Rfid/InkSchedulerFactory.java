@@ -28,11 +28,17 @@ public class InkSchedulerFactory {
             return new SmardCardScheduler(ctx);
 //            return new RfidScheduler(ctx);
         } else {
+// H.M.Wang 2022-4-12 追加try，以避免旧so里面没有这个函数导致死机
+            try {
 // H.M.Wang 2022-1-23 根据SmartCard是否连接来判断走SC还是RFID
-            if(SmartCard.exist(PlatformInfo.getImgUniqueCode().startsWith("M") ? 1 : 0) == SmartCard.SC_SUCCESS) {
-                return new SmardCardScheduler(ctx);
-            }
+                if(SmartCard.exist(PlatformInfo.getImgUniqueCode().startsWith("M") ? 1 : 0) == SmartCard.SC_SUCCESS) {
+                    return new SmardCardScheduler(ctx);
+                }
 // End of H.M.Wang 2022-1-23 根据SmartCard是否连接来判断走SC还是RFID
+            } catch(Exception e) {
+
+            }
+// End of H.M.Wang 2022-4-12 追加try，以避免旧so里面没有这个函数导致死机
             return new RfidScheduler(ctx);
         }
     }
