@@ -181,6 +181,8 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init(JNIEnv *env, jclass arg) {
     return SC_SUCCESS;
 }
 
+extern char *inkFamilyGetFiledName(uint8_t id);
+
 JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jint card ) {
     LOGI("Initializing smart card component...%d\n", card);
 
@@ -219,6 +221,10 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jin
 
         adjustLocalInkValue(HP_SMART_CARD_DEVICE_PEN2);
     } else if(CARD_SELECT_BULK1 == card || CARD_SELECT_BULKX == card) {
+        if(CARD_SELECT_BULKX == card) {     // 2022-4-15 墨盒替代墨袋的时候，显示log的时候使用ink的访问信息，不适用supply的信息。
+            FIELD_NAME[HP_SMART_CARD_DEVICE_BULK1] = inkFamilyGetFiledName;
+        }
+
         if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_present(HP_SMART_CARD_DEVICE_BULK1)) {
             LOGE(">>> LIB_HP_SMART_CARD_device_present(%d): NOT PRESENT.  ", HP_SMART_CARD_DEVICE_BULK1);
             pthread_mutex_unlock(&mutex);

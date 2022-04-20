@@ -12,6 +12,7 @@ import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -24,7 +25,7 @@ public class SmartCardManager implements IInkDevice {
 
     public static boolean SMARTCARD_ACCESS = true;
     private static boolean CONSISTENCY_CHECK = false;
-    private static boolean OIB_CHECK = false;
+    private static boolean OIB_CHECK = true;
     private static boolean SUM_CHECK = false;
 
     private final static int PEN_VS_BAG_RATIO           = 3;
@@ -41,6 +42,9 @@ public class SmartCardManager implements IInkDevice {
     private class _device_status {
         private boolean mInitialized;
         private boolean mValid;
+// H.M.Wang 2022-4-18 增加OIB属性，记录OIB状态
+        private boolean mOIB;
+// End of H.M.Wang 2022-4-18 增加OIB属性，记录OIB状态
         private int     mCardType;
         private int     mLevelType;
         private int     mInkLevel;
@@ -54,6 +58,7 @@ public class SmartCardManager implements IInkDevice {
         public _device_status(int cardType, int levelType, int maxVolume) {
             mInitialized = false;
             mValid = true;
+            mOIB = false;
 
             mCardType = cardType;
             mLevelType = levelType;
@@ -92,6 +97,7 @@ public class SmartCardManager implements IInkDevice {
 
     private static final int MSG_SHOW_CONSISTENCY       = 101;
     private static final int MSG_SHOW_LEVEL             = 102;
+    private static final int MSG_SHOW_OIB_ERROR         = 103;
 
     private final static int READ_LEVEL_INTERVAL        = 10;
     private final static int MSG_READ_CONSISTENCY_INTERVAL   = 1000 * 60;
@@ -134,6 +140,9 @@ public class SmartCardManager implements IInkDevice {
                         mRecvedLevelPromptDlg.show();
                         mRecvedLevelPromptDlg.show();
                     }
+                    break;
+                case MSG_SHOW_OIB_ERROR:
+                    ToastUtil.show(mContext, "Out of Ink!");
                     break;
             }
         }
@@ -180,6 +189,11 @@ public class SmartCardManager implements IInkDevice {
 
     private boolean isOpeningInit = false;
     private int reading = 0;
+// H.M.Wang 2022-4-18 再次开放，失败尝试次数改为5次
+// H.M.Wang 2022-4-14 另外一种对应国外用户的PEN经常会初始化失败，导致不能打印的问题，如果失败尝试3次初始化（暂时去功能）
+    private int try_num = 0;
+// End of H.M.Wang 2022-4-14 另外一种对应国外用户的PEN经常会初始化失败，导致不能打印的问题，如果失败尝试3次初始化
+// End of H.M.Wang 2022-4-18 再次开放，失败尝试次数改为5次
 
 // H.M.Wang 2022-1-24 将单卡的初始化流程提取出来成为一个独立的函数
     private void initComponent(int index) {
@@ -190,6 +204,7 @@ public class SmartCardManager implements IInkDevice {
             SmartCard.initComponent(mCards[index].mLevelType);
         }
         if(SmartCard.SC_SUCCESS == SmartCard.initComponent(mCards[index].mCardType)) {
+            try_num = 0;
             mCards[index].mInitialized = true;
             mCards[index].mValid = true;
             MAX_BAG_INK_VOLUME = SmartCard.getMaxVolume(mCards[index].mCardType);
@@ -199,10 +214,16 @@ public class SmartCardManager implements IInkDevice {
                 mCards[index].mMaxVolume = MAX_BAG_INK_VOLUME;
             }
             checkOIB(index);
+// H.M.Wang 2022-4-18 因为在初始化成功之前，getLocalInk函数可能就被主线程调用过，因为这时mInitialized和mValid都是false，因此mInkLevel会因为4-14日的修改，为了支持初始化失败也可以打印，所以mInkLevel被设上了一个虚假值（最大值的1/2)，这样初始化成功以后也不会再次去读卡中的值，因此这里设一个-1，强制其更新为卡中的值
+            mCards[index].mInkLevel = -1;
+// H.M.Wang 2022-4-18 因为在初始化成功之前，...
             getLocalInk(index);
         } else {
+            try_num++;
             mCards[index].mInitialized = false;
             mCards[index].mValid = false;
+            if(try_num < 5) initComponent(index);
+            try_num = 0;
         }
     }
 // End of H.M.Wang 2022-1-24 将单卡的初始化流程提取出来成为一个独立的函数
@@ -259,10 +280,12 @@ public class SmartCardManager implements IInkDevice {
                     mCallback.sendEmptyMessage(MSG_SMARTCARD_INIT_SUCCESS);
                 } else {
                     for(int i=0; i<mPenNum; i++) {
-                        if(!mCards[i].mValid) {
-                            mCallback.obtainMessage(MSG_SMARTCARD_CHECK_FAILED, SmartCard.SC_FAILED, 0, null).sendToTarget();
-                            return;
-                        }
+// H.M.Wang 2022-4-14 临时取消开始打印后检查valid状态，因为国外用户的PEN经常会初始化失败，导致不能打印（代码已经恢复原样）
+//                        if(!mCards[i].mValid) {
+//                            mCallback.obtainMessage(MSG_SMARTCARD_CHECK_FAILED, SmartCard.SC_FAILED, 0, null).sendToTarget();
+//                            return;
+//                        }
+// End of H.M.Wang 2022-4-14 临时取消开始打印后检查valid状态，因为国外用户的PEN经常会初始化失败，导致不能打印
                     }
                     mCallback.sendEmptyMessage(MSG_SMARTCARD_CHECK_SUCCESS);
                     if(null == mTimer) {
@@ -323,7 +346,9 @@ public class SmartCardManager implements IInkDevice {
                 int ret = SmartCard.checkOIB(mCards[cardIdx].mCardType);
                 if(SmartCard.SC_SUCCESS != ret) {
                     mCards[cardIdx].mValid = false;
+                    mCards[cardIdx].mOIB = true;
                     mCallback.obtainMessage(MSG_SMARTCARD_CHECK_FAILED, SmartCard.SC_OUT_OF_INK_ERROR, 0, null).sendToTarget();
+                    mHandler.sendEmptyMessage(MSG_SHOW_OIB_ERROR);
                     return false;
                 }
             }
@@ -541,6 +566,10 @@ public class SmartCardManager implements IInkDevice {
                         if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
                             mCards[cardIdx].mInkLevel = SmartCard.getLocalInk(mCards[cardIdx].mCardType);
                             mCards[cardIdx].mInkLevel = (mCards[cardIdx].mInkLevel >= 0 ? mCards[cardIdx].mMaxVolume - mCards[cardIdx].mInkLevel : mCards[cardIdx].mInkLevel);
+// H.M.Wang 2022-4-14 临时取消开始打印后检查valid状态，因为国外用户的PEN经常会初始化失败，导致不能打印（代码已经恢复原样）
+                        } else {
+                            mCards[cardIdx].mInkLevel = mCards[cardIdx].mMaxVolume / 2;
+// End of H.M.Wang 2022-4-14 临时取消开始打印后检查valid状态，因为国外用户的PEN经常会初始化失败，导致不能打印
                         }
                     }
                 }
@@ -574,6 +603,7 @@ public class SmartCardManager implements IInkDevice {
         boolean ret = false;
 
         if(cardIdx < mPenNum + mBagNum) {
+            if(mCards[cardIdx].mOIB) return false;
 // H.M.Wang 2022-1-24 追加在卡为无效或者未初始化的时候，尝试初始化
             if(!mCards[cardIdx].mValid || !mCards[cardIdx].mInitialized) {
                 mCachedThreadPool.execute(new Runnable() {
@@ -587,7 +617,10 @@ public class SmartCardManager implements IInkDevice {
             ret = mCards[cardIdx].mValid;
         }
 
-        return ret;
+// H.M.Wang 2022-4-14 临时取消开始打印后检查valid状态，因为国外用户的PEN经常会初始化失败，导致不能打印
+//        return ret;
+        return (cardIdx < mPenNum ? true : ret);
+// End of H.M.Wang 2022-4-14 临时取消开始打印后检查valid状态，因为国外用户的PEN经常会初始化失败，导致不能打印
     }
 
     @Override
@@ -624,9 +657,7 @@ public class SmartCardManager implements IInkDevice {
                 synchronized (SmartCardManager.this) {
                     if(mCards[cardIdx].mInitialized && mCards[cardIdx].mValid) {
 // H.M.Wang 2021-8-7 追加当写SC卡出现错误的时候报错的处理
-//                        SmartCard.downLocal(mCards[cardIdx].mCardType);
-                        int ret = SmartCard.SC_SUCCESS;
-                        ret = SmartCard.downLocal(mCards[cardIdx].mCardType);
+                        int ret = SmartCard.downLocal(mCards[cardIdx].mCardType);
                         if(SmartCard.SC_SUCCESS != ret) {
                             mHandler.obtainMessage(MSG_SHOW_CONSISTENCY, "Smartcard access error!").sendToTarget();
                         }
@@ -636,9 +667,11 @@ public class SmartCardManager implements IInkDevice {
 // End of H.M.Wang 2021-8-23 取消重新读取卡中的值来修正本地值的操作
                         checkOIB(cardIdx);
 
+                    }
+// H.M.Wang 2022-4-16 将墨袋的减锁和墨盒的减锁分离
+                    if(mCards[mCurBagIdx].mInitialized && mCards[mCurBagIdx].mValid) {
 // H.M.Wang 2021-8-7 追加当写SC卡出现错误的时候报错的处理
-//                        SmartCard.downLocal(mCards[mCurBagIdx].mCardType);
-                        ret = SmartCard.downLocal(mCards[mCurBagIdx].mCardType);
+                        int ret = SmartCard.downLocal(mCards[mCurBagIdx].mCardType);
                         if(SmartCard.SC_SUCCESS != ret) {
                             mHandler.obtainMessage(MSG_SHOW_CONSISTENCY, "Smartcard access error!").sendToTarget();
                         }
@@ -648,6 +681,7 @@ public class SmartCardManager implements IInkDevice {
 // End of H.M.Wang 2021-8-23 取消重新读取卡中的值来修正本地值的操作
                         checkOIB(mCurBagIdx);
                     }
+// End of H.M.Wang 2022-4-16 将墨袋的减锁和墨盒的减锁分离
                 }
             }
         });
