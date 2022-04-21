@@ -52,7 +52,7 @@ static pthread_mutex_t mutex;
 
 //#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.375"
+#define VERSION_CODE                            "1.0.376"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -233,6 +233,18 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_init_comp(JNIEnv *env, jclass arg, jin
 
         if (HP_SMART_CARD_OK != LIB_HP_SMART_CARD_device_init(HP_SMART_CARD_DEVICE_BULK1)) {
             LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): Initialization Failed.  ", HP_SMART_CARD_DEVICE_BULK1);
+            pthread_mutex_unlock(&mutex);
+            return SC_INIT_BULK_CTRG_INIT_FAILED;
+        }
+
+        if (HP_SMART_CARD_OK == readTag0FamilyID(HP_SMART_CARD_DEVICE_BULK1, &family_id)) {
+            if((CARD_SELECT_BULKX == card && family_id != 27) || (CARD_SELECT_BULK1 == card && family_id != 28)) {
+                LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): FamilyID not match.  ", HP_SMART_CARD_DEVICE_BULK1);
+                pthread_mutex_unlock(&mutex);
+                return SC_INIT_BULK_CTRG_INIT_FAILED;
+            }
+        } else {
+            LOGE(">>> LIB_HP_SMART_CARD_device_init(%d): FamilyID read error.  ", HP_SMART_CARD_DEVICE_BULK1);
             pthread_mutex_unlock(&mutex);
             return SC_INIT_BULK_CTRG_INIT_FAILED;
         }

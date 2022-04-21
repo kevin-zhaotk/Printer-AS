@@ -150,7 +150,7 @@ public class SmartCardManager implements IInkDevice {
 
     public SmartCardManager(Context context) {
         Debug.d(TAG, "APK VERSION_CODE: " + BuildConfig.VERSION_CODE);
-        Debug.d(TAG, "---> enter SmartCardManager()");
+        Debug.d(TAG, "---> enter SmartCardManager() - CARD_TYPE_BULKX(Full)");
         mContext = context;
 
         mCachedThreadPool = Executors.newCachedThreadPool();
@@ -208,7 +208,7 @@ public class SmartCardManager implements IInkDevice {
             mCards[index].mInitialized = true;
             mCards[index].mValid = true;
             MAX_BAG_INK_VOLUME = SmartCard.getMaxVolume(mCards[index].mCardType);
-            if(mCards[index].mCardType == CARD_TYPE_PEN1 || mCards[index].mCardType == CARD_TYPE_PEN2 || mCards[index].mCardType == CARD_TYPE_BULKX) {
+            if(mCards[index].mCardType == CARD_TYPE_PEN1 || mCards[index].mCardType == CARD_TYPE_PEN2) {
                 mCards[index].mMaxVolume = MAX_BAG_INK_VOLUME * PEN_VS_BAG_RATIO;
             } else {
                 mCards[index].mMaxVolume = MAX_BAG_INK_VOLUME;
@@ -599,13 +599,16 @@ public class SmartCardManager implements IInkDevice {
 
     @Override
     public boolean isValid(final int cardIdx) {
-        Debug.d(TAG, "---> enter isValid(" + cardIdx + ")");
+        Debug.d(TAG, "---> enter isValid(" + cardIdx + ")" + "mInitialized=" + !mCards[cardIdx].mInitialized + "mValid=" + !mCards[cardIdx].mValid + "mOIB=" + !mCards[cardIdx].mOIB);
         boolean ret = false;
 
         if(cardIdx < mPenNum + mBagNum) {
             if(mCards[cardIdx].mOIB) return false;
 // H.M.Wang 2022-1-24 追加在卡为无效或者未初始化的时候，尝试初始化
-            if(!mCards[cardIdx].mValid || !mCards[cardIdx].mInitialized) {
+// H.M.Wang 2022-4-21 修改重新初始化的逻辑，没有初始化过的不尝试
+//            if(!mCards[cardIdx].mValid || !mCards[cardIdx].mInitialized) {
+              if(!mCards[cardIdx].mValid && mCards[cardIdx].mInitialized) {
+// End of H.M.Wang 2022-4-21 修改重新初始化的逻辑，没有初始化过的不尝试
                 mCachedThreadPool.execute(new Runnable() {
                     @Override
                     public void run() {
