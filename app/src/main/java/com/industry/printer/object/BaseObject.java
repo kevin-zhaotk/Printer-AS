@@ -294,7 +294,7 @@ public class BaseObject{
 		Debug.d(TAG, "mRatio = " + mRatio);
 	}
 
-	private Bitmap draw() {
+	protected Bitmap draw() {
 		Bitmap bitmap;
 		mPaint.setTextSize(getfeed());
 		mPaint.setAntiAlias(true); //去除锯齿  

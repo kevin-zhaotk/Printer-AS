@@ -81,6 +81,9 @@ public class EditScrollView extends View {
 			switch (type) {
 				case MESSAGE_TYPE_12_7:
 				case MESSAGE_TYPE_1_INCH:
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+				case MESSAGE_TYPE_254X10:
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
 				case MESSAGE_TYPE_16_DOT:
 				case MESSAGE_TYPE_32_DOT:
 // H.M.Wang 2020-7-23 追加32DN打印头

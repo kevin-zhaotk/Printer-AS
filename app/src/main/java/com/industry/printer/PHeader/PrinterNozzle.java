@@ -52,8 +52,11 @@ public enum PrinterNozzle {
 // End of H.M.Wang 2021-8-16 追加96DN头
 // H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
     MESSAGE_TYPE_E5X48(MessageType.NOZZLE_INDEX_E5X48, NozzleType.NOZZLE_TYPE_E5X48, 1, 1),
-    MESSAGE_TYPE_E5X50(MessageType.NOZZLE_INDEX_E5X50, NozzleType.NOZZLE_TYPE_E5X50, 1, 1);
+    MESSAGE_TYPE_E5X50(MessageType.NOZZLE_INDEX_E5X50, NozzleType.NOZZLE_TYPE_E5X50, 1, 1),
 // End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+    MESSAGE_TYPE_254X10(MessageType.NOZZLE_INDEX_254X10, NozzleType.NOZZLE_TYPE_254X10, 1, 1);//10,10
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
 
     public final int mIndex;
     public final int mType;
@@ -238,6 +241,11 @@ public enum PrinterNozzle {
                 mHeight = 96;
                 break;
 // End of H.M.Wang 2021-8-16 追加96DN头
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+            case NozzleType.NOZZLE_TYPE_254X10:
+                mHeight = 3200;
+                break;
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
         }
     }
 
@@ -390,6 +398,12 @@ public enum PrinterNozzle {
                 scaleH = 96f/152;
                 break;
 // End of H.M.Wang 2021-8-16 追加96DN头
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+            case NozzleType.NOZZLE_TYPE_254X10:
+                scaleW = 10.0f * 308 / 152;
+                scaleH = 10.0f * 308 / 152;
+                break;
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
             default:
                 scaleW = 1f;
                 scaleH = 1f;
@@ -470,6 +484,11 @@ public enum PrinterNozzle {
                 ratio = 96f / 304;
                 break;
 // End of H.M.Wang 2021-8-16 追加96DN头
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+            case NozzleType.NOZZLE_TYPE_254X10:
+                ratio = 10.0f * 25.4f / 304;
+                break;
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
             default:
                 break;
         }
@@ -627,6 +646,10 @@ public enum PrinterNozzle {
             case MessageType.NOZZLE_INDEX_E5X50:
                 return MESSAGE_TYPE_E5X50;
 // End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+            case NozzleType.NOZZLE_TYPE_254X10:
+                return MESSAGE_TYPE_254X10;
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
             default:
                 return MESSAGE_TYPE_12_7;
 
@@ -702,6 +725,10 @@ public enum PrinterNozzle {
             case NozzleType.NOZZLE_TYPE_E5X50:
                 return MESSAGE_TYPE_E5X50;
 // End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+            case NozzleType.NOZZLE_TYPE_254X10:
+                return MESSAGE_TYPE_254X10;
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
             default:
                 return MESSAGE_TYPE_12_7;
         }
@@ -756,6 +783,9 @@ public enum PrinterNozzle {
         public static final int NOZZLE_INDEX_E5X48 = 21;
         public static final int NOZZLE_INDEX_E5X50 = 22;
 // End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+        public static final int NOZZLE_INDEX_254X10 = 23;
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
     }
 
     public static class NozzleType {
@@ -806,5 +836,8 @@ public enum PrinterNozzle {
         public static final int NOZZLE_TYPE_E5X48 = 40;
         public static final int NOZZLE_TYPE_E5X50 = 41;
 // End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+        public static final int NOZZLE_TYPE_254X10 = 42;
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
     }
 }

@@ -385,17 +385,21 @@ public class ObjectInfoDialog extends Dialog implements android.view.View.OnClic
 			    mShow = (CheckBox) findViewById(R.id.check_Num_show);
 		    	//mContent.setEnabled(false);
 			    mTextsize = (EditText) findViewById(R.id.et_text_size);
-			    if (mObject.mSource) {
-					mContent.setEnabled(false);
-				}
+// H.M.Wang 2022-4-22 允许动态条码编辑初始内容
+//			    if (mObject.mSource) {
+//					mContent.setEnabled(false);
+//				}
+// End of H.M.Wang 2022-4-22 允许动态条码编辑初始内容
 
 				// H.M.Wang 追加这段代码在添加条码的时候不显示字体，追加二维码的时候不显示内容和字体
 				// H.M.Wang 2019-9-21 二维码有两种QRCode和DynamicQRCode，只有第二种需要隐藏内容编辑窗
 //				if(((BarcodeObject)mObject).isQRCode()) {
-				if(((BarcodeObject)mObject).isDynamicCode()) {
-					mContentView.setVisibility(View.GONE);
-					mContent.setVisibility(View.GONE);
-				}
+// H.M.Wang 2022-4-22 允许动态条码编辑初始内容
+//				if(((BarcodeObject)mObject).isDynamicCode()) {
+//					mContentView.setVisibility(View.GONE);
+//					mContent.setVisibility(View.GONE);
+//				}
+// End of H.M.Wang 2022-4-22 允许动态条码编辑初始内容
 				mFontView.setVisibility(View.GONE);
 				mFont.setVisibility(View.GONE);
 			} else if (mObject instanceof LetterHourObject) {

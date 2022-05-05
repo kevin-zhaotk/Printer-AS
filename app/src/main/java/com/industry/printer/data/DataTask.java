@@ -261,6 +261,9 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_38_1 ||
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_50_8 ||
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH ||
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_254X10 ||
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL ||
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_TRIPLE ||
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR ||
@@ -314,8 +317,14 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 		}
 // End of H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
 
+// H.M.Wang 2022-5-5 将MB的偏移（25.4x10头偏移）单独处理
+		if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_254X10) {
+			rebuildBuffer4254x10();
+		} else {
+			rebuildBuffer();
+		}
+// End of H.M.Wang 2022-5-5 将MB的偏移（25.4x10头偏移）单独处理
 
-		rebuildBuffer();
 		// }
 		//BinCreater.Bin2Bitmap(mPrintBuffer);
 		/*test bin*/
@@ -660,6 +669,12 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 			scaleW /= 1.0f * 308 / 152;
 			div = scaleW;
 			scaleH = 0.5f;
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_254X10) {
+			scaleW /= 10.0f * 308 / 152;
+			div = scaleW;
+			scaleH = 0.05f;
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
 		} else if (headType == PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL) {
 // H.M.Wang 修改
 //			div = 0.5f;
@@ -1200,7 +1215,43 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 		}
 		return false;
 	}
-	
+
+// H.M.Wang 2022-5-5 将MB的偏移（25.4x10头偏移）单独处理
+	private void rebuildBuffer4254x10() {
+		mBuffer = mPrintBuffer;
+
+		int shift0 = (mTask.getMsgObject().getPNozzle().shiftEnable ? Configs.getMessageShift(0) : 0);
+		int shift1 = (mTask.getMsgObject().getPNozzle().shiftEnable ? Configs.getMessageShift(1) : 0);
+		int shiftBand = 0;
+		int expandCols = 0;
+
+		if(shift0 > 0) {
+			shiftBand = 0;
+			expandCols = shift0;
+		} else if(shift1 > 0) {
+			shiftBand = 1;
+			expandCols = shift1;
+		} else {
+			return;
+		}
+
+		int charsPerColumn = 200;       // 每列的双字节数。400个字节，3200个点
+		int charsPerBlock = 20;			// 每个头的双字节数。40个字节，320个点
+		char[] newBuf = new char[mBuffer.length + expandCols * charsPerColumn];		// 扩大缓冲区
+
+		for(int i=0; i<mBuffer.length/200; i++) {			// 遍历每个列
+			for(int j=0; j<10; j++) {
+				if(j%2 == shiftBand) {
+					System.arraycopy(mBuffer, i * charsPerColumn + j * charsPerBlock, newBuf, (i + expandCols) * charsPerColumn + j * charsPerBlock,  charsPerBlock);
+				} else {
+					System.arraycopy(mBuffer, i * charsPerColumn + j * charsPerBlock, newBuf, i * charsPerColumn + j * charsPerBlock,  charsPerBlock);
+				}
+			}
+		}
+		mBuffer = newBuf;
+	}
+// End of H.M.Wang 2022-5-5 将MB的偏移（25.4x10头偏移）单独处理
+
 	/**
 	 * 对buffer进行左右移动变换，生成真正的打印数据
 	 */
@@ -1209,7 +1260,7 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 		if (!isNeedRebuild()) {
 			mBuffer = mPrintBuffer;
 		}
-		MessageObject object = mTask.getMsgObject();;
+		MessageObject object = mTask.getMsgObject();
 //		ArrayList<SegmentBuffer> buffers = new ArrayList<SegmentBuffer>();
 //		for (BaseObject msg : mTask.getObjects()) {
 //			if (msg instanceof MessageObject) {

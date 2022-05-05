@@ -108,6 +108,15 @@ public class DynamicText extends BaseObject {
         return mDtIndex;
     }
 
+// H.M.Wang 2022-4-24 追加这个继承自父类的函数，用来在编辑页面也显示蓝色
+    @Override
+    protected void drawNormal() {
+        // Debug.d(TAG, "--->drawNormal");
+        mPaint.setColor(Color.BLUE);
+        mBitmap = super.draw();     // 将父类的该函数从private修改为protected，否则无法调用
+    }
+// End of H.M.Wang 2022-4-24 追加这个继承自父类的函数，用来在编辑页面也显示蓝色
+
     @Override
     public Bitmap getpreviewbmp()
     {

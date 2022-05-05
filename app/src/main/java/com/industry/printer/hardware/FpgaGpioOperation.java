@@ -369,6 +369,9 @@ public class FpgaGpioOperation {
 // H.M.Wang 2021-5-22 25.4x(1-4)头，打印的时候，S18[4]强制设为0
 // H.M.Wang 2021-5-20 25.4x(1-4)头，打印的时候，S18[4]强制设为1
             if (config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH ||
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+                config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_254X10 ||
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_TRIPLE ||
                 config.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR) {

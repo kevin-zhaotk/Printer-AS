@@ -43,7 +43,12 @@ public class RFIDAsyncTask implements Runnable {
 		Debug.print(RFIDDevice.RFID_DATA_SEND, mCmd.mTransData);
 		byte[] readin = null;
 		int writed = RFIDDevice.write(mFd, mCmd.transferData(), mCmd.getLength());
-		readin = RFIDDevice.read(mFd, 64);
+// H.M.Wang 2022-4-24 如果操作太快，read函数可能会超时返回null，导致后续处理异常。修改为如果空则一直等待
+//		readin = RFIDDevice.read(mFd, 64);
+		do {
+			readin = RFIDDevice.read(mFd, 64);
+		} while(null == readin);
+// End of H.M.Wang 2022-4-24 如果操作太快，read函数可能会超时返回null，导致后续处理异常。修改为如果空则一直等待
 		Debug.print(RFIDDevice.RFID_DATA_RECV, readin);
 		RFIDData response = parseResponse(readin);
 		if (mCallback != null) {

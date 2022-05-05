@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.industry.printer.DataTransferThread;
 import com.industry.printer.FileFormat.QRReader;
 import com.industry.printer.R;
 import com.industry.printer.FileFormat.SystemConfigFile;
@@ -217,6 +218,13 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 				QRReader.reInstance(mContext);												// 重新初始化QRReader类，必须在更新了不挥发存储区后执行
 // End of H.M.Wang 2020-5-19 写入不挥发存储区后，重新初始化QRReader类，否则，上次执行结果留存，新设置内容不起作用
 				notifyDataSetChanged();
+// H.M.Wang 2022-4-24 如果修改了QRLast值，则重新生成一次打印缓冲区
+				DataTransferThread dt = DataTransferThread.getInstance(mContext);
+				if(dt.isRunning()) {
+					dt.setContentsFromQRFile();
+					dt.mNeedUpdate = true;
+				}
+// End of H.M.Wang 2022-4-24 如果修改了QRLast值，则重新生成一次打印缓冲区
 				break;
 // End of H.M.Wang 2020-5-16 QRLast移植RTC的0x38地址保存，可以通过参数设置管理
 			}

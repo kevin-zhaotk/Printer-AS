@@ -57,7 +57,7 @@
 	<string name="str_seldata">Выбр. дан.</string>
 	<string name="str_mvforward">Вперед</string>
 	<string name="str_mvbackward">Назад</string>
-	<string name="str_preview">Просмотр</string>
+	<string name="str_preview">Показать</string>
 	<string name="str_del">Удалить</string>
 	<string name="str_multi_select">Группа</string>
 	<string name="str_btn_shift">Смена</string>
@@ -78,11 +78,11 @@
 	<string name="strDefault">0</string>
 	<string name="txtDefault">текст</string>
 	<string name="strDragable">Перетаскиваемый</string>
-	<string name="strShow">Просмотр</string>
-	<string name="strFontsize">Разм. ш.</string>
+	<string name="strShow">Показать</string>
+	<string name="strFontsize">Шрифт</string>
 	<string name="strFont">Шрифт</string>
 	<string name="strLinewidth">Шир. линии</string>
-	<string name="strBits">Цифр.</string>
+	<string name="strBits">Симв.</string>
 	<string name="strImage">Изобр.</string>
 	<string name="strDirect">Направление</string>
 	<string name="strShift1">Смена1</string>
@@ -100,7 +100,7 @@
 	<string name="strCopying">Копирование. Пожалуйста, подождите...</string>
 	<string name="strInsertSerial">Пожалуйста, подключите устройство.</string>
 	<string name="strReinsertSerial">Ошибка печати, переподключите печатающее устройство.</string>
-	<string name="strCode">Тип кодирования</string>
+	<string name="strCode">Тип кода</string>
 	<string name="strBarsource">Данные</string>
 	<string name="strLinetype">Тип линии</string>
 	<string name="str_ok">Ок</string>
@@ -394,7 +394,7 @@
 	<string name="str_textview_param40">40.Сигнал</string>
 	<!-- H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
 	<!--	<string name="str_textview_param41">41.Серийная печать</string> -->
-	<string name="str_repeat_times">41.Серийная печать</string>
+	<string name="str_textview_param41">41.Резерв</string>
 	<!-- End of H.M.Wang 2019-12-19 恢复原来参数41的内容 -->
 	<string name="str_textview_param42">42.Печать при вкл. питания</string>
 	<string name="str_textview_param43">43.Количество форсунок</string>
@@ -451,7 +451,7 @@
 	<string name="str_notice_save">Пожалуйста, введите имя файла:</string>
 	<string name="str_notice_no_objects">Нет объектов для сохранения</string>
 	<string name="str_file_title">Информация:</string>
-	<string name="str_file_hint">Сохранить номер</string>
+	<string name="str_file_hint">Имя файла</string>
 	<string name="str_page_prev">Назад</string>
 	<string name="str_page_next">Вперед</string>
 	<string name="str_filename_no">Нов.</string>
@@ -465,7 +465,7 @@
 	<string name="str_cnt_min">Начать</string>
 	<string name="str_cnt_max">Законч.</string>
 	<string name="str_cnt_steplen">Шаг</string>
-	<string name="str_cnt_index">Значение</string>
+	<string name="str_cnt_index">Номер</string>
 	<string name="str_loading">Загрузка...</string>
 	<string name="str_toast_no_qrfile">QR.txt или QR.csv не найдены</string>
 	<string name="str_barcode_end">QR.txt распечатан</string>

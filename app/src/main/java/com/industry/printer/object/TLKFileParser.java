@@ -534,6 +534,12 @@ public class TLKFileParser  extends TlkFile{
 				dots = 320f;
 				mProportion = 1f;
 				break;
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+			case MESSAGE_TYPE_254X10:
+				dots = 3200f;
+				mProportion = 1f;
+				break;
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
 			case MESSAGE_TYPE_1_INCH_DUAL:
 				dots = 640f;
 				mProportion = 1.0f;

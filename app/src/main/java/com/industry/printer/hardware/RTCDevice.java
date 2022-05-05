@@ -308,6 +308,7 @@ public class RTCDevice {
 		byte byte4 = (byte) Integer.parseInt(bytes[6].substring(pos+2), 16);
 
 		int count = (byte1 & 0x0ff) + (byte2 & 0x0ff) * 256 + (byte3 & 0x0ff) * 256 * 256 + (byte4 & 0x0ff) * 256 * 256 * 256;
+
 		Debug.d(TAG, "--->QRLast = " + count);
 
 		return count;

@@ -324,7 +324,9 @@ public class BarcodeObject extends BaseObject {
 // End of H.M.Wang 2020-7-29 所有条码均可以设置为动态条码
 // H.M.Wang 2020-8-11 动态条码内容设置为123456
 //			setContent("dynamic");
-			setContent("123456");
+// H.M.Wang 2022-4-22 如果没有设置内容，则使用缺省设置
+			if(mContent.isEmpty()) setContent("123456");
+// End of H.M.Wang 2022-4-22 如果没有设置内容，则使用缺省设置
 // End of H.M.Wang 2020-8-11 动态条码内容设置为123456
 		} else {
 			mName = mContext.getString(R.string.object_bar);
@@ -428,6 +430,23 @@ public class BarcodeObject extends BaseObject {
 		}
 		// mBitmap = draw(mContent, (int)mWidth, (int)mHeight);
 		setWidth(mWidth);
+
+// H.M.Wang 2022-4-23 追加动态条码、二维码使用蓝色图案
+		if(mSource) {
+			int[] pixels = new int[(int)mWidth * (int)mHeight];
+			mBitmap.getPixels(pixels, 0, (int)mWidth, 0, 0, (int)mWidth, (int)mHeight);
+
+			for(int i=0; i<(int)mWidth; i++) {
+				for(int j=0; j<(int)mHeight; j++) {
+					if(pixels[i*(int)mHeight + j] == 0xff000000) {
+						pixels[i*(int)mHeight + j] = 0xff0000ff;
+					}
+				}
+			}
+			mBitmap.setPixels(pixels, 0, (int)mWidth, 0, 0, (int)mWidth, (int)mHeight);
+		}
+// End of H.M.Wang 2022-4-23 追加动态条码、二维码使用蓝色图案
+
 		return mBitmap;
 	}
 

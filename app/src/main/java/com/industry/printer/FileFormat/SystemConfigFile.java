@@ -1320,6 +1320,11 @@ public class SystemConfigFile{
 			case PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH:
 				nozzle = PrinterNozzle.MESSAGE_TYPE_1_INCH;
 				break;
+// H.M.Wang 2022-4-29 追加25.4x10头类型
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_254X10:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_254X10;
+				break;
+// End of H.M.Wang 2022-4-29 追加25.4x10头类型
 			case PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_DUAL:
 				nozzle = PrinterNozzle.MESSAGE_TYPE_1_INCH_DUAL;
 				break;

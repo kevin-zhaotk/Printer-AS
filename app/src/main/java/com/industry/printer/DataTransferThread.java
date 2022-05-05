@@ -1822,7 +1822,7 @@ private void setCounterPrintedNext(DataTask task, int count) {
 // H.M.Wang 2021-3-3 从QR.txt文件当中读取的变量信息的功能从DataTask类转移至此
 	private boolean isReady = true;
 
-	private void setContentsFromQRFile() {
+	public void setContentsFromQRFile() {
 		int strIndex = -1;
 		String[] recvStrs = new String[1];
 // H.M.Wang 2021-1-4 追加数据源FILE2，也是从QR.txt读取DT0,DT1,...,DT9,BARCODE的信息，但是DT赋值根据DT变量内部的序号匹配
@@ -2167,7 +2167,9 @@ private void setCounterPrintedNext(DataTask task, int count) {
 								mCallback != null) {
 // End of H.M.Wang 2021-3-5 修改判断条件，只有在FILE和FILE2数据源时才判断是否为到了文件末尾而结束
 								mCallback.OnFinished(CODE_BARFILE_END);
-								break;
+// H.M.Wang 2022-4-25 补充修改2022-4-8取消停止打印修改的遗漏，如果不停止打印，这里就不要break了
+//								break;
+// End of H.M.Wang 2022-4-25 补充修改2022-4-8取消停止打印修改的遗漏，如果不停止打印，这里就不要break了
 							}
 // End of H.M.Wang 2021-3-4 DataTask中的isReady变量，由于读QR文件的操作转移至这里，已经失效，在本类中追加isReady变量，并且据此进行判断操作
 // End of H.M.Wang 2021-3-4 此断代码转移至此
