@@ -2,11 +2,13 @@ package com.industry.printer.Rfid;
 
 import android.content.Context;
 
+import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
 import com.industry.printer.hardware.InkManagerFactory;
 import com.industry.printer.hardware.SmartCard;
 
 public class InkSchedulerFactory {
+    private static final String TAG = InkSchedulerFactory.class.getSimpleName();
 
     private static volatile IInkScheduler scheduler = null;
 
@@ -35,9 +37,11 @@ public class InkSchedulerFactory {
                     return new SmardCardScheduler(ctx);
                 }
 // End of H.M.Wang 2022-1-23 根据SmartCard是否连接来判断走SC还是RFID
-            } catch(Exception e) {
-
+// H.M.Wang 2022-5-9 Exception e修改为UnsatisfiedLinkError e，并且打印log输出，否则catch不到
+            } catch(UnsatisfiedLinkError e) {
+                Debug.e(TAG, "Error: " + e.getMessage());
             }
+// End of H.M.Wang 2022-5-9 Exception e修改为UnsatisfiedLinkError e，并且打印log输出，否则catch不到
 // End of H.M.Wang 2022-4-12 追加try，以避免旧so里面没有这个函数导致死机
             return new RfidScheduler(ctx);
         }
