@@ -1076,7 +1076,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
 	private void refreshInk() {
 		float ink = mInkManager.getLocalInkPercentage(mRfid);
-		Debug.d(TAG,  BuildConfig.VERSION_CODE + "--->refresh ink: " + mRfid + " = " + ink);
+// H.M.Wang 2022-5-9 增加img的版本号的输出，同时输出apk的版本号
+		Debug.d(TAG,  "[" + PlatformInfo.getImgUniqueCode() + "-" + BuildConfig.VERSION_CODE + "] --->refresh ink: " + mRfid + " = " + ink);
+// End of H.M.Wang 2022-5-9 增加img的版本号的输出，同时输出apk的版本号
 		String level = "";
 		if(mInkManager instanceof RFIDManager) {
 			level = String.valueOf(mRfid + 1) + "-" + (String.format("%.1f", ink) + "%");

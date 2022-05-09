@@ -45,9 +45,11 @@ public class InkManagerFactory {
                     return new SmartCardManager(ctx);
                 }
 // End of H.M.Wang 2022-1-20 根据SmartCard是否连接来判断走SC还是RFID
-            } catch(Exception e) {
-
+// H.M.Wang 2022-5-9 Exception e修改为UnsatisfiedLinkError e，并且打印log输出，否则catch不到
+            } catch(UnsatisfiedLinkError e) {
+                Debug.e(TAG, "Error: " + e.getMessage());
             }
+// End of H.M.Wang 2022-5-9 Exception e修改为UnsatisfiedLinkError e，并且打印log输出，否则catch不到
 // End of H.M.Wang 2022-4-12 追加try，以避免旧so里面没有这个函数导致死机
             return new RFIDManager(ctx);
         }

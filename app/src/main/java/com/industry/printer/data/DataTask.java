@@ -1220,31 +1220,43 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 	private void rebuildBuffer4254x10() {
 		mBuffer = mPrintBuffer;
 
-		int shift0 = (mTask.getMsgObject().getPNozzle().shiftEnable ? Configs.getMessageShift(0) : 0);
-		int shift1 = (mTask.getMsgObject().getPNozzle().shiftEnable ? Configs.getMessageShift(1) : 0);
+		int shift0 = Configs.getMessageShift(0);
+		int shift1 = Configs.getMessageShift(1);
+		int dir = Configs.getMessageDir(5);
 		int shiftBand = 0;
 		int expandCols = 0;
 
-		if(shift0 > 0) {
+		if(shift0 > 0) {				// 参数10设置时，偏移13579头
 			shiftBand = 0;
 			expandCols = shift0;
-		} else if(shift1 > 0) {
+		} else if(shift1 > 0) {			// 参数11设置时，偏移24680头
 			shiftBand = 1;
 			expandCols = shift1;
+		} else if(dir != SystemConfigFile.DIRECTION_NORMAL ){
 		} else {
 			return;
 		}
 
 		int charsPerColumn = 200;       // 每列的双字节数。400个字节，3200个点
 		int charsPerBlock = 20;			// 每个头的双字节数。40个字节，320个点
+		int orgCols = mBuffer.length/200;
+		int newCols = orgCols + expandCols;
 		char[] newBuf = new char[mBuffer.length + expandCols * charsPerColumn];		// 扩大缓冲区
 
-		for(int i=0; i<mBuffer.length/200; i++) {			// 遍历每个列
+		for(int i=0; i<orgCols; i++) {			// 遍历每个列
 			for(int j=0; j<10; j++) {
 				if(j%2 == shiftBand) {
-					System.arraycopy(mBuffer, i * charsPerColumn + j * charsPerBlock, newBuf, (i + expandCols) * charsPerColumn + j * charsPerBlock,  charsPerBlock);
+                    if(dir == SystemConfigFile.DIRECTION_NORMAL) {
+                        System.arraycopy(mBuffer, i * charsPerColumn + j * charsPerBlock, newBuf, (i + expandCols) * charsPerColumn + j * charsPerBlock,  charsPerBlock);
+                    } else {
+                        System.arraycopy(mBuffer, i * charsPerColumn + j * charsPerBlock, newBuf, (newCols - 1 - i - expandCols) * charsPerColumn + j * charsPerBlock,  charsPerBlock);
+                    }
 				} else {
-					System.arraycopy(mBuffer, i * charsPerColumn + j * charsPerBlock, newBuf, i * charsPerColumn + j * charsPerBlock,  charsPerBlock);
+                    if(dir == SystemConfigFile.DIRECTION_NORMAL) {
+                        System.arraycopy(mBuffer, i * charsPerColumn + j * charsPerBlock, newBuf, i * charsPerColumn + j * charsPerBlock,  charsPerBlock);
+                    } else {
+                        System.arraycopy(mBuffer, i * charsPerColumn + j * charsPerBlock, newBuf, (newCols - 1 - i) * charsPerColumn + j * charsPerBlock,  charsPerBlock);
+                    }
 				}
 			}
 		}
