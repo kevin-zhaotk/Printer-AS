@@ -51,7 +51,7 @@
 #define DRIVE_CURRENT_3_ADDR    0x21
 
 #define MANUFACTURE_ID_ADDR     0x7E        // Default 0x5449
-#define DEVICE_ID_ADDR          0x7F        // Default 0x3055
+#define DEVICE_ID_ADDR          0x7F        // Default 0x3055（12,373）
 
 static int _writeI2Cdata(uint8_t reg, uint8_t *data, int length) {
     int ret;

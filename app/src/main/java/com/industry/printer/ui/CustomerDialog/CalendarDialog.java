@@ -7,6 +7,9 @@ import java.util.logging.Logger;
 import com.industry.printer.R;
 import com.industry.printer.R.id;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.Utils.PackageInstaller;
+import com.industry.printer.Utils.PlatformInfo;
+import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.hardware.RTCDevice;
 
 import android.R.string;
@@ -23,11 +26,12 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 
 public class CalendarDialog extends Dialog {
+	public static final String TAG="CalendarDialog";
 
-	public static final String TAG="CalendarDialog"; 
 	private int mLayout;
 	public Button mPositive;
 	public Button mNegative;
+	public Button mUpgrade;
 	public DatePicker mDPicker;
 	public TimePicker mTPicker;
 	public EditText mYear;
@@ -35,12 +39,10 @@ public class CalendarDialog extends Dialog {
 	public EditText mDate;
 	public EditText mHour;
 	public EditText mMinute;
-	
-	
+
 	protected CalendarDialog(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub
-		
 	}
 
 	public  CalendarDialog(Context context, int resLayout)
@@ -71,10 +73,10 @@ public class CalendarDialog extends Dialog {
 		// mTPicker.setCurrentHour(c.get(Calendar.HOUR_OF_DAY));
 		// mTPicker.setCurrentMinute(c.get(Calendar.MINUTE));
 		mYear.setText(String.valueOf(c.get(Calendar.YEAR)));
-		mMonth.setText(String.valueOf(c.get(Calendar.MONTH) + 1));
-		mDate.setText(String.valueOf(c.get(Calendar.DAY_OF_MONTH)));
-		mHour.setText(String.valueOf(c.get(Calendar.HOUR_OF_DAY)));
-		mMinute.setText(String.valueOf(c.get(Calendar.MINUTE)));
+		mMonth.setText(String.format("%02d", c.get(Calendar.MONTH) + 1));
+		mDate.setText(String.format("%02d", c.get(Calendar.DAY_OF_MONTH)));
+		mHour.setText(String.format("%02d", c.get(Calendar.HOUR_OF_DAY)));
+		mMinute.setText(String.format("%02d", c.get(Calendar.MINUTE)));
 		
 		mPositive = (Button) findViewById(R.id.btn_setTimeOk);
 		mPositive.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +114,20 @@ public class CalendarDialog extends Dialog {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				dismiss();
+			}
+		});
+
+		mUpgrade =  (Button) findViewById(id.btn_upgrade);
+		mUpgrade.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (PlatformInfo.PRODUCT_SMFY_SUPER3.equals(PlatformInfo.getProduct())) {
+					PackageInstaller installer = PackageInstaller.getInstance(CalendarDialog.super.getContext());
+					if(installer.silentUpgrade2()) {
+						dismiss();
+						LoadingDialog.show(CalendarDialog.super.getContext(), R.string.str_upgrade_progress);
+					}
+				}
 			}
 		});
 	}

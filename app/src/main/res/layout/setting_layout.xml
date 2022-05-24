@@ -101,8 +101,9 @@
 				android:background="@drawable/bg_mid_button"
 		        android:text="@string/str_file_cancel"
 			    />
-	    </RelativeLayout> 
-        
+	    </RelativeLayout>
+
+<!-- H.M.Wang 2022-5-12 修改升级的方法。取消启动后自动升级，改为在设置页面按钮启动升级 将btn_setting_upgrade段设置为visible -->
 		<RelativeLayout
 		    android:id="@+id/btn_setting_upgrade" 
 		    android:layout_width="0dp"

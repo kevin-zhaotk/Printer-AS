@@ -841,20 +841,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		mSettingTitle.setText(PlatformInfo.getImgUniqueCode());
 // End of H.M.Wang 2021-4-16 追加机器类型码的取得和显示
 
-// H.M.Wang 2022-5-5 点击题目条空白处，关闭软键盘
-		mSettings.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				InputMethodManager imm = (InputMethodManager) MainActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-				if (imm.isActive()) {
-					if (MainActivity.this.getCurrentFocus().getWindowToken() != null) {
-						imm.hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-					}
-				}
-			}
-		});
-// End of H.M.Wang 2022-5-5 点击题目条空白处，关闭软键盘
-
 		mVersion = (TextView) findViewById(R.id.setting_version);
 		mVerTitle = (TextView) findViewById(R.id.setting_version_key);
 
@@ -1283,6 +1269,18 @@ public class MainActivity extends Activity implements OnCheckedChangeListener, O
 		case R.id.settings_view:
 			Debug.e(TAG, "settings_view Clicked! " + (System.currentTimeMillis() - mLastClick));
 			if(System.currentTimeMillis() - mLastClick > 1000) {
+// H.M.Wang 2022-5-5 点击题目条空白处，关闭软键盘
+				try {
+					InputMethodManager imm = (InputMethodManager) MainActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+					if (imm.isActive()) {
+						if (MainActivity.this.getCurrentFocus().getWindowToken() != null) {
+							imm.hideSoftInputFromWindow(MainActivity.this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+						}
+					}
+				} catch(Exception e) {
+					Debug.e(TAG, e.getMessage());
+				}
+// End of H.M.Wang 2022-5-5 点击题目条空白处，关闭软键盘
 				mClickCount = 1;
 			} else {
 				mClickCount++;

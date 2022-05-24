@@ -6,6 +6,7 @@ import java.util.Vector;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.PlatformInfo;
+import com.industry.printer.Utils.UsbDeviceID;
 
 //import android.os.SystemProperties;
 import android.content.BroadcastReceiver;
@@ -41,6 +42,9 @@ public class PrinterBroadcastReceiver extends BroadcastReceiver {
 		{
 			ArrayList<String> st = ConfigPath.updateMountedUsb();
 			mUsbAttached = st.size();
+// H.M.Wang 2022-5-13 追加一个USB盘的唯一ID获取调用，用来检查该盘是否为用来update的合法盘
+			UsbDeviceID.obtainUsbDeviceId();
+// End of H.M.Wang 2022-5-13 追加一个USB盘的唯一ID获取调用，用来检查该盘是否为用来update的合法盘
 			Debug.d(TAG, "--->boot usbStorage: " + mUsbAttached);
 			return;
 		}
@@ -93,6 +97,9 @@ public class PrinterBroadcastReceiver extends BroadcastReceiver {
 //						// }
 //					}
 					mUsbAttached = usbs.size();
+// H.M.Wang 2022-5-13 追加一个USB盘的唯一ID获取调用，用来检查该盘是否为用来update的合法盘
+					UsbDeviceID.obtainUsbDeviceId();
+// End of H.M.Wang 2022-5-13 追加一个USB盘的唯一ID获取调用，用来检查该盘是否为用来update的合法盘
 				}
 				//else if(intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_DETACHED))
 				else if(intent.getAction().equals(Intent.ACTION_MEDIA_UNMOUNTED))
@@ -100,6 +107,9 @@ public class PrinterBroadcastReceiver extends BroadcastReceiver {
 					Debug.d(TAG, "usb disconnected");
 					ArrayList<String> usbs = ConfigPath.updateMountedUsb();
 					mUsbAttached = usbs.size();
+// H.M.Wang 2022-5-13 追加一个USB盘的唯一ID获取调用，用来检查该盘是否为用来update的合法盘
+					UsbDeviceID.obtainUsbDeviceId();
+// End of H.M.Wang 2022-5-13 追加一个USB盘的唯一ID获取调用，用来检查该盘是否为用来update的合法盘
 					Debug.d(TAG, "--->detach usbStorage: " + mUsbAttached);
 				}
 			}

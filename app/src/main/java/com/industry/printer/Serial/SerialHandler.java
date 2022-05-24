@@ -73,7 +73,10 @@ public class SerialHandler {
             if(null != pcCmdManager)pcCmdManager.addSeriHandler(mSerialPort);
         } else {
 // H.M.Wang 2022-4-4 根据数据源的类型选择串口
-            if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_11) {
+            if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_11 ||
+// H.M.Wang 2022-5-16 追加串口协议2无线
+                SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2_WIFI) {
+// End of H.M.Wang 2022-5-16 追加串口协议2无线
                 Debug.i(TAG, "Open " + SERIAL_CH341_PORT);
                 mSerialPort.openSerial(SERIAL_CH341_PORT);
             } else {
@@ -115,7 +118,10 @@ public class SerialHandler {
 //        Debug.d(TAG, "DataSource: " + SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE));
 
         if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1 ||
-            SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2) {
+            SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2 ||
+// H.M.Wang 2022-5-16 追加串口协议2无线
+            SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2_WIFI) {
+// End of H.M.Wang 2022-5-16 追加串口协议2无线
             EC_DOD_Protocol p = new EC_DOD_Protocol(mSerialPort, mContext);
             p.handleCommand(mNormalCmdListeners, mPrintCmdListeners, bab);
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_3) {
@@ -183,7 +189,10 @@ public class SerialHandler {
         if(!isInitialized()) return;
 
         if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1 ||
-            SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2) {
+            SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2 ||
+// H.M.Wang 2022-5-16 追加串口协议2无线
+            SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2_WIFI) {
+// End of H.M.Wang 2022-5-16 追加串口协议2无线
             EC_DOD_Protocol p = new EC_DOD_Protocol(mSerialPort, mContext);
             p.sendCommandProcessResult(cmd, ack, devStatus, cmdStatus, message);
         } else if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_3) {

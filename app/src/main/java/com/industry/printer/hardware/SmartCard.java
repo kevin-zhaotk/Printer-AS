@@ -58,6 +58,10 @@ public class SmartCard {
 
     static public native int readLevel(int card);
 
+    static public native int readManufactureID(int card);
+
+    static public native int readDeviceID(int card);
+
     static public native int shutdown();
 
 }

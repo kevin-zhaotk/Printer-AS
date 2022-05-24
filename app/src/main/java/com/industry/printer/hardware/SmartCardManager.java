@@ -35,7 +35,7 @@ public class SmartCardManager implements IInkDevice {
     private final static int CARD_TYPE_PEN1             = 11;
     private final static int CARD_TYPE_PEN2             = 12;
     private final static int CARD_TYPE_BULK1            = 13;           // 真实墨袋
-    private final static int CARD_TYPE_BULKX            = 14;           // 墨盒代替墨袋
+//    private final static int CARD_TYPE_BULKX            = 14;           // 墨盒代替墨袋
     private final static int CARD_TYPE_LEVEL1           = 21;
     private final static int CARD_TYPE_LEVEL2           = 22;
 
@@ -50,6 +50,9 @@ public class SmartCardManager implements IInkDevice {
         private int     mInkLevel;
         private int     mMaxVolume;
         private ArrayList<Integer> mRecentLevels;
+// H.M.Wang 2022-5-13 追加一个Level的设备ID，从卡中读取，如果中途有读失败，则赋值（-1）
+        private int     mLevelDevID;
+// End of H.M.Wang 2022-5-13 追加一个Level的设备ID，从卡中读取，如果中途有读失败，则赋值（-1）
         private volatile boolean mInkAdding;
         private int mInkAddedTimes;
         private boolean mAddInkFailed;
@@ -67,6 +70,10 @@ public class SmartCardManager implements IInkDevice {
             mMaxVolume = maxVolume;
 
             mRecentLevels = new ArrayList<Integer>();
+
+// H.M.Wang 2022-5-13 追加一个Level的设备ID，从卡中读取，如果中途有读失败，则赋值（-1）
+            mLevelDevID = 0;
+// End of H.M.Wang 2022-5-13 追加一个Level的设备ID，从卡中读取，如果中途有读失败，则赋值（-1）
 
             mInkAdding = false;
             mInkAddedTimes = 0;
@@ -122,7 +129,10 @@ public class SmartCardManager implements IInkDevice {
                     if (null != mRecvedLevelPromptDlg) {
                         StringBuilder sb = new StringBuilder();
                         for(int i=0; i<mPenNum; i++) {
+// H.M.Wang 2022-5-13 追加一个Level的设备ID，从卡中读取，如果中途有读失败，则赋值（-1）
                             sb.append("Level - " + (i + 1) + "\n");
+//                            sb.append("Level - " + (i + 1) + " - (" +mCards[i].mLevelDevID + ")\n");
+// End of H.M.Wang 2022-5-13 追加一个Level的设备ID，从卡中读取，如果中途有读失败，则赋值（-1）
                             for(int j=0; j<mCards[i].mRecentLevels.size(); j++) {
                                 if (j != 0) sb.append(",");
                                 sb.append(mCards[i].mRecentLevels.get(j) / 100000);
@@ -373,6 +383,180 @@ public class SmartCardManager implements IInkDevice {
         }
     }
 
+// H.M.Wang 2022-5-20 追加Level ID测试功能，读取100次，每次读取间隔0.1秒
+    public interface SCTestListener {
+        void onError(String result);
+        void onResult(String result);
+    }
+    private boolean mIDTestRunning;
+    private boolean mIDTestCancel;
+
+    public void startIDTest(final SCTestListener l) {
+        if(null == l) return;
+        mIDTestRunning = false;
+
+        if(mLibInited) {
+            l.onError("Library running");
+            return;
+        }
+
+        mCachedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                mIDTestRunning = true;
+                int levelType[] = new int[] {CARD_TYPE_LEVEL1, CARD_TYPE_LEVEL2};
+                int idValue[] = new int[] {0, 0};
+                int success[] = new int[2];
+                int devID;
+                if(SmartCard.init() == SmartCard.SC_SUCCESS) {
+                    mIDTestCancel = false;
+                    for(int c=0; c<100; c++) {
+                        if(mIDTestCancel) break;
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Tested times: " + (c+1) + "\n");
+                        for(int i=0; i<levelType.length; i++) {
+                            devID = SmartCard.readDeviceID(levelType[i]);
+                            Debug.d(TAG, "Read Device ID" + (i+1) + " = " + devID);
+                            if (devID != -1 && (idValue[i] == devID || idValue[i] == 0)) {
+                                success[i]++;
+                                idValue[i] = devID;
+                            }
+                            Debug.d(TAG, "Success Device ID" + (i+1) + " = " + success[i]);
+                            sb.append("ID" + (i+1) + " succeeded times: " + success[i] + "%\n");
+                        }
+                        l.onResult(sb.toString());
+                        try{ Thread.sleep(100); }catch(Exception e){}
+                    }
+                } else {
+                    l.onError("Library initialization failed.");
+                }
+                mIDTestRunning = false;
+            }
+        });
+
+        while(!mIDTestRunning) {
+            try{ Thread.sleep(10); }catch(Exception e){}
+        }
+    }
+
+    public void stopIDTest() {
+        mIDTestCancel = true;
+        while(mIDTestRunning) {
+            try{ Thread.sleep(10); }catch(Exception e){}
+        }
+    }
+// End of H.M.Wang 2022-5-20 追加Level ID测试功能，读取100次，每次读取间隔0.1秒
+
+// H.M.Wang 2022-5-21 追加SC测试功能，读取100次，每次读取间隔0.1秒
+    public void startSCTest(final SCTestListener l) {
+        if(null == l) return;
+        mIDTestRunning = false;
+
+        if(mLibInited) {
+            l.onError("Library running");
+            return;
+        }
+
+        mCachedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                mIDTestRunning = true;
+                int cardType[] = new int[] {CARD_TYPE_PEN1, CARD_TYPE_PEN2, CARD_TYPE_BULK1};
+                int success[] = new int[3];
+                if(SmartCard.init() == SmartCard.SC_SUCCESS) {
+                    mIDTestCancel = false;
+                    for(int c=0; c<100; c++) {
+                        if(mIDTestCancel) break;
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Tested times: " + (c+1) + "\n");
+                        for(int i=0; i<3; i++) {
+                            if(SmartCard.SC_SUCCESS == SmartCard.initComponent(cardType[i])) {
+                                success[i]++;
+                            }
+                            if(i<2) {
+                                Debug.d(TAG, "Init Pen" + (i+1) + " Success Times: " + success[i]);
+                                sb.append("Pen" + (i+1) + " succeeded times: " + success[i] + "%\n");
+                            } else {
+                                Debug.d(TAG, "Init Bag" + (i-1) + " Success Times: " + success[i]);
+                                sb.append("Bag" + (i-1) + " succeeded times: " + success[i] + "%\n");
+                            }
+                        }
+                        l.onResult(sb.toString());
+                        try{ Thread.sleep(100); }catch(Exception e){}
+                    }
+                } else {
+                    l.onError("Library initialization failed.");
+                }
+                mIDTestRunning = false;
+            }
+        });
+
+        while(!mIDTestRunning) {
+            try{ Thread.sleep(10); }catch(Exception e){}
+        }
+    }
+
+    public void stopSCTest() {
+        mIDTestCancel = true;
+        while(mIDTestRunning) {
+            try{ Thread.sleep(10); }catch(Exception e){}
+        }
+    }
+// End of H.M.Wang 2022-5-21 追加SC测试功能，读取100次，每次读取间隔0.1秒
+
+// H.M.Wang 2022-5-21 追加Level测试功能，读取100次，每次读取间隔0.1秒
+    public void startLevelTest(final SCTestListener l) {
+        if(null == l) return;
+        mIDTestRunning = false;
+
+        if(mLibInited) {
+            l.onError("Library running");
+            return;
+        }
+
+        mCachedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                mIDTestRunning = true;
+                if(SmartCard.init() == SmartCard.SC_SUCCESS) {
+                    mIDTestCancel = false;
+                    int levelType[] = new int[] {CARD_TYPE_LEVEL1, CARD_TYPE_LEVEL2};
+                    StringBuilder sb = new StringBuilder();
+                    int level;
+                    for(int c=0; c<100; c++) {
+                        if(mIDTestCancel) break;
+                        for(int i=0; i<2; i++) {
+                            level = SmartCard.readLevel(levelType[i]);
+                            Debug.d(TAG, "Read Level" + (i+1) + " = " + Integer.toHexString(level));
+                            if((level & 0x0FFFFFFF) == 0x0FFFFFFF) {
+                                sb.append((c+1) + "-Level" + (i+1) + ": failed.\n");
+                            } else {
+                                sb.append((c+1) + "-Level" + (i+1) + ": " + level + "\n");
+                            }
+                        }
+                        l.onResult(sb.toString());
+                        try{ Thread.sleep(100); }catch(Exception e){}
+                    }
+                } else {
+                    l.onError("Library initialization failed.");
+                }
+                mIDTestRunning = false;
+            }
+        });
+
+        while(!mIDTestRunning) {
+            try{ Thread.sleep(10); }catch(Exception e){}
+        }
+    }
+
+    public void stopLevelTest() {
+        mIDTestCancel = true;
+        while(mIDTestRunning) {
+            try{ Thread.sleep(10); }catch(Exception e){}
+        }
+    }
+// End of H.M.Wang 2022-5-20 追加Level ID测试功能，读取100次，每次读取间隔0.1秒
+
     private void readLevelValue(int cardIdx) {
         Debug.d(TAG, "---> enter readLevelValue(" + cardIdx + ")");
 
@@ -394,6 +578,17 @@ public class SmartCardManager implements IInkDevice {
                         } else {
                             Debug.e(TAG, "Read Level Error: " + Integer.toHexString(level & 0xF0000000));
                         }
+// H.M.Wang 2022-5-13 追加一个Level的设备ID，从卡中读取，如果中途有读失败，则赋值（-1）
+/*
+                        int devID = SmartCard.readDeviceID(mCards[cardIdx].mLevelType);
+                        if (devID != -1 && (mCards[cardIdx].mLevelDevID == devID || mCards[cardIdx].mLevelDevID == 0)) {
+                            Debug.d(TAG, "Read Level Device ID: " + devID);
+                        } else {
+                            Debug.e(TAG, "Read Level Device ID Error: " + devID);
+                        }
+                        mCards[cardIdx].mLevelDevID = devID;
+*/
+// End of H.M.Wang 2022-5-13 追加一个Level的设备ID，从卡中读取，如果中途有读失败，则赋值（-1）
                     }
                 }
             }

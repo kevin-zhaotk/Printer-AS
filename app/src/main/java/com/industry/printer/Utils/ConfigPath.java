@@ -14,6 +14,7 @@ import com.industry.printer.Utils.PlatformInfo;
 
 import android.R.integer;
 import android.graphics.Path;
+import android.hardware.usb.UsbManager;
 
 /**
  * ConfigPath 选择系统设置的保持路径

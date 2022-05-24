@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.industry.printer.FileFormat.SystemConfigFile;
@@ -23,6 +24,9 @@ import com.industry.printer.Serial.SerialPort;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.hardware.ExtGpio;
+import com.industry.printer.hardware.IInkDevice;
+import com.industry.printer.hardware.InkManagerFactory;
+import com.industry.printer.hardware.SmartCardManager;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,6 +37,14 @@ import java.util.TimerTask;
 
 public class GpioTestPopWindow {
     public static final String TAG = GpioTestPopWindow.class.getSimpleName();
+
+    private final int TEST_PHASE_NONE = 0;
+    private final int TEST_PHASE_PINS = 1;
+    private final int TEST_PHASE_ID = 2;
+    private final int TEST_PHASE_SC = 3;
+    private final int TEST_PHASE_LEVEL = 4;
+
+    private int mCurrentTestPhase = TEST_PHASE_NONE;
 
     String[] IN_PINS = new String[] {
             "PG0", "PI5", "PI6", "PE7", "PE8", "PE9", "PE10", "PE11"
@@ -50,6 +62,14 @@ public class GpioTestPopWindow {
 
     private Context mContext = null;
     private PopupWindow mPopupWindow = null;
+
+// H.M.Wang 2022-5-20 修改测试页面的布局，追加ID，SC及Level的测试功能。当前仅实现了ID，后续完善SC和Level。修改量很大，未一一标记
+    private TextView mTestTitle = null;
+    private ScrollView mIDTestArea = null;
+    private TextView mIDTestResult = null;
+// End of H.M.Wang 2022-5-20 修改测试页面的布局，追加ID，SC及Level的测试功能。当前仅实现了ID，后续完善SC和Level
+
+    private LinearLayout mPinsTestArea = null;
     private LinearLayout mOutPinLayout = null;
     private LinearLayout mInPinLayout = null;
     private TextView[] mOutPins = null;
@@ -59,10 +79,11 @@ public class GpioTestPopWindow {
     private boolean mSerialWritting = false;
 
     private final int MESSAGE_SET_BGCOLOR = 102;
-    private final int MSG_AUTOTEST_NEXT = 103;
+    private final int MSG_PINSTEST_NEXT = 103;
     private final int MSG_CHECK_PINS = 104;
     private final int MSG_TERMINATE_TEST = 105;
     private final int MSG_TEST_IN_PIN = 106;
+    private final int MSG_SHOW_ID_TEST_RESULT = 107;
 
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -75,55 +96,11 @@ public class GpioTestPopWindow {
                         tv.setBackgroundColor(Color.GRAY);
                     }
                     break;
-                case MSG_AUTOTEST_NEXT:
+                case MSG_PINSTEST_NEXT:
                     toggleOutPin(mCurrentOutPin);
-/*
-                    if(mCurrentOutPin != 7) {
-                        mSerialWritting = false;
-                        try {
-                            ExtGpio.writeGpioTestPin(OUT_PINS[mCurrentOutPin].charAt(1), Integer.valueOf(OUT_PINS[mCurrentOutPin].substring(2)), PIN_ENABLE);
-                        } catch (NumberFormatException e) {
-                            Debug.e(TAG, e.getMessage());
-                        }
-                    } else {    // 串口
-                        mSerialWritting = true;
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                SerialPort sp = SerialHandler.getInstance().getSerialPort();
-                                if(null != sp) {
-                                    while(mSerialWritting) {
-                                        sp.writeSerial(new byte[]{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00});
-                                    }
-                                }
-                            }
-                        }).start();
-                    }
-                    sendEmptyMessageDelayed(MSG_CHECK_PINS, 100);
-                    break;
-                case MSG_CHECK_PINS:
-                    int value;
-                    if(mCurrentOutPin != 7) {
-                        value = ExtGpio.readGpioTestPin(OUT_PINS[mCurrentOutPin].charAt(1), Integer.valueOf(OUT_PINS[mCurrentOutPin].substring(2)));
-                        if(value == 0) {
-                            mOutPins[mCurrentOutPin].setBackgroundColor(Color.RED);
-                        } else {
-                            mOutPins[mCurrentOutPin].setBackgroundColor(Color.GREEN);
-                        }
-                    } else {    // 串口
-                        mOutPins[mCurrentOutPin].setBackgroundColor(Color.GREEN);
-                    }
-
-                    value = ExtGpio.readGpioTestPin(IN_PINS[mCurrentOutPin].charAt(1), Integer.valueOf(IN_PINS[mCurrentOutPin].substring(2)));
-                    if(value != 0) {
-                        mInPins[mCurrentOutPin].setBackgroundColor(Color.RED);
-                    } else {
-                        mInPins[mCurrentOutPin].setBackgroundColor(Color.GREEN);
-                    }
-*/
                     mCurrentOutPin++;
                     mCurrentOutPin %= 8;
-                    if(mCurrentOutPin != 0) sendEmptyMessageDelayed(MSG_AUTOTEST_NEXT, 1000); else sendEmptyMessageDelayed(MSG_TERMINATE_TEST, 1000);
+                    if(mCurrentOutPin != 0) sendEmptyMessageDelayed(MSG_PINSTEST_NEXT, 1000); else sendEmptyMessageDelayed(MSG_TERMINATE_TEST, 1000);
                     break;
                 case MSG_TEST_IN_PIN:
                     testInPin(msg.arg1);
@@ -131,8 +108,10 @@ public class GpioTestPopWindow {
                 case MSG_TERMINATE_TEST:
                     mHandler.removeMessages(MSG_TEST_IN_PIN);
                     mSerialWritting = false;
-//                    resetOutPins();
-//                    resetInPins();
+                    break;
+                case MSG_SHOW_ID_TEST_RESULT:
+                    mIDTestResult.setTextColor(msg.arg1);
+                    mIDTestResult.setText((CharSequence)msg.obj);
                     break;
             }
         }
@@ -153,13 +132,144 @@ public class GpioTestPopWindow {
         public void onClick(View v) {
             Integer index = (Integer)v.getTag();
             Debug.d(TAG, "In Index: " + index);
-
-//            updateInPins();
         }
     };
 
     public GpioTestPopWindow(Context ctx) {
         mContext = ctx;
+    }
+
+    private void setTestPhase(int testPhase) {
+//        if(testPhase == mCurrentTestPhase) return;
+
+        switch(mCurrentTestPhase) {
+            case TEST_PHASE_PINS:
+                mHandler.removeMessages(MSG_TEST_IN_PIN);
+                mHandler.removeMessages(MSG_PINSTEST_NEXT);
+                mPinsTestArea.setVisibility(View.GONE);
+                break;
+            case TEST_PHASE_ID:
+                IInkDevice scm = InkManagerFactory.inkManager(mContext);
+                if(scm instanceof SmartCardManager) {
+                    ((SmartCardManager)scm).stopIDTest();
+                }
+                mIDTestArea.setVisibility(View.GONE);
+                break;
+            case TEST_PHASE_SC:
+                scm = InkManagerFactory.inkManager(mContext);
+                if(scm instanceof SmartCardManager) {
+                    ((SmartCardManager)scm).stopSCTest();
+                }
+                mIDTestArea.setVisibility(View.GONE);
+                break;
+            case TEST_PHASE_LEVEL:
+                scm = InkManagerFactory.inkManager(mContext);
+                if(scm instanceof SmartCardManager) {
+                    ((SmartCardManager)scm).stopLevelTest();
+                }
+                mIDTestArea.setVisibility(View.GONE);
+                break;
+        }
+        mCurrentTestPhase = testPhase;
+        switch(mCurrentTestPhase) {
+            case TEST_PHASE_PINS:
+                mTestTitle.setText("Pin Test");
+                mPinsTestArea.setVisibility(View.VISIBLE);
+                resetOutPins();
+                resetInPins();
+                mSerialWritting = false;
+                mCurrentOutPin = 0;
+                mAutoTest = true;
+                mHandler.sendEmptyMessage(MSG_PINSTEST_NEXT);
+                break;
+            case TEST_PHASE_ID:
+                mTestTitle.setText("ID Test");
+                mIDTestArea.setVisibility(View.VISIBLE);
+                IInkDevice scm = InkManagerFactory.inkManager(mContext);
+                if(scm instanceof SmartCardManager) {
+                    ((SmartCardManager)scm).startIDTest(new SmartCardManager.SCTestListener() {
+                        @Override
+                        public void onError(String result) {
+                            Message msg = mHandler.obtainMessage(MSG_SHOW_ID_TEST_RESULT);
+                            msg.obj = result;
+                            msg.arg1 = Color.RED;
+                            mHandler.sendMessage(msg);
+                        }
+
+                        @Override
+                        public void onResult(String result) {
+                            Message msg = mHandler.obtainMessage(MSG_SHOW_ID_TEST_RESULT);
+                            msg.obj = result;
+                            msg.arg1 = Color.BLACK;
+                            mHandler.sendMessage(msg);
+                        }
+                    });
+                } else {
+                    Message msg = mHandler.obtainMessage(MSG_SHOW_ID_TEST_RESULT);
+                    msg.obj = "Smart card not installed.\n";
+                    msg.arg1 = Color.RED;
+                    mHandler.sendMessage(msg);
+                }
+                break;
+            case TEST_PHASE_SC:
+                mTestTitle.setText("SC Test");
+                mIDTestArea.setVisibility(View.VISIBLE);
+                scm = InkManagerFactory.inkManager(mContext);
+                if(scm instanceof SmartCardManager) {
+                    ((SmartCardManager)scm).startSCTest(new SmartCardManager.SCTestListener() {
+                        @Override
+                        public void onError(String result) {
+                            Message msg = mHandler.obtainMessage(MSG_SHOW_ID_TEST_RESULT);
+                            msg.obj = result;
+                            msg.arg1 = Color.RED;
+                            mHandler.sendMessage(msg);
+                        }
+
+                        @Override
+                        public void onResult(String result) {
+                            Message msg = mHandler.obtainMessage(MSG_SHOW_ID_TEST_RESULT);
+                            msg.obj = result;
+                            msg.arg1 = Color.BLACK;
+                            mHandler.sendMessage(msg);
+                        }
+                    });
+                } else {
+                    Message msg = mHandler.obtainMessage(MSG_SHOW_ID_TEST_RESULT);
+                    msg.obj = "Smart card not installed.\n";
+                    msg.arg1 = Color.RED;
+                    mHandler.sendMessage(msg);
+                }
+                break;
+            case TEST_PHASE_LEVEL:
+                mTestTitle.setText("Level Test");
+                mIDTestArea.setVisibility(View.VISIBLE);
+                scm = InkManagerFactory.inkManager(mContext);
+                if(scm instanceof SmartCardManager) {
+                    ((SmartCardManager)scm).startLevelTest(new SmartCardManager.SCTestListener() {
+                        @Override
+                        public void onError(String result) {
+                            Message msg = mHandler.obtainMessage(MSG_SHOW_ID_TEST_RESULT);
+                            msg.obj = result;
+                            msg.arg1 = Color.RED;
+                            mHandler.sendMessage(msg);
+                        }
+
+                        @Override
+                        public void onResult(String result) {
+                            Message msg = mHandler.obtainMessage(MSG_SHOW_ID_TEST_RESULT);
+                            msg.obj = result;
+                            msg.arg1 = Color.BLACK;
+                            mHandler.sendMessage(msg);
+                        }
+                    });
+                } else {
+                    Message msg = mHandler.obtainMessage(MSG_SHOW_ID_TEST_RESULT);
+                    msg.obj = "Smart card not installed.\n";
+                    msg.arg1 = Color.RED;
+                    mHandler.sendMessage(msg);
+                }
+                break;
+        }
     }
 
     public void show(View v) {
@@ -186,16 +296,37 @@ public class GpioTestPopWindow {
             }
         });
 
-        TextView autoTest = (TextView)popupView.findViewById(R.id.btn_autotest);
-        autoTest.setOnClickListener(new View.OnClickListener() {
+        mTestTitle = (TextView)popupView.findViewById(R.id.test_title);
+        mIDTestArea = (ScrollView) popupView.findViewById(R.id.id_test_area);
+        TextView testID = (TextView)popupView.findViewById(R.id.btn_testID);
+        testID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetOutPins();
-                resetInPins();
-                mSerialWritting = false;
-                mCurrentOutPin = 0;
-                mAutoTest = true;
-                mHandler.sendEmptyMessage(MSG_AUTOTEST_NEXT);
+                setTestPhase(TEST_PHASE_ID);
+            }
+        });
+        TextView testSC = (TextView)popupView.findViewById(R.id.btn_testSC);
+        testSC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setTestPhase(TEST_PHASE_SC);
+            }
+        });
+        TextView testLVL = (TextView)popupView.findViewById(R.id.btn_testLVL);
+        testLVL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setTestPhase(TEST_PHASE_LEVEL);
+            }
+        });
+        mIDTestResult = (TextView)popupView.findViewById(R.id.id_test_result);
+
+        mPinsTestArea = (LinearLayout) popupView.findViewById(R.id.pins_test_area);
+        TextView testpins = (TextView)popupView.findViewById(R.id.btn_testpins);
+        testpins.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setTestPhase(TEST_PHASE_PINS);
             }
         });
 
@@ -204,7 +335,7 @@ public class GpioTestPopWindow {
         for(int i=0; i<OUT_PINS.length; i++) {
             TextView tv = new TextView(mContext);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0,3,0,3);
+            lp.setMargins(0,1,0,1);
             tv.setLayoutParams(lp);
             tv.setPadding(0,5,0,5);
             tv.setGravity(Gravity.CENTER);
@@ -224,7 +355,7 @@ public class GpioTestPopWindow {
         for(int i=0; i<IN_PINS.length; i++) {
             TextView tv = new TextView(mContext);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0,3,0,3);
+            lp.setMargins(0,1,0,1);
             tv.setLayoutParams(lp);
             tv.setPadding(0,5,0,5);
             tv.setGravity(Gravity.CENTER);

@@ -93,6 +93,9 @@ public class EC_DOD_Protocol extends SerialProtocol {
     public final static int CMD_START_PRINT_B         = 0x0018;       // B喷头喷印	0x0018
     public final static int CMD_STOP_PRINT_A          = 0x0019;       // A喷印完成	0x0019
     public final static int CMD_STOP_PRINT_B          = 0x0020;       // B喷印完成	0x0020
+// H.M.Wang 2022-5-16 追加启动打印特定编号信息的命令
+    public final static int CMD_START_PRINT_X         = 0x0021;       // 启动打印特定编号信息	0x0021
+// End of H.M.Wang 2022-5-16 追加启动打印特定编号信息的命令
 
     public final static int ERROR_INVALID_STX         = 0x81000000;   // 起始标识错误
     public final static int ERROR_INVALID_ETX         = 0x82000000;   // 终止标识错误
@@ -291,36 +294,39 @@ public class EC_DOD_Protocol extends SerialProtocol {
 
     private void dispatchCommands(int cmd, byte[] data) {
         switch (cmd) {
-            case EC_DOD_Protocol.CMD_SET_NOZZLE_HEIGHT:            // 设定喷头喷印高度	0x0002
-            case EC_DOD_Protocol.CMD_GET_NOZZLE_HEIGHT:            // 读取喷头喷印高度	0x0003
-            case EC_DOD_Protocol.CMD_SET_DOT_INTERVAL:             // 设定喷头喷印点距	0x0004
-            case EC_DOD_Protocol.CMD_GET_DOT_INTERVAL:             // 读取喷头喷印点距	0x0005
-            case EC_DOD_Protocol.CMD_SET_DROP_SIZE:                // 设定喷头喷印墨滴大小	0x0006
-            case EC_DOD_Protocol.CMD_GET_DROP_SIZE:                // 读取喷头墨滴大小	0x0007
-            case EC_DOD_Protocol.CMD_GET_PRINT_DELAY:              // 读取喷头喷印延时	0x0009
-            case EC_DOD_Protocol.CMD_GET_MOVE_SPEED:               // 读取物体移动速度	0x000b
-            case EC_DOD_Protocol.CMD_SET_EYE_STATUS:               // 设定喷头电眼状态	0x000c
-            case EC_DOD_Protocol.CMD_GET_EYE_STATUS:               // 读取喷头电眼状态	0x000d
-            case EC_DOD_Protocol.CMD_SET_SYNC_STATUS:              // 设定喷头同步器状态	0x000e
-            case EC_DOD_Protocol.CMD_GET_SYNC_STATUS:              // 读取喷头同步器状态	0x000f
-            case EC_DOD_Protocol.CMD_GET_REVERSE:                  // 读取喷头翻转喷印	0x0011
-            case EC_DOD_Protocol.CMD_GET_USABLE_IDS:               // 获取当前文件中可用的ID	0x0012
-            case EC_DOD_Protocol.CMD_SAVE_CURRENT_INFO:            // 保存当前信息	0x0014
-//            case EC_DOD_Protocol.CMD_START_PRINT_A:                // A喷头喷印	0x0017
-            case EC_DOD_Protocol.CMD_START_PRINT_B:                // B喷头喷印	0x0018
-            case EC_DOD_Protocol.CMD_STOP_PRINT_A:                 // A喷印完成	0x0019
-            case EC_DOD_Protocol.CMD_STOP_PRINT_B:                 // B喷印完成	0x0020
+            case CMD_SET_NOZZLE_HEIGHT:            // 设定喷头喷印高度	0x0002
+            case CMD_GET_NOZZLE_HEIGHT:            // 读取喷头喷印高度	0x0003
+            case CMD_SET_DOT_INTERVAL:             // 设定喷头喷印点距	0x0004
+            case CMD_GET_DOT_INTERVAL:             // 读取喷头喷印点距	0x0005
+            case CMD_SET_DROP_SIZE:                // 设定喷头喷印墨滴大小	0x0006
+            case CMD_GET_DROP_SIZE:                // 读取喷头墨滴大小	0x0007
+            case CMD_GET_PRINT_DELAY:              // 读取喷头喷印延时	0x0009
+            case CMD_GET_MOVE_SPEED:               // 读取物体移动速度	0x000b
+            case CMD_SET_EYE_STATUS:               // 设定喷头电眼状态	0x000c
+            case CMD_GET_EYE_STATUS:               // 读取喷头电眼状态	0x000d
+            case CMD_SET_SYNC_STATUS:              // 设定喷头同步器状态	0x000e
+            case CMD_GET_SYNC_STATUS:              // 读取喷头同步器状态	0x000f
+            case CMD_GET_REVERSE:                  // 读取喷头翻转喷印	0x0011
+            case CMD_GET_USABLE_IDS:               // 获取当前文件中可用的ID	0x0012
+            case CMD_SAVE_CURRENT_INFO:            // 保存当前信息	0x0014
+//            case CMD_START_PRINT_A:                // A喷头喷印	0x0017
+            case CMD_START_PRINT_B:                // B喷头喷印	0x0018
+            case CMD_STOP_PRINT_A:                 // A喷印完成	0x0019
+            case CMD_STOP_PRINT_B:                 // B喷印完成	0x0020
                 sendCommandProcessResult(cmd, 1, 0, 1, "");
 //                mSerialPort.writeStringSerial( "<!-- Not Support Command -->");
                 break;
-            case EC_DOD_Protocol.CMD_CHECK_CHANNEL:                // 检查信道	0x0001
-            case EC_DOD_Protocol.CMD_SET_PRINT_DELAY:              // 设定喷头喷印延时	0x0008
-            case EC_DOD_Protocol.CMD_SET_MOVE_SPEED:               // 设定物体移动速度	0x000a
-            case EC_DOD_Protocol.CMD_SET_REVERSE:                  // 设定喷头翻转喷印	0x0010
-            case EC_DOD_Protocol.CMD_TEXT:                         // 发送一条文本	0x0013
-            case EC_DOD_Protocol.CMD_START_PRINT:                  // 启动喷码机开始喷印	0x0015
-            case EC_DOD_Protocol.CMD_STOP_PRINT:                   // 停机命令	0x0016
-            case EC_DOD_Protocol.CMD_START_PRINT_A:                // A喷头喷印	0x0017
+            case CMD_CHECK_CHANNEL:                // 检查信道	0x0001
+            case CMD_SET_PRINT_DELAY:              // 设定喷头喷印延时	0x0008
+            case CMD_SET_MOVE_SPEED:               // 设定物体移动速度	0x000a
+            case CMD_SET_REVERSE:                  // 设定喷头翻转喷印	0x0010
+            case CMD_TEXT:                         // 发送一条文本	0x0013
+            case CMD_START_PRINT:                  // 启动喷码机开始喷印	0x0015
+            case CMD_STOP_PRINT:                   // 停机命令	0x0016
+            case CMD_START_PRINT_A:                // A喷头喷印	0x0017
+// H.M.Wang 2022-5-16 追加启动打印特定编号信息的命令
+            case CMD_START_PRINT_X:                // 启动打印特定编号信息	0x0021
+// End of H.M.Wang 2022-5-16 追加启动打印特定编号信息的命令
                 procCommands(cmd, data);
                 break;
             default:

@@ -43,6 +43,9 @@
         <!--  H.M.Wang 2022-4-5 追加PC命令 -->
         <item>RS232-11</item>
         <!--  End of H.M.Wang 2022-4-5 追加PC命令 -->
+        <!-- H.M.Wang 2022-5-16 追加串口协议2无线 -->
+        <item>RS232-2 Wifi</item>
+        <!-- End of H.M.Wang 2022-5-16 追加串口协议2无线 -->
     </string-array>
 <!-- End of H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
 

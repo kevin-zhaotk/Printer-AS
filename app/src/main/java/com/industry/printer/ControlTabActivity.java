@@ -439,6 +439,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		mObjList = new ArrayList<BaseObject>();
 		mContext = this.getActivity();
 		mSysconfig = SystemConfigFile.getInstance(mContext);
+		mSysconfig.getFeatureCode();
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(ACTION_REOPEN_SERIAL);
 		filter.addAction(ACTION_CLOSE_SERIAL);
@@ -683,6 +684,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			public void onCommandReceived(int cmd, byte[] data) {
 				if( SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_1 ||
 					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2 ||
+// H.M.Wang 2022-5-16 追加串口协议2无线
+					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_2_WIFI ||
+// End of H.M.Wang 2022-5-16 追加串口协议2无线
 // H.M.Wang 2020-7-17 追加串口7协议
 					SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_RS232_7) {
 // End of H.M.Wang 2020-7-17 追加串口7协议
@@ -742,6 +746,29 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 							sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_START_PRINT_A, 1, 0, 0, "");
 							break;
 // End of H.M.Wang 2021-1-26 将17命令作为清洗命令
+// H.M.Wang 2022-5-16 追加启动打印特定编号信息的命令
+						case EC_DOD_Protocol.CMD_START_PRINT_X:                // 启动打印特定编号信息	0x0021
+							if (data.length != 3) {
+								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_START_PRINT_X, 1, 0, 1, "");
+							}
+
+							String fileName = "" + ((0x00ff & data[2]) * 0x0100 + (0x00ff & data[1]));
+
+							Debug.d(TAG, "RS232_2 select file: " + fileName);
+							if(new File(ConfigPath.getTlkDir(fileName)).exists()) {
+								Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
+								Bundle bundle = new Bundle();
+								bundle.putString("file", fileName);
+								if (mDTransThread != null && mDTransThread.isRunning()) {
+									bundle.putBoolean("printNext", true);
+								}
+								msg.setData(bundle);
+								mHandler.sendMessage(msg);
+								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_START_PRINT_X, 1, 0, 0, "");
+							} else {
+								sHandler.sendCommandProcessResult(EC_DOD_Protocol.CMD_START_PRINT_X, 1, 0, 1, "");
+							}
+// End of H.M.Wang 2022-5-16 追加启动打印特定编号信息的命令
 					}
 				}
 			}
@@ -1571,6 +1598,13 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				case RFIDManager.MSG_RFID_CHECK_SUCCESS:
 				case MESSAGE_PRINT_START:
 					Debug.d(TAG, "--->Print check success = " + msg.what);
+// H.M.Wang 2022-5-24 如果apk自带Feature与内部保存的不一致，可能是用户自己推送的apk，则禁止打印
+					if(!mSysconfig.getFeatureCode().equals(mSysconfig.getPackageFeatureCode())) {
+						ToastUtil.show(mContext, R.string.str_no_permission);
+						break;
+					}
+// End of H.M.Wang 2022-5-24 如果apk自带Feature与内部保存的不一致，可能是用户自己推送的apk，则禁止打印
+
 					if (mDTransThread != null && mDTransThread.isRunning()) {
 						// H.M.Wang注释掉一行
 //						handleError(R.string.str_print_printing, pcMsg);
@@ -1951,7 +1985,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 // H.M.Wang 2021-9-24 注释：由于这个Segment创建的太早，导致屏幕还没有反转就已经画图完毕了，因此首次进入这个函数时屏幕是竖屏的，变为横屏的时候onConfigurationChanged事件被过滤掉了，因此
 // 如果把preview的高度设成match_parent，就会获得一个竖屏模式下获取的高度，从而变大
 
-	private void dispPreview(final Bitmap bmp) {
+	private void dispPreview(Bitmap bmp) {
 // H.M.Wang 2021-6-1 修改预览页面显示方法。保修切割图片，延迟显示方法
 //		int x=0,y=0;
 //		int cutWidth = 0;
@@ -1960,7 +1994,9 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 			Debug.e(TAG, "--->dispPreview error: bmp is NULL!!!");
 			return;
 		}
-		
+// H.M.Wang 2022-5-10 取消直接在线程当中使用final Bitmap bmp，改为使用成员变量。可能是因为这个参数传递导致时间长了bitmap被回收
+		mPreBitmap = bmp;
+// End of H.M.Wang 2022-5-10 取消直接在线程当中使用final Bitmap bmp，改为使用成员变量。可能是因为这个参数传递导致时间长了bitmap被回收
 //		String product = SystemPropertiesProxy.get(mContext, "ro.product.name");
 //		DisplayMetrics dm = new DisplayMetrics();
 //		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -1978,7 +2014,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 				int cutWidth = 0;
 				float scale = 1;
 				float height = mllPreview.getHeight();
-				scale = (height/bmp.getHeight());
+				scale = (height/mPreBitmap.getHeight());
 				mllPreview.removeAllViews();
 
 //				ImageView imgView = new ImageView(mContext);
@@ -1991,19 +2027,19 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 //				mllPreview.addView(imgView);
 
 
-				for (int i = 0;x < bmp.getWidth(); i++) {
-					if (x + 1200 > bmp.getWidth()) {
-						cutWidth = bmp.getWidth() - x;
+				for (int i = 0;x < mPreBitmap.getWidth(); i++) {
+					if (x + 1200 > mPreBitmap.getWidth()) {
+						cutWidth = mPreBitmap.getWidth() - x;
 					} else {
 						cutWidth =1200;
 					}
-					Bitmap child = Bitmap.createBitmap(bmp, x, 0, cutWidth, bmp.getHeight());
-					if (cutWidth * scale < 1 || bmp.getHeight() * scale < 1) {
+					Bitmap child = Bitmap.createBitmap(mPreBitmap, x, 0, cutWidth, mPreBitmap.getHeight());
+					if (cutWidth * scale < 1 || mPreBitmap.getHeight() * scale < 1) {
 						child.recycle();
 						break;
 					}
 					Debug.d(TAG, "-->child: [" + child.getWidth() + ", " + child.getHeight() + "]; view h: " + mllPreview.getHeight() + "]; orientation: " + mContext.getResources().getConfiguration().orientation);
-					Bitmap scaledChild = Bitmap.createScaledBitmap(child, (int) (cutWidth*scale), (int) (bmp.getHeight() * scale), true);
+					Bitmap scaledChild = Bitmap.createScaledBitmap(child, (int) (cutWidth*scale), (int) (mPreBitmap.getHeight() * scale), true);
 					//child.recycle();
 					//Debug.d(TAG, "--->scaledChild  width = " + child.getWidth() + " scale= " + scale);
 					x += cutWidth;

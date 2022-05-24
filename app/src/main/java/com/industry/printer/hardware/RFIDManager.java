@@ -120,6 +120,15 @@ public class RFIDManager implements RfidCallback, IInkDevice {
 				mDevice.autoSearch(new RfidCallback() {
 					@Override
 					public void onFinish(RFIDData data) {
+// H.M.Wang 2022-5-12 修改读写逻辑，如果读失败，超时返回，则最多等待5次，每次等待100ms，作为一个尝试循环。如果失败，再次发送写命令，后重新开始读尝试循环，最多3次。上述尝试失败以后，向应用层报错
+						if(null == data){
+							Message msg = mHandler.obtainMessage(MSG_RFID_CHECK_COMPLETE);
+							msg.arg1 = 0;
+							msg.sendToTarget();
+							return;
+						}
+// End of H.M.Wang 2022-5-12 修改读写逻辑，如果读失败，超时返回，则最多等待5次，每次等待100ms，作为一个尝试循环。如果失败，再次发送写命令，后重新开始读尝试循环，最多3次。上述尝试失败以后，向应用层报错
+
 						byte[] orgSN = mDevice.mSN.clone();
 // H.M.Wang 2022-2-16 取消2022-1-13的修改，这个修改在第一次读取SN的时候，如果出错会报错，但是如果尝试第二次，则会两个相同的错误进行比较，误判为正确。改为读取失败后，将mValid设为false比较稳妥
 // H.M.Wang 2022-1-13 追加清空SN，如果不清空，会导致如果读失败时保留原值，从而忽略掉拔卡或者读卡错误的问题

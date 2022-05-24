@@ -20,6 +20,7 @@ import android.R.xml;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.util.Xml;
 
 import com.industry.printer.PHeader.PrinterNozzle;
@@ -97,8 +98,9 @@ public class SystemConfigFile{
 	public static final String PH_SETTING_RESERVED_62 = "_10062";
 	public static final String PH_SETTING_RESERVED_63 = "_10063";
 	public static final String PH_SETTING_RESERVED_64 = "_10064";
-	
+
 	public static final String LAST_MESSAGE = "message";
+	public static final String FEATURE_CODE = "code";
 
 	// H.M.Wang 2020-4-18 增加打印密度索引定义，避免硬码满天飞的现象
 	public static final int INDEX_PRINT_DENSITY = 2;
@@ -224,6 +226,9 @@ public class SystemConfigFile{
 	// 	帧尾：0x0D, 0x0A,
 	// 	（全文实力）：0x1B, 0x53, 0x31, 0x31, 0x30, 0x30, 0x31, 0x38, 0x2E, 0x32, 0x6B, 0x67, 0xCB, 0x0D, 0x0A
 // End of H.M.Wang 2022-4-5 追加串口协议11(341串口)
+// H.M.Wang 2022-5-16 追加串口协议2无线
+	public static final int DATA_SOURCE_RS232_2_WIFI = 23;      // 串口协议2无线。与串口协议2完全一致，只是走CH341串口（ttyUSB0）
+// End of H.M.Wang 2022-5-16 追加串口协议2无线
 
 // H.M.Wang 2021-3-6 追加串口协议8
 	public static final int INDEX_LOCAL_ID 			= 57;		// 用于串口协议8当中的本地机器ID。
@@ -900,7 +905,94 @@ public class SystemConfigFile{
 		tags.add(new XmlTag(PH_SETTING_RESERVED_62, String.valueOf(mResv62)));
 	}
 	*/
-	
+
+// H.M.Wang 2022-5-23 从feature.xml读取featurecode。策略是：
+//	(1) 如果没有该文件，或者文件格式不正确，读不到featurecode，则作为没有该文件，而生成一个新的。并且将当前versionCode中的后4位（该versionCode必须是9位的）写入。并且作为featurecode的值
+//	(2) 如果能够读到该文件中的featurecode，则作为featurecode的值
+
+	private String mFeatureCode = "";
+
+	public String getPackageFeatureCode() {
+		PackageManager pm = mContext.getPackageManager();
+		int curVersion;
+		int curFeature;
+
+		try {
+			curVersion = pm.getPackageInfo(mContext.getPackageName(), 0).versionCode;
+		} catch (PackageManager.NameNotFoundException e) {
+			Debug.e(TAG, e.getMessage());
+			return "";
+		}
+
+		if(curVersion / 100000 > 0) {		// 5位以上
+			curFeature = curVersion % 10000;
+		} else {
+			return "";
+		}
+
+		Debug.d(TAG, "Package Feature Code: " + curFeature);
+
+		return String.valueOf(curFeature);
+	}
+
+	public String getFeatureCode() {
+		if(mFeatureCode.isEmpty()) mFeatureCode = readFeatureCode();
+
+		Debug.d(TAG, "Local Feature Code: " + mFeatureCode);
+		return mFeatureCode;
+	}
+
+	public String readFeatureCode() {
+		String tag;
+
+		XmlInputStream inStream = new XmlInputStream(Configs.CONFIG_PATH_FLASH + Configs.LAST_FEATURE_XML);
+		if(null == inStream) {
+			writeFeatureCode();
+			return mFeatureCode;
+		}
+
+		List<XmlTag> list = inStream.read();
+		if (list == null) {
+			inStream.close();
+			writeFeatureCode();
+			return mFeatureCode;
+		}
+
+		for (XmlTag t : list) {
+			tag = t.getKey();
+			if (tag.equalsIgnoreCase(FEATURE_CODE)) {
+				inStream.close();
+				Debug.d(TAG, "Read: tag key:"+tag+", value:"+t.getValue());
+				return t.getValue();
+			}
+		}
+		inStream.close();
+		writeFeatureCode();
+		return mFeatureCode;
+	}
+
+	public void writeFeatureCode() {
+		File dir = new File(Configs.CONFIG_PATH_FLASH + Configs.SYSTEM_CONFIG_DIR);
+		if (!dir.exists()) {
+			if(dir.mkdirs() == false)
+				return;
+		}
+
+		String curFeature = getPackageFeatureCode();
+		if(curFeature.isEmpty()) return;
+
+		ArrayList<XmlTag> list = new ArrayList<XmlTag>();
+		XmlTag tag1 = new XmlTag(FEATURE_CODE, curFeature);
+		list.add(tag1);
+		XmlOutputStream stream = new XmlOutputStream(Configs.CONFIG_PATH_FLASH + Configs.LAST_FEATURE_XML);
+		Debug.d(TAG, "Write: tag key:"+FEATURE_CODE+", value:"+curFeature);
+		if(stream.write(list)) {
+			mFeatureCode = curFeature;
+		}
+	}
+
+// End of H.M.Wang 2022-5-23 从feature.xml读取featurecode。策略是：
+
 	public String getLastMsg() {
 		
 		String tag;

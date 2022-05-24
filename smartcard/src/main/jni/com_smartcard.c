@@ -52,7 +52,7 @@ static pthread_mutex_t mutex;
 
 //#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
 
-#define VERSION_CODE                            "1.0.376"
+#define VERSION_CODE                            "1.0.377"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,
@@ -868,6 +868,9 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_writeOIB(JNIEnv *env, jclass arg, jint
     return ret;
 }
 
+/**
+ * 读取Level值
+ */
 JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jint card) {
     LOGD(">>> Read Level(#%d)", card);
 
@@ -896,6 +899,66 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jin
 }
 
 /**
+ * 读取ManufactureID
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_readManufactureID(JNIEnv *env, jclass arg, jint card) {
+    LOGD(">>> Read ManufactureID(#%d)", card);
+
+    pthread_mutex_lock(&mutex);
+
+    if(SELECT_LEVEL1 == card) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1);
+    } else if(SELECT_LEVEL2 == card) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN2);
+    } else {
+        pthread_mutex_unlock(&mutex);
+        return 0;
+    }
+
+    int16_t manID;
+
+    if(LEVEL_I2C_OK != readManufactureID(&manID)) {
+        manID = -1;
+    }
+
+    LOGD(">>> ManufactureID read: 0x%04X", manID);
+
+    pthread_mutex_unlock(&mutex);
+
+    return manID;
+}
+
+/**
+ * 读取DeviceID
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_readDeviceID(JNIEnv *env, jclass arg, jint card) {
+    LOGD(">>> Read DeviceID(#%d)", card);
+
+    pthread_mutex_lock(&mutex);
+
+    if(SELECT_LEVEL1 == card) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1);
+    } else if(SELECT_LEVEL2 == card) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN2);
+    } else {
+        pthread_mutex_unlock(&mutex);
+        return 0;
+    }
+
+    int16_t devID;
+
+    if(LEVEL_I2C_OK != readDeviceID(&devID)) {
+        devID = -1;
+    }
+
+    LOGD(">>> DeviceID read: 0x%04X", devID);
+
+    pthread_mutex_unlock(&mutex);
+
+    return devID;
+}
+
+/**
  * RTC操作jni接口
  */
 static JNINativeMethod gMethods[] = {
@@ -912,6 +975,8 @@ static JNINativeMethod gMethods[] = {
         {"downLocal",		        "(I)I",						(void *)Java_com_Smartcard_downLocal},
         {"writeOIB",		        "(I)I",						(void *)Java_com_Smartcard_writeOIB},
         {"readLevel",		        "(I)I",						(void *)Java_com_Smartcard_readLevel},
+        {"readManufactureID",	    "(I)I",						(void *)Java_com_Smartcard_readManufactureID},
+        {"readDeviceID",	        "(I)I",						(void *)Java_com_Smartcard_readDeviceID},
         {"shutdown",				"()I",	                    (void *)Java_com_Smartcard_shutdown},
 };
 
