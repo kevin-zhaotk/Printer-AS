@@ -224,6 +224,11 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 //			Debug.d(TAG, mTask.getPath() + "/print.bin");
 //			BinCreater.saveBin(mTask.getPath() + "/print.bin", mPrintBuffer, 64);
 		}
+// H.M.Wang 2022-5-27 追加32x2头类型
+		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_32X2) {
+			mPrintBuffer = bitShiftFor32X2();
+		}
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 
 // H.M.Wang 2021-8-16 追加96DN头
 		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_96DN) {
@@ -279,6 +284,9 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32DN ||
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32SN ||
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT ||
+// H.M.Wang 2022-5-27 追加32x2头类型
+				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_32X2 ||
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // H.M.Wang 2021-8-16 追加96DN头
 //				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN ) {
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_64SN ||
@@ -556,6 +564,9 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
                 head != PrinterNozzle.MESSAGE_TYPE_64SN &&
 // H.M.Wang 2021-8-16 追加96DN头
 //                head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
+// H.M.Wang 2022-5-27 追加32x2头类型
+				head != PrinterNozzle.MESSAGE_TYPE_32X2 &&
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 				head != PrinterNozzle.MESSAGE_TYPE_64_DOT &&
 				head != PrinterNozzle.MESSAGE_TYPE_96DN) {
 // End of H.M.Wang 2021-8-16 追加96DN头
@@ -715,7 +726,10 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 		// H.M.Wang 追加下列两行
 // H.M.Wang 2020-8-26 追加64SN打印头
 //		} else if (headType == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
-		} else if (headType == PrinterNozzle.MESSAGE_TYPE_64_DOT || headType == PrinterNozzle.MESSAGE_TYPE_64SN) {
+// H.M.Wang 2022-5-27 追加32x2头类型
+//		} else if (headType == PrinterNozzle.MESSAGE_TYPE_64_DOT || headType == PrinterNozzle.MESSAGE_TYPE_64SN) {
+		} else if (headType == PrinterNozzle.MESSAGE_TYPE_64_DOT || headType == PrinterNozzle.MESSAGE_TYPE_64SN || headType == PrinterNozzle.MESSAGE_TYPE_32X2) {
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // H.M.Wang 2020-8-26 追加64SN打印头
 			div = 152f/64f;
 			scaleW = 152f/64;
@@ -764,6 +778,9 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 				(headType != PrinterNozzle.MESSAGE_TYPE_64SN) &&
 // H.M.Wang 2021-8-16 追加96DN头
 //				(headType != PrinterNozzle.MESSAGE_TYPE_64_DOT)) {
+// H.M.Wang 2022-5-27 追加32x2头类型
+				(headType != PrinterNozzle.MESSAGE_TYPE_32X2) &&
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 				(headType != PrinterNozzle.MESSAGE_TYPE_64_DOT) &&
 				(headType != PrinterNozzle.MESSAGE_TYPE_96DN)) {
 // End of H.M.Wang 2021-8-16 追加96DN头
@@ -1362,8 +1379,10 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 // H.M.Wang 2020-8-26 追加64SN打印头
 			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64SN ||
 // End of H.M.Wang 2020-8-26 追加64SN打印头
-//			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2022-5-27 追加32x2头类型
+			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_32X2 ||
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // H.M.Wang 2021-8-16 追加96DN头
 			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_64_DOT ||
 			object.getPNozzle() == PrinterNozzle.MESSAGE_TYPE_96DN) {
@@ -1609,6 +1628,39 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
     }
 
 // End of H.M.Wang 2022-3-29 追加32DN打印头的双列位移打印功能。功能的要求是
+
+// H.M.Wang 2022-5-27 追加32x2头类型。每列64点，奇数点上移到上32bit，偶数点下移到下32bit。然后上32bit后移3列（修改为下32bit后移3列）
+	public char[] bitShiftFor32X2() {
+		int CHARS_PER_COLOMN = 4;
+		int COLUMNS_TO_SHIFT = 3;
+		char[] buffer = new char[mPrintBuffer.length + CHARS_PER_COLOMN * COLUMNS_TO_SHIFT];
+		Arrays.fill(buffer, (char)0x0000);
+
+		for (int i = 0; i < mBinInfo.mColumn; i++) {
+			for(int j1=0; j1<CHARS_PER_COLOMN/2; j1++) {
+				char d1 = 0x0000;
+				char d2 = 0x0000;
+				for (int j2=1; j2>=0; j2--) {
+					char odd = (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j1*2+j2] & 0x5555);
+					char even = (char)(mPrintBuffer[i * CHARS_PER_COLOMN + j1*2+j2] & 0xaaaa);
+					for(int k=0; k<8; k++) {
+						d1 *= 2;
+						if(((odd << (2*k+1)) & 0x8000) == 0x8000) {
+							d1++;
+						}
+						d2 *= 2;
+						if(((even << (2*k)) & 0x8000) == 0x8000) {
+							d2++;
+						}
+					}
+				}
+				buffer[i * CHARS_PER_COLOMN + j1] = d1;
+				buffer[(i + COLUMNS_TO_SHIFT) * CHARS_PER_COLOMN + CHARS_PER_COLOMN/2 + j1] = d2;
+			}
+		}
+		return buffer;
+	}
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 
 // H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 // H.M.Wang 2022-4-4 按着吕总要求修改

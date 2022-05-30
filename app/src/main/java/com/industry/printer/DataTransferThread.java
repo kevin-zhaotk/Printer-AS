@@ -225,6 +225,9 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-8-26 追加64SN打印头
 //				head == PrinterNozzle.MESSAGE_TYPE_64_DOT);
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2022-5-27 追加32x2头类型
+				head == PrinterNozzle.MESSAGE_TYPE_32X2 ||
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // H.M.Wang 2021-8-16 追加96DN头
 				head == PrinterNozzle.MESSAGE_TYPE_64_DOT ||
 				head == PrinterNozzle.MESSAGE_TYPE_96DN);
@@ -359,6 +362,9 @@ public class DataTransferThread {
 // End of H.M.Wang 2020-8-26 追加64SN打印头
 //			head != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2022-5-27 追加32x2头类型
+			head != PrinterNozzle.MESSAGE_TYPE_32X2 &&
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // H.M.Wang 2021-8-16 追加96DN头
 			head != PrinterNozzle.MESSAGE_TYPE_64_DOT &&
 			head != PrinterNozzle.MESSAGE_TYPE_96DN) {
@@ -1614,6 +1620,9 @@ private void setSerialProtocol9DTs(final String data) {
 // End of H.M.Wang 2020-8-26 追加64SN打印头
 //				hType != PrinterNozzle.MESSAGE_TYPE_64_DOT) {
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2022-5-27 追加32x2头类型
+				hType != PrinterNozzle.MESSAGE_TYPE_32X2 &&
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // H.M.Wang 2021-8-16 追加96DN头
 				hType != PrinterNozzle.MESSAGE_TYPE_64_DOT &&
 				hType != PrinterNozzle.MESSAGE_TYPE_96DN) {

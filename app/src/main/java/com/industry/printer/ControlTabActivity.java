@@ -439,7 +439,11 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		mObjList = new ArrayList<BaseObject>();
 		mContext = this.getActivity();
 		mSysconfig = SystemConfigFile.getInstance(mContext);
-		mSysconfig.getFeatureCode();
+// H.M.Wang 2022-5-24 如果apk自带Feature与内部保存的不一致，可能是用户自己推送的apk，则禁止打印
+        if(!mSysconfig.getFeatureCode().equals(mSysconfig.getPackageFeatureCode())) {
+            ToastUtil.show(mContext, R.string.str_no_permission);
+        }
+// End of H.M.Wang 2022-5-24 如果apk自带Feature与内部保存的不一致，可能是用户自己推送的apk，则禁止打印
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(ACTION_REOPEN_SERIAL);
 		filter.addAction(ACTION_CLOSE_SERIAL);
@@ -832,10 +836,10 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 
                     //     协议２：　
                     //            0x01：是打印开始停止
-                    //     协议４：
+                    //     协议５：
                     //            0x01：是打印“开始／停止”控制位。其中，打印开始停止实在apk里面处理的，方向控制是在img里面控制的
                     if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_2 ||
-                       mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_4) {
+                       mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_5) {
                         if((mInPinState & 0x01) != (newState & 0x01)) {		// 0x01位的前后值不一致
                             mBtnStart.post(new Runnable() {
                                 @Override
@@ -886,78 +890,81 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 						}
                     }
 
-                    if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_4) {
-						//     协议４：
+					if(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_5) {
+						//     协议５：
 						//            0x04：方向切换
-						if((mInPinState & 0x04) != (newState & 0x04)) {
+						if ((mInPinState & 0x04) != (newState & 0x04)) {
 							Debug.d(TAG, "设置方向调整：" + (((newState & 0x04) == 0x04) ? 1 : 0));
 							FpgaGpioOperation.setMirror(((newState & 0x04) == 0x04) ? 1 : 0);
 ////						mInPinState &= (~0x04);
 ////						mInPinState |= (newState & 0x04);
 						}
 
-                        //     协议４：
-                        //            0x02：是计数器清零，包括RTC的数据和正在打印的数据
-                        if((mInPinState & 0x02) != (newState & 0x02)) {
-                            if((newState & 0x02) == 0x02) {
-                                Debug.d(TAG, "Clear counters");
-                                SystemConfigFile sysConfigFile = SystemConfigFile.getInstance();
-                                long[] counters = new long[10];
-                                for (int i = 0; i < 10; i++) {
-                                    counters[i] = 0;
-                                    sysConfigFile.setParamBroadcast(i+SystemConfigFile.INDEX_COUNT_1, 0);
-                                }
-                                RTCDevice.getInstance(mContext).writeAll(counters);
-
-                                List<DataTask> tasks = thread.getData();
-                                if(null != tasks) {
-                                    for(DataTask task : tasks) {
-                                        ArrayList<BaseObject> objList = task.getObjList();
-                                        for (BaseObject obj : objList) {
-                                            if (obj instanceof CounterObject) {
-                                                ((CounterObject)obj).setValue(((CounterObject)obj).getStart());
-                                            }
-                                        }
-                                    }
-                                    if(thread.isRunning()) {
-                                        DataTask task = thread.getCurData();
-                                        ArrayList<BaseObject> objList = task.getObjList();
-                                        for (BaseObject obj : objList) {
-                                            if (obj instanceof CounterObject) {
-                                                thread.mNeedUpdate = true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-////                            mInPinState = (mInPinState & (~0x02)) + (newState & 0x02);
-                        }
-
-                        //     协议４：
-                        //            0xF0段，即0x10 - 0xF0)为打印文件的文件名（数字形式，1-15）
-                        if((mInPinState & 0x0F0) != (newState & 0x0F0)) {
+						//     协议５：
+						//            0xF0段，即0x10 - 0xF0)为打印文件的文件名（数字形式，1-15）
+						if((mInPinState & 0x0F0) != (newState & 0x0F0)) {
 ////                            mInPinState = (mInPinState & 0x0F) + (newState & 0x0F0);
-                            int index = 0x0F & (newState >> 4);
-                            if(index != 0x00) {
-                                String fileName = "0" + index;
+							int index = 0x0F & (newState >> 4);
+							if(index != 0x00) {
+								String fileName = "0" + index;
 //						if(index >= 10) {
-                                fileName = "" + index;
+								fileName = "" + index;
 //						}
-                                Debug.d(TAG, "IN8-IN5 select file: " + fileName);
-                                if(new File(ConfigPath.getTlkDir(fileName)).exists()) {
-                                    Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
-                                    Bundle bundle = new Bundle();
-                                    bundle.putString("file", fileName);
+								Debug.d(TAG, "IN8-IN5 select file: " + fileName);
+								if(new File(ConfigPath.getTlkDir(fileName)).exists()) {
+									Message msg = mHandler.obtainMessage(MESSAGE_OPEN_PREVIEW);
+									Bundle bundle = new Bundle();
+									bundle.putString("file", fileName);
 // H.M.Wang 2022-3-1 正在打印中的时候切换打印信息，重新生成打印缓冲区
-                                    if (mDTransThread != null && mDTransThread.isRunning()) {
-                                        bundle.putBoolean("printNext", true);
-                                    }
+									if (mDTransThread != null && mDTransThread.isRunning()) {
+										bundle.putBoolean("printNext", true);
+									}
 // End of H.M.Wang 2022-3-1 正在打印中的时候切换打印信息，重新生成打印缓冲区
-                                    msg.setData(bundle);
-                                    mHandler.sendMessage(msg);
-                                }
-                            }
-                        }
+									msg.setData(bundle);
+									mHandler.sendMessage(msg);
+								}
+							}
+						}
+					}
+
+					if((mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_5 && (mInPinState & 0x02) != (newState & 0x02)/*状态发生了变化*/ && (newState & 0x02) == 0x02)/*新值是设位*/ ||
+                        //     协议５：
+                        //            0x02：是计数器清零，包括RTC的数据和正在打印的数据
+						(mSysconfig.getParam(SystemConfigFile.INDEX_IPURT_PROC) == SystemConfigFile.INPUT_PROTO_4 && (mInPinState & 0x01) != (newState & 0x01) && (newState & 0x01) == 0x01)) {
+						//     协议４：
+						//            0x01：是计数器清零，包括RTC的数据和正在打印的数据
+//						if((newState & 0x02) == 0x02) {
+							Debug.d(TAG, "Clear counters");
+							SystemConfigFile sysConfigFile = SystemConfigFile.getInstance();
+							long[] counters = new long[10];
+							for (int i = 0; i < 10; i++) {
+								counters[i] = 0;
+								sysConfigFile.setParamBroadcast(i+SystemConfigFile.INDEX_COUNT_1, 0);
+							}
+							RTCDevice.getInstance(mContext).writeAll(counters);
+
+							List<DataTask> tasks = thread.getData();
+							if(null != tasks) {
+								for(DataTask task : tasks) {
+									ArrayList<BaseObject> objList = task.getObjList();
+									for (BaseObject obj : objList) {
+										if (obj instanceof CounterObject) {
+											((CounterObject)obj).setValue(((CounterObject)obj).getStart());
+										}
+									}
+								}
+								if(thread.isRunning()) {
+									DataTask task = thread.getCurData();
+									ArrayList<BaseObject> objList = task.getObjList();
+									for (BaseObject obj : objList) {
+										if (obj instanceof CounterObject) {
+											thread.mNeedUpdate = true;
+										}
+									}
+								}
+							}
+////                            mInPinState = (mInPinState & (~0x02)) + (newState & 0x02);
+//                        }
                     }
 					mInPinState = newState;
 				}

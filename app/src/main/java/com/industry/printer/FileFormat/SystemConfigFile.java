@@ -261,8 +261,11 @@ public class SystemConfigFile{
 
 	public static final int INPUT_PROTO_1           = 0;        // 禁止GPIO
 	public static final int INPUT_PROTO_2           = 1;        // 0x01控制打印，其他管脚禁止
-    public static final int INPUT_PROTO_3           = 2;        // 0x01控制方向，其他管脚禁止
-    public static final int INPUT_PROTO_4           = 3;        // 综合
+	public static final int INPUT_PROTO_3           = 2;        // 0x01控制方向，其他管脚禁止
+// H.M.Wang 2022-5-28 增加清零操作，将原综合操作的PROTO_4改为PROTO_5，清零操作使用PROTO_4
+	public static final int INPUT_PROTO_4           = 3;        // 0x01清零
+    public static final int INPUT_PROTO_5           = 4;        // 综合
+// End of H.M.Wang 2022-5-28 增加清零操作，将原综合操作的PROTO_4改为PROTO_5，清零操作使用PROTO_4
 // End of H.M.Wang 追加输入设置参数
 
 // H.M.Wang 2020-3-3 镜像方向定义，影响到参数12，13，20，21
@@ -1447,6 +1450,11 @@ public class SystemConfigFile{
 				nozzle = PrinterNozzle.MESSAGE_TYPE_64SN;
 				break;
 // End of H.M.Wang 2020-8-26 追加64SN打印头
+// H.M.Wang 2022-5-27 追加32x2头类型
+			case PrinterNozzle.MessageType.NOZZLE_INDEX_32X2:
+				nozzle = PrinterNozzle.MESSAGE_TYPE_32X2;
+				break;
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 			case PrinterNozzle.MessageType.NOZZLE_INDEX_64_DOT:
 				nozzle = PrinterNozzle.MESSAGE_TYPE_64_DOT;
 				break;

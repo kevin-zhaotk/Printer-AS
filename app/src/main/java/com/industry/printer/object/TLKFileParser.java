@@ -564,6 +564,9 @@ public class TLKFileParser  extends TlkFile{
 			case MESSAGE_TYPE_32SN:
 // End of H.M.Wang 2020-8-17 追加32SN打印头
 
+// H.M.Wang 2022-5-27 追加32x2头类型
+			case MESSAGE_TYPE_32X2:
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 			// H.M.Wang 追加下列一行
 			case MESSAGE_TYPE_64_DOT:
 // H.M.Wang 2020-8-26 追加64SN打印头

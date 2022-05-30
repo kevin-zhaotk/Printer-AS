@@ -98,6 +98,9 @@
         <!-- H.M.Wang 2022-4-29 追加25.4x10头 -->
         <item>25.4x10</item>
         <!-- End of H.M.Wang 2022-4-29 追加25.4x10头 -->
+        <!-- H.M.Wang 2022-5-27 追加32x2头类型 -->
+        <item>32x2</item>
+        <!-- End of H.M.Wang 2022-5-27 追加32x2头类型 -->
     </string-array>
 
     <string-array name="strFontArray">
@@ -340,6 +343,7 @@
         <item>P-2</item>
         <item>P-3</item>
         <item>P-4</item>
+        <item>P-5</item>
     </string-array>
     <!-- End of H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
 </resources>

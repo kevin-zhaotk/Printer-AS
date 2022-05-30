@@ -2,11 +2,17 @@ package com.industry.printer.Utils;
 
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.industry.printer.FileFormat.FilenameSuffixFilter;
 import com.industry.printer.FileFormat.XmlInputStream;
 import com.industry.printer.R;
 import com.industry.printer.ui.CustomerDialog.LoadingDialog;
@@ -91,39 +97,7 @@ public class PackageInstaller {
 			ToastUtil.show(mContext, R.string.str_no_upgrade);
 			return false;
 		}
-/*
-// H.M.Wang 2022-5-12 修改升级的方法。取消启动后自动升级，改为在设置页面按钮启动升级
-// 		版本号修改为9位，前5位作为开发版本号，由开发者添加管理，后四位作为用户的特征码，由发布者添加管理
-//		如，308461138。30846代表开发版本号，顺序增加；1138作为用户的特征码，由发布者根据特定算法生成添加
-//		新的升级策略位，
-//			（1） 如果当前apk为旧版本（5位版本号），待升级apk为新版本apk（9位版本号），则无条件升级 （O）
-//			（2） 如果当前apk为新版本apk（9位版本号），待升级apk为旧版本（5位版本号），则无不能升级
-//			（3） 如果当前apk与待升级apk均为版本apk（9位版本号），根据后4位特征码决定升级方法
-//				（3-1）如果两者的特征码相同，则如果开发版本号不同，则执行升级；如果相同，则无需升级 （O）
-//				（3-2）如果两者的特征码不同，但两者之中有一个为9999，则执行升级	（O）
-//				（3-2）如果两者的特征码不同，但两者之中无一为9999，则执行不能升级
 
-		int curFeature = 0;
-		int newFeature= 0;
-
-		if(curVersion / 100000 > 0) {
-			curFeature = curVersion % 10000;
-		}
-		if(newVersion / 100000 > 0) {
-			newFeature = newVersion % 10000;
-		}
-
-		if(curFeature == 0) {	// 当前apk为旧版apk，可以升级
-		} else if(newFeature == curFeature) {	// 两个apk的特征码一致，则可以升级
-		} else if(curFeature == 9999 || newFeature == 9999) {	// 两个apk的特征码中有一个为9999
-		} else {
-			ToastUtil.show(mContext, R.string.str_no_permission);
-			return false;
-		}
-
-//		LoadingDialog dialog = LoadingDialog.show(mContext, R.string.str_upgrade_progress);
-// End of H.M.Wang 2022-5-12 修改升级的方法。取消启动后自动升级，改为在设置页面按钮启动升级
-*/
 		new Thread() {
 			public void run() {
 				try{
@@ -137,6 +111,33 @@ public class PackageInstaller {
 		}.start();
 		return true;
 	}
+
+// H.M.Wang 2022-5-26 USB授权信息检查。
+	private boolean checkUSBAuthentication() {
+		ArrayList<String> paths = ConfigPath.getMountedUsb();
+		if (paths == null || paths.size() <= 0) {
+			return false;
+		} else {
+			File[] files = new File(paths.get(0)).listFiles(new FileFilter() {
+				@Override
+				public boolean accept(File pathname) {
+					if(pathname.getName().endsWith(".dat")) return true;
+					return false;
+				}
+			});
+			if(null == files) return false;
+			for(File f : files) {
+				Debug.e(TAG, f.getName());
+			}
+
+			if(files.length >= 79 && "946767B2C64B2AE2CC98EAF978286A81.dat".equals(files[78].getName())) {
+				Debug.e(TAG, "CORRECT!!!");
+				return true;
+			}
+			return false;
+		}
+	}
+// End of H.M.Wang 2022-5-26 USB授权信息检查。
 
 	public boolean silentUpgrade2() {
 		int curVersion = 0;
@@ -173,11 +174,11 @@ public class PackageInstaller {
 //		如，308461138。30846代表开发版本号，顺序增加；1138作为用户的特征码，由发布者根据特定算法生成添加
 //		新的升级策略位，
 //			（1） 如果当前apk为旧版本（5位版本号），待升级apk为新版本apk（9位版本号），则无条件升级 （O）
-//			（2） 如果当前apk为新版本apk（9位版本号），待升级apk为旧版本（5位版本号），则无不能升级
+//			（2） 如果当前apk为新版本apk（9位版本号），待升级apk为旧版本（5位版本号），则不能升级
 //			（3） 如果当前apk与待升级apk均为版本apk（9位版本号），根据后4位特征码决定升级方法
 //				（3-1）如果两者的特征码相同，则如果开发版本号不同，则执行升级；如果相同，则无需升级 （O）
-//				（3-2）如果两者的特征码不同，但两者之中有一个为9999，则执行升级	（O）
-//				（3-2）如果两者的特征码不同，但两者之中无一为9999，则执行不能升级
+//				（3-2）如果两者的特征码不同，如果USB盘中有授权码，则执行升级	（O）
+//						授权码为在data目录下顺序保存的乱序文件名(MD5的文件名)当中的第79位为特定文件名	(946767B2C64B2AE2CC98EAF978286A81.dat)则允许升级，否则不允许升级
 
 		int curFeature = 0;
 		int newFeature= 0;
@@ -191,7 +192,7 @@ public class PackageInstaller {
 
 		if(curFeature == 0) {	// 当前apk为旧版apk，可以升级
 		} else if(newFeature == curFeature) {	// 两个apk的特征码一致，则可以升级
-//		} else if(curFeature == 9999 || newFeature == 9999) {	// 两个apk的特征码中有一个为9999
+		} else if(checkUSBAuthentication()) {	// 检查USB授权
 		} else {
 			ToastUtil.show(mContext, R.string.str_no_permission);
 			return false;

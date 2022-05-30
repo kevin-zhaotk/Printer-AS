@@ -250,6 +250,9 @@ public class MessageObject extends BaseObject {
 // H.M.Wang 2020-8-17 追加32SN打印头
 						mPNozzle == PrinterNozzle.MESSAGE_TYPE_32SN ||
 // End of H.M.Wang 2020-8-17 追加32SN打印头
+// H.M.Wang 2022-5-27 追加32x2头类型
+						mPNozzle == PrinterNozzle.MESSAGE_TYPE_32X2 ||
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // H.M.Wang 2020-8-26 追加64SN打印头
 						mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN ||
 // End of H.M.Wang 2020-8-26 追加64SN打印头
@@ -353,7 +356,10 @@ public class MessageObject extends BaseObject {
         // H.M.Wang 追加下列5行
 // H.M.Wang 2020-8-26 追加64SN打印头
 //		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
-        } else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN) {
+// H.M.Wang 2022-5-27 追加32x2头类型
+//		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32X2) {
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // End of H.M.Wang 2020-8-26 追加64SN打印头
             size = new String[mDot_64_Size.length];
             for (int i = 0; i < size.length; i++) {
@@ -481,7 +487,10 @@ public class MessageObject extends BaseObject {
         // H.M.Wang 追加下列9行
 // H.M.Wang 2020-8-26 追加64SN打印头
 //		} else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT ) {
-		} else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN) {
+// H.M.Wang 2022-5-27 追加32x2头类型
+//		} else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN) {
+		} else  if ( mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32X2) {
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // End of H.M.Wang 2020-8-26 追加64SN打印头
 // H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
 // H.M.Wang 2020-4-15 追加"5x5"字体
@@ -654,7 +663,10 @@ public class MessageObject extends BaseObject {
         // H.M.Wang 追加下列10行
 // H.M.Wang 2020-8-26 追加64SN打印头
 //		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
-        } else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN) {
+// H.M.Wang 2022-5-27 追加32x2头类型
+//        } else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN) {
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT || mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN || mPNozzle == PrinterNozzle.MESSAGE_TYPE_32X2) {
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // End of H.M.Wang 2020-8-26 追加64SN打印头
 			if (size <= 152f * 5 / 64 + 1) {
 				return mDot_64_Size[0];

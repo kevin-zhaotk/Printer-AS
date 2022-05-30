@@ -184,6 +184,9 @@ public class DynamicText extends BaseObject {
             head == PrinterNozzle.MESSAGE_TYPE_32DN ||
             head == PrinterNozzle.MESSAGE_TYPE_32SN ||
             head == PrinterNozzle.MESSAGE_TYPE_64SN ||
+// H.M.Wang 2022-5-27 追加32x2头类型
+            head == PrinterNozzle.MESSAGE_TYPE_32X2 ||
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // H.M.Wang 2021-8-16 追加96DN头
 //            head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
             head == PrinterNozzle.MESSAGE_TYPE_64_DOT ||
@@ -285,6 +288,9 @@ public class DynamicText extends BaseObject {
 // H.M.Wang 2020-8-26 追加64SN打印头
             head == PrinterNozzle.MESSAGE_TYPE_64SN ||
 // End of H.M.Wang 2020-8-26 追加64SN打印头
+// H.M.Wang 2022-5-27 追加32x2头类型
+            head == PrinterNozzle.MESSAGE_TYPE_32X2 ||
+// End of H.M.Wang 2022-5-27 追加32x2头类型
 // H.M.Wang 2021-8-16 追加96DN头
 //            head == PrinterNozzle.MESSAGE_TYPE_64_DOT) {
             head == PrinterNozzle.MESSAGE_TYPE_64_DOT ||
