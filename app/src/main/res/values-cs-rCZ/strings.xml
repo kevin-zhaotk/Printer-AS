@@ -372,7 +372,10 @@
 	<string name="str_textview_param57">57.Input</string>
 	<!-- End of H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
 	<string name="str_textview_param58">58.IP</string>
-	<string name="str_textview_param59">59.Vyhrazeno</string>
+<!-- H.M.Wang 2022-5-30 增加编码器变倍 -->
+<!--	<string name="str_textview_param59">59.Vyhrazeno</string> -->
+	<string name="str_textview_param59">59.Width Ratio</string>
+<!-- End of H.M.Wang 2022-5-30 增加编码器变倍 -->
 	<string name="str_textview_param60">60.Log</string>
 <!-- H.M.Wang 2021-11-19 修改双列支持的名称
     <string name="str_textview_param61">61.Vyhrazeno</string> -->

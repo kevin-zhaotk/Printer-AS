@@ -106,6 +106,8 @@ public class PackageInstaller {
 					
 				}
 				// silentInstall(pkName, path);
+				File file = new File(Configs.CONFIG_PATH_FLASH + Configs.LAST_FEATURE_XML);
+				if(file.exists()) file.delete();
 				install();
 			}
 		}.start();

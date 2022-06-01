@@ -29,6 +29,11 @@ public class PCCommand {
     public static final String CMD_SET_REMOTE = "600";
     public static final String CMD_SET_REMOTE_S = "Dynamic";
 
+// H.M.Wang 2022-6-1 增加新的文本设置指令，该文本设置格式与600命令一致，为10个文本+1个条码，但是文本的排列顺序不代表填充到消息里面DT变量的顺序，而是10个全局DT桶的顺序
+    public static final String CMD_SET_REMOTE1 = "650";
+    public static final String CMD_SET_REMOTE1_S = "Dynamic1";
+// End of H.M.Wang 2022-6-1 增加新的文本设置指令，该文本设置格式与600命令一致，为10个文本+1个条码，但是文本的排列顺序不代表填充到消息里面DT变量的顺序，而是10个全局DT桶的顺序
+
     /** 生成tlk */
     public static final String CMD_MAKE_TLK = "700";
     public static final String CMD_MAKE_TLK_S = "MakeTLK";

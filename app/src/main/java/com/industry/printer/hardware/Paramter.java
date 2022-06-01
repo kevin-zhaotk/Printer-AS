@@ -1,5 +1,6 @@
 package com.industry.printer.hardware;
 
+import com.industry.printer.FileFormat.SystemConfigFile;
 import com.industry.printer.Utils.Debug;
 
 public class Paramter {
@@ -200,6 +201,10 @@ public class Paramter {
 //			Debug.e(TAG, "--->mFPGAParam[" + i + "]=" + mFPGAParam[i]);
 //		}
 	    mFPGAParam[13] = (int) ((param[9] * 25.4 * 128)/(param[8] * 3.14)/param[2]);
+// H.M.Wang 2022-5-30 增加编码器变倍
+		mFPGAParam[13] *= (param[SystemConfigFile.INDEX_WIDTH_RATIO] <= 10 ? 100 : param[SystemConfigFile.INDEX_WIDTH_RATIO]);
+		mFPGAParam[13] /= 100;
+// End of H.M.Wang 2022-5-30 增加编码器变倍
 	    mFPGAParam[14] = param[34];
 	    mFPGAParam[20] = param[36];
 	    mFPGAParam[21] = param[33];

@@ -263,8 +263,8 @@ public class SystemConfigFile{
 	public static final int INPUT_PROTO_2           = 1;        // 0x01控制打印，其他管脚禁止
 	public static final int INPUT_PROTO_3           = 2;        // 0x01控制方向，其他管脚禁止
 // H.M.Wang 2022-5-28 增加清零操作，将原综合操作的PROTO_4改为PROTO_5，清零操作使用PROTO_4
-	public static final int INPUT_PROTO_4           = 3;        // 0x01清零
-    public static final int INPUT_PROTO_5           = 4;        // 综合
+	public static final int INPUT_PROTO_4           = 3;        // 综合
+	public static final int INPUT_PROTO_5           = 4;        // 0x01清零
 // End of H.M.Wang 2022-5-28 增加清零操作，将原综合操作的PROTO_4改为PROTO_5，清零操作使用PROTO_4
 // End of H.M.Wang 追加输入设置参数
 
@@ -310,6 +310,13 @@ public class SystemConfigFile{
 // H.M.Wang 2021-7-23 追加触发一次后重复打印的次数的设置。定位C41
 	public static final int INDEX_PRINT_TIMES = 40;
 // End of H.M.Wang 2021-7-23 追加触发一次后重复打印的次数的设置。定位C41
+
+// H.M.Wang 2022-5-30 编码器变倍，  希望启用一个参数，  Width Ratio /宽度调节（w）。
+//					  用途就是把S14 换算一次，      新的S14 =老的S14 * w/100.
+//					  也就是说， 用户设80， 打印出来是以前80% 宽，   200， 就是200% 宽了。
+//					  0当100 计算，  这样兼容不设置的情况。10%都当100
+	public static final int INDEX_WIDTH_RATIO = 58;
+// End of H.M.Wang 2022-5-30 编码器变倍，  希望启用一个参数，  Width Ratio /宽度调节（w）。
 
 // H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 	private String[] mDTBuffer = new String[] {

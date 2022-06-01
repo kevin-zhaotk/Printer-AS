@@ -232,6 +232,23 @@ public class FpgaGpioOperation {
         return ret;
     }
 
+// H.M.Wang 2022-5-31 向FPGA的PG1和PG2下发11，3ms后再下发00
+    public static void clear() {
+        int fd = open();
+        if (fd <= 0) {
+            Debug.d(TAG, "===>open fpga file error");
+            return;
+        }
+        ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_CLEAN);
+        Debug.d(TAG, "FPGA_STATE_CLEAN");
+
+        try{Thread.sleep(3);}catch(Exception e){};
+
+        ExtGpio.setFpgaState(ExtGpio.FPGA_STATE_OUTPUT);
+        Debug.d(TAG, "FPGA_STATE_OUTPUT");
+    }
+// End of H.M.Wang 2022-5-31 向FPGA的PG1和PG2下发11，3ms后再下发00
+
     /**
      * clean 下发清空数据命令到FPGA
      */

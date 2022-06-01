@@ -192,7 +192,7 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 // H.M.Wang 2022-4-4 按着吕总要求修改
 //			if(slant == 0) {
 //				mPrintBuffer = bitShiftFor32DN();
-            if(slant >= 0 || slant <= 8) {
+            if(slant >= 0 && slant <= 8) {
                 mPrintBuffer = bitShiftFor32DN(slant);
 // End of H.M.Wang 2022-4-4 按着吕总要求修改
             } else {
@@ -1632,7 +1632,7 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 // H.M.Wang 2022-5-27 追加32x2头类型。每列64点，奇数点上移到上32bit，偶数点下移到下32bit。然后上32bit后移3列（修改为下32bit后移3列）
 	public char[] bitShiftFor32X2() {
 		int CHARS_PER_COLOMN = 4;
-		int COLUMNS_TO_SHIFT = 3;
+		int COLUMNS_TO_SHIFT = 2;
 		char[] buffer = new char[mPrintBuffer.length + CHARS_PER_COLOMN * COLUMNS_TO_SHIFT];
 		Arrays.fill(buffer, (char)0x0000);
 

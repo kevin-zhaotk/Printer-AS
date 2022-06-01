@@ -137,6 +137,30 @@ public class PCCommandHandler {
             }
             // End.
 // End. -----
+// H.M.Wang 2022-6-1 新的外部文本处理函数，支持新的PC或者串口PC当中的DT设置命令（CMD_SET_REMOTE1和CMD_SET_REMOTE1_S),接收到的10个DT对应于10个全局DT桶的顺序
+        } else if (PCCommand.CMD_SET_REMOTE1.equalsIgnoreCase(cmd.command) ||
+                PCCommand.CMD_SET_REMOTE1_S.equalsIgnoreCase(cmd.command)) {
+            // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
+            if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
+// H.M.Wang 2022-5-28 当数据源定义为PC命令的时候，通过串口传递WIFI的命令。但是，由于PC命令占用了数据源的LAN和LAN_FAST的位置，这里协议是冲突的，因此视作LAN和LAN_FAST打开，但是LAN的动作能够全部实现，LAN_FAST由于有多余的打印流程控制，不会动作
+                    SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_PC_COMMAND ||
+// End of H.M.Wang 2022-5-28 当数据源定义为PC命令的时候，通过串口传递WIFI的命令。但是，由于PC命令占用了数据源的LAN和LAN_FAST的位置，这里协议是冲突的，因此视作LAN和LAN_FAST打开
+// H.M.Wang 2020-6-28 追加专门为网络快速打印设置
+                    SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
+// End of H.M.Wang 2020-6-28 追加专门为网络快速打印设置
+                DataTransferThread aDTThread = DataTransferThread.getInstance(mContext);
+                if(aDTThread.isRunning()) {
+                    aDTThread.setRemote1TextSeparated(cmd.content);
+                    sendmsg(Constants.pcOk(msg));
+                } else {
+                    sendmsg(Constants.pcErr(msg));
+                }
+            } else {
+                sendmsg(Constants.pcErr(msg));
+            }
+            // End.
+// End. -----
+// End of H.M.Wang 2022-6-1 新的外部文本处理函数，支持新的PC或者串口PC当中的DT设置命令（CMD_SET_REMOTE1和CMD_SET_REMOTE1_S),接收到的10个DT对应于10个全局DT桶的顺序
         } else if (PCCommand.CMD_PRINT.equalsIgnoreCase(cmd.command) ||
                    PCCommand.CMD_PRINT_S.equalsIgnoreCase(cmd.command)) {
             File msgfile = new File(cmd.content);

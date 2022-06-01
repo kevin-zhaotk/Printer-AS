@@ -459,6 +459,57 @@ public class DataTransferThread {
 		return mRunning;
 	}
 
+// H.M.Wang 2022-6-1 新的外部文本处理函数，支持新的PC或者串口PC当中的DT设置命令（CMD_SET_REMOTE1和CMD_SET_REMOTE1_S),接收到的10个DT对应于10个全局DT桶的顺序
+	public void setRemote1TextSeparated(final String data) {
+		Debug.d(TAG, "String from Remote = [" + data + "]");
+		mHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if(null != mRemoteRecvedPromptDlg) {
+					mRemoteRecvedPromptDlg.show();		// 不知道为啥，hide之后，必须要show两次才能够及时显示出来
+					mRemoteRecvedPromptDlg.setMessage(data);
+//					mRemoteRecvedPromptDlg.show();
+				}
+			}
+		});
+		String[] recvStrs = data.split(EC_DOD_Protocol.TEXT_SEPERATOR);
+
+		boolean needUpdate = false;
+
+// H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+		for(int i=0; i<Math.min(recvStrs.length, 10); i++) {
+			SystemConfigFile.getInstance().setDTBuffer(i, recvStrs[i]);
+		}
+// End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+
+// H.M.Wang 2020-9-10 协议收到的数值对群组也有效
+		for(DataTask dataTask : mDataTask) {
+			ArrayList<BaseObject> objList = dataTask.getObjList();
+			for(BaseObject baseObject: objList) {
+				if(baseObject instanceof DynamicText) {
+						Debug.d(TAG, "DynamicText[" + baseObject.getIndex() + "](DT Index: " + ((DynamicText) baseObject).getDtIndex() + "): " + recvStrs[((DynamicText) baseObject).getDtIndex()]);
+						baseObject.setContent(recvStrs[((DynamicText) baseObject).getDtIndex()]);
+						needUpdate = true;
+				} else if(baseObject instanceof BarcodeObject) {
+					if(((BarcodeObject)baseObject).isDynamicCode() && recvStrs.length >= 11) {
+						Debug.d(TAG, "Dynamic QRCode: " + recvStrs[10]);
+						((BarcodeObject)baseObject).setContent(recvStrs[10]);
+						needUpdate = true;
+					}
+				}
+			}
+		}
+// End of H.M.Wang 2020-9-10 协议收到的数值对群组也有效
+		mNeedUpdate = needUpdate;
+
+// 2020-7-3 标识网络快速打印状态下数据更新
+		if(SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
+			mDataUpdatedForFastLan = true;
+		}
+// End of 2020-7-3 标识网络快速打印状态下数据更新
+	}
+// End of H.M.Wang 2022-6-1 新的外部文本处理函数，支持新的PC或者串口PC当中的DT设置命令（CMD_SET_REMOTE1和CMD_SET_REMOTE1_S),接收到的10个DT对应于10个全局DT桶的顺序
+
 // H.M.Wang 2019-12-19 函数名变更，处理由分隔符分开的字符串，主要满足数据源为以太网和串口协议2的情况
 // H.M.Wang 2019-12-16 将计数器和动态二维码替代部分函数化，以对应串口和网络两方面的需求
 	public void setRemoteTextSeparated(final String data) {

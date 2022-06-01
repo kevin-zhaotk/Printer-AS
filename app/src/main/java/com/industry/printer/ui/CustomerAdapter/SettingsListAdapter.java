@@ -581,7 +581,9 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mSettingItems[56] = new ItemOneLine(57, R.string.str_textview_param57, R.array.input_proc_item_entries, 0, ItemType.TYPE_SWITCH);
 // End of H.M.Wang 2021-9-24 追加输入设置参数
 		mSettingItems[57] = new ItemOneLine(58, R.string.str_textview_param58, 0);
+// H.M.Wang 2022-5-30 增加编码器变倍
 		mSettingItems[58] = new ItemOneLine(59, R.string.str_textview_param59, 0);
+// End of H.M.Wang 2022-5-30 增加编码器变倍
 		mSettingItems[59] = new ItemOneLine(60, R.string.str_textview_param60, 0);
 		mSettingItems[60] = new ItemOneLine(61, R.string.str_textview_param61, 0);
 		mSettingItems[61] = new ItemOneLine(62, R.string.str_textview_param62, 0);
