@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<!-- H.M.Wang 2020-2-4 追加班次(Shift)位数数组 -->
+    <string-array name="strShiftBitsArray">
+        <item>1 bit</item>
+        <item>2 bits</item>
+    </string-array>
+<!-- End of H.M.Wang 2020-2-4 追加班次(Shift)位数数组 -->
+
+<!-- H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
+    <string-array name="strDataSourceArray">
+        <item>Disable</item>
+        <item>Bin</item>
+        <item>File</item>
+        <item>File2</item>
+        <item>Lan Data</item>
+        <item>Fast Lan</item>
+        <item>Lan Heart</item>
+        <item>Scaner-1</item>
+        <item>Scaner-1-FIFO</item>
+        <item>Scaner-2</item>
+        <item>Scaner-3</item>
+        <item>Scaner-4</item>
+        <item>RS232-1</item>
+        <item>RS232-2</item>
+        <item>RS232-3</item>
+        <item>RS232-4</item>
+        <item>RS232-6</item>
+        <item>RS232-7</item>
+        <!--  H.M.Wang 2021-3-6 追加串口8 -->
+        <item>RS232-8</item>
+        <!--  End of H.M.Wang 2021-3-6 追加串口8 -->
+        <!--  H.M.Wang 2021-9-24 追加串口9 -->
+        <item>RS232-9</item>
+        <!--  End of H.M.Wang 2021-9-24 追加串口9 -->
+        <!--  H.M.Wang 2021-9-28 追加串口10 -->
+        <item>RS232-10</item>
+        <!--  End of H.M.Wang 2021-9-28 追加串口10 -->
+        <!--  H.M.Wang 2021-10-30 追加PC命令 -->
+        <item>PC Command</item>
+        <!--  End of H.M.Wang 2021-10-30 追加PC命令 -->
+        <!--  H.M.Wang 2022-4-5 追加PC命令 -->
+        <item>RS232-11</item>
+        <!--  End of H.M.Wang 2022-4-5 追加PC命令 -->
+        <!-- H.M.Wang 2022-5-16 追加串口协议2无线 -->
+        <item>RS232-2 Wifi</item>
+        <!-- End of H.M.Wang 2022-5-16 追加串口协议2无线 -->
+    </string-array>
+<!-- End of H.M.Wang 2019-12-19 追加数据源名称字符串数组 -->
+
+    <string-array name="strPrinterArray">
+        <item>12.7 </item>
+        <item>12.7X2</item>
+        <item>12.7X3</item>
+        <item>12.7X4</item>
+        <item>25.4</item>
+        <item>25.4X2</item>
+        <item>25.4X3</item>
+        <item>25.4X4</item>
+        <item>16 dot</item>
+        <item>32 dot</item>
+
+        <!--  H.M.Wang 追加下列一行 -->
+        <item>64 dot</item>
+
+        <!--  H.M.Wang 2020-4-16 追加追加12.7R5头类型 -->
+        <!-- H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头 -->
+        <!--<item>12.7 R5</item>-->
+        <item>R6X48</item>
+        <item>R6X50</item>
+        <!-- End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头 -->
+
+        <!-- H.M.Wang 2020-7-23 追加32DN打印头 -->
+        <item>32DN</item>
+        <!-- End of H.M.Wang 2020-7-23 追加32DN打印头 -->
+
+        <!-- H.M.Wang 2020-8-18 追加32SN打印头 -->
+        <item>32SN</item>
+        <!-- End of H.M.Wang 2020-8-18 追加32SN打印头 -->
+
+        <!-- H.M.Wang 2020-8-26 追加64SN打印头 -->
+        <item>64SN</item>
+        <!-- End of H.M.Wang 2020-8-26 追加64SN打印头 -->
+        <item>9MM</item>
+        <!--  H.M.Wang 2021-3-6 追加E6X48,E6X50头 -->
+        <item>E6X48</item>
+        <item>E6X50</item>
+        <!--  End of H.M.Wang 2021-3-6 追加E6X48,E6X50头 -->
+        <item>E6X1</item>
+        <!-- H.M.Wang 2021-8-16 追加96DN头 -->
+        <item>96DN</item>
+        <!-- End of H.M.Wang 2021-8-16 追加96DN头 -->
+        <!-- H.M.Wang 2021-8-25 追加E5X48和E5X50头类型 -->
+        <item>E5X48</item>
+        <item>E5X50</item>
+        <!-- End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型 -->
+        <!-- H.M.Wang 2022-4-29 追加25.4x10头 -->
+        <item>25.4x10</item>
+        <!-- End of H.M.Wang 2022-4-29 追加25.4x10头 -->
+    </string-array>
+
+    <string-array name="strFontArray">
+        <item>0T+</item>
+        <item>1+</item>
+        <item>1B+</item>
+        <item>1B2</item>
+        <item>1BS</item>
+        <item>1T</item>
+        <item>2+</item>
+        <item>2B</item>
+        <item>2i</item>
+        <item>3+</item>
+        <item>3B</item>
+        <item>3i</item>
+        <item>3T</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>6B</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+
+    <string-array name="strFontTipsArray">
+        <item>0T+ font</item>
+        <item>1+ font</item>
+        <item>1B+ font</item>
+        <item>1B2 font</item>
+        <item>1BS font</item>
+        <item>1T font</item>
+        <item>2+ font</item>
+        <item>2B font</item>
+        <item>2i font</item>
+        <item>3+ font</item>
+        <item>3B font</item>
+        <item>3i font</item>
+        <item>3T font</item>
+        <item>4 font</item>
+        <item>5 font</item>
+        <item>6 font</item>
+        <item>6B font</item>
+        <item>7 font</item>
+        <item>8 font</item>
+        <item>9 font</item>
+    </string-array>
+
+    <string-array name="strCodeArray">
+        <item>EAN8</item>
+        <item>EAN13</item>
+        <item>EAN128</item>
+        <item>CODE_128</item>
+        <item>CODE_39</item>
+        <item>UPC_A</item>
+        <item>ITF_14</item>
+        <item>QR</item>
+        <item>DM</item>
+    </string-array>
+
+    <string-array name="strDirectArray">
+        <item>Увеличить</item>
+        <item>Уменьшить</item>
+    </string-array>
+
+    <string-array name="strLineArray">
+        <item>Сплошная</item>
+        <item>Пунктирная</item>
+        <item>Точечная</item>
+        <item>Пунктирно-точечная</item>
+        <item>Пунктир-двуточечная</item>
+    </string-array>
+
+    <string-array name="strTimeFormat">
+        <item>YYYY.MM.DD</item>
+        <item>YYYY/MM/DD</item>
+        <item>MM/DD/YYYY</item>
+        <item>DD/MM/YYYY</item>
+        <item>YY-MM-DD</item>
+        <item>MM-DD-YY</item>
+        <item>DD-MM-YY</item>
+        <item>YY/MM/DD</item>
+        <item>MM/DD/YY</item>
+        <item>DD/MM/YY</item>
+        <item>YYYY</item>
+        <item>YY</item>
+        <item>MM</item>
+        <item>DD</item>
+        <item>HH:NN:SS</item>
+        <item>HH:NN</item>
+        <item>SS</item>
+    </string-array>
+
+
+    <string-array name="strarrayFontSize">
+        <item>1 mm</item>
+        <item>1.5 mm</item>
+        <item>2 mm</item>
+        <item>2.5 mm</item>
+        <item>3 mm</item>
+        <item>4 mm</item>
+        <item>5 mm</item>
+        <item>6 mm</item>
+        <item>7 mm</item>
+        <item>8 mm</item>
+        <item>9 mm</item>
+        <item>10 mm</item>
+        <item>11 mm</item>
+        <item>12 mm</item>
+        <item>12.7 mm</item>
+    </string-array>
+
+    <string-array name="trigger_mode_name">
+        <item>Вкл</item>
+        <item>Выкл</item>
+    </string-array>
+
+    <string-array name="trigger_mode_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="direction_name">
+        <item>Слева-Направо</item>
+        <item>Справа-Налево</item>
+    </string-array>
+
+    <string-array name="direction_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="encoder_name">
+        <item>Вкл</item>
+        <item>Выкл</item>
+    </string-array>
+
+    <string-array name="encoder_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="horires_name">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="horires_value">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="vertres_name">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="vertres_value">
+        <item>300</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="object_list_msg">
+        <item>Имя сообщ.</item>
+    </string-array>
+
+    <string-array name="storage_dev">
+        <item>SDCard</item>
+        <item>USB</item>
+    </string-array>
+
+    <string-array name="array_triger_mode">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+
+    <string-array name="encoder_item_entries">
+        <item>PHO1</item>
+        <item>PHO2</item>
+    </string-array>
+
+    <string-array name="direction_item_entries">
+        <item>Налево</item>
+        <item>Направо</item>
+    </string-array>
+
+    <string-array name="resolution_item_entries">
+        <item>150</item>
+        <item>300</item>
+        <item>450</item>
+        <item>600</item>
+        <item>750</item>
+        <!-- 2021-5-22 增加加重权值 -->
+        <item>900</item>
+        <item>1200</item>
+        <item>1800</item>
+        <item>2400</item>
+    </string-array>
+
+    <string-array name="pens_item_entries">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+
+    <string-array name="switch_item_entries">
+        <item>Выкл</item>
+        <item>Вкл</item>
+    </string-array>
+
+    <string-array name="photo_item_entries">
+        <item>Выкл</item>
+        <item>ПГ</item>
+        <item>Порт</item>
+    </string-array>
+
+    <string-array name="message_dots">
+        <item>128</item>
+        <item>152</item>
+        <item>384</item>
+    </string-array>
+
+    <string-array name="msglines_item_entries">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+    <!-- H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
+    <string-array name="input_proc_item_entries">
+        <item>P-1</item>
+        <item>P-2</item>
+        <item>P-3</item>
+        <item>P-4</item>
+    </string-array>
+    <!-- End of H.M.Wang 2021-9-24 追加输入设置参数(参数57) -->
+</resources>
