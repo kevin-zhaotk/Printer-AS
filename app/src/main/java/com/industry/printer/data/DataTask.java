@@ -257,7 +257,7 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 
 		SystemConfigFile sysconf = SystemConfigFile.getInstance(mContext);
 
-// H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
+// H.M.Wang 2021-7-23 对应于重复打印次数，横向复制打印缓冲区
 ///./...		Debug.d(TAG, "INDEX_PRINT_TIMES = " + sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES));
 		if(sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) > 1 && sysconf.getParam(SystemConfigFile.INDEX_PRINT_TIMES) < 31) {
 			int maxColNumPerUnit = 0;
@@ -274,9 +274,9 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_1_INCH_FOUR ||
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_9MM ) {
 				if(Configs.GetDpiVersion() == FpgaGpioOperation.DPI_VERSION_150) {
-					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 6;
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 6;	// 1mm有6列
 				} else {
-					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 12;
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 12;	// 1mm有12列
 				}
 			} else if (
 				sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_16_DOT ||
@@ -296,7 +296,7 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 //				if(sysconf.getParam(SystemConfigFile.INDEX_SLANT) >= 100) {
 //					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) * 8;
 //				} else {
-					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) / 4;
+					maxColNumPerUnit = sysconf.getParam(SystemConfigFile.INDEX_REPEAT_PRINT) / 4;		//4mm一列
 //				}
 // End of H.M.Wang 2021-8-20 由于复制操作已到了倾斜操作之前，所以不需要这个SLANT的判断了
 			}
@@ -323,7 +323,7 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 				mPrintBuffer = caBuf.toCharArray();
 			}
 		}
-// End of H.M.Wang 2021-7-23 对应于重复打印次数，横向复制横向复制打印缓冲区
+// End of H.M.Wang 2021-7-23 对应于重复打印次数，横向复制打印缓冲区
 
 // H.M.Wang 2022-5-5 将MB的偏移（25.4x10头偏移）单独处理
 		if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_254X10) {
