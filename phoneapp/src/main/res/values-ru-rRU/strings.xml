@@ -533,7 +533,7 @@
 	
 	<string name="str_flush_tips">Изменить настройки, подтвердить?</string>
 	
-	<string name="str_build_tlk_start">начинайте создавать TLK... </string>
+<!--	<string name="str_build_tlk_start">начинайте создавать TLK... </string>-->
 	<string name="str_prepared">TLK подготовлен!!!</string>
 	<string name="str_prepare_fail">TLK разбор не удался!!!</string>
 	<string name="str_build_tlk_ok">создано TLK успешно</string>

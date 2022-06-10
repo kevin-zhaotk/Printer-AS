@@ -447,7 +447,7 @@
 	<string name="str_no_permission">Permission denied for access the files</string>
 	<string name="str_message_tips">Message %s already exist, overwrite it?</string>
 	<string name="str_flush_tips">Will Overwrite the settings, Confirm?</string>
-	<string name="str_build_tlk_start">start building tlk... </string>
+<!--	<string name="str_build_tlk_start">start building tlk... </string>-->
 	<string name="str_prepared">TLK parse success!!!</string>
 	<string name="str_prepare_fail">TLK parse failed!!!</string>
 	<string name="str_build_tlk_ok">build TLK success</string>

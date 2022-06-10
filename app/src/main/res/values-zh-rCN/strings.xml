@@ -539,7 +539,7 @@
 	<string name="str_net_device">设备:</string>
 	<string name="str_net_device_times">次数:</string>
 	<string name="str_net_ipdefault">192.168.1.101</string>
-	<string name="str_build_tlk_start">开始构建TLK...</string>
+<!--	<string name="str_build_tlk_start">开始构建TLK...</string>-->
 	<string name="str_build_tlk_ok">TLK构建成功</string>
 	<string name="str_build_tlk_fail">TLK构建失败</string>
 	<string name="str_tlk_opening">解析TLK中...</string>

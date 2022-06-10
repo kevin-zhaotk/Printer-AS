@@ -48,10 +48,11 @@ public class PCCommandHandler {
 
     private boolean mWorking = false;
 
-    public PCCommandHandler(Context ctx, StreamTransport st, ControlTabActivity act) {
+    public PCCommandHandler(Context ctx, StreamTransport st, ControlTabActivity act, Handler hdlr) {
         mContext = ctx;
         mStreamTransport = st;
         mControlTabActivity = act;
+        myHandler = hdlr;
     }
 
     public void work() {
@@ -476,7 +477,10 @@ public class PCCommandHandler {
         for (int i = 0; i < files.length; i++) {
             list.add(files[i].getName());
         }
-        if (list.contains("1.TLK") && list.contains("1.bin")) {
+// H.M.Wang 2022-6-10 因为群组当中没有1.bin，因此网络打印群组会失败
+//        if (list.contains("1.TLK") && list.contains("1.bin")) {
+        if (list.contains("1.TLK")) {
+// End of H.M.Wang 2022-6-10 因为群组当中没有1.bin，因此网络打印群组会失败
             return true;
         }
         return false;
@@ -534,6 +538,24 @@ public class PCCommandHandler {
         return retString;
     }
 
+// H.M.Wang 2022-6-8 线程里面不能new Handler, 必须使用预先生成好的Handler。这套机制挺别扭，但是为了将就以前的message.reCreate函数中的第二个参数，只能这样
+    private boolean mCreatingTLK = false;
+    private String mMakeTlkMsg = "";
+    private Handler myHandler=null;//rec infor prpcess handle
+
+    public void handleReCreateResult(Message msg) {
+        if(mCreatingTLK) {
+            if (msg.what == EditTabSmallActivity.HANDLER_MESSAGE_SAVE_SUCCESS) {
+                String cmd = msg.getData().getString(Constants.PC_CMD);
+                sendmsg(Constants.pcOk(cmd));
+            } else {
+                sendmsg(Constants.pcErr(mMakeTlkMsg));
+            }
+            mCreatingTLK = false;
+        }
+    }
+// End of H.M.Wang 2022-6-8 线程里面不能new Handler, 必须使用预先生成好的Handler。这套机制挺别扭，但是为了将就以前的message.reCreate函数中的第二个参数，只能这样
+
     private void MakeTlk(final String msg) {
         Debug.d(TAG, "--->msg: " + msg);
         File file = new File(msg);
@@ -550,6 +572,11 @@ public class PCCommandHandler {
         Debug.d(TAG, "--->tlk: " + tlk + "   Name = " + Name);
         MessageForPc message = new MessageForPc(mContext, tlk, Name);
 
+// H.M.Wang 2022-6-8 线程里面不能new Handler, 必须使用预先生成好的Handler。这套机制挺别扭，但是为了将就以前的message.reCreate函数中的第二个参数，只能这样
+        mCreatingTLK = true;
+        mMakeTlkMsg = msg;
+        message.reCreate(mContext, myHandler, msg);
+/*
         message.reCreate(mContext, new Handler(){
             public void handleMessage(Message msg1) {
                 if (msg1.what == EditTabSmallActivity.HANDLER_MESSAGE_SAVE_SUCCESS) {
@@ -560,6 +587,8 @@ public class PCCommandHandler {
                 }
             }
         }, msg);
+*/
+// End of H.M.Wang 2022-6-8 线程里面不能new Handler, 必须使用预先生成好的Handler。这套机制挺别扭，但是为了将就以前的message.reCreate函数中的第二个参数，只能这样
     }
 
     private boolean deleteFile(String filePath) {

@@ -1,8 +1,12 @@
 package com.industry.printer.pccommand;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 
+import com.industry.printer.Constants.Constants;
 import com.industry.printer.ControlTabActivity;
+import com.industry.printer.EditTabSmallActivity;
 import com.industry.printer.Serial.SerialPort;
 import com.industry.printer.Utils.StreamTransport;
 import com.industry.printer.Utils.Debug;
@@ -21,6 +25,8 @@ public class PCCommandManager {
     private Context mContext = null;
     private ControlTabActivity mControlTabActivity = null;
 
+    private Handler myHandler=null;//rec infor prpcess handle
+
     private ServerThread mServerThread = null;
     private ClientSocket mClientSocket = null;
     private PCCommandHandler mSocketHandler = null;
@@ -37,6 +43,14 @@ public class PCCommandManager {
         mInstance = this;
         mControlTabActivity = act;
         mContext = ctx;
+
+        myHandler = new Handler(){
+            public void handleMessage(Message msg) {
+                if(null != mSocketHandler)mSocketHandler.handleReCreateResult(msg);
+                if(null != mSerialHandler)mSerialHandler.handleReCreateResult(msg);
+            }
+        };
+
         mServerThread = null;
         mServerThread = new ServerThread();
         mServerThread.start();
@@ -101,7 +115,7 @@ public class PCCommandManager {
                     }
 
                     mClientSocket = new ClientSocket(client, mContext);
-                    mSocketHandler = new PCCommandHandler(mContext, mClientSocket.getStreamTransport(), mControlTabActivity);
+                    mSocketHandler = new PCCommandHandler(mContext, mClientSocket.getStreamTransport(), mControlTabActivity, myHandler);
                     mSocketHandler.work();
                 }catch ( IOException e) {
                     Debug.e(TAG, e.getMessage());
@@ -118,7 +132,7 @@ public class PCCommandManager {
             mSerialPort.closeStream();
         }
         mSerialPort = serialPort;
-        mSerialHandler = new PCCommandHandler(mContext, mSerialPort.getStreamTransport(), mControlTabActivity);
+        mSerialHandler = new PCCommandHandler(mContext, mSerialPort.getStreamTransport(), mControlTabActivity, myHandler);
         mSerialHandler.work();
     }
 

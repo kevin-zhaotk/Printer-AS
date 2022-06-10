@@ -527,7 +527,7 @@
 	<string name="str_net_device">설비:</string>
 	<string name="str_net_device_times">차수:</string>
 	<string name="str_net_ipdefault">192.168.1.101</string>
-	<string name="str_build_tlk_start">TLK구성시작...</string>
+<!--	<string name="str_build_tlk_start">TLK구성시작...</string>-->
 	<string name="str_build_tlk_ok">TLK구성 성공</string>
 	<string name="str_build_tlk_fail">TLK구성실패</string>
 	<string name="str_tlk_opening">TLK해석중...</string>

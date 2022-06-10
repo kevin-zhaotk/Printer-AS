@@ -493,7 +493,7 @@
 	<string name="str_no_permission">" Žádné povolení"</string>
 	<string name="str_message_tips">Informace%s již existuje, přepsáno?</string>
 	<string name="str_flush_tips">Přepsat původní informace o nastavení systému?</string>
-	<string name="str_build_tlk_start">Začněte budovat TLK...</string>
+<!--	<string name="str_build_tlk_start">Začněte budovat TLK...</string>-->
 	<string name="str_prepared">TLK Parsování dokončeno</string>
 	<string name="str_prepare_fail">TLK Chyba parsování</string>
 	<string name="str_tlk_opening">TLK Při analýze...</string>
