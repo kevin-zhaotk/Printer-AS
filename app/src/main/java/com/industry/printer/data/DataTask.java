@@ -175,6 +175,30 @@ public class DataTask {
 // End of H.M.Wang 2020-6-30 这段代码可能会在isPreview=true时，导致后面的处理不能进行
 // End of H.M.Wang 2021-7-28 放开该部分功能，在获取预览图的时候，直接返回生成的还未进行加工的图
 
+// H.M.Wang 2022-6-11 删除打印缓冲区后部的空白
+		int rmCols = 0;
+		boolean notZero = false;
+		while(!notZero) {
+			for(int i=1; i<=mBinInfo.getCharsFeed(); i++) {
+				if(mPrintBuffer.length-rmCols*mBinInfo.getCharsFeed()-i < 0) {
+					notZero = true;
+					break;
+				}
+				if(mPrintBuffer[mPrintBuffer.length-rmCols*mBinInfo.getCharsFeed()-i] != 0x0000) {
+					notZero = true;
+					break;
+				}
+			}
+			if(!notZero) rmCols++;
+		}
+		if(rmCols > 0) {
+			char[] pbuf = new char[mPrintBuffer.length - rmCols * mBinInfo.getCharsFeed()];
+			System.arraycopy(mPrintBuffer, 0, pbuf, 0, pbuf.length);
+			mPrintBuffer = pbuf;
+			mBinInfo.mColumn -= rmCols;
+		}
+// End of H.M.Wang 2022-6-11 删除打印缓冲区后部的空白
+
 // H.M.Wang 2020-7-23 追加32DN打印头时的移位处理
 		if(mTask.getNozzle() == PrinterNozzle.MESSAGE_TYPE_32DN) {
 //			Debug.d(TAG, "mPrintBuffer.length = " + mPrintBuffer.length);
@@ -327,7 +351,7 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 
 // H.M.Wang 2022-5-5 将MB的偏移（25.4x10头偏移）单独处理
 		if(sysconf.getParam(SystemConfigFile.INDEX_HEAD_TYPE) == PrinterNozzle.MessageType.NOZZLE_INDEX_254X10) {
-			rebuildBuffer4254x10();
+			rebuildBuffer254x10();
 		} else {
 			rebuildBuffer();
 		}
@@ -538,6 +562,10 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 // H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
 		calDots();
 // End of H.M.Wang 2020-10-23 计算点数从DataTransferThread移到这里
+
+// H.M.Wang 2022-6-11 删除打印缓冲区后部的空白
+		mBinInfo.mColumn += rmCols;
+// End of H.M.Wang 2022-6-11 删除打印缓冲区后部的空白
 
 		Debug.d(TAG, "--->getPrintBuffer: " + (System.currentTimeMillis() - startTime));
 
@@ -1234,7 +1262,7 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 	}
 
 // H.M.Wang 2022-5-5 将MB的偏移（25.4x10头偏移）单独处理
-	private void rebuildBuffer4254x10() {
+	private void rebuildBuffer254x10() {
 		mBuffer = mPrintBuffer;
 
 		int shift0 = Configs.getMessageShift(0);

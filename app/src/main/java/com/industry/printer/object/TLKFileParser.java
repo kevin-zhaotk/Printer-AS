@@ -270,6 +270,11 @@ public class TLKFileParser  extends TlkFile{
 				int withFrame = Integer.parseInt(attr[20]);
 				((BarcodeObject) obj).setWithFrame(withFrame == 0 ? false : true);
 // End of H.M.Wang 2020-2-25 追加ITF_14边框有无的设置
+// H.M.Wang 2022-6-15 追加条码内容的保存桶
+				if(source == 1) {
+					((BarcodeObject) obj).setContent(SystemConfigFile.getInstance().getBarcodeBuffer());
+				}
+// End of H.M.Wang 2022-6-15 追加条码内容的保存桶
 			} else if (BaseObject.OBJECT_TYPE_CNT.equals(attr[1]))        //cnt
 			{
 				obj = new CounterObject(mContext, 0);

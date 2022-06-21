@@ -1,6 +1,14 @@
 package com.industry.printer.Rfid;
 
+import android.support.annotation.NonNull;
+
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
+import java.nio.ShortBuffer;
 
 import org.apache.http.util.ByteArrayBuffer;
 
@@ -57,7 +65,7 @@ public class RFIDData {
 		mCommand = cmd;
 		mData = data;
 		//Debug.d("", "===>cmd:"+cmd +", mCommand:"+mCommand);
-		
+
 		ByteArrayBuffer buffer = new ByteArrayBuffer(0);
 		buffer.append(mHeader);
 		buffer.append(mAddress[0]);

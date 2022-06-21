@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.industry.printer.Serial.EC_DOD_Protocol;
+import com.industry.printer.data.DataTask;
 import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.hardware.RTCDevice;
 import org.xml.sax.InputSource;
@@ -20,6 +22,7 @@ import android.R.xml;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.util.Xml;
 
@@ -27,7 +30,13 @@ import com.industry.printer.PHeader.PrinterNozzle;
 import com.industry.printer.Utils.ConfigPath;
 import com.industry.printer.Utils.Configs;
 import com.industry.printer.Utils.Debug;
+import com.industry.printer.object.BarcodeObject;
+import com.industry.printer.object.BaseObject;
+import com.industry.printer.object.DynamicText;
 import com.industry.printer.ui.CustomerAdapter.SettingsListAdapter;
+
+import static android.R.attr.key;
+import static android.R.attr.value;
 
 
 public class SystemConfigFile{
@@ -331,8 +340,90 @@ public class SystemConfigFile{
 	public void setDTBuffer(int index, String dtStr) {
 		if(index < 0 || index > 9) return;
 		mDTBuffer[index] = dtStr;
+		writeDTPrefs(index, dtStr);
 	}
 // End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
+
+// H.M.Wang 2022-6-13 追加开机时从xml读入已保存的10个DT初始值，更改后保存仅xml文件
+	private static final String DT_PREFS = "DTPrefs";
+	private static final String TAG_DT = "DT";
+
+	private void readDTPrefs() {
+		for(int i=0; i<mDTBuffer.length; i++) {
+			try {
+				SharedPreferences sp = mContext.getSharedPreferences(DT_PREFS, Context.MODE_PRIVATE);
+				mDTBuffer[i] = sp.getString(TAG_DT + i, "#####");
+				Debug.d(TAG, "Read: " + TAG_DT + i + " = [" + mDTBuffer[i] + "]");
+			} catch(Exception e) {
+				Debug.e(TAG, e.getMessage());
+			}
+		}
+	}
+
+	public void writeDTPrefs(int index, String pref) {
+		if(index < 0 || index > 9) return;
+		try {
+			SharedPreferences sp = mContext.getSharedPreferences(DT_PREFS, Context.MODE_PRIVATE);
+			SharedPreferences.Editor prefEditor = sp.edit();
+			prefEditor.putString(TAG_DT+index, pref);
+			prefEditor.apply();
+			Debug.d(TAG, "Write: " + TAG_DT + index + " = [" + pref + "]");
+		} catch(Exception e) {
+			Debug.e(TAG, e.getMessage());
+		}
+	}
+// End of H.M.Wang 2022-6-13 追加开机时从xml读入已保存的10个DT初始值，更改后保存仅xml文件
+
+// H.M.Wang 2022-6-13 即使没有开始打印，也能够设置DT
+	public void setRemoteSeparated(final String data) {
+		Debug.d(TAG, "String from Remote = [" + data + "]");
+		String[] recvStrs = data.split(EC_DOD_Protocol.TEXT_SEPERATOR);
+
+		for(int i=0; i<Math.min(recvStrs.length, 10); i++) {
+			setDTBuffer(i, recvStrs[i]);
+		}
+// H.M.Wang 2022-6-15 追加条码内容的保存桶
+		if(recvStrs.length >= 11) {
+			setBarcodeBuffer(recvStrs[10]);
+		}
+// End of  H.M.Wang 2022-6-15 追加条码内容的保存桶
+	}
+// End of H.M.Wang 2022-6-13 即使没有开始打印，也能够设置DT
+
+// H.M.Wang 2022-6-15 追加条码内容的保存桶
+	private static final String BC_PREFS = "BCPrefs";
+	private static final String TAG_BC = "BC";
+
+	private String mBarCodeBuffer = "";
+	public String getBarcodeBuffer() {
+		return mBarCodeBuffer;
+	}
+
+	public void setBarcodeBuffer(String bcStr) {
+		mBarCodeBuffer = bcStr;
+		writeBarcodePrefs(bcStr);
+	}
+	private void readBarcodePrefs() {
+		try {
+			SharedPreferences sp = mContext.getSharedPreferences(BC_PREFS, Context.MODE_PRIVATE);
+			mBarCodeBuffer = sp.getString(TAG_BC, "");
+			Debug.d(TAG, "Read: " + TAG_BC + " = [" + mBarCodeBuffer + "]");
+		} catch(Exception e) {
+			Debug.e(TAG, e.getMessage());
+		}
+	}
+	public void writeBarcodePrefs(String pref) {
+		try {
+			SharedPreferences sp = mContext.getSharedPreferences(BC_PREFS, Context.MODE_PRIVATE);
+			SharedPreferences.Editor prefEditor = sp.edit();
+			prefEditor.putString(TAG_BC, pref);
+			prefEditor.apply();
+			Debug.d(TAG, "Write: " + TAG_BC + " = [" + pref + "]");
+		} catch(Exception e) {
+			Debug.e(TAG, e.getMessage());
+		}
+	}
+// End of H.M.Wang 2022-6-15 追加条码内容的保存桶
 
 // H.M.Wang 2020-12-28 追加FIFO打印缓冲区数量设置
 	public static final int INDEX_FIFO_SIZE = 55;
@@ -370,6 +461,12 @@ public class SystemConfigFile{
 		init();
 	}
 	public void init() {
+// H.M.Wang 2022-6-13 追加开机时从xml读入已保存的10个DT初始值
+		readDTPrefs();
+// End of H.M.Wang 2022-6-13 追加开机时从xml读入已保存的10个DT初始值
+// H.M.Wang 2022-6-15 追加条码内容的保存桶
+		readBarcodePrefs();
+// End of H.M.Wang 2022-6-15 追加条码内容的保存桶
 		initParamRange();
 		if(parseSystemCofig())
 			return;
@@ -1000,7 +1097,6 @@ public class SystemConfigFile{
 			mFeatureCode = curFeature;
 		}
 	}
-
 // End of H.M.Wang 2022-5-23 从feature.xml读取featurecode。策略是：
 
 	public String getLastMsg() {

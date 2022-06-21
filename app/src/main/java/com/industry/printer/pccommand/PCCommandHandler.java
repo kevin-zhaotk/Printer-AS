@@ -1,10 +1,13 @@
 package com.industry.printer.pccommand;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.view.KeyEvent;
+import android.widget.Toast;
 
 import com.industry.printer.Constants.Constants;
 import com.industry.printer.ControlTabActivity;
@@ -18,13 +21,16 @@ import com.industry.printer.Socket_Server.PCCommand;
 import com.industry.printer.Socket_Server.Paths_Create;
 import com.industry.printer.Utils.Debug;
 import com.industry.printer.Utils.StringUtil;
+import com.industry.printer.Utils.ToastUtil;
 import com.industry.printer.data.DataTask;
+import com.industry.printer.hardware.BarcodeScanParser;
 import com.industry.printer.hardware.FpgaGpioOperation;
 import com.industry.printer.hardware.IInkDevice;
 import com.industry.printer.hardware.InkManagerFactory;
 import com.industry.printer.hardware.RTCDevice;
 import com.industry.printer.object.BaseObject;
 import com.industry.printer.object.CounterObject;
+import com.industry.printer.ui.CustomerDialog.RemoteMsgPrompt;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -84,6 +90,34 @@ public class PCCommandHandler {
         mStreamTransport.writeLine(msg);
     }
 
+    private void showPromptDlg(final String msg) {
+        if(null != myHandler) {
+            myHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    RemoteMsgPrompt mRemoteRecvedPromptDlg = new RemoteMsgPrompt(mContext);
+// H.M.Wang 2020-6-3 解决提示对话窗在显示时，扫码枪的信息被其劫持，而无法识别的问题
+                    mRemoteRecvedPromptDlg.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                        @Override
+                        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                            if(event.getAction() == KeyEvent.ACTION_DOWN) {
+                                if(keyCode == KeyEvent.KEYCODE_ENTER) {
+                                    return true;
+                                } else {
+                                    BarcodeScanParser.append(keyCode, event.isShiftPressed());
+                                }
+                            }
+                            return false;
+                        }
+                    });
+// End of H.M.Wang 2020-6-3 解决提示对话窗在显示时，扫码枪的信息被其劫持，而无法识别的问题
+                    mRemoteRecvedPromptDlg.show();		// 不知道为啥，hide之后，必须要show两次才能够及时显示出来
+                    mRemoteRecvedPromptDlg.setMessage(msg);
+                }
+            });
+        }
+    }
+
     public void handle(String msg) {
         Debug.i(TAG, "--->fromPc: " + msg);
         PCCommand cmd = PCCommand.fromString(msg);
@@ -118,7 +152,7 @@ public class PCCommandHandler {
 // H.M.Wang 2019-12-16 支持网络下发计数器和动态二维码的值
         } else if (PCCommand.CMD_SET_REMOTE.equalsIgnoreCase(cmd.command) ||
                    PCCommand.CMD_SET_REMOTE_S.equalsIgnoreCase(cmd.command)) {
-            // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
+// H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
             if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
 // H.M.Wang 2022-5-28 当数据源定义为PC命令的时候，通过串口传递WIFI的命令。但是，由于PC命令占用了数据源的LAN和LAN_FAST的位置，这里协议是冲突的，因此视作LAN和LAN_FAST打开，但是LAN的动作能够全部实现，LAN_FAST由于有多余的打印流程控制，不会动作
                 SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_PC_COMMAND ||
@@ -131,7 +165,12 @@ public class PCCommandHandler {
                     aDTThread.setRemoteTextSeparated(cmd.content);
                     sendmsg(Constants.pcOk(msg));
                 } else {
-                    sendmsg(Constants.pcErr(msg));
+// H.M.Wang 2022-6-13 即使没有开始打印，也能够设置DT
+                    SystemConfigFile.getInstance().setRemoteSeparated(cmd.content);
+                    showPromptDlg(cmd.content);
+//                    sendmsg(Constants.pcErr(msg));
+                    sendmsg(Constants.pcOk(msg));
+// End of H.M.Wang 2022-6-13 即使没有开始打印，也能够设置DT
                 }
             } else {
                 sendmsg(Constants.pcErr(msg));
@@ -141,20 +180,25 @@ public class PCCommandHandler {
 // H.M.Wang 2022-6-1 新的外部文本处理函数，支持新的PC或者串口PC当中的DT设置命令（CMD_SET_REMOTE1和CMD_SET_REMOTE1_S),接收到的10个DT对应于10个全局DT桶的顺序
         } else if (PCCommand.CMD_SET_REMOTE1.equalsIgnoreCase(cmd.command) ||
                 PCCommand.CMD_SET_REMOTE1_S.equalsIgnoreCase(cmd.command)) {
-            // H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
+// H.M.Wang 2019-12-18 判断参数41，是否采用外部数据源，为true时才起作用
             if (SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_LAN ||
 // H.M.Wang 2022-5-28 当数据源定义为PC命令的时候，通过串口传递WIFI的命令。但是，由于PC命令占用了数据源的LAN和LAN_FAST的位置，这里协议是冲突的，因此视作LAN和LAN_FAST打开，但是LAN的动作能够全部实现，LAN_FAST由于有多余的打印流程控制，不会动作
-                    SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_PC_COMMAND ||
+                SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_PC_COMMAND ||
 // End of H.M.Wang 2022-5-28 当数据源定义为PC命令的时候，通过串口传递WIFI的命令。但是，由于PC命令占用了数据源的LAN和LAN_FAST的位置，这里协议是冲突的，因此视作LAN和LAN_FAST打开
 // H.M.Wang 2020-6-28 追加专门为网络快速打印设置
-                    SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
+                SystemConfigFile.getInstance().getParam(SystemConfigFile.INDEX_DATA_SOURCE) == SystemConfigFile.DATA_SOURCE_FAST_LAN) {
 // End of H.M.Wang 2020-6-28 追加专门为网络快速打印设置
                 DataTransferThread aDTThread = DataTransferThread.getInstance(mContext);
                 if(aDTThread.isRunning()) {
                     aDTThread.setRemote1TextSeparated(cmd.content);
                     sendmsg(Constants.pcOk(msg));
                 } else {
-                    sendmsg(Constants.pcErr(msg));
+// H.M.Wang 2022-6-13 即使没有开始打印，也能够设置DT
+                    SystemConfigFile.getInstance().setRemoteSeparated(cmd.content);
+                    showPromptDlg(cmd.content);
+//                    sendmsg(Constants.pcErr(msg));
+                    sendmsg(Constants.pcOk(msg));
+// End of H.M.Wang 2022-6-13 即使没有开始打印，也能够设置DT
                 }
             } else {
                 sendmsg(Constants.pcErr(msg));

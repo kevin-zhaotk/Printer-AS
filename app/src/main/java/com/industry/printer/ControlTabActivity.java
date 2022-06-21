@@ -560,14 +560,15 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 		mllPreview.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Debug.d(TAG, "Preview Clicked");
 				if(null == mDTransThread || !mDTransThread.isRunning()) return;
 				DataTask dt = mDTransThread.getCurData();
-				if(null != mPreBitmap && !mPreBitmap.isRecycled()) {
-					mPreBitmap.recycle();
-					mPreBitmap = null;
+				if(null == mPrePrintBitmap) {
+                    Debug.d(TAG, "Enter Realtime Preview");
 					mPrePrintBitmap = dt.getPreview();
 					dispPreview(mPrePrintBitmap);
 				} else if(null != mPrePrintBitmap && !mPrePrintBitmap.isRecycled()) {
+                    Debug.d(TAG, "Quit Realtime Preview");
 					mPrePrintBitmap.recycle();
 					mPrePrintBitmap = null;
 					if (mObjPath.startsWith("G-")) {   // group messages
@@ -1745,7 +1746,18 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 // End of H.M.Wang 2022-1-11 延时400ms再次下发CLEAN，目的是错过beep，因为这个beep可能会导致PG1，2始终为低
 						}
 					}).start();
-
+// H.M.Wang 2022-6-20 该部分代码从StopPrint按键响应部分转移到这里，如果在StopPrint按键响应部分，对于网络或者程序控制的停止打印将不会做此操作
+// H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+					mGroupIndex.setVisibility(View.GONE);
+// H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp
+// H.M.Wang 2021-7-26 改用mPreBitmap，取消aotu变量bmp
+					mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
+					dispPreview(mPreBitmap);
+					mPrePrintBitmap = null;
+// End of H.M.Wang 2021-7-26 改用mPreBitmap，取消aotu变量bmp
+// End of H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp
+// End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
+// End of H.M.Wang 2022-6-20 该部分代码从StopPrint按键响应部分转移到这里，如果在StopPrint按键响应部分，对于网络或者程序控制的停止打印将不会做此操作
 					break;
 				case MESSAGE_PRINT_END:
 					FpgaGpioOperation.uninit();
@@ -2497,15 +2509,6 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 // End of H.M.Wang 2020-8-21 追加正在清洗标志，此标志为ON的时候不能对FPGA进行某些操作，如开始，停止等，否则死机
 				// mHandler.removeMessages(MESSAGE_PAOMADENG_TEST);
 				mHandler.sendEmptyMessage(MESSAGE_PRINT_STOP);
-// H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
-                mGroupIndex.setVisibility(View.GONE);
-// H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp
-// H.M.Wang 2021-7-26 改用mPreBitmap，取消aotu变量bmp
-				mPreBitmap = BitmapFactory.decodeFile(MessageTask.getPreview(mObjPath));
-				dispPreview(mPreBitmap);
-// End of H.M.Wang 2021-7-26 改用mPreBitmap，取消aotu变量bmp
-// End of H.M.Wang 2020-4-15 追加群组打印时，显示每个正在打印的message的1.bmp
-// End of H.M.Wang 2020-1-7 追加群组打印时，显示正在打印的MSG的序号
 				break;
 			/*娓呮礂鎵撳嵃澶达紙涓�涓壒娈婄殑鎵撳嵃浠诲姟锛夛紝闇�瑕佸崟鐙殑璁剧疆锛氬弬鏁�2蹇呴』涓� 4锛屽弬鏁�4涓�200锛� 鍙傛暟5涓�20锛�*/
 			case R.id.btnFlush:

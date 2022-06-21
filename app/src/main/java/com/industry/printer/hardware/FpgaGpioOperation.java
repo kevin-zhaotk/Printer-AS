@@ -39,10 +39,11 @@ public class FpgaGpioOperation {
     public static final int FPGA_CMD_MIRROR = 0x0C;
 // End of H.M.Wang 2021-9-24 追加输入设置参数
 // End of H.M.Wang 2022-3-21 修改为设置是否反向生成打印缓冲区
+/* H.M.Wang 2022-6-10 取消连续打印模式的修改
 // H.M.Wang 2022-6-6 追加连续打印模式
     public static final int FPGA_CMD_PERSIST_PRINT = 0x0D;
 // End of H.M.Wang 2022-6-6 追加连续打印模式
-
+*/
 
     // H.M.Wang 2021-4-9 追加ioctl的分辨率信息获取命令
     public static final int DPI_VERSION_NONE  = 0;
@@ -548,12 +549,14 @@ public class FpgaGpioOperation {
         }
 // End of H.M.Wang 2021-8-25 追加E5X48和E5X50头类型
 
+/* H.M.Wang 2022-6-10 取消连续打印模式的修改
 // H.M.Wang 2022-6-7 连续打印模式时设置内容的修改，2022-6-6的修改中忘记了
         if(config.getParam(SystemConfigFile.INDEX_PRINT_TIMES) == 65535) {
             data[5] = data[3];
             data[7] = data[8];
         }
 // End of H.M.Wang 2022-6-7 连续打印模式时设置内容的修改，2022-6-6的修改中忘记了
+*/
 
         //是否雙列打印
 // H.M.Wang 2021-11-17 修改参数61为双列位移设项
@@ -633,6 +636,7 @@ public class FpgaGpioOperation {
         // ioctl(fd, FPGA_CMD_SETTING, FPGA_STATE_OUTPUT);
 		/*启动内核轮训线程*/
         SystemConfigFile config = SystemConfigFile.getInstance(context);
+/* H.M.Wang 2022-6-10 取消连续打印模式的修改
 // H.M.Wang 2022-6-6 追加连续打印模式
         Debug.d(TAG, "FPGA_CMD_PERSIST_PRINT -> " + config.getParam(SystemConfigFile.INDEX_PRINT_TIMES));
         if(config.getParam(SystemConfigFile.INDEX_PRINT_TIMES) == 65535) {
@@ -641,6 +645,7 @@ public class FpgaGpioOperation {
             ioctl(fd, FPGA_CMD_PERSIST_PRINT, 0);
         }
 // End of H.M.Wang 2022-6-6 追加连续打印模式
+*/
         Debug.d(TAG, "FPGA_CMD_BUCKETSIZE -> " + config.getParam(SystemConfigFile.INDEX_FIFO_SIZE));
         ioctl(fd, FPGA_CMD_BUCKETSIZE, config.getParam(SystemConfigFile.INDEX_FIFO_SIZE));
         Debug.d(TAG, "FPGA_CMD_STARTPRINT");
