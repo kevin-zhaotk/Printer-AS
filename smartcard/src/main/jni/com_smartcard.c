@@ -24,6 +24,8 @@ extern "C"
 {
 #endif
 
+#define VERSION_CODE                            "1.0.377"
+
 #define SC_SUCCESS                              0
 #define SC_INIT_HOST_CARD_NOT_PRESENT           100
 #define SC_INIT_PRNT_CTRG_NOT_PRESENT           110
@@ -51,8 +53,6 @@ static int InkVolOfPenPercentage                = INK_VOL_OF_PEN_PERCENTAGE;
 static pthread_mutex_t mutex;
 
 //#define DATA_SEPERATER                          100000      // 这之上是墨盒的减记次数（减记300次），这之下是墨盒/墨袋的减锁次数(MAX_INK_VOLUME)，
-
-#define VERSION_CODE                            "1.0.377"
 
 HP_SMART_CARD_result_t (*inkILGWriteFunc[4])(HP_SMART_CARD_device_id_t cardId, uint32_t ilg_bit) = {
         inkWriteTag9ILGBit01To25,

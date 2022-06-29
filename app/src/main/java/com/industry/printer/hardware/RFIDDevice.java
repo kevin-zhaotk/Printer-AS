@@ -419,7 +419,6 @@ public class RFIDDevice implements RfidCallback{
 	}
 	/**
 	 * 密钥验证
-	 * @param data
 	 * @return
 	 */
 	public boolean keyVerfication(byte sector, byte block, byte[] key, boolean blink) {

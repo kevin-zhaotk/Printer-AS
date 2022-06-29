@@ -678,6 +678,8 @@ public class DataTransferThread {
 			}
 		});
 
+		boolean needUpdate = false;
+
 // H.M.Wang 2020-6-7 修改支持包号->批号检索功能
 		String[] dts = new String[8];
 // End of H.M.Wang 2020-6-7 修改支持包号->批号检索功能
@@ -717,11 +719,12 @@ public class DataTransferThread {
 						SystemConfigFile.getInstance().setDTBuffer(dtIndex, dts[dtIndex]);
 // End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 						baseObject.setContent(dts[dtIndex]);
-						mNeedUpdate = true;
+						needUpdate = true;
 					}
 				}
 			}
 		}
+		mNeedUpdate = needUpdate;
 	}
 	// End. -----
 // H.M.Wang 2020-6-9 追加串口6协议
@@ -742,6 +745,8 @@ public class DataTransferThread {
 			ToastUtil.show(mContext, R.string.invalid_protocol);
 			return;
 		}
+
+		boolean needUpdate = false;
 
 // H.M.Wang 2020-6-7 修改支持包号->批号检索功能
 		String[] dts = new String[6];
@@ -767,10 +772,11 @@ public class DataTransferThread {
 					} else {
 						baseObject.setContent("");
 					}
-					mNeedUpdate = true;
+					needUpdate = true;
 				}
 			}
 		}
+		mNeedUpdate = needUpdate;
 	}
 // End of H.M.Wang 2020-6-9 追加串口6协议
 
@@ -788,6 +794,7 @@ public class DataTransferThread {
 			}
 		});
 
+		boolean needUpdate = false;
 		String[] recvStrs = data.split(Scaner2Protocol.TEXT_SEPERATOR);
 
 		for(DataTask dataTask : mDataTask) {
@@ -803,10 +810,11 @@ public class DataTransferThread {
                     } else {
 						baseObject.setContent("");
 					}
-					mNeedUpdate = true;
+					needUpdate = true;
 				}
 			}
 		}
+		mNeedUpdate = needUpdate;
 	}
 // End of H.M.Wang 2020-10-30 追加扫描2串口协议
 
@@ -828,6 +836,8 @@ public class DataTransferThread {
 			}
 		});
 
+		boolean needUpdate = false;
+
 		if(data.startsWith("Resetcode7799")) {
 			mDtIndex = 0;
             mLastRecvString = "";
@@ -840,11 +850,13 @@ public class DataTransferThread {
 						int dtIndex = ((DynamicText)baseObject).getDtIndex();
 						if(dtIndex == mDtIndex) {
 							baseObject.setContent(data);
-							mNeedUpdate = true;
+							needUpdate = true;
 						}
 					}
 				}
 			}
+
+			mNeedUpdate = needUpdate;
 
 			mLastRecvString = data;
 // H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
@@ -890,6 +902,8 @@ public class DataTransferThread {
 			}
 		});
 
+		boolean needUpdate = false;
+
 		ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
 		for (BaseObject baseObject : objList) {
 			if (baseObject instanceof DynamicText) {
@@ -905,11 +919,14 @@ public class DataTransferThread {
 					SystemConfigFile.getInstance().setDTBuffer(dtIndex, sb.substring(sb.length() - ((DynamicText) baseObject).getBits()));
 // End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 					baseObject.setContent(sb.substring(sb.length() - ((DynamicText) baseObject).getBits()));
+					needUpdate = true;
 				} else if(dtIndex == 3) {
 					baseObject.setContent("" + proCode % 10);
+					needUpdate = true;
 				} else if(dtIndex == 1) {
 // End of H.M.Wang 2021-4-11 追加4字节品种代码
 					baseObject.setContent("" + writeValue % 10);
+					needUpdate = true;
 				} else if(dtIndex == 0) {
 					StringBuilder sb = new StringBuilder();
 					for(int i=0; i<((DynamicText) baseObject).getBits(); i++) {
@@ -920,10 +937,11 @@ public class DataTransferThread {
 					SystemConfigFile.getInstance().setDTBuffer(dtIndex, sb.substring(sb.length() - ((DynamicText) baseObject).getBits()));
 // End of H.M.Wang 2021-5-21 修改动态文本内容获取逻辑，从预留的10个盆子里面获取，编辑页面显示#####
 					baseObject.setContent(sb.substring(sb.length() - ((DynamicText) baseObject).getBits()));
+					needUpdate = true;
 				}
 			}
 		}
-		mNeedUpdate = true;
+		mNeedUpdate = needUpdate;
 	}
 // End of H.M.Wang 2021-3-6 追加串口协议8
 
@@ -952,6 +970,8 @@ private void setSerialProtocol9DTs(final String data) {
 		}
 	});
 
+	boolean needUpdate = false;
+
 	ArrayList<BaseObject> objList = mDataTask.get(index()).getObjList();
 	for (BaseObject baseObject : objList) {
 		if (baseObject instanceof DynamicText) {
@@ -964,9 +984,10 @@ private void setSerialProtocol9DTs(final String data) {
 			} else {
 				baseObject.setContent("");
 			}
+			needUpdate = true;
 		}
 	}
-	mNeedUpdate = true;
+	mNeedUpdate = needUpdate;
 }
 // End of H.M.Wang 2021-9-24 追加串口协议9
 
@@ -1071,6 +1092,8 @@ private void setSerialProtocol9DTs(final String data) {
             return;
         }
 
+		boolean needUpdate = false;
+
 		String dt0 = data.substring(8, 12);
 // H.M.Wang 2021-10-11 追加第14位赋给DT1的功能
 		String dt1 = data.substring(13, 14);
@@ -1096,10 +1119,11 @@ private void setSerialProtocol9DTs(final String data) {
                     } else {
                         baseObject.setContent("");
                     }
-                    mNeedUpdate = true;
+					needUpdate = true;
                 }
             }
         }
+		mNeedUpdate = needUpdate;
     }
 // End of H.M.Wang 2021-9-28 追加串口协议10
 
@@ -1151,6 +1175,8 @@ private void setSerialProtocol9DTs(final String data) {
 				}
 			});
 
+			boolean needUpdate = false;
+
 			for(DataTask dataTask : mDataTask) {
 				ArrayList<BaseObject> objList = dataTask.getObjList();
 				for(BaseObject baseObject: objList) {
@@ -1159,10 +1185,11 @@ private void setSerialProtocol9DTs(final String data) {
 						if(dtIndex == 0) {
 							baseObject.setContent(resString);
 						}
-						mNeedUpdate = true;
+						needUpdate = true;
 					}
 				}
 			}
+			mNeedUpdate = needUpdate;
 		}
 	}
 
