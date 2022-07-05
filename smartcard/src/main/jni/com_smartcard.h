@@ -77,6 +77,10 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_writeOIB(JNIEnv *env, jclass arg, jint
  */
 JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jint card);
 /**
+ * 测试Level值
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_testLevel(JNIEnv *env, jclass arg, jint card);
+/**
  * 读取ManufactureID
  */
 JNIEXPORT jint JNICALL Java_com_Smartcard_readManufactureID(JNIEnv *env, jclass arg, jint card);

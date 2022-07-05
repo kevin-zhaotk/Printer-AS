@@ -24,7 +24,23 @@ extern "C"
 {
 #endif
 
-#define VERSION_CODE                            "1.0.377"
+#define VERSION_CODE                            "1.0.383"
+// 1.0.378
+//   readDeviceID函数内，执行一次重启一次Level设备
+// 1.0.379
+//   (1) 取消1.0.378修改内容
+//   (2) 追加testLevel函数，在读取Level值之前关闭Level5毫秒后，重新打开，然后读Level值
+// 1.0.380
+//   (1) 进入睡眠状态后等待100ms
+//   (2) 增加设置几个参数, Set Full Current Mode, RP Override Enable, Disable Automatic Amplitude Correction, Set High Current Drive
+// 1.0.381
+//   (1) 测试状态时，进入睡眠50ms，开机后50ms后读数
+// 1.0.382
+//   (1) 测试状态时，50ms改为硬性的循环语句 改为循环100万次
+// 1.0.383
+//   (1) readLevel得到的是FF的时候，重启Level，并且在apk里面beep声音提示
+//   (2) testLevel得到的是FF的时候，也重启Level
+
 
 #define SC_SUCCESS                              0
 #define SC_INIT_HOST_CARD_NOT_PRESENT           100
@@ -891,7 +907,73 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_readLevel(JNIEnv *env, jclass arg, jin
         chData = 0;
     }
 
+    if(chData == 0xFFFFFFFF) {
+        uint16_t config;
+        if(LEVEL_I2C_OK == readConfig(&config)) {
+            config |= CONFIG_SLEEP_MODE_ENABLE;                // Set to Sleep mode
+            writeConfig(&config);
+
+            int temp = 0;
+            for(int i=0; i<1000; i++){
+                temp++;
+            }
+
+            config &= CONFIG_ACTIVE_MODE_ENABLE;                // Set to Active mode
+            writeConfig(&config);
+
+            LOGD(">>> Level Restart!");
+        }
+    }
+
     LOGD(">>> Level data read: 0x%08X", chData);
+
+    pthread_mutex_unlock(&mutex);
+
+    return chData;
+}
+
+/**
+ * 测试Level值
+ */
+JNIEXPORT jint JNICALL Java_com_Smartcard_testLevel(JNIEnv *env, jclass arg, jint card) {
+    LOGD(">>> Test Level(#%d)", card);
+
+    pthread_mutex_lock(&mutex);
+
+    if(SELECT_LEVEL1 == card) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1);
+    } else if(SELECT_LEVEL2 == card) {
+        SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN2);
+    } else {
+        pthread_mutex_unlock(&mutex);
+        return 0;
+    }
+
+    uint32_t chData;
+
+    if(LEVEL_I2C_OK != readChannelData0(&chData)) {
+        chData = 0;
+    }
+
+    LOGD(">>> Level data read(For Test Level): 0x%08X", chData);
+
+    if(chData == 0xFFFFFFFF) {
+        uint16_t config;
+        if(LEVEL_I2C_OK == readConfig(&config)) {
+            config |= CONFIG_SLEEP_MODE_ENABLE;                // Set to Sleep mode
+            writeConfig(&config);
+
+            int temp = 0;
+            for(int i=0; i<1000; i++){
+                temp++;
+            }
+
+            config &= CONFIG_ACTIVE_MODE_ENABLE;                // Set to Active mode
+            writeConfig(&config);
+
+            LOGD(">>> Level Restart!");
+        }
+    }
 
     pthread_mutex_unlock(&mutex);
 
@@ -935,7 +1017,6 @@ JNIEXPORT jint JNICALL Java_com_Smartcard_readDeviceID(JNIEnv *env, jclass arg, 
     LOGD(">>> Read DeviceID(#%d)", card);
 
     pthread_mutex_lock(&mutex);
-
     if(SELECT_LEVEL1 == card) {
         SC_GPIO_ADAPTER_select_device(GPIO_DEVICE_PEN1);
     } else if(SELECT_LEVEL2 == card) {
@@ -975,6 +1056,7 @@ static JNINativeMethod gMethods[] = {
         {"downLocal",		        "(I)I",						(void *)Java_com_Smartcard_downLocal},
         {"writeOIB",		        "(I)I",						(void *)Java_com_Smartcard_writeOIB},
         {"readLevel",		        "(I)I",						(void *)Java_com_Smartcard_readLevel},
+        {"testLevel",		        "(I)I",						(void *)Java_com_Smartcard_testLevel},
         {"readManufactureID",	    "(I)I",						(void *)Java_com_Smartcard_readManufactureID},
         {"readDeviceID",	        "(I)I",						(void *)Java_com_Smartcard_readDeviceID},
         {"shutdown",				"()I",	                    (void *)Java_com_Smartcard_shutdown},

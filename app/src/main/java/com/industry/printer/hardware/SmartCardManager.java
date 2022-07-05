@@ -526,8 +526,8 @@ public class SmartCardManager implements IInkDevice {
                     for(int c=0; c<100; c++) {
                         if(mIDTestCancel) break;
                         for(int i=0; i<2; i++) {
-                            level = SmartCard.readLevel(levelType[i]);
-                            Debug.d(TAG, "Read Level" + (i+1) + " = " + Integer.toHexString(level));
+                            level = SmartCard.testLevel(levelType[i]);
+                            Debug.d(TAG, "Read Level(Test)" + (i+1) + " = " + Integer.toHexString(level));
                             if((level & 0x0FFFFFFF) == 0x0FFFFFFF) {
                                 sb.append((c+1) + "-Level" + (i+1) + ": failed.\n");
                             } else {
@@ -577,6 +577,16 @@ public class SmartCardManager implements IInkDevice {
                             readCount++;
                         } else {
                             Debug.e(TAG, "Read Level Error: " + Integer.toHexString(level & 0xF0000000));
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try{
+                                        ExtGpio.playClick();
+                                    } catch (Exception e) {
+                                        Debug.e(TAG, e.getMessage());
+                                    }
+                                }
+                            }).start();
                         }
 // H.M.Wang 2022-5-13 追加一个Level的设备ID，从卡中读取，如果中途有读失败，则赋值（-1）
 /*
