@@ -62,6 +62,21 @@
             android:text="Level"
             android:textColor="@color/black"
             android:gravity="center" />
+<!-- H.M.Wang 2022-7-20 增加Bag减1的操作内容 -->
+        <TextView
+            android:id="@+id/btn_bag_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textSize="30sp"
+            android:background="@color/button_background"
+            android:text="Bag-1"
+            android:textColor="@color/black"
+            android:gravity="center" />
+<!-- End of H.M.Wang 2022-7-20 增加Bag减1的操作内容 -->
     </LinearLayout>
     <RelativeLayout
         android:id="@+id/title_area"

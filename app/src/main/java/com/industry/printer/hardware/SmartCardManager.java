@@ -160,7 +160,7 @@ public class SmartCardManager implements IInkDevice {
 
     public SmartCardManager(Context context) {
         Debug.d(TAG, "APK VERSION_CODE: " + BuildConfig.VERSION_CODE);
-        Debug.d(TAG, "---> enter SmartCardManager() - CARD_TYPE_BULKX(Full)");
+        Debug.d(TAG, "---> enter SmartCardManager() - CARD_TYPE_BULK1(Full)");
         mContext = context;
 
         mCachedThreadPool = Executors.newCachedThreadPool();
@@ -172,14 +172,12 @@ public class SmartCardManager implements IInkDevice {
                     new _device_status(CARD_TYPE_PEN1, CARD_TYPE_LEVEL1, MAX_PEN_INK_VOLUME),
                     new _device_status(CARD_TYPE_PEN2, CARD_TYPE_LEVEL2, MAX_PEN_INK_VOLUME),
                     new _device_status(CARD_TYPE_BULK1, 0, MAX_BAG_INK_VOLUME)
-//                    new _device_status(CARD_TYPE_BULKX, 0, MAX_BAG_INK_VOLUME)
             };
         } else {
             mPenNum = 1;
             mCards = new _device_status[] {
                     new _device_status(CARD_TYPE_PEN1, CARD_TYPE_LEVEL1, MAX_PEN_INK_VOLUME),
                     new _device_status(CARD_TYPE_BULK1, 0, MAX_BAG_INK_VOLUME)
-//                    new _device_status(CARD_TYPE_BULKX, 0, MAX_BAG_INK_VOLUME)
             };
         }
         mCurPenIdx = 0;
@@ -269,7 +267,7 @@ public class SmartCardManager implements IInkDevice {
                                 mCards[i].mInitialized = true;
                                 mCards[i].mValid = true;
                                 MAX_BAG_INK_VOLUME = SmartCard.getMaxVolume(mCards[i].mCardType);
-                                if(mCards[i].mCardType == CARD_TYPE_PEN1 || mCards[i].mCardType == CARD_TYPE_PEN2 || mCards[i].mCardType == CARD_TYPE_BULKX) {
+                                if(mCards[i].mCardType == CARD_TYPE_PEN1 || mCards[i].mCardType == CARD_TYPE_PEN2 || mCards[i].mCardType == CARD_TYPE_BULK1) {
                                     mCards[i].mMaxVolume = MAX_BAG_INK_VOLUME * PEN_VS_BAG_RATIO;
                                 } else {
                                     mCards[i].mMaxVolume = MAX_BAG_INK_VOLUME;
@@ -527,7 +525,7 @@ public class SmartCardManager implements IInkDevice {
                         if(mIDTestCancel) break;
                         for(int i=0; i<2; i++) {
                             level = SmartCard.testLevel(levelType[i]);
-                            Debug.d(TAG, "Read Level(Test)" + (i+1) + " = " + Integer.toHexString(level));
+                            Debug.d(TAG, "Read Level[" + (c+1) + "-" + (i+1) + "](Test) = " + Integer.toHexString(level));
                             if((level & 0x0FFFFFFF) == 0x0FFFFFFF) {
                                 sb.append((c+1) + "-Level" + (i+1) + ": failed.\n");
                             } else {
@@ -556,6 +554,69 @@ public class SmartCardManager implements IInkDevice {
         }
     }
 // End of H.M.Wang 2022-5-20 追加Level ID测试功能，读取100次，每次读取间隔0.1秒
+// H.M.Wang 2022-7-20 增加Bag减1的操作内容
+    private boolean mBagReductionRunning = false;
+
+    public void startBagReduce(final SCTestListener l) {
+        if(null == l) return;
+        mBagReductionRunning = false;
+
+        if(mLibInited) {
+            l.onError("Library running");
+            return;
+        }
+
+        mCachedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                if(SmartCard.init() == SmartCard.SC_SUCCESS) {
+                    if(SmartCard.SC_SUCCESS == SmartCard.initComponent(CARD_TYPE_BULK1)) {
+                        int max = SmartCard.getMaxVolume(CARD_TYPE_BULK1);
+                        int ink = SmartCard.getLocalInk(CARD_TYPE_BULK1);
+                        l.onResult("Current: " + (max-ink) + "\n" + "Max: " + max);
+                        mBagReductionRunning = true;
+                    }
+                } else {
+                    l.onError("Failed!");
+                }
+            }
+        });
+    }
+
+    public void reduceBag(final SCTestListener l) {
+        if(null == l) return;
+
+        if(!mBagReductionRunning) {
+            l.onError("Not started.");
+            return;
+        }
+
+        mCachedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                int max, ink;
+                max = SmartCard.getMaxVolume(CARD_TYPE_BULK1);
+                ink = SmartCard.getLocalInk(CARD_TYPE_BULK1);
+                int r0 = 100 * (max - ink - 1) / max;
+                int r1 = r0;
+                while(r0 == r1 && r0 > 90) {
+                    SmartCard.downLocal(CARD_TYPE_BULK1);
+                    ink = SmartCard.getLocalInk(CARD_TYPE_BULK1);
+                    r1 = 100 * (max - ink -1) / max;
+                };
+
+                l.onResult("Current: " + (max-ink) + "\n" + "Max: " + max);
+            }
+        });
+    }
+
+    public void stopBagReduce() {
+        if(mBagReductionRunning) {
+            mBagReductionRunning = false;
+            SmartCard.shutdown();
+        }
+    }
+// End of H.M.Wang 2022-7-20 增加Bag减1的操作内容
 
     private void readLevelValue(int cardIdx) {
         Debug.d(TAG, "---> enter readLevelValue(" + cardIdx + ")");

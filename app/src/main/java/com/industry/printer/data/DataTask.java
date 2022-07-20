@@ -1515,6 +1515,12 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 //   （3） 总宽度设为512（原宽度）+8（位右移宽度）
 // H.M.Wang 2021-8-16 追加96DN头
 	public char[] evenBitShiftFor96Dot() {
+/* H.M.Wang 2022-7-12 取消原来96DN的构造算法，改为新的构造算法，即
+1.  原来没slant，  现在也不用
+2.  0-15， ，  32-47 ， 64-79， 为第一组，16-31，  48-63， 80-95， 为第二组
+3.  第一组根据喷头一偏移，后移相应列数
+4.  第二组根据喷头二偏移， 后移相应列数
+--> 以下为原算法，全部取消
 		int MAX_COLUMNS = 512;
 		int COLUMNS_TO_SHIFT= 8;
 //		int COLUMNS_TO_SHIFT= 4;
@@ -1533,6 +1539,25 @@ b:  按slant 设置，  和=0 做相同偏移， 不过=0 是固定移动4 列�
 // End of H.M.Wang 2021-8-27 96Dot的情况下将0,2,4,6位的数据后移4列，1,3,5,7位保留原位。与64Dot的不同
 			}
 		}
+End of H.M.Wang 2022-7-12 取消原来96DN的构造算法，改为新的构造算法 */
+// H.M.Wang 2022-7-12 修改后的新算法
+		int CHARS_PER_COLOMN = 6;
+
+		int shift0 = Configs.getMessageShift(0);
+		int shift1 = Configs.getMessageShift(1);
+		char[] buffer = new char[mPrintBuffer.length + Math.max(shift0, shift1) * CHARS_PER_COLOMN];	// 在原有的基础上，增加与位移需求多的列数相当的Char数(96点，每列为6个Char)
+
+		for (int i = 0; i < mBinInfo.mColumn; i++) {
+			for (int j = 0; j < CHARS_PER_COLOMN; j++) {
+				if((j % 2) == 0) {
+					buffer[(i + shift0) * CHARS_PER_COLOMN + j] = mPrintBuffer[i * CHARS_PER_COLOMN + j];
+				} else {
+					buffer[(i + shift1) * CHARS_PER_COLOMN + j] = mPrintBuffer[i * CHARS_PER_COLOMN + j];
+				}
+			}
+		}
+// End of H.M.Wang 2022-7-12 修改后的新算法
+
 		return buffer;
 	}
 // End of H.M.Wang 2021-8-16 追加96DN头
