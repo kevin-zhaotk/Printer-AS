@@ -521,6 +521,36 @@ public class MessageObject extends BaseObject {
             }
 // End of H.M.Wang 2020-4-15 追加"5x5"字体
 // End of H.M.Wang 2020-1-23 追加"10x8", "12x9", "14x10"字体，高度不跟16x12走
+// H.M.Wang 2022-8-19 追加 （H.M.Wang 2021-8-16 追加96DN头） 时的遗漏
+		} else if (mPNozzle == PrinterNozzle.MESSAGE_TYPE_96DN) {
+			if (size.equalsIgnoreCase(mDot_96_Size[0])) {
+				h = 12.7f * 5 / 96;
+			} else if (size.equalsIgnoreCase(mDot_96_Size[1])) {
+				h = 12.7f * 8 / 96;
+			} else if (size.equalsIgnoreCase(mDot_96_Size[2])) {
+				h = 12.7f * 10 / 96;
+			} else if (size.equalsIgnoreCase(mDot_96_Size[3])) {
+				h = 12.7f * 12 / 96;
+			} else if (size.equalsIgnoreCase(mDot_96_Size[4])) {
+				h = 12.7f * 14 / 96;
+			} else if (size.equalsIgnoreCase(mDot_96_Size[5]) || size.equalsIgnoreCase(mDot_64_Size[6]) || size.equalsIgnoreCase(mDot_64_Size[7])) {
+				h = 12.7f * 16 / 96;
+// H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
+			} else if (size.equalsIgnoreCase(mDot_96_Size[8])) {
+				h = 12.7f * 19 / 96;
+			} else if (size.equalsIgnoreCase(mDot_96_Size[9])) {
+				h = 12.7f * 21 / 96;
+// End of H.M.Wang 2020-5-29 追加"19x13", "21x14"字体
+			} else if (size.equalsIgnoreCase(mDot_96_Size[10])) {
+				h = 12.7f * 24 / 96;
+			} else if (size.equalsIgnoreCase(mDot_96_Size[11])) {
+				h = 12.7f * 32 / 96;
+			} else if (size.equalsIgnoreCase(mDot_96_Size[12])) {
+				h = 12.7f * 64 / 96;
+			} else {
+				h = 12.7f * 96 / 96;
+			}
+// End of H.M.Wang 2022-8-19 追加 （H.M.Wang 2021-8-16 追加96DN头） 时的遗漏
 		}
 		Debug.d(TAG, "--->h: " + h + ", type=" + mPNozzle.mType);
 		return h;

@@ -556,6 +556,9 @@ public class SmartCardManager implements IInkDevice {
 // End of H.M.Wang 2022-5-20 追加Level ID测试功能，读取100次，每次读取间隔0.1秒
 // H.M.Wang 2022-7-20 增加Bag减1的操作内容
     private boolean mBagReductionRunning = false;
+// H.M.Wang 2022-8-2 追加一个正在写操作的排斥锁，以避免正在写的时候调用停止，导致冲突
+    private boolean mBagWriting = false;
+// End of H.M.Wang 2022-8-2 追加一个正在写操作的排斥锁，以避免正在写的时候调用停止，导致冲突
 
     public void startBagReduce(final SCTestListener l) {
         if(null == l) return;
@@ -600,7 +603,9 @@ public class SmartCardManager implements IInkDevice {
                 int r0 = 100 * (max - ink - 1) / max;
                 int r1 = r0;
                 while(r0 == r1 && r0 > 90) {
+                    mBagWriting = true;
                     SmartCard.downLocal(CARD_TYPE_BULK1);
+                    mBagWriting = false;
                     ink = SmartCard.getLocalInk(CARD_TYPE_BULK1);
                     r1 = 100 * (max - ink -1) / max;
                 };
@@ -611,6 +616,10 @@ public class SmartCardManager implements IInkDevice {
     }
 
     public void stopBagReduce() {
+        while(mBagWriting) {
+            try { Thread.sleep(10); } catch (Exception e) {}
+        }
+
         if(mBagReductionRunning) {
             mBagReductionRunning = false;
             SmartCard.shutdown();

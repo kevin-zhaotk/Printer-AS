@@ -2543,7 +2543,7 @@ public class ControlTabActivity extends Fragment implements OnClickListener, Ink
 // End of H.M.Wang 2020-8-21 追加点按清洗按键以后提供确认对话窗
 				break;
 			case R.id.btnBinfile:
-				MessageBrowserDialog dialog = new MessageBrowserDialog(mContext, OpenFrom.OPEN_PRINT, mObjPath);
+                MessageBrowserDialog dialog = new MessageBrowserDialog(mContext, OpenFrom.OPEN_PRINT, mObjPath);
 				dialog.setOnPositiveClickedListener(new OnPositiveListener() {
 					
 					@Override

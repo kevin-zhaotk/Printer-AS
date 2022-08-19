@@ -24,7 +24,7 @@ extern "C"
 {
 #endif
 
-#define VERSION_CODE                            "1.0.386"
+#define VERSION_CODE                            "1.0.387"
 // 1.0.378
 //   readDeviceID函数内，执行一次重启一次Level设备
 // 1.0.379
@@ -47,6 +47,8 @@ extern "C"
 //   (1) 重复起振的方法从睡眠-等一会儿-苏醒，改为重启设备-等一会儿-苏醒
 // 1.0.386
 //   (1) 暂时取消重新起振的尝试操作，改为每读5次关闭一次，再关闭的状态读，下一次读再打开
+// 1.0.387
+//   (1) 在shutdown函数中，增加排斥锁的使用，在获取锁后才shutdown
 
 
 #define SC_SUCCESS                              0
@@ -150,7 +152,11 @@ void cache_monitor_failure_handler(HP_SMART_CARD_device_id_t dev_id,
 JNIEXPORT jint JNICALL Java_com_Smartcard_shutdown(JNIEnv *env, jclass arg) {
     LOGI("Shutting down smart card library....\n");
 
+    pthread_mutex_lock(&mutex);
+
     LIB_HP_SMART_CARD_shutdown();
+
+    pthread_mutex_unlock(&mutex);
 
     pthread_mutex_destroy(&mutex);
 
