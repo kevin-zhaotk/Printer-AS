@@ -94,6 +94,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 	private PopWindowAdapter mInputProc;
 // End of H.M.Wang 2021-9-24 追加输入设置参数
 
+// H.M.Wang 2022-8-25 追加喷嘴加热参数项
+	private PopWindowAdapter mNozzleWarm;
+// End of H.M.Wang 2022-8-25 追加喷嘴加热参数项
+
 	private ItemViewHolder mEncoderHolder;
 //	private HashMap<Integer, ItemViewHolder> mHoldMap;
 	
@@ -370,6 +374,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		mInputProc = new PopWindowAdapter(mContext, null);
 // End of H.M.Wang 2021-9-24 追加输入设置参数
 
+// H.M.Wang 2022-8-25 追加喷嘴加热参数项
+		mNozzleWarm = new PopWindowAdapter(mContext, null);
+// End of H.M.Wang 2022-8-25 追加喷嘴加热参数项
+
 		initAdapters();
 
 		// H.M.Wang 增加3行。注册广播接收器，接收计数器更新值，设置到编辑区内
@@ -586,7 +594,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 // End of H.M.Wang 2022-5-30 增加编码器变倍
 		mSettingItems[59] = new ItemOneLine(60, R.string.str_textview_param60, 0);
 		mSettingItems[60] = new ItemOneLine(61, R.string.str_textview_param61, 0);
-		mSettingItems[61] = new ItemOneLine(62, R.string.str_textview_param62, 0);
+// H.M.Wang 2022-8-25 追加喷嘴加热参数项
+//		mSettingItems[61] = new ItemOneLine(62, R.string.str_textview_param62, 0);
+		mSettingItems[61] = new ItemOneLine(62, R.string.str_textview_param62, R.array.switch_item_entries, 0, ItemType.TYPE_SWITCH);
+// End of H.M.Wang 2022-8-25 追加喷嘴加热参数项
 		mSettingItems[62] = new ItemOneLine(63, R.string.str_textview_param63, 0);
 		mSettingItems[63] = new ItemOneLine(64, R.string.str_textview_param64, 0);
 		Debug.d(TAG, "--->loadSettings");
@@ -686,6 +697,12 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 			mBeep.addItem(items[i]);
 		}
 
+// H.M.Wang 2022-8-25 追加喷嘴加热参数项
+		for (int i = 0; i < items.length; i++) {
+			mNozzleWarm.addItem(items[i]);
+		}
+// End of H.M.Wang 2022-8-25 追加喷嘴加热参数项
+
 		// H.M.Wang 2019-12-19 追加对参数39的修改为数据源选择的参数，该设置适配器停用
 //		for (int i = 0; i < items.length; i++) {
 //			mLan.addItem(items[i]);
@@ -709,6 +726,7 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		}
 // End of H.M.Wang 2021-9-24 追加输入设置参数
 	}
+
 	private String getEntry(int id,int index) {
 		String entries[] = mContext.getResources().getStringArray(id);
 		// Debug.d(TAG, "--->getEncoder:entries[" + index + "]=" + entries[index]);
@@ -835,6 +853,10 @@ public class SettingsListAdapter extends BaseAdapter implements OnClickListener,
 		} else if (position == 56) { //參數57
 			mSpiner.setAdapter(mInputProc);
 // End of H.M.Wang 2021-9-24 追加输入设置参数
+// H.M.Wang 2022-8-25 追加喷嘴加热参数项
+		} else if (position == 61) { //參數62
+			mSpiner.setAdapter(mNozzleWarm);
+// End of H.M.Wang 2022-8-25 追加喷嘴加热参数项
 		}
 		mSpiner.setWidth(view.getWidth());
 		//mSpiner.showAsDropDown(view);

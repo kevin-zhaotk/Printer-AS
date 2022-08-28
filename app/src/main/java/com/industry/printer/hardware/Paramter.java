@@ -210,6 +210,9 @@ public class Paramter {
 	    mFPGAParam[21] = param[33];
 	    mFPGAParam[22] = param[32];
 	    mFPGAParam[23] = param[39] == 0 ? (mFPGAParam[23] & 0xFFFE) : (mFPGAParam[23] | 0x0001);
+// H.M.Wang 2022-8-25 追加喷嘴加热参数项
+		mFPGAParam[23] = param[SystemConfigFile.INDEX_NOZZLE_WARMING] == 0 ? (mFPGAParam[23] & 0xFFFD) : (mFPGAParam[23] | 0x0002);
+// End of H.M.Wang 2022-8-25 追加喷嘴加热参数项
 	}
 	
 	public int getFPGAParam(int index) {

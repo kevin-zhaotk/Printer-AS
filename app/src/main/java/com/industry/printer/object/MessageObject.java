@@ -256,8 +256,12 @@ public class MessageObject extends BaseObject {
 // H.M.Wang 2020-8-26 追加64SN打印头
 						mPNozzle == PrinterNozzle.MESSAGE_TYPE_64SN ||
 // End of H.M.Wang 2020-8-26 追加64SN打印头
-						mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT) ? 1 : 2 ;
+						mPNozzle == PrinterNozzle.MESSAGE_TYPE_64_DOT ||
 // End of H.M.Wang 2020-7-23 追加32DN打印头
+// H.M.Wang 2022-8-19 追加 （H.M.Wang 2021-8-16 追加96DN头） 时的遗漏
+						mPNozzle == PrinterNozzle.MESSAGE_TYPE_96DN
+// End of H.M.Wang 2022-8-19 追加 （H.M.Wang 2021-8-16 追加96DN头） 时的遗漏
+			) ? 1 : 2 ;
 
 //			str += mId+"^";
 //			str += "00000^00000^00000^00000^0^000^";

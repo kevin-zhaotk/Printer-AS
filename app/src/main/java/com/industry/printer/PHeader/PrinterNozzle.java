@@ -837,10 +837,8 @@ public enum PrinterNozzle {
         public static final int NOZZLE_TYPE_1_INCH_DUAL = 12;
         public static final int NOZZLE_TYPE_1_INCH_TRIPLE = 18;
         public static final int NOZZLE_TYPE_1_INCH_FOUR = 19;
-
         // H.M.Wang 追加下列一行
         public static final int NOZZLE_TYPE_64_DOT = 20;
-
         // H.M.Wang 2020-4-17 追加12.7R5头类型
 // H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
 //        public static final int NOZZLE_TYPE_12_7_R5 = 30;
@@ -848,7 +846,6 @@ public enum PrinterNozzle {
         public static final int NOZZLE_TYPE_R6X50 = 31;
 // End of H.M.Wang 2020-5-21 12.7R5头改为RX48，追加RX50头
         // End of H.M.Wang 2020-4-17 追加12.7R5头类型
-
 // H.M.Wang 2020-7-23 追加32DN打印头
         public static final int NOZZLE_TYPE_32DN = 32;
 // End of H.M.Wang 2020-7-23 追加32DN打印头
@@ -859,9 +856,7 @@ public enum PrinterNozzle {
 // H.M.Wang 2020-8-26 追加64SN打印头
         public static final int NOZZLE_TYPE_64SN = 34;
 // End of H.M.Wang 2020-8-26 追加64SN打印头
-
         public static final int NOZZLE_TYPE_9MM = 35;
-
 // H.M.Wang 2021-3-6 追加E6X48,E6X50头
         public static final int NOZZLE_TYPE_E6X48 = 36;
         public static final int NOZZLE_TYPE_E6X50 = 37;

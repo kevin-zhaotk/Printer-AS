@@ -146,6 +146,10 @@ public class SystemConfigFile{
 	public static final int INDEX_DUAL_COLUMNS = 60;
 // End of H.M.Wang 2021-11-18 追击双列打印头索引
 
+// H.M.Wang 2022-8-25 追加喷嘴加热参数项
+	public static final int INDEX_NOZZLE_WARMING = 61;
+// End of H.M.Wang 2022-8-25 追加喷嘴加热参数项
+
 	public static final int INDEX_PARAM_63 = 62;
 
 // H.M.Wang 11-13 调整各项目的排列顺序，使得相同接近的数据源排在一起。同时调整arrays.xml的数据源排列顺序
